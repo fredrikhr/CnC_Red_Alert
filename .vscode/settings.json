@@ -1,4 +1,10 @@
 {
-    "cmake.buildDirectory": "${workspaceFolder}/OBJ/${generator}/${buildType}",
-    "cmake.installPrefix": "${workspaceFolder}/BIN/${buildType}"
+  "files.associations": {
+    "*.ASM": "masm",
+    "*.I": "masm",
+    "*.INC": "masm",
+    "*.16": "masm",
+  },
+  "cmake.buildDirectory": "${workspaceFolder}/OBJ/${generator}/${buildType}",
+  "cmake.installPrefix": "${workspaceFolder}/BIN/${buildType}"
 }
