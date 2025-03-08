@@ -129,7 +129,7 @@ _code segment para public use16 'code'
 ;*   08/19/95 ST: Created.                                                                       *
 ;*===============================================================================================*
 
-Start:		;
+_Start:		;
 		; Set up the segments and the stack pointer
 		;
 		cli
@@ -591,4 +591,4 @@ EndCode		label	byte		;The end of the data segment
 
 _data ends
 
-end Start
+end _Start

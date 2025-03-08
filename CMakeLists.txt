@@ -15,6 +15,9 @@ set_file_extensions_local_globs()
 
 option(PHARLAP_TNT "PHARLAP_TNT" OFF)
 
+add_subdirectory(LAUNCH)
+add_subdirectory(LAUNCHER)
+
 add_subdirectory(TOOLS/AUDIOMAK)
 add_subdirectory(TOOLS/MIX)
 

@@ -1,0 +1,3 @@
+include(project_component_helpers)
+set_project_component_name()
+project_component(EXECUTABLE)
