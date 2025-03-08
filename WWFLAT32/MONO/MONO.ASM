@@ -50,18 +50,18 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-LOCALS ??
+; Converted from TASM: LOCALS ??
 
 
 ;
 ; External declares so these functions can be called
 ;
 GLOBAL          MonoScreen              :DWORD
-GLOBAL          MonoEnabled             :DWORD  
+GLOBAL          MonoEnabled             :DWORD
 
 GLOBAL         Mono_Set_Cursor         :NEAR	; done
 GLOBAL         Mono_Clear_Screen       :NEAR	; done
@@ -82,7 +82,7 @@ CPL  =  80      ; characters per line
 LPS  =  25      ; lines per screen
 
 
-DATASEG
+.DATA; Converted from TASM: DATASEG
 
 MonoX           DD      0
 MonoY           DD      0
@@ -114,12 +114,12 @@ PageMap DD      0,1,2,3,4,5,6,7
 
 ;===================================================================
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 
 
 ;***************************************************************************
 ;* Map_Segment_To_Address_ -- Translate a 16bit Seg:Offset address to a    *
-;*                            Linear address.                              *                            
+;*                            Linear address.                              *
 ;*                                                                         *
 ;*                                                                         *
 ;*                                                                         *
@@ -151,12 +151,11 @@ CODESEG
 ; void Mono_Set_Cursor(int x, int y);
 
 
-PROC Mono_Set_Cursor    C near 
+Mono_Set_Cursor    PROC near C
 
-        USES eax , ebx , edx 
-
-        ARG     xpos : DWORD
-        ARG     ypos : DWORD
+        USES eax , ebx , edx,
+        xpos : DWORD,
+        ypos : DWORD
 
         cmp     [MonoEnabled],0
         je      ??exit
@@ -207,7 +206,7 @@ PROC Mono_Set_Cursor    C near
 ??exit:
         ret
 
-ENDP    Mono_Set_Cursor
+Mono_Set_Cursor    ENDP
 
 
 ;***************************************************************************
@@ -225,8 +224,8 @@ ENDP    Mono_Set_Cursor
 ;*=========================================================================*
 ; void Mono_Clear_Screen(void);
 
-PROC Mono_Clear_Screen  C near 
-        
+Mono_Clear_Screen  PROC near C
+
         USES eax , ecx , edi
 
         cmp     [MonoEnabled],0
@@ -256,7 +255,7 @@ PROC Mono_Clear_Screen  C near
 ??exit:
         ret
 
-ENDP    Mono_Clear_Screen
+Mono_Clear_Screen    ENDP
 
 
 ;***************************************************************************
@@ -273,10 +272,10 @@ ENDP    Mono_Clear_Screen
 ;* HISTORY:                                                                *
 ;*=========================================================================*
 ; void Mono_Scroll(DWORD lines);
-PROC Mono_Scroll        C near 
+Mono_Scroll        PROC near C
 
-        USES 	eax , ebx , ecx , edx , edi , esi
-        ARG     lines : DWORD
+        USES 	eax , ebx , ecx , edx , edi , esi,
+        lines : DWORD
 
         cmp     [MonoEnabled],0
         je      ??exit
@@ -294,26 +293,26 @@ PROC Mono_Scroll        C near
         je      short ??fini            ; =>NO
 
         mov     ebx,eax                 ; set line counter
-                                                    
+
         mov     edx,[MonoY]             ; get row count
         ror     edx,16                  ; store it in high half of register
         mov     dx,[WORD PTR MonoOff]   ; get column offset
         ror     edx,16
-                     
+
 ;        mov     eax,[MonoScreen]        ; get selector for mono screen
 ;        push    ds                      ; save off data seg for later
 ;        mov     ds,ax                   ; set data source register
 ;        mov     es,ax                   ;  and extra source register
 
         sub     eax,eax                 ; set to clear clear line
-        
+
 ??looper:
         mov     ecx,(80*24)             ; Number of words to move.
 
  ;      xor     edi,edi                 ; dst start at top of screen area
  ;      mov     esi,80*2                ; src start at next line down
     mov edi , [ MonoScreen ]
-    lea esi , [ 80 * 2 + edi ]       
+    lea esi , [ 80 * 2 + edi ]
         rep     movsw                   ; Scroll the screen upward.
 
         dec     dx                      ; decrement Y counter
@@ -332,12 +331,12 @@ PROC Mono_Scroll        C near
         mov     [WORD PTR MonoY],dx     ; store of the mono y position
         ror     edx,16                  ; switch to screen offset
         mov     [WORD PTR MonoOff],dx   ; store of the mono offset
-                
+
 ??fini:
 ??exit:
         ret
 
-ENDP    Mono_Scroll
+Mono_Scroll    ENDP
 
 
 ;***************************************************************************
@@ -355,16 +354,15 @@ ENDP    Mono_Scroll
 ;*=========================================================================*
 ; void Mono_Put_Char(char character, int attrib=2);
 
-PROC Mono_Put_Char      C near 
+Mono_Put_Char      PROC near C
 
-        USES    eax , edi
-
-        ARG     character : BYTE
-        ARG     attrib    : DWORD
+        USES    eax , edi,
+        character : BYTE,
+        attrib    : DWORD
 
         cmp     [MonoEnabled],0
         je      ??exit
-                       
+
 ;       mov     ax,cs
 ;       and     ax,7
 ;       or      ax,SS_DATA
@@ -379,7 +377,7 @@ PROC Mono_Put_Char      C near
         ; Output character to monochrome monitor.
         mov     al,[character]
         mov     ah,[BYTE PTR attrib]
-;       stosw       
+;       stosw
         mov     [ edi ] , ax
 
         ; Update cursor position.
@@ -390,13 +388,13 @@ PROC Mono_Put_Char      C near
         mov     eax,[MonoX]
         push    eax
 
-        call    Mono_Set_Cursor 
+        call    Mono_Set_Cursor
         add     esp,8
 
 ??exit:
         ret
 
-ENDP    Mono_Put_Char
+Mono_Put_Char    ENDP
 
 
 ;***************************************************************************
@@ -414,16 +412,15 @@ ENDP    Mono_Put_Char
 ;*=========================================================================*
 ; void Mono_Draw_Rect(int x, int y, int w, int h, int attrib=2, int thick=0);
 
-PROC Mono_Draw_Rect     C near 
+Mono_Draw_Rect     PROC near C
 
-        USES eax , ebx , ecx , esi , edi
-
-        ARG     xpos:DWORD
-        ARG     ypos:DWORD
-        ARG     width:DWORD
-        ARG     height:DWORD
-        ARG     attrib:DWORD
-        ARG     thick:DWORD
+        USES eax , ebx , ecx , esi , edi,
+        xpos:DWORD,
+        ypos:DWORD,
+        width:DWORD,
+        height:DWORD,
+        attrib:DWORD,
+        thick:DWORD
 
         cmp     [MonoEnabled],0
         je      ??exit
@@ -466,7 +463,7 @@ PROC Mono_Draw_Rect     C near
         push    ecx
         mov     ecx,[xpos]
         push    ecx
-        call    Mono_Set_Cursor 
+        call    Mono_Set_Cursor
         add     esp,8
 
 ??drawloop:
@@ -494,7 +491,7 @@ PROC Mono_Draw_Rect     C near
         push    eax
         push    ebx
 
-        call    Mono_Put_Char 
+        call    Mono_Put_Char
         add     esp,8
 
         movsx   eax,[BYTE PTR esi+1]
@@ -528,7 +525,7 @@ PROC Mono_Draw_Rect     C near
 ??exit:
         ret
 
-ENDP    Mono_Draw_Rect
+Mono_Draw_Rect    ENDP
 
 
 ;***************************************************************************
@@ -546,15 +543,14 @@ ENDP    Mono_Draw_Rect
 ;*=========================================================================*
 ; void Mono_Text_Print(void *text, int x, int y, int attrib, int update);
 
-PROC _Mono_Text_Print   C near 
+_Mono_Text_Print   PROC near C
 
-        USES eax,ebx,ecx,edx,edi,esi
-
-        ARG     text:DWORD
-        ARG     xpos:DWORD
-        ARG     ypos:DWORD
-        ARG     attrib:DWORD
-        ARG     update:DWORD
+        USES eax,ebx,ecx,edx,edi,esi,
+        text:DWORD,
+        xpos:DWORD,
+        ypos:DWORD,
+        attrib:DWORD,
+        update:DWORD
 
         cmp     [MonoEnabled],0
         je      ??exit
@@ -579,7 +575,7 @@ PROC _Mono_Text_Print   C near
         push    eax
         mov     eax,[xpos]
         push    eax
-        call    Mono_Set_Cursor 
+        call    Mono_Set_Cursor
         add     esp,8
 
         mov     esi,[text]
@@ -605,7 +601,7 @@ PROC _Mono_Text_Print   C near
         mov     eax,[attrib]
         push    eax
         push    ebx
-        call    Mono_Put_Char 
+        call    Mono_Put_Char
         add     esp,8
 
         ; Perform adjustments if wrapping past right margin.
@@ -618,7 +614,7 @@ PROC _Mono_Text_Print   C near
         push    eax
 ;       sub     eax,eax
         push    0
-        call    Mono_Set_Cursor 
+        call    Mono_Set_Cursor
         add     esp,8
 
         jmp short ??nowrap
@@ -631,7 +627,7 @@ PROC _Mono_Text_Print   C near
         push    eax
         mov     eax,[xpos]
         push    eax
-        call    Mono_Set_Cursor 
+        call    Mono_Set_Cursor
         add     esp,8
 
         ; Scroll the monochrome screen if necessary.
@@ -640,7 +636,7 @@ PROC _Mono_Text_Print   C near
         jb      short ??noscroll
 
         push    1
-        call    Mono_Scroll 
+        call    Mono_Scroll
         add     esp,4
 
         dec     [ypos]
@@ -659,16 +655,16 @@ PROC _Mono_Text_Print   C near
 ??exit:
         ret
 
-ENDP    _Mono_Text_Print
+_Mono_Text_Print    ENDP
 
 ;=====================================================================
 
-PROC Mono_Text_Print    C near 
-        USES    eax
-        ARG     text:DWORD
-        ARG     xpos:DWORD
-        ARG     ypos:DWORD
-        ARG     attrib:DWORD
+Mono_Text_Print    PROC near C
+        USES    eax,
+        text:DWORD,
+        xpos:DWORD,
+        ypos:DWORD,
+        attrib:DWORD
 
 
         cmp     [MonoEnabled],0
@@ -685,13 +681,13 @@ PROC Mono_Text_Print    C near
         mov     eax,[text]
         push    eax
 
-        call    _Mono_Text_Print 
+        call    _Mono_Text_Print
         add     esp,20
 
 ??exit:
         ret
 
-ENDP    Mono_Text_Print
+Mono_Text_Print    ENDP
 
 
 
@@ -710,11 +706,10 @@ ENDP    Mono_Text_Print
 ;*=========================================================================*
 ; void Mono_Print(void *text);
 
-PROC Mono_Print         C near 
-        
-        USES eax
+Mono_Print         PROC near C
 
-        ARG     text:DWORD
+        USES eax,
+        text:DWORD
 
         cmp     [MonoEnabled],0
         je      ??exit
@@ -737,13 +732,13 @@ PROC Mono_Print         C near
         mov     eax,[text]
         push    eax
 
-        call    _Mono_Text_Print 
+        call    _Mono_Text_Print
         add     esp,20
 
 ??exit:
         ret
 
-ENDP    Mono_Print
+Mono_Print    ENDP
 
 ;***************************************************************************
 ;* Mono_View_Page -- page in a mono screen                                 *
@@ -761,11 +756,10 @@ ENDP    Mono_Print
 ; int cdecl Mono_View_Page(int page);
 
 
-PROC Mono_View_Page     C near 
+Mono_View_Page     PROC near C
 
-        USES eax,ebx,ecx,edx,edi,esi
-
-        ARG     page:DWORD
+        USES eax,ebx,ecx,edx,edi,esi,
+        page:DWORD
 
         LOCAL   oldpage:DWORD
 
@@ -838,8 +832,8 @@ PROC Mono_View_Page     C near
 ??exit:
         mov     eax,[oldpage]
         ret
-        
-ENDP    Mono_View_Page
+
+Mono_View_Page    ENDP
 
 END
 

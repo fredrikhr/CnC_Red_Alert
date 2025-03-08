@@ -35,15 +35,15 @@
 ;*   Vesa_Buffer_To_Page -- Copies a linear buffer to a vesa page          *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-INCLUDE "mcgaprim.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <mcgaprim.inc>
+INCLUDE <.\gbuffer.inc>
 
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* VESA_BUFFER_TO_PAGE -- Copies a linear buffer to a vesa page            *
@@ -59,7 +59,7 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   01/16/1995 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Vesa_Buffer_To_Page C near 
+Vesa_Buffer_To_Page PROC	near C
 	ret
-	ENDP	Vesa_Buffer_To_Page 
+Vesa_Buffer_To_Page	ENDP
 END

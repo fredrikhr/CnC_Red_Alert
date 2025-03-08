@@ -35,14 +35,14 @@
 ;*   VVPC::Clear -- Clears a virtual viewport instance                     *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-INCLUDE "mcgaprim.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <mcgaprim.inc>
+INCLUDE <.\gbuffer.inc>
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* VVPC::CLEAR -- Clears a virtual viewport instance                       *
@@ -58,11 +58,10 @@ CODESEG
 ;*   06/07/1994 PWG : Created.                                             *
 ;*   08/23/1994 SKB : Clear the direction flag to always go forward.       *
 ;*=========================================================================*
-	PROC	MCGA_Clear C near 
-	USES	eax,ebx,ecx,edx,esi,edi
-
-	ARG    	this:DWORD				; this is a member function
-	ARG    	color:BYTE				; what color should we clear to
+MCGA_Clear PROC	near C
+	USES	eax,ebx,ecx,edx,esi,edi,
+	this:DWORD				; this is a member function,
+	color:BYTE				; what color should we clear to
 
 	cld 		 				; always go forward
 
@@ -79,7 +78,7 @@ CODESEG
 	mov	ah,al					; extend across WORD
 	mov	ecx,eax					; extend across DWORD in
 	shl	eax,16					;   several steps
-	mov	ax,cx		
+	mov	ax,cx
 
 	;*===================================================================
 	; Find out if we should bother to align the row.
@@ -123,5 +122,5 @@ CODESEG
 	jnz	??byte_by_byte				; if any left then next line
 ??exit:
 	ret
-	ENDP	MCGA_Clear
+MCGA_Clear	ENDP
 END

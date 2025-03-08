@@ -36,14 +36,14 @@
 ;*   XOR_Delta_Buffer -- Xor's the data in a XOR Delta format to a page.   *
 ; * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
 
 
 
-LOCALS ??
+; Converted from TASM: LOCALS ??
 
 ; These are used to call Apply_XOR_Delta_To_Page_Or_Viewport() to setup flags parameter.  If
 ; These change, make sure and change their values in wsa.cpp.
@@ -68,7 +68,7 @@ GLOBAL 	Apply_XOR_Delta_To_Page_Or_Viewport:NEAR
 
 
 
-	CODESEG
+	.CODE; Converted from TASM: CODESEG
 
 
 
@@ -86,10 +86,10 @@ GLOBAL 	Apply_XOR_Delta_To_Page_Or_Viewport:NEAR
 ;* HISTORY:                                                                *
 ;*   05/23/1994 SKB : Created.                                             *
 ;*=========================================================================*
-PROC	Apply_XOR_Delta C near
-	USES 	ebx,ecx,edx,edi,esi
-	ARG	target:DWORD 		; pointers.
-	ARG	delta:DWORD		; pointers.
+Apply_XOR_Delta PROC	near C
+	USES 	ebx,ecx,edx,edi,esi,
+	target:DWORD 		; pointers.,
+	delta:DWORD		; pointers.
 
 	; Optimized for 486/pentium by rearanging instructions.
 	mov	edi,[target]		; get our pointers into offset registers.
@@ -99,7 +99,7 @@ PROC	Apply_XOR_Delta C near
 	xor	ecx,ecx			; use cx for loop
 
 ??top_loop:
-	xor	eax,eax			; clear out eax.	
+	xor	eax,eax			; clear out eax.
 	lodsb				; get delta source byte
 
 	or	al,al			; check for a SHORTDUMP ; check al incase of sign value.
@@ -134,7 +134,7 @@ PROC	Apply_XOR_Delta C near
 	xor	[edi],al		; xor that byte.
 
 	inc	edi			; go to next dest pixel
-	dec	ecx			; one less to go.	
+	dec	ecx			; one less to go.
 	jnz	??run_loop
 	jmp	??top_loop
 
@@ -152,7 +152,7 @@ PROC	Apply_XOR_Delta C near
 
 ;
 ; SHORTSKIP AND LONGSKIP
-;		
+;
 ??do_skip:
 	add	edi,eax			; do the skip.
 	jmp	??top_loop
@@ -163,7 +163,7 @@ PROC	Apply_XOR_Delta C near
 	sub	eax,08000h     		; opcode -= 0x8000
 	test	eax,04000h		; is it a LONGRUN (code & 0x4000)?
 	je	??long_dump
-	
+
 ;
 ; LONGRUN
 ;
@@ -184,7 +184,7 @@ PROC	Apply_XOR_Delta C near
 
 	ret
 
-	ENDP	Apply_XOR_Delta
+Apply_XOR_Delta	ENDP
 
 
 ;----------------------------------------------------------------------------
@@ -214,13 +214,13 @@ PROC	Apply_XOR_Delta C near
 ;*=========================================================================*
 
 ;PUBLIC Apply_XOR_Delta_To_Page_Or_Viewport(UWORD page_seg, BYTE *delta_ptr, WORD width, WORD flags, WORD descriptor)
-PROC	Apply_XOR_Delta_To_Page_Or_Viewport C near
-	USES 	ebx,ecx,edx,edi,esi
-	ARG	target:DWORD		; pointer to the destination buffer.
-	ARG	delta:DWORD		; pointer to the delta buffer.
-	ARG	width:DWORD		; width of animation.
-	ARG	nextrow:DWORD		; Page/Buffer width - anim width.
-	ARG	copy:DWORD		; should it be copied or xor'd?	
+Apply_XOR_Delta_To_Page_Or_Viewport PROC	near C
+	USES 	ebx,ecx,edx,edi,esi,
+	target:DWORD		; pointer to the destination buffer.,
+	delta:DWORD		; pointer to the delta buffer.,
+	width:DWORD		; width of animation.,
+	nextrow:DWORD		; Page/Buffer width - anim width.,
+	copy:DWORD		; should it be copied or xor'd?
 
 
 	mov	edi,[target]		; Get the target pointer.
@@ -235,7 +235,7 @@ PROC	Apply_XOR_Delta_To_Page_Or_Viewport C near
 	mov	ecx,eax			; use cx for loop
 	mov	edx,eax			; use dx to count the relative column.
 
-	push	ebx			; push nextrow onto the stack for Copy/XOR_Delta_Buffer.	
+	push	ebx			; push nextrow onto the stack for Copy/XOR_Delta_Buffer.
 	mov	ebx,[width]		; bx will hold the max column for speed compares
 
 ; At this point, all the registers have been set up.  Now call the correct function
@@ -252,7 +252,7 @@ PROC	Apply_XOR_Delta_To_Page_Or_Viewport C near
 
 	ret
 
-	ENDP	Apply_XOR_Delta_To_Page_Or_Viewport
+Apply_XOR_Delta_To_Page_Or_Viewport	ENDP
 ;----------------------------------------------------------------------------
 
 
@@ -275,11 +275,11 @@ PROC	Apply_XOR_Delta_To_Page_Or_Viewport C near
 ;*   03/09/1992  SB : Created.                                             *
 ;*=========================================================================*
 
-PROC	XOR_Delta_Buffer C near
-	ARG	nextrow:DWORD
+XOR_Delta_Buffer PROC	near C,
+	nextrow:DWORD
 
 ??top_loop:
-	xor	eax,eax			; clear out eax.	
+	xor	eax,eax			; clear out eax.
 	lodsb				; get delta source byte
 
 	or	al,al			; check for a SHORTDUMP ; check al incase of sign value.
@@ -351,7 +351,7 @@ PROC	XOR_Delta_Buffer C near
 
 ;
 ; SHORTSKIP AND LONGSKIP
-;		
+;
 ??do_skip:
 	sub	edi,edx			; go back to beginning or row.
 	add	edx,eax			; incriment our count on current row
@@ -363,7 +363,7 @@ PROC	XOR_Delta_Buffer C near
 	add	edi,[nextrow]  		; jump to start of next row
 	jmp	??recheck3		; jump up to see if we are at the right row
 ??end_col3:
-	add	edi,edx			; get to correct position in row.	
+	add	edi,edx			; get to correct position in row.
 	jmp	??top_loop
 
 
@@ -372,7 +372,7 @@ PROC	XOR_Delta_Buffer C near
 	sub	eax,08000h     		; opcode -= 0x8000
 	test	eax,04000h		; is it a LONGRUN (code & 0x4000)?
 	je	??long_dump
-	
+
 ;
 ; LONGRUN
 ;
@@ -394,7 +394,7 @@ PROC	XOR_Delta_Buffer C near
 	ret
 
 
-	ENDP	XOR_Delta_Buffer
+XOR_Delta_Buffer	ENDP
 
 ;----------------------------------------------------------------------------
 
@@ -416,11 +416,11 @@ PROC	XOR_Delta_Buffer C near
 ;* HISTORY:                                                                *
 ;*   03/09/1992  SB : Created.                                             *
 ;*=========================================================================*
-PROC	Copy_Delta_Buffer C near
-	ARG	nextrow:DWORD
+Copy_Delta_Buffer PROC	near C,
+	nextrow:DWORD
 
 ??top_loop:
-	xor	eax,eax			; clear out eax.	
+	xor	eax,eax			; clear out eax.
 	lodsb				; get delta source byte
 
 	or	al,al			; check for a SHORTDUMP ; check al incase of sign value.
@@ -494,7 +494,7 @@ PROC	Copy_Delta_Buffer C near
 
 ;
 ; SHORTSKIP AND LONGSKIP
-;		
+;
 ??do_skip:
 	sub	edi,edx			; go back to beginning or row.
 	add	edx,eax			; incriment our count on current row
@@ -506,7 +506,7 @@ PROC	Copy_Delta_Buffer C near
 	add	edi,[nextrow]  		; jump to start of next row
 	jmp	??recheck3		; jump up to see if we are at the right row
 ??end_col3:
-	add	edi,edx			; get to correct position in row.	
+	add	edi,edx			; get to correct position in row.
 	jmp	??top_loop
 
 
@@ -515,7 +515,7 @@ PROC	Copy_Delta_Buffer C near
 	sub	eax,08000h     		; opcode -= 0x8000
 	test	eax,04000h		; is it a LONGRUN (code & 0x4000)?
 	je	??long_dump
-	
+
 ;
 ; LONGRUN
 ;
@@ -536,7 +536,7 @@ PROC	Copy_Delta_Buffer C near
 
 	ret
 
-	ENDP	Copy_Delta_Buffer
+Copy_Delta_Buffer	ENDP
 
 ;----------------------------------------------------------------------------
 

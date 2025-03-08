@@ -40,15 +40,15 @@
 ;*   Transparent_Remapped_Draw -- jump loc for scaled remap trans pixels   *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-INCLUDE "mcgaprim.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <mcgaprim.inc>
+INCLUDE <.\gbuffer.inc>
 
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 
 
 ;***************************************************************************
@@ -63,24 +63,24 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   06/16/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Linear_Scale_To_Linear C NEAR
+Linear_Scale_To_Linear PROC	NEAR C
 	USES	eax,ebx,ecx,edx,esi,edi
 
 	;*===================================================================
 	;* Define the arguements that our function takes.
-	;*===================================================================
-	ARG	this:DWORD		; pointer to source view port
-	ARG	dest:DWORD		; pointer to destination view port
-	ARG	src_x:DWORD		; source x offset into view port
-	ARG	src_y:DWORD		; source y offset into view port
-	ARG	dst_x:DWORD		; dest x offset into view port
-	ARG	dst_y:DWORD		; dest y offset into view port
-	ARG	src_width:DWORD		; width of source rectangle
-	ARG	src_height:DWORD	; height of source rectangle
-	ARG	dst_width:DWORD		; width of dest rectangle
-	ARG	dst_height:DWORD	; width of dest height
-	ARG	trans:DWORD		; is this transparent?
-	ARG	remap:DWORD		; pointer to table to remap source
+	;*===================================================================,
+	this:DWORD		; pointer to source view port,
+	dest:DWORD		; pointer to destination view port,
+	src_x:DWORD		; source x offset into view port,
+	src_y:DWORD		; source y offset into view port,
+	dst_x:DWORD		; dest x offset into view port,
+	dst_y:DWORD		; dest y offset into view port,
+	src_width:DWORD		; width of source rectangle,
+	src_height:DWORD	; height of source rectangle,
+	dst_width:DWORD		; width of dest rectangle,
+	dst_height:DWORD	; width of dest height,
+	trans:DWORD		; is this transparent?,
+	remap:DWORD		; pointer to table to remap source
 
 	;*===================================================================
 	;* Define local variables to hold the viewport characteristics
@@ -121,21 +121,21 @@ CODESEG
 
 	mov	eax , [ src_x ]
 	mov	ebx , [ src_y ]
-	mov	[ src_x0 ] , eax 
-	mov	[ src_y0 ] , ebx 
+	mov	[ src_x0 ] , eax
+	mov	[ src_y0 ] , ebx
 	add	eax , [ src_width ]
 	add	ebx , [ src_height ]
-	mov	[ src_x1 ] , eax 
-	mov	[ src_y1 ] , ebx 
+	mov	[ src_x1 ] , eax
+	mov	[ src_y1 ] , ebx
 
 	mov	eax , [ dst_x ]
 	mov	ebx , [ dst_y ]
-	mov	[ dst_x0 ] , eax 
-	mov	[ dst_y0 ] , ebx 
+	mov	[ dst_x0 ] , eax
+	mov	[ dst_y0 ] , ebx
 	add	eax , [ dst_width ]
 	add	ebx , [ dst_height ]
-	mov	[ dst_x1 ] , eax 
-	mov	[ dst_y1 ] , ebx 
+	mov	[ dst_x1 ] , eax
+	mov	[ dst_y1 ] , ebx
 
 ; Clip Source Rectangle against source Window boundaries.
 	mov  	esi , [ this ]	    ; get ptr to src
@@ -211,7 +211,7 @@ CODESEG
 	sub	eax , [ src_y ]
 	imul	[ dst_height ]
 	idiv	[ src_height ]
-	add	eax , [ dst_y ] 
+	add	eax , [ dst_y ]
 	mov	[ dst_y1 ] , eax
 
 ; Clip destination Rectangle against source Window boundaries.
@@ -295,7 +295,7 @@ CODESEG
 
 ??do_scaling:
 
-       cld	
+       cld
        mov	ebx , [ this ]
        mov	esi , [ (VideoViewPort ebx) . VIVPOffset ]
        mov	eax , [ (VideoViewPort ebx) . VIVPXAdd ]
@@ -357,7 +357,7 @@ CODESEG
        mov	[ counter_x ] , ebx
        lea	ecx , [ ??ref_point + ecx + ecx * 2 ]
        mov	[ entry ] , ecx
-	
+
  ??outter_loop:
        push	esi
        push	edi
@@ -365,7 +365,7 @@ CODESEG
        mov	ebx , [ counter_x ]
        jmp	[ entry ]
  ??inner_loop:
-       REPT	32	
+       REPT	32
 	       mov	cl , [ esi ]
 	       add	ecx , eax
 	       adc	esi , edx
@@ -396,7 +396,7 @@ CODESEG
 ; *************************************************************************
 ; normal scale with remap
 
-??normal_remap:	
+??normal_remap:
        mov	ecx , ebx
        mov	[ dx_frac ], eax
        and	ecx , 01fh
@@ -416,7 +416,7 @@ CODESEG
        xor	ebx , ebx
        jmp	[ entry ]
  ??remapinner_loop:
-       REPT	32	
+       REPT	32
 	       mov	bl , [ esi ]
 	       add	ecx , [ dx_frac ]
 	       adc	esi , edx
@@ -425,7 +425,7 @@ CODESEG
 	       inc	edi
        ENDM
  ??remapref_point:
-       dec	[ remap_counter ] 
+       dec	[ remap_counter ]
        jge	??remapinner_loop
 
        pop	edi
@@ -469,7 +469,7 @@ CODESEG
        mov	ebx , [ counter_x ]
        jmp	[ entry ]
  ??trans_inner_loop:
-       REPT	32	
+       REPT	32
        local	trans_pixel
 	       mov	cl , [ esi ]
 	       test	cl , cl
@@ -504,7 +504,7 @@ CODESEG
 ; *************************************************************************
 ; normal scale with remap
 
-??trans_remap:	
+??trans_remap:
        mov	ecx , ebx
        mov	[ dx_frac ], eax
        and	ecx , 01fh
@@ -524,7 +524,7 @@ CODESEG
        xor	ebx , ebx
        jmp	[ entry ]
  ??trans_remapinner_loop:
-       REPT	32	
+       REPT	32
        local	trans_pixel
 	       mov	bl , [ esi ]
 	       test	bl , bl
@@ -537,7 +537,7 @@ CODESEG
 	       inc	edi
        ENDM
  ??trans_remapref_point:
-       dec	[ remap_counter ] 
+       dec	[ remap_counter ]
        jge	??trans_remapinner_loop
 
        pop	edi

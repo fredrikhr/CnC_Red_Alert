@@ -49,19 +49,19 @@
 ;*   Conditional_Show_Mouse -- shows mouse if it was conditionally hidden  *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL				; the product runs in ideal mode
-P386				; use 386 real mode instructions
-MODEL USE32 FLAT
-LOCALS ??			; ?? is the symbol for a local
+; Converted from TASM: IDEAL				; the product runs in ideal mode
+.386P	; Converted from TASM: P386				; use 386 real mode instructions
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
+; Converted from TASM: LOCALS ??			; ?? is the symbol for a local
 ;WARN				; generate all warnings we can
 ;JUMPS				; optimize jumps if possible
 
 ;---------------------------------------------------------------------------
 ; Include all of the keyboard specific defines
 ;---------------------------------------------------------------------------
-INCLUDE "keystruc.inc"
-INCLUDE "shape.inc"
-include "svgaprim.inc"
+INCLUDE <keystruc.inc>
+INCLUDE <shape.inc>
+include <svgaprim.inc>
 
 DOS_SYS_CALL		EQU	21h		; to do TNT DOS-XNDR system calls.
 RESTORE_VISIBLE_PAGE	EQU	0
@@ -95,18 +95,18 @@ GLOBAL	Vesa_YRes : near
 
 
 
-DPMI_INTR	EQU	31h	
+DPMI_INTR	EQU	31h
 
 
-STRUC DPMI_REGS
+DPMI_REGS STRUC
        _edi  dd ?
-       _esi  dd ?	
-       _ebp  dd ?	
+       _esi  dd ?
+       _ebp  dd ?
        	     dd ?
-       _ebx  dd ?	
-       _edx  dd ?	
-       _ecx  dd ?	
-       _eax  dd ?	
+       _ebx  dd ?
+       _edx  dd ?
+       _ecx  dd ?
+       _eax  dd ?
        Flags dw ?
        _es   dw ?
        _ds   dw ?
@@ -118,7 +118,7 @@ STRUC DPMI_REGS
        _ss   dw ?
        	     dd ?
 	     dd ?
-  nothing    dd ?			
+  nothing    dd ?
 ENDS
 
 
@@ -126,7 +126,7 @@ ENDS
 ;---------------------------------------------------------------------------
 ; Now lets handle any data in the data segment
 ;---------------------------------------------------------------------------
-	DATASEG
+	.DATA; Converted from TASM: DATASEG
 
 RealInt		DPMI_REGS <>	; structure to call a real mode int
 MInstalled	DD	0		; is the mouse installed?
@@ -145,7 +145,7 @@ Mouse_Shadow_Buffer	dd	VGA_Mouse_Shadow_Buffer
 ;---------------------------------------------------------------------------
 ; Time to write some code
 ;---------------------------------------------------------------------------
-	CODESEG
+	.CODE; Converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* INSTALL_MOUSE -- Initializes mouse driver and verifies mouse connected  *
@@ -171,13 +171,12 @@ Mouse_Shadow_Buffer	dd	VGA_Mouse_Shadow_Buffer
 ;*   08/26/1994 PWG : Created.                                             *
 ;*=========================================================================*
 GLOBAL	Install_Mouse:NEAR
-PROC	Install_Mouse C NEAR 
-	USES	ebx,ecx,edx,esi,edi
-
-	ARG	mouse_max_width:DWORD
-	ARG	mouse_max_height:DWORD
-	ARG	screen_width:DWORD
-	ARG	screen_height:DWORD
+Install_Mouse PROC	NEAR C
+	USES	ebx,ecx,edx,esi,edi,
+	mouse_max_width:DWORD,
+	mouse_max_height:DWORD,
+	screen_width:DWORD,
+	screen_height:DWORD
 
 
 	;*=========================================================================*
@@ -207,7 +206,7 @@ PROC	Install_Mouse C NEAR
 	; cl set above
 	;==========================================================================
 	mov	eax,0200h
-	mov	bl,033h		
+	mov	bl,033h
 	int	DPMI_INTR		; do call.
 	jc	??error			; no mouse driver present
 
@@ -215,7 +214,7 @@ PROC	Install_Mouse C NEAR
 	;* If the interupt vector is pointing to 0000:0000h, there is no mouse
 	;*=========================================================================*
 	mov	ax,cx
-	or	ax,dx		
+	or	ax,dx
 	jz	short ??nomouse
 
 	and	edx , 0ffffh
@@ -237,7 +236,7 @@ PROC	Install_Mouse C NEAR
 
 ??mouse_buff:
 	;*=========================================================================*
-	;* Allocate two real mode memory buffers for the mouse cursor and the 
+	;* Allocate two real mode memory buffers for the mouse cursor and the
 	;*	mouse shadow
 	;*=========================================================================*
 	mov	eax,[mouse_max_width]	       	; get the is max width
@@ -252,7 +251,7 @@ PROC	Install_Mouse C NEAR
 
  	mov	ebx,eax				; get size of RM binary.
 	mov	ecx,eax				; ecx will use it later.
-	add	ebx,15				; round up 
+	add	ebx,15				; round up
 	shr	ebx,4				; convert to pages.
 	mov	eax,0100h			; alloc real buffer
 	int	DPMI_INTR	 		; do call.
@@ -294,11 +293,11 @@ PROC	Install_Mouse C NEAR
 	mov	eax ,[RealInt . _eax]
 	cmp	ax,-1					; was the mouse attached to system
       	jne	??nomouse				; if not exit out of the routine
-	
+
 	mov	[(KeyboardType esi).Adjust],0		; assume we do not need to adjust mouse
 
 ;***************************************************************************
-; Set the Vesa Parameters 
+; Set the Vesa Parameters
 
 	mov	eax , [ VesaFunc ]
 	test	eax , eax
@@ -345,7 +344,7 @@ PROC	Install_Mouse C NEAR
 	mov	[ Mouse_Shadow_Buffer ] , eax
 
 ??end_vesa:
-	call 	Reset_Mouse 
+	call 	Reset_Mouse
 	mov	eax , TRUE
 	ret
 
@@ -353,23 +352,23 @@ PROC	Install_Mouse C NEAR
 	mov	eax,FALSE
 ??exit:
 	ret
-	ENDP	Install_Mouse
+Install_Mouse	ENDP
 
 ;***************************************************************************
 ;* ResET_MOUSE -- Reset mouse to a new graphif mode			   *
 ;*									   *
-;* reset mouse driver funtions to a a currently graphic mode		   *	
+;* reset mouse driver funtions to a a currently graphic mode		   *
 ;*                                                                         *
 ;* INPUT:								   *
 ;* OUTPUT:      							   *
-;* PROTO:	Reset_Mouse ( void ) 					   *	
+;* PROTO:	Reset_Mouse ( void ) 					   *
 ;*									   *
 ;*                                                                         *
 ;* HISTORY:                                                                *
 ;*   08/26/1994 JRJ : Created.                                             *
 ;*=========================================================================*
 GLOBAL	Reset_Mouse:NEAR
-PROC	Reset_Mouse C NEAR 
+Reset_Mouse PROC	NEAR C
 	USES	eax,ebx,ecx,edx,esi,edi
 
 
@@ -396,7 +395,7 @@ PROC	Reset_Mouse C NEAR
 	mov	[(KeyboardType esi).Adjust],0		; assume we do not need to adjust mouse
 
 ;***************************************************************************
-; Set the Vesa Parameters 
+; Set the Vesa Parameters
 
 	mov	eax , [ VesaFunc ]
 	test	eax , eax
@@ -444,14 +443,14 @@ PROC	Reset_Mouse C NEAR
 
 
 ??end_vesa:
-       ; S Mickey/pixel Ratio cursor limits 
+       ; S Mickey/pixel Ratio cursor limits
 	call	Clear_RM_regs
 	mov	eax , 0300h
 	mov	ebx , 033h
 	mov	ecx , 8
 	mov	edx , 16
 	mov	[RealInt . _eax ] , 0fh
-	mov	[RealInt . _ecx] , ecx 
+	mov	[RealInt . _ecx] , ecx
 	mov	[RealInt . _edx] , edx
 	xor	ecx , ecx
 	lea	edi, [RealInt]
@@ -461,7 +460,7 @@ PROC	Reset_Mouse C NEAR
 	call	Clear_RM_regs
 	mov	eax , 0300h
 	mov	ebx , 033h
-	mov	ecx , 0	 
+	mov	ecx , 0
 	mov	edx , [ XRes ]
 	cmp	edx , 320
 	jne	??set_it
@@ -471,7 +470,7 @@ PROC	Reset_Mouse C NEAR
 ??set_it:
 ;	dec	edx
 	mov	[RealInt . _eax ] , 7
-	mov	[RealInt . _ecx] , ecx 
+	mov	[RealInt . _ecx] , ecx
 	mov	[RealInt . _edx] , edx
 	xor	ecx , ecx
 	lea	edi, [RealInt]
@@ -485,7 +484,7 @@ PROC	Reset_Mouse C NEAR
 	mov	edx , [ YRes ]
 	dec	edx
 	mov	[RealInt . _eax ] , 8
-	mov	[RealInt . _ecx] , ecx 
+	mov	[RealInt . _ecx] , ecx
 	mov	[RealInt . _edx] , edx
 	xor	ecx , ecx
 	lea	edi, [RealInt]
@@ -502,7 +501,7 @@ IF 0
 	sub	ecx , 8
 	sub  	edx , 16
 	mov	[RealInt . _eax ] , 4
-	mov	[RealInt . _ecx] , ecx 
+	mov	[RealInt . _ecx] , ecx
 	mov	[RealInt . _edx] , edx
 	xor	ecx , ecx
 	lea	edi, [RealInt]
@@ -530,7 +529,7 @@ IF 0
 	mov	[(KeyboardType esi).Adjust_YPos],0
 	jz	??No_scaleY
 	mov	[(KeyboardType esi).Adjust_YPos],edx
-??No_scaleY:	
+??No_scaleY:
 ENDIF
 
 	mov	ecx, [ XRes ]				; set the mouses x coordinate to 160
@@ -548,7 +547,7 @@ ENDIF
 	mov	eax , 0300h
 	mov	ebx , 033h
 	mov	[RealInt . _eax ] , 4
-	mov	[RealInt . _ecx] , ecx 
+	mov	[RealInt . _ecx] , ecx
 	mov	[RealInt . _edx] , edx
 	xor	ecx , ecx
 	lea	edi, [RealInt]
@@ -578,7 +577,7 @@ ENDIF
 
 ??exit:
 	ret
-	ENDP	Reset_Mouse
+Reset_Mouse	ENDP
 
 
 
@@ -599,9 +598,9 @@ ENDIF
 ;*   08/29/1994 PWG : Created.                                             *
 ;*=========================================================================*
 	GLOBAL	Remove_Mouse:NEAR
-	PROC	Remove_Mouse C NEAR 
+Remove_Mouse PROC	NEAR C
 	USES	eax,ebx,ecx,edx,esi,edi
-	
+
 
 	call	Clear_RM_regs
 	cmp 	[MInstalled],FALSE	; check to see if mouse installed
@@ -648,13 +647,13 @@ ENDIF
 
 ??exit:
 	ret
-	ENDP	Remove_Mouse
+Remove_Mouse	ENDP
 
 
 ;***************************************************************************
 
 GLOBAL	Clear_RM_regs :NEAR
-PROC	Clear_RM_regs  NEAR 
+PROC	Clear_RM_regs  NEAR
 
 	push	eax
 	push	ecx
@@ -669,7 +668,7 @@ PROC	Clear_RM_regs  NEAR
 	pop	ecx
 	pop	eax
 	ret
-ENDP	Clear_RM_regs
+Clear_RM_regs	ENDP
 
 
 ;***************************************************************************
@@ -687,14 +686,14 @@ ENDP	Clear_RM_regs
 ;*   08/29/1994 PWG : Created.                                             *
 ;*=========================================================================*
 	GLOBAL	Get_Mouse_X:NEAR
-	PROC	Get_Mouse_X C NEAR 
+Get_Mouse_X PROC	NEAR C
 	USES	esi
 
 	mov	esi,[RealModePtr]
 	mov	eax,[(KeyboardType esi).MouseX]
 	ret
 
-	ENDP	Get_Mouse_X
+Get_Mouse_X	ENDP
 
 ;***************************************************************************
 ;* GET_MOUSE_STATE -- Returns the current mouse state			   *
@@ -711,14 +710,14 @@ ENDP	Clear_RM_regs
 ;*   08/29/1994 PWG : Created.                                             *
 ;*=========================================================================*
 	GLOBAL	Get_Mouse_State:NEAR
-	PROC	Get_Mouse_State C NEAR 
+Get_Mouse_State PROC	NEAR C
 	USES	esi
 
 	mov	esi,[RealModePtr]
 	mov	eax,[(KeyboardType esi).MState]
 	ret
 
-	ENDP	Get_Mouse_State
+Get_Mouse_State	ENDP
 
 ;***************************************************************************
 ;* GET_MOUSE_X -- Returns the mouses x pixel position                      *
@@ -735,15 +734,15 @@ ENDP	Clear_RM_regs
 ;*   08/29/1994 PWG : Created.                                             *
 ;*=========================================================================*
 	GLOBAL	Get_Mouse_Disabled:NEAR
-	PROC	Get_Mouse_Disabled C NEAR 
+Get_Mouse_Disabled PROC	NEAR C
 	USES	esi
 
 	mov	esi,[RealModePtr]
 	movzx	eax,[(KeyboardType esi).MDisabled]
 	ret
 
-	ENDP	Get_Mouse_Disabled
-				  
+Get_Mouse_Disabled	ENDP
+
 ;***************************************************************************
 ;* GET_MOUSE_Y -- Returns the mouse's y pixel position                     *
 ;*                                                                         *
@@ -759,14 +758,14 @@ ENDP	Clear_RM_regs
 ;*   08/29/1994 PWG : Created.                                             *
 ;*=========================================================================*
 	GLOBAL	Get_Mouse_Y:NEAR
-	PROC	Get_Mouse_Y C NEAR 
+Get_Mouse_Y PROC	NEAR C
 	USES	esi
 
 	mov	esi,[RealModePtr]
 	mov	eax,[(KeyboardType esi).MouseY]
 	ret
 
-	ENDP	Get_Mouse_Y
+Get_Mouse_Y	ENDP
 
 ;***************************************************************************
 ;* GET_MOUSE_BUTTON -- Gets the values of the mouse button                 *
@@ -785,7 +784,7 @@ ENDP	Clear_RM_regs
 ;*   09/19/1994 PWG : Created.                                             *
 ;*=========================================================================*
 	GLOBAL	Get_Mouse_Button:NEAR
-	PROC	Get_Mouse_Button C NEAR 
+Get_Mouse_Button PROC	NEAR C
 	USES	eax,esi
 
 	mov	esi,[RealModePtr]
@@ -793,7 +792,7 @@ ENDP	Clear_RM_regs
 	mov	al,[(KeyboardType esi).Button]
 	ret
 
-	ENDP	Get_Mouse_Button
+Get_Mouse_Button	ENDP
 
 ;***************************************************************************
 ;* SET_MOUSE_CURSOR -- Sets the shape to be used as the mouse.             *
@@ -817,12 +816,11 @@ ENDP	Clear_RM_regs
 ;*   02/13/1992 JLB : Created.                                             *
 ;*=========================================================================*
 	GLOBAL	Set_Mouse_Cursor:NEAR
-	PROC	Set_Mouse_Cursor C NEAR 
-	USES	ebx,ecx,edx,esi,edi
-
-	ARG	xhotspot:DWORD				; the x hot spot of the mouse
-	ARG	yhotspot:DWORD				; the y hot spot of the mouse
-	ARG	cursor:DWORD				; ptr to the new mouse cursor
+Set_Mouse_Cursor PROC	NEAR C
+	USES	ebx,ecx,edx,esi,edi,
+	xhotspot:DWORD				; the x hot spot of the mouse,
+	yhotspot:DWORD				; the y hot spot of the mouse,
+	cursor:DWORD				; ptr to the new mouse cursor
 
 	LOCAL	datasize:DWORD
 	LOCAL	stype:WORD
@@ -908,7 +906,7 @@ ENDP	Clear_RM_regs
 	add	esi,10				; adjust past header of shape
 	mov	eax,[swidth]			; load up the width
 	mul	[sheight]				; find size of shape in pixels
-	mov	edx,eax				; save this in number of bytes 
+	mov	edx,eax				; save this in number of bytes
 	xor	ecx,ecx				; clear high of loop variable
 ??norm_unrle:
 	mov	al,[esi]			; get a byte out of the file
@@ -940,7 +938,7 @@ ENDP	Clear_RM_regs
 	add	esi,16				; move past remap table
 	mov	eax,[swidth]			; load up the width
 	mul	[sheight]			; load up the height
-	mov	edx,eax				; save this in number of bytes 
+	mov	edx,eax				; save this in number of bytes
 	xor	eax,eax				; clear high of lookup variable
 	xor	ecx,ecx				; clear high of loop variable
 ??16_color_unrle:
@@ -961,7 +959,7 @@ ENDP	Clear_RM_regs
 	xor	al,al				; clear out al cuz we're writing zeros
 	rep	stosb				; write all of them out
 	or	edx,edx				; or edx to test for zero
-	jnz	??16_color_unrle		
+	jnz	??16_color_unrle
 	jmp	??done_copy
 
 	;-------------------------------------------------------------------
@@ -987,7 +985,7 @@ ENDP	Clear_RM_regs
 	add	ecx,8			; otherwise adjust ecx for header
 ??copy_head:
 	rep	movsw			; copy the necessary bytes
-	
+
 	mov 	eax,[datasize]		; get uncompressed length
 	push	eax			; push as third param
 	push	edi			; push the destination offset
@@ -1028,7 +1026,7 @@ ENDP	Clear_RM_regs
 	pop	[PrevMousePtr]
 	ret				; and return back to the world
 
-	ENDP	Set_Mouse_Cursor
+Set_Mouse_Cursor	ENDP
 
 
 ;***************************************************************************
@@ -1044,7 +1042,7 @@ ENDP	Clear_RM_regs
 ;*   09/19/1994 PWG : Created.                                             *
 ;*=========================================================================*
 	GLOBAL	C Low_Hide_Mouse:NEAR
-	PROC	Low_Hide_Mouse C NEAR 
+Low_Hide_Mouse PROC	NEAR C
 	USES	eax,ebx,esi
 
 	mov	ebx,[RealModePtr]			; get 32 bit offset of dos data
@@ -1074,7 +1072,7 @@ ENDP	Clear_RM_regs
 
 ??end:
 	ret
-	ENDP	Low_Hide_Mouse
+Low_Hide_Mouse	ENDP
 
 ;***************************************************************************
 ;* LOW_SHOW_MOUSE -- Low level routine which shows the mouse		   *
@@ -1089,7 +1087,7 @@ ENDP	Clear_RM_regs
 ;*   09/19/1994 PWG : Created.                                             *
 ;*=========================================================================*
 	GLOBAL	C Low_Show_Mouse:NEAR
-	PROC	Low_Show_Mouse C NEAR 
+Low_Show_Mouse PROC	NEAR C
 	USES	eax,ebx,ecx,edx,edi,esi
 	LOCAL	mousex:DWORD
 	LOCAL	mousey:DWORD
@@ -1147,7 +1145,7 @@ ENDP	Clear_RM_regs
 	pop	eax
 ??exit:
 	ret
-	ENDP	Low_Show_Mouse
+Low_Show_Mouse	ENDP
 
 ;***************************************************************************
 ;* HIDE_MOUSE -- Hides mouse cursor on screen if it was show               *
@@ -1162,7 +1160,7 @@ ENDP	Clear_RM_regs
 ;*   11/03/1994 PWG : Created.                                             *
 ;*=========================================================================*
 	GLOBAL	Hide_Mouse:NEAR
-	PROC	Hide_Mouse C NEAR
+Hide_Mouse PROC	NEAR C
 	USES	eax,esi
 
 	mov	esi,[RealModePtr]			; get the real mode offset
@@ -1174,8 +1172,8 @@ ENDP	Clear_RM_regs
 	call	Low_Hide_Mouse				; make the function call
 	dec	[(KeyboardType esi).MouseUpdate]	; were done drawing mouse
 	ret
-	
-	ENDP	Hide_Mouse
+
+Hide_Mouse	ENDP
 
 ;----------------------------------------------------------------------------
 
@@ -1193,7 +1191,7 @@ ENDP	Clear_RM_regs
 ;*   11/03/1994 PWG : Created.                                             *
 ;*=========================================================================*
 	GLOBAL	Show_Mouse:NEAR
-	PROC	Show_Mouse C NEAR 
+Show_Mouse PROC	NEAR C
 	USES	eax,esi
 
 	mov	esi,[RealModePtr]			; get the real mode offset
@@ -1205,7 +1203,7 @@ ENDP	Clear_RM_regs
 	call	Low_Show_Mouse				; make the function call
 	dec	[(KeyboardType esi).MouseUpdate]	; were done drawing mouse
 	ret
-	ENDP	Show_Mouse
+Show_Mouse	ENDP
 
 ;***************************************************************************
 ;* CONDITIONAL_HIDE_MOUSE -- Hides mouse if its with given region          *
@@ -1226,13 +1224,12 @@ ENDP	Clear_RM_regs
 ;*   11/03/1994 PWG : Created.                                             *
 ;*=========================================================================*
 	GLOBAL	Conditional_Hide_Mouse:NEAR
-	PROC	Conditional_Hide_Mouse C NEAR 
-	USES	eax,ebx,ecx,edx,esi,edi
-
-	ARG	sx_pixel:DWORD				; left x pixel pos
-	ARG     sy_pixel:DWORD				; upper y pixel pos
-	ARG	dx_pixel:DWORD				; right x pixel pos
-	ARG	dy_pixel:DWORD				; lower y pixel pos
+Conditional_Hide_Mouse PROC	NEAR C
+	USES	eax,ebx,ecx,edx,esi,edi,
+	sx_pixel:DWORD				; left x pixel pos,
+	sy_pixel:DWORD				; upper y pixel pos,
+	dx_pixel:DWORD				; right x pixel pos,
+	dy_pixel:DWORD				; lower y pixel pos
 
 	mov	esi,[RealModePtr]			; get the real mode offset
 
@@ -1240,9 +1237,9 @@ ENDP	Clear_RM_regs
 	;* Widen region leftward by amount mouse shape spills to the right of
 	;* its hot point.  Limited to the left edge of the screen.
 	;*=========================================================================*
-	mov	eax,[(KeyboardType esi).MouseWidth]	
-	sub	eax,[(KeyboardType esi).MouseXHot]	
-	neg	eax					
+	mov	eax,[(KeyboardType esi).MouseWidth]
+	sub	eax,[(KeyboardType esi).MouseXHot]
+	neg	eax
 	add	eax,[sx_pixel]
 	jns	short ??noleftlimit
 	xor	eax,eax
@@ -1361,7 +1358,7 @@ ENDP	Clear_RM_regs
 	dec	[(KeyboardType esi).MouseUpdate]
 	ret
 
-	ENDP	Conditional_Hide_Mouse
+Conditional_Hide_Mouse	ENDP
 
 ;***************************************************************************
 ;* CONDITIONAL_SHOW_MOUSE -- shows mouse if it was conditionally hidden    *
@@ -1376,7 +1373,7 @@ ENDP	Clear_RM_regs
 ;*   11/03/1994 PWG : Created.                                             *
 ;*=========================================================================*
 	GLOBAL	Conditional_Show_Mouse:NEAR
-	PROC	Conditional_Show_Mouse C NEAR
+Conditional_Show_Mouse PROC	NEAR C
 	USES	eax,esi
 
 	mov	esi,[RealModePtr]    ; get the real mode offset
@@ -1415,7 +1412,7 @@ ENDP	Clear_RM_regs
 	mov	[(KeyboardType esi).MCState],ax
 	dec	[(KeyboardType esi).MouseUpdate]
 	ret
-	ENDP	Conditional_Show_Mouse
+Conditional_Show_Mouse	ENDP
 
 
 
@@ -1437,9 +1434,9 @@ ENDP	Clear_RM_regs
 ;*   10/27/1994 PWG : Created.                                             *
 ;*=========================================================================*
 	GLOBAL	C VGA_Mouse_Shadow_Buffer:NEAR
-	PROC	VGA_Mouse_Shadow_Buffer C NEAR 
-	USES	eax,ebx,ecx,edx,edi,esi
-	ARG	store:DWORD
+VGA_Mouse_Shadow_Buffer PROC	NEAR C
+	USES	eax,ebx,ecx,edx,edi,esi,
+	store:DWORD
 
 	local	x0 : dword
 	local	y0 : dword
@@ -1463,12 +1460,12 @@ ENDP	Clear_RM_regs
 	sub	eax,[(KeyboardType esi).MouseXHot]
 	sub	ebx,[(KeyboardType esi).MouseYHot]
 
-	mov	[ x0 ] , eax  
-	mov	[ y0 ] , ebx  
+	mov	[ x0 ] , eax
+	mov	[ y0 ] , ebx
 	add	eax,[(KeyboardType esi).MouseBuffW]
 	add	ebx,[(KeyboardType esi).MouseBuffH]
-	mov	[ x1 ] , eax  
-	mov	[ y1 ] , ebx  
+	mov	[ x1 ] , eax
+	mov	[ y1 ] , ebx
 
 	mov	[ buffx0 ] , 0
 	mov	eax , [ MouseBuffer ]
@@ -1481,13 +1478,13 @@ ENDP	Clear_RM_regs
 	xor 	eax , eax
 	xor 	edx , edx
 
-	mov	ecx , [ x0 ]  
-	mov	ebx , [ x1 ]  
+	mov	ecx , [ x0 ]
+	mov	ebx , [ x1 ]
 	shld	eax , ecx , 1
 	shld	edx , ebx , 1
 
-	mov	ecx , [ x0 ]  
-	mov	ebx , [ x1 ]  
+	mov	ecx , [ x0 ]
+	mov	ebx , [ x1 ]
 	sub	ecx , [(KeyboardType esi).MouseRight]
 	sub	ebx , [(KeyboardType esi).MouseRight]
 	dec	ecx
@@ -1495,13 +1492,13 @@ ENDP	Clear_RM_regs
 	shld	eax , ecx , 1
 	shld	edx , ebx , 1
 
-	mov	ecx , [ y0 ]  
-	mov	ebx , [ y1 ]  
+	mov	ecx , [ y0 ]
+	mov	ebx , [ y1 ]
 	shld	eax , ecx , 1
 	shld	edx , ebx , 1
 
-	mov	ecx , [ y0 ]  
-	mov	ebx , [ y1 ]  
+	mov	ecx , [ y0 ]
+	mov	ebx , [ y1 ]
 	sub	ecx , [(KeyboardType esi).MouseBottom]
 	sub	ebx , [(KeyboardType esi).MouseBottom]
 	dec	ecx
@@ -1573,7 +1570,7 @@ ENDP	Clear_RM_regs
 	jle	??out
 
 	sub	edx , eax
-	sub	ebx , eax	
+	sub	ebx , eax
 	push	ebp
 	cmp	[store],RESTORE_VISIBLE_PAGE		; are we restoring page?
 	jne	??store_entry				; if not the go to store
@@ -1607,7 +1604,7 @@ ENDP	Clear_RM_regs
 	pop	ebp
 ??out:
 	ret
-	ENDP	VGA_Mouse_Shadow_Buffer
+VGA_Mouse_Shadow_Buffer	ENDP
 
 ;***************************************************************************
 ;* DRAW_MOUSE -- Handles drawing the mouse cursor			   *
@@ -1622,10 +1619,10 @@ ENDP	Clear_RM_regs
 ;*   10/27/1994 PWG : Created.                                             *
 ;*=========================================================================*
 	GLOBAL	VGA_Draw_Mouse:NEAR
-	PROC	VGA_Draw_Mouse C NEAR 
-	USES	eax,ebx,ecx,edx,edi,esi
-	ARG	mousex:DWORD
-	ARG	mousey:DWORD
+VGA_Draw_Mouse PROC	NEAR C
+	USES	eax,ebx,ecx,edx,edi,esi,
+	mousex:DWORD,
+	mousey:DWORD
 
 	local	x0 : dword
 	local	y0 : dword
@@ -1645,12 +1642,12 @@ ENDP	Clear_RM_regs
 	sub	eax,[(KeyboardType esi).MouseXHot]
 	sub	ebx,[(KeyboardType esi).MouseYHot]
 
-	mov	[ x0 ] , eax  
-	mov	[ y0 ] , ebx  
+	mov	[ x0 ] , eax
+	mov	[ y0 ] , ebx
 	add	eax,[(KeyboardType esi).MouseWidth]
 	add	ebx,[(KeyboardType esi).MouseHeight]
-	mov	[ x1 ] , eax  
-	mov	[ y1 ] , ebx  
+	mov	[ x1 ] , eax
+	mov	[ y1 ] , ebx
 
 	mov	[ buffx0 ] , 0
 	mov	eax , [ MouseCursor ]
@@ -1663,13 +1660,13 @@ ENDP	Clear_RM_regs
 	xor 	eax , eax
 	xor 	edx , edx
 
-	mov	ecx , [ x0 ]  
-	mov	ebx , [ x1 ]  
+	mov	ecx , [ x0 ]
+	mov	ebx , [ x1 ]
 	shld	eax , ecx , 1
 	shld	edx , ebx , 1
 
-	mov	ecx , [ x0 ]  
-	mov	ebx , [ x1 ]  
+	mov	ecx , [ x0 ]
+	mov	ebx , [ x1 ]
 	sub	ecx , [(KeyboardType esi).MouseRight]
 	sub	ebx , [(KeyboardType esi).MouseRight]
 	dec	ecx
@@ -1677,13 +1674,13 @@ ENDP	Clear_RM_regs
 	shld	eax , ecx , 1
 	shld	edx , ebx , 1
 
-	mov	ecx , [ y0 ]  
-	mov	ebx , [ y1 ]  
+	mov	ecx , [ y0 ]
+	mov	ebx , [ y1 ]
 	shld	eax , ecx , 1
 	shld	edx , ebx , 1
 
-	mov	ecx , [ y0 ]  
-	mov	ebx , [ y1 ]  
+	mov	ecx , [ y0 ]
+	mov	ebx , [ y1 ]
 	sub	ecx , [(KeyboardType esi).MouseBottom]
 	sub	ebx , [(KeyboardType esi).MouseBottom]
 	dec	ecx
@@ -1756,7 +1753,7 @@ ENDP	Clear_RM_regs
 	jle	??out
 
 	sub	edx , eax
-	sub	ebx , eax	
+	sub	ebx , eax
 
 	;*===================================================================
 	;* Handle restoring the buffer to the visible page
@@ -1780,7 +1777,7 @@ ENDP	Clear_RM_regs
 ??out:
 	ret
 
-	ENDP	VGA_Draw_Mouse
+VGA_Draw_Mouse	ENDP
 
 
 ;***************************************************************************
@@ -1801,9 +1798,9 @@ ENDP	Clear_RM_regs
 ;*   10/27/1994 PWG : Created.                                             *
 ;*=========================================================================*
 	GLOBAL	C VESA_Mouse_Shadow_Buffer:NEAR
-	PROC	VESA_Mouse_Shadow_Buffer C NEAR 
-	USES	eax,ebx,ecx,edx,edi,esi
-	ARG	store:DWORD
+VESA_Mouse_Shadow_Buffer PROC	NEAR C
+	USES	eax,ebx,ecx,edx,edi,esi,
+	store:DWORD
 
 	local	x0 : dword
 	local	y0 : dword
@@ -1830,12 +1827,12 @@ ENDP	Clear_RM_regs
 	sub	ebx,[(KeyboardType esi).MouseYHot]
 
 
-	mov	[ x0 ] , eax  
-	mov	[ y0 ] , ebx  
+	mov	[ x0 ] , eax
+	mov	[ y0 ] , ebx
 	add	eax,[(KeyboardType esi).MouseBuffW]
 	add	ebx,[(KeyboardType esi).MouseBuffH]
-	mov	[ x1 ] , eax  
-	mov	[ y1 ] , ebx  
+	mov	[ x1 ] , eax
+	mov	[ y1 ] , ebx
 
 	mov	[ buffx0 ] , 0
 	mov	eax , [ MouseBuffer ]
@@ -1848,13 +1845,13 @@ ENDP	Clear_RM_regs
 	xor 	eax , eax
 	xor 	edx , edx
 
-	mov	ecx , [ x0 ]  
-	mov	ebx , [ x1 ]  
+	mov	ecx , [ x0 ]
+	mov	ebx , [ x1 ]
 	shld	eax , ecx , 1
 	shld	edx , ebx , 1
 
-	mov	ecx , [ x0 ]  
-	mov	ebx , [ x1 ]  
+	mov	ecx , [ x0 ]
+	mov	ebx , [ x1 ]
 	sub	ecx , [(KeyboardType esi).MouseRight]
 	sub	ebx , [(KeyboardType esi).MouseRight]
 	dec	ecx
@@ -1862,13 +1859,13 @@ ENDP	Clear_RM_regs
 	shld	eax , ecx , 1
 	shld	edx , ebx , 1
 
-	mov	ecx , [ y0 ]  
-	mov	ebx , [ y1 ]  
+	mov	ecx , [ y0 ]
+	mov	ebx , [ y1 ]
 	shld	eax , ecx , 1
 	shld	edx , ebx , 1
 
-	mov	ecx , [ y0 ]  
-	mov	ebx , [ y1 ]  
+	mov	ecx , [ y0 ]
+	mov	ebx , [ y1 ]
 	sub	ecx , [(KeyboardType esi).MouseBottom]
 	sub	ebx , [(KeyboardType esi).MouseBottom]
 	dec	ecx
@@ -1941,7 +1938,7 @@ ENDP	Clear_RM_regs
 	jle	??out
 
 	sub	edx , eax
-	sub	ebx , eax	
+	sub	ebx , eax
 
 	cmp	[store],RESTORE_VISIBLE_PAGE		; are we restoring page?
 	jne	??store_entry				; if not the go to store
@@ -1958,7 +1955,7 @@ ENDP	Clear_RM_regs
 	inc	esi
 	inc	edi
 	mov	ebx , edi
-	add	ebx , [ cpu_video_page ] 	
+	add	ebx , [ cpu_video_page ]
 	cmp	ebx , [ cpu_page_limit ]
 	jl	??restore__in_range
 	add	edi , [ cpu_video_page ]
@@ -1970,7 +1967,7 @@ ENDP	Clear_RM_regs
 	add	edi,edx	   				; adjust dest to next line
 
 	mov	ebx , edi
-	add	ebx , [ cpu_video_page ] 	
+	add	ebx , [ cpu_video_page ]
 	cmp	ebx , [ cpu_page_limit ]
 	jl	??restore__in_range1
 	add  	edi ,[ cpu_video_page ]
@@ -1993,7 +1990,7 @@ ENDP	Clear_RM_regs
 	inc	esi
 	inc	edi
 	mov	ebx , edi
-	add	ebx , [ cpu_video_page ] 	
+	add	ebx , [ cpu_video_page ]
 	cmp	ebx , [ cpu_page_limit ]
 	jl	??store_in_range
 	add  	edi ,[ cpu_video_page ]
@@ -2005,7 +2002,7 @@ ENDP	Clear_RM_regs
 	add	edi,edx	   				; adjust dest to next line
 
 	mov	ebx , edi
-	add	ebx , [ cpu_video_page ] 	
+	add	ebx , [ cpu_video_page ]
 	cmp	ebx , [ cpu_page_limit ]
 	jl	??store_in_range1
 	add  	edi ,[ cpu_video_page ]
@@ -2020,7 +2017,7 @@ ENDP	Clear_RM_regs
 	call	Vesa_Asm_Set_Win
 
 	ret
-	ENDP	VESA_Mouse_Shadow_Buffer
+VESA_Mouse_Shadow_Buffer	ENDP
 
 ;***************************************************************************
 ;* DRAW_MOUSE -- Handles drawing the mouse cursor			   *
@@ -2035,10 +2032,10 @@ ENDP	Clear_RM_regs
 ;*   10/27/1994 PWG : Created.                                             *
 ;*=========================================================================*
 	GLOBAL	VESA_Draw_Mouse:NEAR
-	PROC	VESA_Draw_Mouse C NEAR 
-	USES	eax,ebx,ecx,edx,edi,esi
-	ARG	mousex:DWORD
-	ARG	mousey:DWORD
+VESA_Draw_Mouse PROC	NEAR C
+	USES	eax,ebx,ecx,edx,edi,esi,
+	mousex:DWORD,
+	mousey:DWORD
 
 	local	x0 : dword
 	local	y0 : dword
@@ -2062,12 +2059,12 @@ ENDP	Clear_RM_regs
 	sub	eax,[(KeyboardType esi).MouseXHot]
 	sub	ebx,[(KeyboardType esi).MouseYHot]
 
-	mov	[ x0 ] , eax  
-	mov	[ y0 ] , ebx  
+	mov	[ x0 ] , eax
+	mov	[ y0 ] , ebx
 	add	eax,[(KeyboardType esi).MouseWidth]
 	add	ebx,[(KeyboardType esi).MouseHeight]
-	mov	[ x1 ] , eax  
-	mov	[ y1 ] , ebx  
+	mov	[ x1 ] , eax
+	mov	[ y1 ] , ebx
 
 	mov	[ buffx0 ] , 0
 	mov	eax , [ MouseCursor ]
@@ -2080,13 +2077,13 @@ ENDP	Clear_RM_regs
 	xor 	eax , eax
 	xor 	edx , edx
 
-	mov	ecx , [ x0 ]  
-	mov	ebx , [ x1 ]  
+	mov	ecx , [ x0 ]
+	mov	ebx , [ x1 ]
 	shld	eax , ecx , 1
 	shld	edx , ebx , 1
 
-	mov	ecx , [ x0 ]  
-	mov	ebx , [ x1 ]  
+	mov	ecx , [ x0 ]
+	mov	ebx , [ x1 ]
 	sub	ecx , [(KeyboardType esi).MouseRight]
 	sub	ebx , [(KeyboardType esi).MouseRight]
 	dec	ecx
@@ -2094,13 +2091,13 @@ ENDP	Clear_RM_regs
 	shld	eax , ecx , 1
 	shld	edx , ebx , 1
 
-	mov	ecx , [ y0 ]  
-	mov	ebx , [ y1 ]  
+	mov	ecx , [ y0 ]
+	mov	ebx , [ y1 ]
 	shld	eax , ecx , 1
 	shld	edx , ebx , 1
 
-	mov	ecx , [ y0 ]  
-	mov	ebx , [ y1 ]  
+	mov	ecx , [ y0 ]
+	mov	ebx , [ y1 ]
 	sub	ecx , [(KeyboardType esi).MouseBottom]
 	sub	ebx , [(KeyboardType esi).MouseBottom]
 	dec	ecx
@@ -2174,7 +2171,7 @@ ENDP	Clear_RM_regs
 	jle	??out
 
 	sub	edx , eax
-	sub	ebx , eax	
+	sub	ebx , eax
 
 	;*===================================================================
 	;* Handle restoring the buffer to the visible page
@@ -2191,7 +2188,7 @@ ENDP	Clear_RM_regs
 ??inc_edi:
 	inc	edi
 	mov	ebx , edi
-	add	ebx , [ cpu_video_page ] 	
+	add	ebx , [ cpu_video_page ]
 	cmp	ebx , [ cpu_page_limit ]
 	jl	??in_range
 	add  	edi ,[ cpu_video_page ]
@@ -2203,7 +2200,7 @@ ENDP	Clear_RM_regs
 	add	edi,edx	   				; adjust dest to next line
 
 	mov	ebx , edi
-	add	ebx , [ cpu_video_page ] 	
+	add	ebx , [ cpu_video_page ]
 	cmp	ebx , [ cpu_page_limit ]
 	jl	??in_range1
 	add  	edi ,[ cpu_video_page ]
@@ -2219,7 +2216,7 @@ ENDP	Clear_RM_regs
 
 	ret
 
-	ENDP	VESA_Draw_Mouse
+VESA_Draw_Mouse	ENDP
 
 
 ;----------------------------------------------------------------------------

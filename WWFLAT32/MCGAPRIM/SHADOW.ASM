@@ -36,13 +36,13 @@
 ;*                                                                         *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-INCLUDE "mcgaprim.inc"
-INCLUDE ".\gbuffer.inc"
-INCLUDE ".\keystruc.inc"
+INCLUDE <mcgaprim.inc>
+INCLUDE <.\gbuffer.inc>
+INCLUDE <.\keystruc.inc>
 
 GLOBAL	Shadow_Blit	: NEAR
 
@@ -50,7 +50,7 @@ GLOBAL	RealModePtr : DWORD
 GLOBAL	Hide_Mouse  : NEAR
 GLOBAL	Show_Mouse  : NEAR
 
-	CODESEG
+	.CODE; Converted from TASM: CODESEG
 
 ; void Shadow_Blit(int xpix, int ypix, int width, int height, GVPC src, VBC dst, void *shadowbuff);
 ; Warning: Shadow_Blit appears to be relatively stupid, in that while it is
@@ -60,16 +60,15 @@ GLOBAL	Show_Mouse  : NEAR
 ;	   will use the dword loop.  However, if you blit a region that is
 ;	   201 pixels wide, the dumb thing will use the byte loop for the
 ;	   entire blit.
-	PROC    Shadow_Blit C near
-	USES	eax,ebx,ecx,edx,esi,edi
-
-	ARG	x:DWORD
-	ARG	y:DWORD
-	ARG	width:DWORD
-	ARG	height:DWORD
-	ARG     srcpage:DWORD
-	ARG     dstpage:DWORD
-	ARG     shadow:DWORD
+Shadow_Blit PROC    near C
+	USES	eax,ebx,ecx,edx,esi,edi,
+	x:DWORD,
+	y:DWORD,
+	width:DWORD,
+	height:DWORD,
+	srcpage:DWORD,
+	dstpage:DWORD,
+	shadow:DWORD
 
 	LOCAL	modulo:DWORD		; Row modulo
 	LOCAL	hidemouse:DWORD		; Was the mouse hidden?
@@ -203,7 +202,7 @@ GLOBAL	Show_Mouse  : NEAR
 ??reallyfini:
 	ret
 
-	ENDP    Shadow_Blit
+Shadow_Blit    ENDP
 
 	END
 

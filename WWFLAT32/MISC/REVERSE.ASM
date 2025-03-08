@@ -38,15 +38,15 @@
 ;*                                                                         *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
 GLOBAL	 Reverse_WORD	:NEAR
 GLOBAL	 Swap_LONG	:NEAR
 GLOBAL	 Reverse_LONG	:NEAR
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 
 
 ; ----------------------------------------------------------------
@@ -66,8 +66,8 @@ CODESEG
 ; LONG Reverse_LONG(LONG number);
 ;
 ;*
-	PROC	Reverse_LONG C near
-	ARG	number:DWORD
+Reverse_LONG PROC	near C,
+	number:DWORD
 
 IF 1
 	mov	eax,[DWORD PTR number]
@@ -85,7 +85,7 @@ ENDIF
 
 	ret
 
-	ENDP	Reverse_LONG
+Reverse_LONG	ENDP
 
 ;-----------------------------------------------------------------
 
@@ -96,14 +96,14 @@ ENDIF
 ; WORD Reverse_WORD(WORD number);
 ;
 ;*
-	PROC	Reverse_WORD C near
-	ARG	number:WORD
+Reverse_WORD PROC	near C,
+	number:WORD
 
 	mov	ax,[number]
 	xchg	ah,al
 	ret
 
-	ENDP	Reverse_WORD
+Reverse_WORD	ENDP
 
 ;-----------------------------------------------------------------
 
@@ -115,8 +115,8 @@ ENDIF
 ; LONG Swap_LONG(LONG number);
 ;
 ;*
-	PROC	Swap_LONG C near
-	ARG	number:DWORD
+Swap_LONG PROC	near C,
+	number:DWORD
 
 IF 1
 	; 32 bit code.
@@ -131,7 +131,7 @@ ENDIF
 	ret
 
 
-	ENDP	Swap_LONG
+Swap_LONG	ENDP
 
 ;-----------------------------------------------------------------
 

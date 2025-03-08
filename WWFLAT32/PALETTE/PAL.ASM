@@ -36,12 +36,12 @@
 ;*   Bump_Color -- adjusts specified color in specified palette            *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 ;********************** Model & Processor Directives ************************
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
 
-include "keyboard.inc"
+include <keyboard.inc>
 
 
 ;****************************** Declarations ********************************
@@ -52,9 +52,9 @@ GLOBAL		PaletteTable:byte:1024
 
 
 ;********************************** Data ************************************
-LOCALS ??
+; Converted from TASM: LOCALS ??
 
-	DATASEG
+	.DATA; Converted from TASM: DATASEG
 
 CurrentPalette	DB	768 DUP(255)	; copy of current values of DAC regs
 PaletteTable	DB	1024 DUP(0)
@@ -65,7 +65,7 @@ ENDIF
 
 
 ;********************************** Code ************************************
-	CODESEG
+	.CODE; Converted from TASM: CODESEG
 
 
 IF 1
@@ -85,9 +85,9 @@ IF 1
 ;*   03/07/1995 PWG : Created.                                             *
 ;*=========================================================================*
 
-	PROC	Set_Palette_Range C NEAR
-	USES	eax,ebx,ecx,edx,edi,esi
-	ARG	palette:DWORD
+Set_Palette_Range PROC	NEAR C
+	USES	eax,ebx,ecx,edx,edi,esi,
+	palette:DWORD
 
 	cld
 
@@ -111,7 +111,7 @@ IF 1
 	inc	cl				; adjust to next palette entry
 	jnz	??loop_top			; if we dont wrap to zero we have more
 	jmp	??set_pal			; so now go set the palette
-??set_table:	
+??set_table:
 	shl	eax,8				; shift bgr value up register
 	mov	al,cl				; store which palette entry num
 	mov	[ebx],eax
@@ -191,7 +191,7 @@ IF 1
 ??exit:
 	ret
 
-	ENDP	Set_Palette_Range
+Set_Palette_Range	ENDP
 ELSE
 ;***************************************************************************
 ;* Set_Palette_Range -- Sets changed values in the palette.                *
@@ -209,9 +209,9 @@ ELSE
 ;*   04/27/1994 BR : Converted to 32-bit                                   *
 ;*=========================================================================*
 ; VOID cdecl Set_Palette_Range(VOID *palette);
-	PROC Set_Palette_Range	C NEAR
-	USES eax,ebx,ecx,edx,edi,esi
-	ARG	palette:DWORD
+Set_Palette_Range	PROC NEAR C
+	USES eax,ebx,ecx,edx,edi,esi,
+	palette:DWORD
 	LOCAL	remain:DWORD	; 32-bit: converted to LONG
 
 	cld
@@ -322,7 +322,7 @@ ELSE
 ??exit:
 	ret
 
-	ENDP	Set_Palette_Range
+Set_Palette_Range	ENDP
 ENDIF
 
 
@@ -342,9 +342,9 @@ ENDIF
 ;*   04/27/1994 BR : Converted to 32-bit.                                  *
 ;*=========================================================================*
 ; BOOL cdecl Bump_Color(VOID *palette, WORD changable, WORD target);
-PROC Bump_Color C NEAR 
-	USES ebx,ecx,edi,esi
-	ARG	pal:DWORD, color:WORD, desired:WORD
+Bump_Color PROC NEAR C
+	USES ebx,ecx,edi,esi,
+	pal:DWORD, color:WORD, desired:WORD
 	LOCAL	changed:WORD		; Has palette changed?
 
 	mov	edi,[pal]		; Original palette pointer.
@@ -380,7 +380,7 @@ PROC Bump_Color C NEAR
 	mov	ax,[changed]
 	ret
 
-	ENDP	Bump_Color
+Bump_Color	ENDP
 
 	END
 

@@ -32,23 +32,23 @@
 
 
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-INCLUDE "svgaprim.inc"
+INCLUDE <svgaprim.inc>
 
 
 DPMI_INTR equ 031h
 
 
-LOCALS ??
+; Converted from TASM: LOCALS ??
 
 ;//////////////////////////////////////////////////////////////////////////////////////
 ;/////////////////////////////////// Prototypes //////////////////////////////////////
 
 GLOBAL	  RMVesaVector    : DWORD
-GLOBAL	  RMVesaRegs      : DWORD	
+GLOBAL	  RMVesaRegs      : DWORD
 GLOBAL	  RMVesaVectorSel : DWORD
 GLOBAL	  Vesa_Hook    	  : NEAR
 GLOBAL	  Remove_Vesa 	  : NEAR
@@ -56,27 +56,27 @@ GLOBAL	  VesaFunc	  : dword
 
 ;//////////////////////////////////////////////////////////////////////////////////////
 ;//////////////////////////////////////// Data ////////////////////////////////////////
-	DATASEG
+	.DATA; Converted from TASM: DATASEG
 
 ; The current time we will just include the real mode stuff
 ; into the protected mode code and then copy it down.  The C side of
 ; this will handle this method or reading it off of disk in the real
 ; method.
 
-LABEL 	RealDataStart BYTE
-include "VesaReal.ibn"
-LABEL	RealDataEnd BYTE
+RealDataStart 	LABEL BYTE
+include <VesaReal.ibn>
+RealDataEnd	LABEL BYTE
 
 RMVesaVectorSel DD	0
 
 ;//////////////////////////////////////////////////////////////////////////////////////
 ;//////////////////////////////////////// Code ////////////////////////////////////////
 
-	CODESEG
+	.CODE; Converted from TASM: CODESEG
 
-PROC	Vesa_Hook C Near
-	USES	ebx,ecx,edx,ecx,edi,esi
-	ARG	vesa_ptr:DWORD
+Vesa_Hook PROC	Near C
+	USES	ebx,ecx,edx,ecx,edi,esi,
+	vesa_ptr:DWORD
 
 	; Are they attempting to set timer again?
 	cmp	[RMVesaVectorSel],0
@@ -141,7 +141,7 @@ PROC	Vesa_Hook C Near
        jnz	??find
        jmp	??error
  ??found:
-       mov	eax , 0201h	
+       mov	eax , 0201h
        mov	edx , edi
        shld	ecx , edx , 16
        and	ebx , 0ffh
@@ -151,17 +151,17 @@ PROC	Vesa_Hook C Near
 
  ??exit:
        xor	eax,eax			; signal an error.
-       ret	       
- ??error:	
-       mov 	eax , -1 
-       ret	
+       ret
+ ??error:
+       mov 	eax , -1
+       ret
       ENDP
 
 
 
-PROC	Remove_Vesa C Near
-	USES	ebx,ecx,edx,ecx,edi,esi
-	ARG	vesa_ptr:DWORD
+Remove_Vesa PROC	Near C
+	USES	ebx,ecx,edx,ecx,edi,esi,
+	vesa_ptr:DWORD
 
 
 	; Are they attempting to set timer again?
@@ -172,15 +172,15 @@ PROC	Remove_Vesa C Near
        mov	ebx , [ RMVesaVector ]
        test	ebx , ebx
        jz	??exit
-       mov	eax , 0201h	
+       mov	eax , 0201h
        xor	edx , edx
-       xor	ecx , ecx 
+       xor	ecx , ecx
        int	DPMI_INTR
        mov	[ RMVesaVector ] , 0
        jc	??exit
 
 ;       mov	eax , 0601h
-;       mov 	ecx , [ RMVesaRegs ] 
+;       mov 	ecx , [ RMVesaRegs ]
 ;       shld	ebx , ecx , 16
 ;       lea	edi , [RealDataEnd]
 ;       sub	edi , offset RealDataStart
@@ -197,7 +197,7 @@ PROC	Remove_Vesa C Near
 	int	DPMI_INTR	 	; do call.
 	mov	[RMVesaVectorSel],0
 ??exit:
-       ret	
+       ret
       ENDP
 
 

@@ -39,19 +39,19 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
 GLOBAL             Get_CPU		    :NEAR
 
 
-DATASEG
+.DATA; Converted from TASM: DATASEG
 
 OperatingSystem	dw	0
 
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* Operating_System -- Determines what the operating system is.            *
@@ -65,10 +65,10 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   01/26/1993  SB : Created.                                             *
 ;*=========================================================================*
-	PROC	Get_CPU C near 
+Get_CPU PROC	near C
 	USES	ebx,ecx,edx,es,edi
-IF 0	
-	xor	eax,eax      	 	
+IF 0
+	xor	eax,eax
         mov     ax,1
         pushf
         pop     bx
@@ -127,10 +127,10 @@ P586
         cpuid
         and     eax,0f00h
         shr     eax,8
-P386
+.386P	; Converted from TASM: P386
 @@1:    ret
 
-ENDP	Get_CPU
+Get_CPU	ENDP
 
 
 

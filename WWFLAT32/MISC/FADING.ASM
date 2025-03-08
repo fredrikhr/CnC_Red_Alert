@@ -34,13 +34,13 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
 GLOBAL	Build_Fading_Table	:NEAR
 
-	CODESEG
+	.CODE; Converted from TASM: CODESEG
 
 ;***********************************************************
 ; BUILD_FADING_TABLE
@@ -53,12 +53,12 @@ GLOBAL	Build_Fading_Table	:NEAR
 ;
 ; Bounds Checking: None
 ;*
-	PROC	Build_Fading_Table C near
-	USES	ebx, ecx, edi, esi
-	ARG	palette:DWORD
-	ARG	dest:DWORD
-	ARG	color:DWORD
-	ARG	frac:DWORD
+Build_Fading_Table PROC	near C
+	USES	ebx, ecx, edi, esi,
+	palette:DWORD,
+	dest:DWORD,
+	color:DWORD,
+	frac:DWORD
 
 	LOCAL	matchvalue:DWORD	; Last recorded match value.
 	LOCAL	targetred:BYTE		; Target gun red.
@@ -173,7 +173,7 @@ GLOBAL	Build_Fading_Table	:NEAR
 	mov	ah,al
 	imul	ah
 	add	edx,eax
-	
+
 	lodsb
 	sub	al,[idealgreen]
 	mov	ah,al
@@ -209,7 +209,7 @@ GLOBAL	Build_Fading_Table	:NEAR
 	mov	eax,[dest]
 	ret
 
-	ENDP	Build_Fading_Table
+Build_Fading_Table	ENDP
 
 
 	END

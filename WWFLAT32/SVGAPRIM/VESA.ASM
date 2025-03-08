@@ -36,28 +36,28 @@
 ;*   Vesa_Asm_Next_Window -- Sets to the next vesa window                  *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
-LOCALS  ??
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
+; Converted from TASM: LOCALS  ??
 
-INCLUDE "svgaprim.inc"
+INCLUDE <svgaprim.inc>
 
 GLOBAL	RMVesaVector	: DWORD
 GLOBAL	RMVesaRegs	: DWORD
 
 
-DPMI_INTR	EQU	31h	
+DPMI_INTR	EQU	31h
 
-STRUC DPMI_REGS
+DPMI_REGS STRUC
        _edi  dd ?
-       _esi  dd ?	
-       _ebp  dd ?	
+       _esi  dd ?
+       _ebp  dd ?
        	     dd ?
-       _ebx  dd ?	
-       _edx  dd ?	
-       _ecx  dd ?	
-       _eax  dd ?	
+       _ebx  dd ?
+       _edx  dd ?
+       _ecx  dd ?
+       _eax  dd ?
        Flags dw ?
        _es   dw ?
        _ds   dw ?
@@ -67,19 +67,19 @@ STRUC DPMI_REGS
        _cs   dw ?
        _sp   dw ?
        _ss   dw ?
-       	     dd ?	
+       	     dd ?
 ENDS
 
 
-DATASEG
+.DATA; Converted from TASM: DATASEG
 
 cpu_video_page	dd           0h
 cpu_page_limit  dd	0b0000h
-CurrentBank	DD  	     0h		; current vesa bank  
+CurrentBank	DD  	     0h		; current vesa bank
 RealFunc	DPMI_REGS   ?		; structure to call a real mode int
 
 
-	CODESEG
+	.CODE; Converted from TASM: CODESEG
 
 
 ;***************************************************************************
@@ -94,7 +94,7 @@ RealFunc	DPMI_REGS   ?		; structure to call a real mode int
 ;* HISTORY:                                                                *
 ;*   12/08/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Vesa_Asm_Set_Win C near 
+Vesa_Asm_Set_Win PROC	near C
 
 	push	eax
 	push	edi
@@ -139,6 +139,6 @@ RealFunc	DPMI_REGS   ?		; structure to call a real mode int
 	and	edi,0000ffffh			; adjust edi to be 64k
 	add	edi,0a0000h
 	ret
-	ENDP	Vesa_Asm_Set_Win
+Vesa_Asm_Set_Win	ENDP
 
 END

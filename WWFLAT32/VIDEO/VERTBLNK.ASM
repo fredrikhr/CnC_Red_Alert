@@ -39,11 +39,11 @@
 ;*                                                                         *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-LOCALS ??
+; Converted from TASM: LOCALS ??
 
 GLOBAL             Get_Vert_Blank       : NEAR
 GLOBAL             Wait_Vert_Blank      : NEAR
@@ -51,7 +51,7 @@ GLOBAL		   get_vga_state	: NEAR
 GLOBAL		   set_vga_mode		: NEAR
 
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 
 ; ----------------------------------------------------------------
 ;
@@ -67,23 +67,23 @@ CODESEG
 
 ;----------------------------------------------------------------------------
 
-PROC	Get_Vert_Blank C near
+Get_Vert_Blank PROC	near C
 	USES edx
-		
+
 	mov	dx,03DAH	; CRTC status register
 	in	al,dx
 	and	al,008H		; look at bit 3 vertical sync
 	xor	ah,ah		; zero ah
 	ret
 
-ENDP	Get_Vert_Blank
+Get_Vert_Blank	ENDP
 
 ;----------------------------------------------------------------------------
 
 ;----------------------------------------------------------------------------
-PROC	Wait_Vert_Blank C near
-	USES eax,ebx,edx
-	ARG	blank:DWORD
+Wait_Vert_Blank PROC	near C
+	USES eax,ebx,edx,
+	blank:DWORD
 
 	mov	ebx,[blank]	; get vertical blank 0 or 1 for on
 
@@ -106,31 +106,31 @@ PROC	Wait_Vert_Blank C near
 
 	ret
 
-ENDP	Wait_Vert_Blank
+Wait_Vert_Blank	ENDP
 
 ;----------------------------------------------------------------------------
 
 ; WORD get_vga_state (VOID) ;
 
-PROC	get_vga_state C near
+get_vga_state PROC	near C
 	USES  ebx
 	mov   eax,0f00h
 	int   10h
 	and   eax, 0ffh
 	ret
-ENDP	get_vga_state
+get_vga_state	ENDP
 
 ;----------------------------------------------------------------------------
 
 ; VOID set_vga_mode (WORD) ;
 
-PROC   set_vga_mode C near
-	ARG   mode:dword
+set_vga_mode PROC   near C,
+	mode:dword
 	mov   eax , [mode]
-	and   eax , 0ffh	
+	and   eax , 0ffh
 	int   10h
 	ret
-ENDP   set_vga_mode
+set_vga_mode   ENDP
 
 
 

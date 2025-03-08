@@ -36,16 +36,16 @@
 ;*   VIVPC::Put_Pixel -- Puts a pixel on a virtual viewport                *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
-LOCALS ??
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
+; Converted from TASM: LOCALS ??
 
-INCLUDE "svgaprim.inc"
-INCLUDE "gbuffer.inc"
+INCLUDE <svgaprim.inc>
+INCLUDE <gbuffer.inc>
 
 
-	CODESEG
+	.CODE; Converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* VIVPC::PUT_PIXEL -- Puts a pixel on a video viewport                    *
@@ -64,13 +64,12 @@ INCLUDE "gbuffer.inc"
 ;* HISTORY:                                                                *
 ;*   06/08/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Vesa_Put_Pixel C near 
-	USES	eax,ebx,ecx,edx,edi,esi
-
-	ARG    	this:DWORD				; this is a member function
-	ARG	x_pixel:DWORD				; x position of pixel to set
-	ARG	y_pixel:DWORD				; y position of pixel to set
-	ARG    	color:BYTE				; what color should we clear to
+Vesa_Put_Pixel PROC	near C
+	USES	eax,ebx,ecx,edx,edi,esi,
+	this:DWORD				; this is a member function,
+	x_pixel:DWORD				; x position of pixel to set,
+	y_pixel:DWORD				; y position of pixel to set,
+	color:BYTE				; what color should we clear to
 
 	;*===================================================================
 	; Get the viewport information and put bytes per row in ecx
@@ -111,5 +110,5 @@ INCLUDE "gbuffer.inc"
 	mov	[edi],al				; write it to the screen
 ??exit:
 	ret
-	ENDP	Vesa_Put_Pixel
+Vesa_Put_Pixel	ENDP
 END

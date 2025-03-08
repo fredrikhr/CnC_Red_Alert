@@ -34,21 +34,20 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
 ;MODEL USE32 FLAT
 MODEL	LARGE
 
 GLOBAL	C Calculate_CRC:FAR
 
-	CODESEG
+	.CODE; Converted from TASM: CODESEG
 
 ; LONG Calculate_CRC(VOID *buffer, LONG length);
-	PROC	Calculate_CRC C far
-	USES 	esi,ebx,ecx
-
-	ARG	buffer:DWORD
-	ARG	length:DWORD
+Calculate_CRC PROC	far C
+	USES 	esi,ebx,ecx,
+	buffer:DWORD,
+	length:DWORD
 
 	LOCAL	crc:DWORD
 
@@ -111,7 +110,7 @@ GLOBAL	C Calculate_CRC:FAR
 	mov	ax,[WORD PTR crc]
 	ret
 
-	ENDP	Calculate_CRC
+Calculate_CRC	ENDP
 
 	END
 

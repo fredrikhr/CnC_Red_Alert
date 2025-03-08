@@ -36,32 +36,32 @@
 ;
 ; ----------------------------------------------------------------
 
-IDEAL				; the product runs in ideal mode
-P386				; use 386 real mode instructions
-MODEL USE32 FLAT
-LOCALS ??			; ?? is the symbol for a local
+; Converted from TASM: IDEAL				; the product runs in ideal mode
+.386P	; Converted from TASM: P386				; use 386 real mode instructions
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
+; Converted from TASM: LOCALS ??			; ?? is the symbol for a local
 WARN				; generate all warnings we can
 JUMPS				; optimize jumps if possible
 
 ;---------------------------------------------------------------------------
 ; Make some general equates for easy compatability
 ;---------------------------------------------------------------------------
-DPMI_INTR	 EQU	31h  
+DPMI_INTR	 EQU	31h
 PAGE_FAULT	 equ	0eh
 RESET_VIDEO_MODE  equ	-1
 
 GLOBAL	 Install_Page_Fault_Handle : NEAR
-GLOBAL	 Set_Video_Mode		   : NEAR		
+GLOBAL	 Set_Video_Mode		   : NEAR
 GLOBAL	 Remove_Mouse		   : NEAR
 GLOBAL	 Remove_Keyboard_Interrupt : NEAR
-GLOBAL	 Remove_Timer_Interrupt	   : NEAR	
+GLOBAL	 Remove_Timer_Interrupt	   : NEAR
 
-DATASEG
+.DATA; Converted from TASM: DATASEG
 	Old_Page_Fault_handle DF ?
 	Page_Fault_SS 	DD	?
 	Page_Fault_ESP	DD	?
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 ;***************************************************************************
 ;* INSTALL_PAGE_FAULT_HANDLE -- Installs new page fault handle             *
 ;*	This function will install a new page fault handle 		   *
@@ -78,28 +78,28 @@ CODESEG
 ;*                                                                         *
 ;* HISTORY:  04/25/96 Created                                              *
 ;*=========================================================================*
-	PROC	Install_Page_Fault_Handle C NEAR 
+Install_Page_Fault_Handle PROC	NEAR C
 	USES	eax,ebx,ecx,edx,esi,edi
 
 	mov	eax,0202h 	; get address of exception handle
 	mov	bl,PAGE_FAULT
 	int	DPMI_INTR
-	jc	??exit		; not action is taken 
+	jc	??exit		; not action is taken
 
 	; save addrees of default handle
 	mov	[dword ptr Old_Page_Fault_handle],edx
 	mov	[word ptr  Old_Page_Fault_handle+4],cx
 
 	; redirect default handle to a new Page Fault Handle
-	mov eax,0203h		
+	mov eax,0203h
 	mov bl,PAGE_FAULT
 	mov cx,cs
 	lea edx,[Page_Fault_Handle]
-	int DPMI_INTR 
+	int DPMI_INTR
 
   ??exit:
 	ret
-	ENDP	Install_Page_Fault_Handle
+Install_Page_Fault_Handle	ENDP
 
 
 ;***************************************************************************
@@ -109,18 +109,18 @@ CODESEG
 ;*                                                                         *
 ;* HISTORY:  04/25/96 Created                                              *
 ;*=========================================================================*
-PROC	Page_Fault_Handle far 
+PROC	Page_Fault_Handle far
 
 	; preserve used  registers
 	push	eax
 	push	ebx
 	; save Page Fault satck frame
-	mov	ax,ss	
+	mov	ax,ss
 	mov	[Page_Fault_SS],eax
 	mov	[Page_Fault_ESP],esp
 
 	; retrieve application original stack frame
-	mov eax , [ esp + ( 6 + 2 ) * 4 ] 
+	mov eax , [ esp + ( 6 + 2 ) * 4 ]
 	mov ebx , [ esp + ( 7 + 2 ) * 4 ]
 	mov ss , bx
 	mov esp , eax
@@ -143,7 +143,7 @@ PROC	Page_Fault_Handle far
 	pop	eax
 	jmp	[fword Old_Page_Fault_handle]
 
-	ENDP	Page_Fault_Handle
+Page_Fault_Handle	ENDP
 
 
 ;***************************************************************************

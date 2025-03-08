@@ -41,17 +41,17 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
+	; Converted from TASM: IDEAL
+	.386P	; Converted from TASM: P386
+	.MODEL	FLAT	; Converted from TASM: MODEL	USE32 FLAT
+	; Converted from TASM: LOCALS	??
 
 
-DPMI_INTR		equ	31h	
+DPMI_INTR		equ	31h
 IF_LOCKED_PM_CODE	equ	1h		; Locked PM code for DPMI.
 IF_LOCKED_PM_DATA	equ	2h		; Locked PM code for DPMI.
 
-STRUC	sCompInfo
+sCompInfo	STRUC
 lpSource		DD	?	;Compressed data pointer
 lpDest			DD	?	;Uncompressed data pointer
 dwCompSize		DD	?	;Compressed size
@@ -75,16 +75,16 @@ wIndex2			DW	?	;Index into step table
 
 wBitSize		DW	?	;Bit size for decompression
 wChannels		DW	?    	;number of channels
-ENDS	sCompInfo
+sCompInfo	ENDS
 
 
-	DATASEG
+	.DATA; Converted from TASM: DATASEG
 
 
 InitFlags	DD	0		; Flags to indicate what has been initialized.
 
 
-LABEL	LockedDataStart	BYTE	
+LockedDataStart	LABEL	BYTE
 
 ;* Index table for stepping into step table
 
@@ -95,7 +95,7 @@ wCODECIndexTab	DD	-1,-1,-1,-1,2,4,6,8
 ;Lookup table of replacement values
 ;The actual sound value is replaced with an index to lookup in this table
 ;The index only takes up a nibble(4bits) and represents an int(16bits)
-;Essentially: 
+;Essentially:
 ;Get a value
 ;compare it with the value before it
 ;find closest value in table and store the index into the table
@@ -106,7 +106,7 @@ wCODECIndexTab	DD	-1,-1,-1,-1,2,4,6,8
 ;1)handle stereo and mono in two seperate loops. cleaner...
 ;start at byte 0 and skip every other byte(or word) both write and read
 ;when we get done
-;	set start byte to 1 and do it again 
+;	set start byte to 1 and do it again
 
 
 
@@ -114,18 +114,18 @@ wCODECIndexTab	DD	-1,-1,-1,-1,2,4,6,8
 ;This table essentialy round off to closes values in 3 distinct bands
 ; precalculated and optimized(i guess) for human hearing.
 
-wCODECStepTab	DD	7,  	8,  	9,   	10,   	11,  	12,   	13,14   		
-		DD	16, 	17, 	19, 	21,  	23,   	25,  	28,   	31			
-		DD	34, 	37, 	41, 	45,  	50,   	55,  	60,   	66			
-		DD	73, 	80, 	88, 	97,  	107,  	118, 	130,  	143			
-		DD	157,	173,	190,	209, 	230,  	253, 	279,  	307			
-		DD	337,	371,	408,	449, 	494,  	544, 	598,  	658			
-		DD	724,	796,	876,	963, 	1060,	1166,	1282,	1411			
-		DD	1552,	1707,	1878,	2066,	2272,	2499,	2749,	3024			
+wCODECStepTab	DD	7,  	8,  	9,   	10,   	11,  	12,   	13,14
+		DD	16, 	17, 	19, 	21,  	23,   	25,  	28,   	31
+		DD	34, 	37, 	41, 	45,  	50,   	55,  	60,   	66
+		DD	73, 	80, 	88, 	97,  	107,  	118, 	130,  	143
+		DD	157,	173,	190,	209, 	230,  	253, 	279,  	307
+		DD	337,	371,	408,	449, 	494,  	544, 	598,  	658
+		DD	724,	796,	876,	963, 	1060,	1166,	1282,	1411
+		DD	1552,	1707,	1878,	2066,	2272,	2499,	2749,	3024
 		DD	3327,	3660,	4026,	4428,	4871,	5358,	5894,	6484
-		DD	7132,	7845,	8630,	9493,	10442,	11487,	12635,	13899		
-		DD	15289,	16818,	18500,	20350,	22385,	24623,	27086,	29794 
-		DD	32767			
+		DD	7132,	7845,	8630,	9493,	10442,	11487,	12635,	13899
+		DD	15289,	16818,	18500,	20350,	22385,	24623,	27086,	29794
+		DD	32767
 
 wCode				DD	0 ; this is to hold index into wCodeStep
 dwCODECByteIndex		DD	0 ; this is when to stop compressing
@@ -133,12 +133,12 @@ dwCODECBytesProcessed		DD	0 ; this is how many so far compressed
 dwCODECTempStep			DD	0 ; tempory storage for step value
 wCODECMask			DW	0 ; Current mask
 
-LABEL	LockedDataEnd	BYTE
+LockedDataEnd	LABEL	BYTE
 
 
-	CODESEG
+	.CODE; Converted from TASM: CODESEG
 
-LABEL	LockedCodeStart	BYTE
+LockedCodeStart	LABEL	BYTE
 
 ;****************************************************************************
 ;*
@@ -161,23 +161,23 @@ LABEL	LockedCodeStart	BYTE
 ;*
 ;****************************************************************************
 
-	GLOBAL	sosCODECInitStream:NEAR
-	PROC	sosCODECInitStream C NEAR
+;	GLOBAL	sosCODECInitStream:NEAR
+sosCODECInitStream	PROC	NEAR C,
+	sSOSInfo:NEAR PTR
 
-	ARG	sSOSInfo:NEAR PTR
-
+	assume eax:NEAR PTR sCompInfo
 	mov	eax,[sSOSInfo]
-	mov	[(sCompInfo eax).wIndex],0 		; starting index 0
-	mov	[(sCompInfo eax).wStep],7  		; start with a step of 7
-	mov	[(sCompInfo eax).dwPredicted],0 	; no predicted value
-	mov	[(sCompInfo eax).dwSampleIndex],0	;start at head of index
-	mov	[(sCompInfo eax).wIndex2],0 		; starting index 0
-	mov	[(sCompInfo eax).wStep2],7  		; start with a step of 7
-	mov	[(sCompInfo eax).dwPredicted2],0 	; no predicted value
-	mov	[(sCompInfo eax).dwSampleIndex2],0 	;start at head of index
+	mov	[eax].wIndex,0 		; starting index 0
+	mov	[eax].wStep,7  		; start with a step of 7
+	mov	[eax].dwPredicted,0 	; no predicted value
+	mov	[eax].dwSampleIndex,0	;start at head of index
+	mov	[eax].wIndex2,0 		; starting index 0
+	mov	[eax].wStep2,7  		; start with a step of 7
+	mov	[eax].dwPredicted2,0 	; no predicted value
+	mov	[eax].dwSampleIndex2,0 	;start at head of index
 	ret
 
-	ENDP	sosCODECInitStream
+sosCODECInitStream	ENDP
 
 
 
@@ -204,14 +204,13 @@ LABEL	LockedCodeStart	BYTE
 ;*
 ;****************************************************************************
 
-	GLOBAL	sosCODECDecompressData:NEAR
-	PROC	sosCODECDecompressData C NEAR
-
-	ARG	sSOSInfo:NEAR PTR
-	ARG	wBytes:DWORD
+;	GLOBAL	sosCODECDecompressData:NEAR
+sosCODECDecompressData	PROC	NEAR C,
+	sSOSInfo:NEAR PTR,
+	wBytes:DWORD
 
 	push	esi
-	push	edi			   
+	push	edi
 	push	ebx
 	push	ecx
 	push	edx
@@ -220,25 +219,26 @@ LABEL	LockedCodeStart	BYTE
 ;*	Initialize
 ;*---------------------------------------------------------------------------
 
+	assume ebx:NEAR PTR sCompInfo
 	mov	ebx,[sSOSInfo]
 	mov	eax,[wBytes]
 	mov	[dwCODECBytesProcessed],eax
-	mov	[(sCompInfo ebx).dwSampleIndex],0 	;start at head of index
-	mov	[(sCompInfo ebx).dwSampleIndex2],0 	;start at head of index
+	mov	[ebx].dwSampleIndex,0 	;start at head of index
+	mov	[ebx].dwSampleIndex2,0 	;start at head of index
 
-	cmp	[(sCompInfo ebx).wBitSize],16
+	cmp	[ebx].wBitSize,16
 	jne	short ??skipByteDivide
 
 	shr	eax,1	;Divide size by two
 
 ??skipByteDivide:
 	mov	[dwCODECByteIndex],eax
-	mov	esi,[(sCompInfo ebx).lpSource]
-	mov	edi,[(sCompInfo ebx).lpDest]
+	mov	esi,[ebx].lpSource
+	mov	edi,[ebx].lpDest
 
-	cmp	[(sCompInfo ebx).wChannels],2		;stereo check
-	je	??mainloopl				;do left side first	
-	
+	cmp	[ebx].wChannels,2		;stereo check
+	je	??mainloopl				;do left side first
+
 ;	Determine if sample index is even or odd. This will determine
 ;	if we need to get a new token or not.
 
@@ -246,15 +246,15 @@ LABEL	LockedCodeStart	BYTE
 ;Main Mono Loop
 ;---------------------------------------------------------------------------
 	push	ebp
-	movzx	edx,[(sCompInfo ebx).wIndex] 		;preload index
+	movzx	edx,[ebx].wIndex 		;preload index
 	mov	ebp, [dwCODECByteIndex]
-	mov	ecx,[(sCompInfo ebx).dwSampleIndex]	;preload SampleIndex
-	
-??mainloop:	 
+	mov	ecx,[ebx].dwSampleIndex	;preload SampleIndex
+
+??mainloop:
 	xor	eax,eax					;get a new token
 	test	ecx,1					;odd Sample??
 	je	short ??fetchToken			; if so get new token
-	mov	ax,[(sCompInfo ebx).wCodeBuf]		;ored with Code
+	mov	ax,[ebx].wCodeBuf		;ored with Code
 	shr	eax,4
 	jmp	short ??calcDifference
 	align	4
@@ -262,24 +262,24 @@ LABEL	LockedCodeStart	BYTE
 ??fetchToken:
 	mov	al,[esi]				;put in codebuf
 	inc	esi
-	mov	[(sCompInfo ebx).wCodeBuf],ax
+	mov	[ebx].wCodeBuf,ax
 
 
 ??calcDifference:
 	xor	ecx,ecx
 	and	eax,000Fh
-	mov	cx,[(sCompInfo ebx).wStep]		;cx is step value
+	mov	cx,[ebx].wStep		;cx is step value
 	mov	[wCode],eax
 	jmp	[DWORD PTR JumpTable + eax*4]
 	align	4
 
-; note: it is important for speed reasons to keep the order the 
+; note: it is important for speed reasons to keep the order the
 ; following jumps entries as well as the "align 4" after some of
 ; the jmp statements
 
 ??7:
 	; eax = x + x/2 + x/4 + x/8 = (8*x + 4*x +2*x + x)>>3 =
-	;     = ( x * ( 8 + 4 + 2 + 1 )) >> 3 = ( x * 15 ) >> 3 
+	;     = ( x * ( 8 + 4 + 2 + 1 )) >> 3 = ( x * 15 ) >> 3
 	lea	ecx,[ecx+ecx*2]
 	lea	eax,[ecx+ecx*4]
 	sar	eax,3				    ; now we divide x>>3
@@ -296,7 +296,7 @@ LABEL	LockedCodeStart	BYTE
 	align	4
 
 ??5:
-	; eax = x + x / 4 + x / 8 = (8*x + 2*x + x) >> 3 = 
+	; eax = x + x / 4 + x / 8 = (8*x + 2*x + x) >> 3 =
 	;     =	( 8 * x + 3 * x) >> 3
 	lea	eax,[ecx+ecx*2]
 	lea	eax,[eax+ecx*8]
@@ -343,7 +343,7 @@ LABEL	LockedCodeStart	BYTE
 
 ??15:
 	; eax = x + x/2 + x/4 + x/8 = (8*x + 4*x +2*x + x)>>3 =
-	;     = ( x * ( 8 + 4 + 2 + 1 )) >> 3 = ( x * 15 ) >> 3 
+	;     = ( x * ( 8 + 4 + 2 + 1 )) >> 3 = ( x * 15 ) >> 3
 	lea	ecx,[ecx+ecx*2]
 	lea	eax,[ecx+ecx*4]
 	jmp	??neg_save_dif
@@ -358,7 +358,7 @@ LABEL	LockedCodeStart	BYTE
 	align	4
 
 ??13:
-	; eax = x + x / 4 + x / 8 = (8*x + 2*x + x) >> 3 = 
+	; eax = x + x / 4 + x / 8 = (8*x + 2*x + x) >> 3 =
 	;     =	( 8 * x + 3 * x) >> 3
 	lea	eax,[ecx+ecx*2]
 	lea	eax,[eax+ecx*8]
@@ -393,18 +393,18 @@ LABEL	LockedCodeStart	BYTE
 
 ??8:
 	; eax = x/8 = x >> 3
-	mov	eax,ecx		       ; !!important!! no need for align here	
+	mov	eax,ecx		       ; !!important!! no need for align here
 
 ??neg_save_dif:
 	sar	eax,3				    ; now we divide x>>3
 	neg 	eax
 
 ??save_dif:
- 	mov	ecx,[wCode]			    ; load offset into CODETab table	
-	mov	[(sCompInfo ebx).dwDifference],eax  ;Store wStep
+ 	mov	ecx,[wCode]			    ; load offset into CODETab table
+	mov	[ebx].dwDifference,eax  ;Store wStep
 
 	; add difference to predicted value.
-	add	eax,[(sCompInfo ebx).dwPredicted]
+	add	eax,[ebx].dwPredicted
 
 	; make sure there is no under or  overflow.
 
@@ -418,10 +418,10 @@ LABEL	LockedCodeStart	BYTE
 	mov	eax,0FFFF8000h
 
 ??noUnderflow:
-	add	edx,[wCODECIndexTab + ecx*4]	  ; won't hurt 486 	
-	cmp	[(sCompInfo ebx).wBitSize],16
-	mov	[(sCompInfo ebx).dwPredicted],eax
-	mov	ecx,[(sCompInfo ebx).dwSampleIndex] ;load dwSampleindex
+	add	edx,[wCODECIndexTab + ecx*4]	  ; won't hurt 486
+	cmp	[ebx].wBitSize,16
+	mov	[ebx].dwPredicted,eax
+	mov	ecx,[ebx].dwSampleIndex ;load dwSampleindex
 	je	short ??output16Bit
 	; output 8 bit sample
 	xor	ah,80h
@@ -447,21 +447,21 @@ LABEL	LockedCodeStart	BYTE
 
 ??adjustStep:
 	; advance index and store step value
-	mov	[(sCompInfo ebx).dwSampleIndex],ecx
+	mov	[ebx].dwSampleIndex,ecx
 
 	; fetch wIndex so we can fetch new step value
 	mov	eax,[wCODECStepTab + edx*4]
 
 	; decrement bytes processed and loop back.
 	dec	ebp
-	mov	[(sCompInfo ebx).wStep],ax
+	mov	[ebx].wStep,ax
 	jne	??mainloop
 	pop	ebp
 
 	mov	eax,[wCode]			; these three lines do not
-	mov	[(sCompInfo ebx).wCode],ax	; seem to have any relevance
+	mov	[ebx].wCode,ax	; seem to have any relevance
 
-	mov	[(sCompInfo ebx).wIndex],dx  	; save index
+	mov	[ebx].wIndex,dx  	; save index
 	jmp	??exitout
 
 ;--------------------------------------------------------------------------
@@ -470,61 +470,61 @@ LABEL	LockedCodeStart	BYTE
 
 
 ??mainloopl:
-	test	[(sCompInfo ebx).dwSampleIndex],1
+	test	[ebx].dwSampleIndex,1
 	je	short ??fetchTokenl
-	
+
 	xor	eax,eax
-	mov	ax,[(sCompInfo ebx).wCodeBuf]
+	mov	ax,[ebx].wCodeBuf
 	shr	eax,4
 	and	eax,000Fh
-	mov	[(sCompInfo ebx).wCode],ax
+	mov	[ebx].wCode,ax
 	jmp	short ??calcDifferencel
 
 ??fetchTokenl:
 	xor	eax,eax
 	mov	al,[esi]
-	mov	[(sCompInfo ebx).wCodeBuf],ax
-	add	esi,2					;2 for stereo			
+	mov	[ebx].wCodeBuf,ax
+	add	esi,2					;2 for stereo
 	and	eax,000Fh
-	mov	[(sCompInfo ebx).wCode],ax
+	mov	[ebx].wCode,ax
 
 ??calcDifferencel:
 							; reset difference
 
-	mov	[(sCompInfo ebx).dwDifference],0
+	mov	[ebx].dwDifference,0
 	xor	ecx,ecx
-	mov	cx,[(sCompInfo ebx).wStep]
+	mov	cx,[ebx].wStep
 	test	eax,4					;Check for wCode & 4
 	je	short ??no4l
-	add	[(sCompInfo ebx).dwDifference],ecx	;Add wStep
+	add	[ebx].dwDifference,ecx	;Add wStep
 
 ??no4l:
 	test	eax,2					;Check for wCode & 2
 	je	short ??no2l
 	mov	edx,ecx					;Add wStep >> 1
 	shr	edx,1
-	add	[(sCompInfo ebx).dwDifference],edx
+	add	[ebx].dwDifference,edx
 
 ??no2l:
 	test	eax,1					;Check for wCode & 1
 	je	short ??no1l
 	mov	edx,ecx					;Add wStep >> 2
 	shr	edx,2
-	add	[(sCompInfo ebx).dwDifference],edx
+	add	[ebx].dwDifference,edx
 
 ??no1l:
 	mov	edx,ecx					;Add in wStep >> 3
 	shr	edx,3
-	add	[(sCompInfo ebx).dwDifference],edx
+	add	[ebx].dwDifference,edx
 	test	eax,8					;Check for wCode & 8
 	je	short ??no8l
-	neg	[(sCompInfo ebx).dwDifference]		;Negate diff
+	neg	[ebx].dwDifference		;Negate diff
 
 ??no8l:
 		; add difference to predicted value.
 
-	mov	eax,[(sCompInfo ebx).dwPredicted]
-	add	eax,[(sCompInfo ebx).dwDifference]
+	mov	eax,[ebx].dwPredicted
+	add	eax,[ebx].dwDifference
 
 		; make sure there is no under or  overflow.
 
@@ -538,11 +538,11 @@ LABEL	LockedCodeStart	BYTE
 	mov	eax,0FFFF8000h
 
 ??noUnderflowl:
-	mov	[(sCompInfo ebx).dwPredicted],eax
-	cmp	[(sCompInfo ebx).wBitSize],16
+	mov	[ebx].dwPredicted,eax
+	cmp	[ebx].wBitSize,16
 	jne	short ??output8Bitl
 	mov	[edi],ax				;Output 16bit sample
-	add	edi,4					;4 for stereo		
+	add	edi,4					;4 for stereo
 	jmp	short ??adjustIndexl
 
 ??output8Bitl:
@@ -550,41 +550,41 @@ LABEL	LockedCodeStart	BYTE
 
 	xor	ah,80h
 	mov	[edi],ah
-	add	edi,2					;2 for stereo       
+	add	edi,2					;2 for stereo
 
 ??adjustIndexl:
 	xor	ecx,ecx
-	mov	cx,[(sCompInfo ebx).wCode]
+	mov	cx,[ebx].wCode
 	xor	eax,eax
 	shl	ecx,2
 	mov	eax,[wCODECIndexTab + ecx]
-	add	[(sCompInfo ebx).wIndex],ax
+	add	[ebx].wIndex,ax
 							; check if wIndex < 0
-	cmp	[(sCompInfo ebx).wIndex],8000h
+	cmp	[ebx].wIndex,8000h
 	jb	short ??checkOverflowl
-	mov	[(sCompInfo ebx).wIndex],0
+	mov	[ebx].wIndex,0
 	jmp	short ??adjustStepl			;reset index to zero
 
 
 ??checkOverflowl:
-							
-	cmp	[(sCompInfo ebx).wIndex],88		; check if wIndex > 88
+
+	cmp	[ebx].wIndex,88		; check if wIndex > 88
 	jbe	short ??adjustStepl
-	mov	[(sCompInfo ebx).wIndex],88		; reset index to 88
+	mov	[ebx].wIndex,88		; reset index to 88
 
 ??adjustStepl:
 	; fetch wIndex so we can fetch new step value
 
 	xor	ecx,ecx
-	mov	cx,[(sCompInfo ebx).wIndex]
+	mov	cx,[ebx].wIndex
 	xor	eax,eax
 	shl	ecx,2
 	mov	eax,[wCODECStepTab + ecx]
 
 	; advance index and store step value
 
-	add	[(sCompInfo ebx).dwSampleIndex],1
-	mov	[(sCompInfo ebx).wStep],ax
+	add	[ebx].dwSampleIndex,1
+	mov	[ebx].wStep,ax
 
 	; decrement bytes processed and loop back.
 
@@ -595,80 +595,80 @@ LABEL	LockedCodeStart	BYTE
 ;----------------------------------------------------------------------------
 	mov	eax,[wBytes]
 	mov	[dwCODECBytesProcessed],eax
-	mov	esi,[(sCompInfo ebx).lpSource]
-	mov	edi,[(sCompInfo ebx).lpDest]
+	mov	esi,[ebx].lpSource
+	mov	edi,[ebx].lpDest
 	inc	esi					; skip left channel
 	inc	edi				     	; skip left channel
-	cmp	[(sCompInfo ebx).wBitSize],16		;16 bit ??
-	je	short ??doByteDivide			
+	cmp	[ebx].wBitSize,16		;16 bit ??
+	je	short ??doByteDivide
 	mov	[dwCODECByteIndex],eax
 	jmp  short ??mainloopr
-	
+
 ??doByteDivide:
 	shr	eax,1 					;Divide size by two
 	inc	edi   					; 16 bit so skip 1 more
 	mov	[dwCODECByteIndex],eax
-	
+
 
 ;--------------------------------------------------------------------------
 ;Right Channel Start
 ;--------------------------------------------------------------------------
 
 
-??mainloopr:	 
-	test	[(sCompInfo ebx).dwSampleIndex2],1
+??mainloopr:
+	test	[ebx].dwSampleIndex2,1
 	je	short ??fetchTokenr
 	xor	eax,eax
-	mov	ax,[(sCompInfo ebx).wCodeBuf2]
+	mov	ax,[ebx].wCodeBuf2
 	shr	eax,4
 	and	eax,000Fh
-	mov	[(sCompInfo ebx).wCode2],ax
+	mov	[ebx].wCode2,ax
 	jmp	short ??calcDifferencer
 
 ??fetchTokenr:
 	xor	eax,eax
 	mov	al,[esi]
-	mov	[(sCompInfo ebx).wCodeBuf2],ax
-	add	esi,2				     	;2 for stereo			
+	mov	[ebx].wCodeBuf2,ax
+	add	esi,2				     	;2 for stereo
 	and	eax,000Fh
-	mov	[(sCompInfo ebx).wCode2],ax
+	mov	[ebx].wCode2,ax
 
 ??calcDifferencer:
 							; reset difference
 
-	mov	[(sCompInfo ebx).dwDifference2],0
+	mov	[ebx].dwDifference2,0
 	xor	ecx,ecx
-	mov	cx,[(sCompInfo ebx).wStep2]
+	mov	cx,[ebx].wStep2
 	test	eax,4					;Check for wCode & 4
 	je	short ??no4r
-	add	[(sCompInfo ebx).dwDifference2],ecx	;Add wStep
+	add	[ebx].dwDifference2,ecx	;Add wStep
 
 ??no4r:
 	test	eax,2					;Check for wCode & 2
 	je	short ??no2r
 	mov	edx,ecx					;Add wStep >> 1
 	shr	edx,1
-	add	[(sCompInfo ebx).dwDifference2],edx
+	add	[ebx].dwDifference2,edx
 
 ??no2r:
 	test	eax,1					;Check for wCode & 1
 	je	short ??no1r
 	mov	edx,ecx					;Add wStep >> 2
 	shr	edx,2
-	add	[(sCompInfo ebx).dwDifference2],edx
+	add	[ebx].dwDifference2,edx
 
 ??no1r:
 	mov	edx,ecx					;Add in wStep >> 3
 	shr	edx,3
-	add	[(sCompInfo ebx).dwDifference2],edx
+	add	[ebx].dwDifference2,edx
 	test	eax,8					;Check for wCode & 8
 	je	short ??no8r
-	neg	[(sCompInfo ebx).dwDifference2]		;Negate diff
+	neg	[ebx].dwDifference2		;Negate diff
 
 ??no8r:
 	; add difference to predicted value.
-	mov	eax,[(sCompInfo ebx).dwPredicted2]
-	add	eax,[(sCompInfo ebx).dwDifference2]
+	mov	eax,[ebx].dwPredicted2
+	add	eax,[ebx].dwDifference2
 	cmp	eax,7FFFh
 	jl	short ??noOverflowr
 	mov	eax,7FFFh
@@ -679,8 +679,8 @@ LABEL	LockedCodeStart	BYTE
 	mov	eax,0FFFF8000h
 
 ??noUnderflowr:
-	mov	[(sCompInfo ebx).dwPredicted2],eax
-	cmp	[(sCompInfo ebx).wBitSize],16
+	mov	[ebx].dwPredicted2,eax
+	cmp	[ebx].wBitSize,16
 	jne	short ??output8Bitr
 	mov	[edi],ax				;Output 16bit sample
 	add	edi,4					;4 for stereo		***
@@ -690,53 +690,53 @@ LABEL	LockedCodeStart	BYTE
 							; output 8 bit sample
 	xor	ah,80h
 	mov	[edi],ah
-	add	edi,2					;2 for stereo       
+	add	edi,2					;2 for stereo
 
 ??adjustIndexr:
 	xor	ecx,ecx
-	mov	cx,[(sCompInfo ebx).wCode2]
+	mov	cx,[ebx].wCode2
 	xor	eax,eax
 	shl	ecx,2
 	mov	eax,[wCODECIndexTab + ecx]
-	add	[(sCompInfo ebx).wIndex2],ax
+	add	[ebx].wIndex2,ax
 							; check if wIndex < 0
-	cmp	[(sCompInfo ebx).wIndex2],8000h
+	cmp	[ebx].wIndex2,8000h
 	jb	short ??checkOverflowr
 							; reset index to zero
-	mov	[(sCompInfo ebx).wIndex2],0
+	mov	[ebx].wIndex2,0
 	jmp	short ??adjustStepr
 
 ??checkOverflowr:
 							; check if wIndex > 88
-	cmp	[(sCompInfo ebx).wIndex2],88	        
+	cmp	[ebx].wIndex2,88
 	jbe	short ??adjustStepr
-	mov	[(sCompInfo ebx).wIndex2],88		; reset index to 88
+	mov	[ebx].wIndex2,88		; reset index to 88
 
 ??adjustStepr:
 	; fetch wIndex so we can fetch new step value
 
 	xor	ecx,ecx
-	mov	cx,[(sCompInfo ebx).wIndex2]
+	mov	cx,[ebx].wIndex2
 	xor	eax,eax
 	shl	ecx,2
 	mov	eax,[wCODECStepTab + ecx]
 
 	; advance index and store step value
 
-	add	[(sCompInfo ebx).dwSampleIndex2],1
-	mov	[(sCompInfo ebx).wStep2],ax
+	add	[ebx].dwSampleIndex2,1
+	mov	[ebx].wStep2,ax
 
 	; decrement bytes processed and loop back.
 
 	sub	[dwCODECByteIndex],2
 	jne	??mainloopr
-	
+
 
 ??exitout:
 ;     	don't think we need this but just in case i'll leave it here!!
 
-;	mov	[(sCompInfo ebx).lpSource],esi
-;	mov	[(sCompInfo ebx).lpDest],edi
+;	mov	[ebx].lpSource,esi
+;	mov	[ebx].lpDest,edi
 	; set up return value for number of bytes processed.
 	mov	eax,[dwCODECBytesProcessed]
 	pop	edx
@@ -762,11 +762,11 @@ JumpTable	DD	??0
 		DD	??13
 		DD	??14
 		DD	??15
-			 
 
-	ENDP	sosCODECDecompressData
 
-LABEL	LockedCodeEnd	BYTE
+sosCODECDecompressData	ENDP
+
+LockedCodeEnd	LABEL	BYTE
 
 ;***************************************************************************
 ;* sosCODEC_LOCK -- locks the JLB audio decompression code		   *
@@ -780,8 +780,8 @@ LABEL	LockedCodeEnd	BYTE
 ;* HISTORY:								   *
 ;*   06/26/1995 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	sosCODEC_Lock:NEAR
-	PROC	sosCODEC_Lock C NEAR USES ebx ecx edx esi edi
+;	GLOBAL	sosCODEC_Lock:NEAR
+sosCODEC_Lock	PROC	NEAR C USES ebx ecx edx esi edi
 
 	;
 	; Lock the code that is used by the sos decompression method.
@@ -815,7 +815,7 @@ LABEL	LockedCodeEnd	BYTE
 	xor	eax,eax
 ??exit:
 	ret
-	ENDP	sosCODEC_Lock
+sosCODEC_Lock	ENDP
 
 ;***************************************************************************
 ;* DECOMPRESS_FRAME_UNLOCK -- Unlocks the JLB audio compression code       *
@@ -829,8 +829,8 @@ LABEL	LockedCodeEnd	BYTE
 ;* HISTORY:								   *
 ;*   06/26/1995 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	sosCODEC_Unlock:NEAR
-	PROC	sosCODEC_Unlock C NEAR USES ebx ecx edx esi edi
+;	GLOBAL	sosCODEC_Unlock:NEAR
+sosCODEC_Unlock	PROC	NEAR C USES ebx ecx edx esi edi
 
 	test	[InitFlags],IF_LOCKED_PM_CODE
 	jz	??code_not_locked
@@ -865,7 +865,7 @@ LABEL	LockedCodeEnd	BYTE
 	xor	eax,eax
 ??exit:
 	ret
-	ENDP	sosCODEC_Unlock
+sosCODEC_Unlock	ENDP
 
 	END
 

@@ -40,15 +40,15 @@
 
 ;----------------------------------------------------------------------------
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-GLOBAL  	    Get_Devices          :NEAR
-GLOBAL              Is_Device_Real       :NEAR
+;GLOBAL  	    Get_Devices          :NEAR
+;GLOBAL              Is_Device_Real       :NEAR
 
-GLOBAL              MaxDevice          	 :BYTE
-GLOBAL              DefaultDrive         :BYTE
+EXTERN              MaxDevice          	 :BYTE
+EXTERN              DefaultDrive         :BYTE
 
 ; ----------------------------------------------------------------
 ;
@@ -59,7 +59,7 @@ GLOBAL              DefaultDrive         :BYTE
 ;
 ; ----------------------------------------------------------------
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 
 ;***********************************************************
 ;
@@ -73,9 +73,8 @@ CODESEG
 ;*
 DOS	equ	21h
 
-PROC	Get_Devices C near 
-	USES eax,ebx,edx
-		   
+Get_Devices PROC	near C USES eax ebx edx
+
    	sub	eax,eax
 	mov	ah,25			; get current drive service
 	int	DOS			; drive returned in al
@@ -105,7 +104,7 @@ PROC	Get_Devices C near
 
 	ret
 
-ENDP	Get_Devices
+Get_Devices	ENDP
 
 ;***************************************************************
 
@@ -120,9 +119,8 @@ ENDP	Get_Devices
 ; phisical one.  Send it the drive # to check.
 ;
 ;*
-PROC	Is_Device_Real C near 
-	USES ebx,edx
-	ARG	drive:WORD
+Is_Device_Real PROC	near C USES ebx edx,
+	drive:WORD
 
 	sub	edx,edx
 	mov	dx,[drive]
@@ -136,7 +134,7 @@ PROC	Is_Device_Real C near
 	pop	ebx
 
 	jnc	short ??it_is_real	; jump if no error
-	cmp	al,01			; 1 = invalid command, 
+	cmp	al,01			; 1 = invalid command,
 					; 0F = invalid device
 	je	short ??real			; 1? it is ok (RAM device)
 	jmp	short ??invalid		; 0Fh, it was not a device
@@ -150,14 +148,14 @@ PROC	Is_Device_Real C near
 
 ??invalid:				; The device is invalid.
 	mov	eax,0
-	jmp	short ??out			
+	jmp	short ??out
 
 ??real:					; Return true, for valid device.
 	mov	eax,1
-		    
+
 ??out:
 	ret
-ENDP	Is_Device_Real
+Is_Device_Real	ENDP
 
 ;***************************************************************
 

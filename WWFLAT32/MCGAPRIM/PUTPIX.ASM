@@ -35,15 +35,15 @@
 ;*   VVPC::Put_Pixel -- Puts a pixel on a virtual viewport                 *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-INCLUDE "mcgaprim.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <mcgaprim.inc>
+INCLUDE <.\gbuffer.inc>
 
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* VVPC::PUT_PIXEL -- Puts a pixel on a virtual viewport                   *
@@ -62,19 +62,18 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   06/08/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	MCGA_Put_Pixel C near 
-	USES	eax,ebx,ecx,edx,edi
-
-	ARG    	this:DWORD				; this is a member function
-	ARG	x_pixel:DWORD				; x position of pixel to set
-	ARG	y_pixel:DWORD				; y position of pixel to set
-	ARG    	color:BYTE				; what color should we clear to
+MCGA_Put_Pixel PROC	near C
+	USES	eax,ebx,ecx,edx,edi,
+	this:DWORD				; this is a member function,
+	x_pixel:DWORD				; x position of pixel to set,
+	y_pixel:DWORD				; y position of pixel to set,
+	color:BYTE				; what color should we clear to
 
 	;*===================================================================
 	; Get the viewport information and put bytes per row in ecx
 	;*===================================================================
 	mov	ebx,[this]				; get a pointer to viewport
-	xor	eax,eax					
+	xor	eax,eax
 	mov	edi,[(GraphicViewPort ebx).GVPOffset]	; get the correct offset
 	mov	ecx,[(GraphicViewPort ebx).GVPHeight]	; edx = height of viewport
 	mov	edx,[(GraphicViewPort ebx).GVPWidth]	; ecx = width of viewport
@@ -104,6 +103,6 @@ CODESEG
 	mov	[edi],al				; write it to the screen
 ??exit:
 	ret
-	ENDP	MCGA_Put_Pixel
+MCGA_Put_Pixel	ENDP
 
 END

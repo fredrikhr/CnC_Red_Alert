@@ -36,26 +36,26 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
 
-GLOBAL      GetDefaultSelectors :NEAR
+;GLOBAL      GetDefaultSelectors :NEAR
 
-GLOBAL 	    DataSelector	:WORD
-GLOBAL 	    ScreenSelector	:WORD
-GLOBAL 	    GraphicsSelector	:WORD
-GLOBAL 	    PspSelector		:WORD
-GLOBAL 	    EnvSelector		:WORD
-GLOBAL 	    DosMemSelector	:WORD
-GLOBAL 	    Fp1167Selector	:WORD
-GLOBAL 	    FpWeitekSelector	:WORD
-GLOBAL 	    FpCyrixSelector	:WORD
-GLOBAL 	    CodeSelector	:WORD
+;GLOBAL 	    DataSelector	:WORD
+;GLOBAL 	    ScreenSelector	:WORD
+;GLOBAL 	    GraphicsSelector	:WORD
+;GLOBAL 	    PspSelector		:WORD
+;GLOBAL 	    EnvSelector		:WORD
+;GLOBAL 	    DosMemSelector	:WORD
+;GLOBAL 	    Fp1167Selector	:WORD
+;GLOBAL 	    FpWeitekSelector	:WORD
+;GLOBAL 	    FpCyrixSelector	:WORD
+;GLOBAL 	    CodeSelector	:WORD
 
 
-DATASEG
+.DATA; Converted from TASM: DATASEG
 
 ; It is very important that this section remain untouch
 ; is not really needed by Rational System but is here to
@@ -74,9 +74,9 @@ FpCyrixSelector		dw	0
 
 CodeSelector		dw	0
 
-		    
+
 ;============================================================================
-CODESEG
+.CODE; Converted from TASM: CODESEG
 
 ;***************************************************************************
 ;*  GetDefaultSelectors -- Setup the defaults selector values to have the  *
@@ -94,8 +94,7 @@ CODESEG
 ;*   03/28/1994  jaw: Created.                                             *
 ;*=========================================================================*
 
-PROC GetDefaultSelectors 	C near 
-	USES eax,esi,ecx
+GetDefaultSelectors 	PROC near C USES eax esi ecx
 
 	lea	edi,[DataSelector]
 	lea	ecx,[CodeSelector]
@@ -105,11 +104,11 @@ PROC GetDefaultSelectors 	C near
 	rep	stosw
 	mov	ax,cs
 	mov	[word ptr CodeSelector] , ax
-     
-	ret	   
+
+	ret
 ;====================
-ENDP GetDefaultSelectors	
-     
+GetDefaultSelectors ENDP
+
 
 END
 

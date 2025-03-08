@@ -34,11 +34,11 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
+; Converted from TASM: IDEAL
 MODEL TINY
-P386N
+.386P	; Converted from TASM: P386N
 
-LOCALS ??
+; Converted from TASM: LOCALS ??
 
 ;//////////////////////////////////////////////////////////////////////////////////////
 ;///////////////////////////////////// Equates ////////////////////////////////////////
@@ -46,7 +46,7 @@ LOCALS ??
 INTCHIP0	EQU	20h		; 8259 interrupt chip controller 0
 CLEARISR	EQU	20h		; Value to write to 8259 to reenable interrupts.
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 ;//////////////////////////////////////////////////////////////////////////////////////
 ;///////////////////////////////////// Data ////////////////////////////////////////
 ; This information may not change unless the protected mode version is
@@ -72,14 +72,14 @@ DosAdder		DW	0 	; amount to add to DosFraction each interrupt.
 DosFraction		DW	0	; Call dos when overflowed.
 
 OldRMI			DD	0	; The origianl RM interrupt seg:off.
-OldPMIOffset		DD	0	; The origianl PM interrupt offset		
+OldPMIOffset		DD	0	; The origianl PM interrupt offset
 OldPMISelector		DD	0	; The original PM interrupt segment.
 
 CodeOffset		DW	RM_Timer_Interrupt_Handler	; Offset of the code in the RM stuff.
 CallRMIntOffset		DW	Call_Interrupt_Chain		; Offset of function to call DOS timer interrupt.
 CallRMIntAddr		DD	0	; PM address of CallRealIntOffset for speed.
 
-PMIssuedInt		DD	0	; PM signals RM to just call Int chain.	
+PMIssuedInt		DD	0	; PM signals RM to just call Int chain.
 
 ; These are just used for information on testing.  When all is done, they can
 ; be removed, but why?  The don't add too much proccessing time and can
@@ -149,7 +149,7 @@ ENDM
 ;* HISTORY:                                                                *
 ;*   07/08/1994 SKB : Created.                                             *
 ;*=========================================================================*
-label RM_Timer_Interrupt_Handler
+RM_Timer_Interrupt_Handler label
 start_RM_Timer_Interrupt_Handler:
 
 	push	ax
@@ -157,11 +157,11 @@ start_RM_Timer_Interrupt_Handler:
 	push	dx
 	push	ds
 
-	mov	ax,cs			; Set data segment to code segment 
+	mov	ax,cs			; Set data segment to code segment
 	mov	ds,ax			;   since data is in code seg.
 
 	cmp	[WORD PTR PMIssuedInt],0; Check to see if PM made Int call.
-	mov	[WORD PTR PMIssuedInt],0; Make it false.		
+	mov	[WORD PTR PMIssuedInt],0; Make it false.
 	jne	??call_int_chain	; if so, just call Int Chain.
 
 
@@ -227,7 +227,7 @@ IF 0
 
 	mov	ax,0B000h		; ES:DI = Mono RAM address.
 	mov	es,ax
-		
+
 	mov	al,'A'
 	mov	ah,2
 	and	di,63

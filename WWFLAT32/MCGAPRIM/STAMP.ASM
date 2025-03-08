@@ -34,16 +34,16 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-INCLUDE "mcgaprim.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <mcgaprim.inc>
+INCLUDE <.\gbuffer.inc>
 
-INCLUDE	"stamp.inc"
+INCLUDE	<stamp.inc>
 
-	DATASEG
+	.DATA; Converted from TASM: DATASEG
 
 
 LastIconset	DD	0	; Pointer to last iconset initialized.
@@ -59,7 +59,7 @@ IconCount	DD	0	; Number of icons in the set.
 
 	EVEN
 
-	CODESEG
+	.CODE; Converted from TASM: CODESEG
 
 ; 256 color icon system.
 
@@ -72,8 +72,8 @@ IconCount	DD	0	; Number of icons in the set.
 ; Bounds Checking: NONE
 ;
 ;*
-	PROC	Init_Stamps C near USES eax ebx edi
-	ARG	icondata:DWORD
+Init_Stamps PROC	near C USES eax ebx edi,
+	icondata:DWORD
 
 	; Verify legality of parameter.
 	cmp	[icondata],0
@@ -120,7 +120,7 @@ IconCount	DD	0	; Number of icons in the set.
 ??fini:
 	ret
 
-	ENDP	Init_Stamps
+Init_Stamps	ENDP
 
 
 ;***********************************************************
@@ -138,14 +138,13 @@ IconCount	DD	0	; Number of icons in the set.
 ; remap valid colors to be invisible (for special effect reasons).
 ; This routine is fastest when no remap table is passed in.
 ;*
-	PROC	MCGA_Draw_Stamp C near
-
-	ARG	this:DWORD		; this is a member function
-	ARG	icondata:DWORD		; Pointer to icondata.
-	ARG	icon:DWORD		; Icon number to draw.
-	ARG	x_pixel:DWORD		; X coordinate of icon.
-	ARG	y_pixel:DWORD		; Y coordinate of icon.
-	ARG	remap:DWORD 		; Remap table.
+MCGA_Draw_Stamp PROC	near C,
+	this:DWORD		; this is a member function,
+	icondata:DWORD		; Pointer to icondata.,
+	icon:DWORD		; Icon number to draw.,
+	x_pixel:DWORD		; X coordinate of icon.,
+	y_pixel:DWORD		; Y coordinate of icon.,
+	remap:DWORD 		; Remap table.
 
 	LOCAL	modulo:DWORD		; Modulo to get to next row.
 	LOCAL	iwidth:DWORD		; Icon width (here for speedy access).
@@ -308,7 +307,7 @@ IconCount	DD	0	; Number of icons in the set.
 	popad
 	ret
 
-	ENDP	MCGA_Draw_Stamp
+MCGA_Draw_Stamp	ENDP
 
 ;***********************************************************
 ; DRAW_STAMP_CLIP
@@ -322,18 +321,17 @@ IconCount	DD	0	; Number of icons in the set.
 ; remap valid colors to be invisible (for special effect reasons).
 ; This routine is fastest when no remap table is passed in.
 ;*
-	PROC	MCGA_Draw_Stamp_Clip C near
-
-	ARG	this:DWORD		; this is a member function
-	ARG	icondata:DWORD		; Pointer to icondata.
-	ARG	icon:DWORD		; Icon number to draw.
-	ARG	x_pixel:DWORD		; X coordinate of icon.
-	ARG	y_pixel:DWORD		; Y coordinate of icon.
-	ARG	remap:DWORD 		; Remap table.
-	ARG	min_x:DWORD		; Clipping rectangle boundary
-	ARG	min_y:DWORD		; Clipping rectangle boundary
-	ARG	max_x:DWORD		; Clipping rectangle boundary
-	ARG	max_y:DWORD		; Clipping rectangle boundary
+MCGA_Draw_Stamp_Clip PROC	near C,
+	this:DWORD		; this is a member function,
+	icondata:DWORD		; Pointer to icondata.,
+	icon:DWORD		; Icon number to draw.,
+	x_pixel:DWORD		; X coordinate of icon.,
+	y_pixel:DWORD		; Y coordinate of icon.,
+	remap:DWORD 		; Remap table.,
+	min_x:DWORD		; Clipping rectangle boundary,
+	min_y:DWORD		; Clipping rectangle boundary,
+	max_x:DWORD		; Clipping rectangle boundary,
+	max_y:DWORD		; Clipping rectangle boundary
 
 	LOCAL	modulo:DWORD		; Modulo to get to next row.
 	LOCAL	iwidth:DWORD		; Icon width (here for speedy access).
@@ -407,7 +405,7 @@ IconCount	DD	0	; Number of icons in the set.
 	jge	??nominxclip
 	; x < minx, so must clip
 	mov	ebx,[min_x]
-	sub	ebx,[x_pixel]	
+	sub	ebx,[x_pixel]
 	add	esi,ebx		; source ptr += (minx - x)
 	sub	[iwidth],ebx	; icon width -= (minx - x)
 	mov	ebx,[min_x]
@@ -573,6 +571,6 @@ IconCount	DD	0	; Number of icons in the set.
 	popad
 	ret
 
-	ENDP	MCGA_Draw_Stamp_Clip
+MCGA_Draw_Stamp_Clip	ENDP
 
 	END

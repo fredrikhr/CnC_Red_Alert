@@ -50,16 +50,16 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
 
-DPMI_INTR	equ	31h	
+DPMI_INTR	equ	31h
 TRUE		equ	1			; Boolean 'true' value
 FALSE		equ	0			; Boolean 'false' value
 
-LOCALS ??
+; Converted from TASM: LOCALS ??
 
 ;//////////////////////////////////////////////////////////////////////////////////////
 ;///////////////////////////////////// Equates ////////////////////////////////////////
@@ -67,7 +67,7 @@ LOCALS ??
 SYSTEM_TIMER_FREQ	equ	60	; Frequency of system timer.
 
 ;********************************************************************
-; There are two ways to call our interrupt chain in protected mode.  
+; There are two ways to call our interrupt chain in protected mode.
 ; The obvious way it to call the address that we replaced in the
 ; PM interrupt chain.  This method is a little difficult but works and
 ; should always work.
@@ -94,12 +94,12 @@ TIMER_CONST	EQU	1193180		; TIMER_CONST / FREQ = rate to set 8259 chip
 TIMERCMDREG	EQU	043H		; timer command register port.
 TIMER0PORT	EQU	040H		; timer channel 0 port
 TIMETYPE	EQU	036H		; type of timer.
-	;  36H = 0011 0110			    
-	;        --         select channel 0			    
-	;          --       read/load low byte then high byte for timer			    
-	;             ---   timer mode 3			    
+	;  36H = 0011 0110
+	;        --         select channel 0
+	;          --       read/load low byte then high byte for timer
+	;             ---   timer mode 3
 	;                -  0 - binary , 1 - BCD data
-	
+
 ;//////////////////////////////////////////////////////////////////////////////////////
 ;///////////////////////////////////// Structs ////////////////////////////////////////
 
@@ -108,7 +108,7 @@ TIMETYPE	EQU	036H		; type of timer.
 ; This is at the very start of the real mode code.
 ; This information may not change unless the real mode version is also changed.
 
-STRUC TimerType
+TimerType STRUC
 ; For speed, PM uses a DD while RM used DW
 ; For speed, SysRate and SysError are DD in PM and are DW in real mode.
 
@@ -129,14 +129,14 @@ STRUC TimerType
 	DosFraction		DW	?	; Call dos when overflowed.
 
 	OldRMI			DD	?	; The origianl RM interrupt seg:off.
-	OldPMIOffset		DD	?	; The origianl PM interrupt offset		
+	OldPMIOffset		DD	?	; The origianl PM interrupt offset
 	OldPMISelector		DD	?	; The original PM interrupt segment.
 
 	CodeOffset		DW	?	; Offset of the code in the RM stuff.
 	CallRMIntOffset		DW	?	; Offset of function to call DOS timer interrupt.
 	CallRMIntAddr		DD	?	; PM address of CallRealIntOffset for speed.
 
-	PMIssuedInt		DD	0	; PM signals RM to just call Int chain.	
+	PMIssuedInt		DD	0	; PM signals RM to just call Int chain.
 
 ; These are just used for information on testing.  When all is done, they can
 ; be removed, but why?  The don't add too much proccessing time and can
@@ -165,27 +165,27 @@ GLOBAL		Enable_Timer_Interrupt:NEAR
 
 ;//////////////////////////////////////////////////////////////////////////////////////
 ;//////////////////////////////////////// Data ////////////////////////////////////////
-	DATASEG
+	.DATA; Converted from TASM: DATASEG
 
 ; The current time we will just include the real mode stuff
 ; into the protected mode code and then copy it down.  The C side of
 ; this will handle this method or reading it off of disk in the real
 ; method.
 
-LABEL 	RealBinStart	BYTE
-include "timereal.ibn"
-LABEL	RealBinEnd	BYTE
+RealBinStart 	LABEL	BYTE
+include <timereal.ibn>
+RealBinEnd	LABEL	BYTE
 
 
 
 
-LABEL	LockedDataStart	BYTE	
+LockedDataStart	LABEL	BYTE
 RealModeSel	DD	0
 RealModePtr	DD	0		; Pointer to real mode memory.
 RealModeSize	DD	0		; Pointer to real mode memory.
-LABEL	LockedDataEnd	BYTE
+LockedDataEnd	LABEL	BYTE
 
-	
+
 InitFlags	DD	0		; Flags to indicate what has been initialized.
 
 ; InitFlags that are set to have a fully functional interrupt.
@@ -200,7 +200,7 @@ IF_LOCKED_RM_CODE	equ	40h		; Timer is in and functional.
 ;//////////////////////////////////////////////////////////////////////////////////////
 ;//////////////////////////////////////// Code ////////////////////////////////////////
 
-	CODESEG
+	.CODE; Converted from TASM: CODESEG
 
 ;//////////////////////////////////////////////////////////////////////////////////////
 ;/////////////////////////////// Init routines ////////////////////////////////////////
@@ -219,7 +219,7 @@ IF_LOCKED_RM_CODE	equ	40h		; Timer is in and functional.
 ;* HISTORY:                                                                *
 ;*   07/06/1994 SKB : Created.                                             *
 ;*=========================================================================*
-	PROC	Get_RM_Timer_Address C Near
+Get_RM_Timer_Address PROC	Near C
 
 	mov	eax, OFFSET RealBinStart
 	ret
@@ -240,7 +240,7 @@ IF_LOCKED_RM_CODE	equ	40h		; Timer is in and functional.
 ;* HISTORY:                                                                *
 ;*   07/06/1994 SKB : Created.                                             *
 ;*=========================================================================*
-	PROC	Get_RM_Timer_Size C Near
+Get_RM_Timer_Size PROC	Near C
 
 	mov	eax, OFFSET RealBinEnd - OFFSET RealBinStart
 	ret
@@ -264,7 +264,7 @@ IF_LOCKED_RM_CODE	equ	40h		; Timer is in and functional.
 PROC	Set_Timer_Rate Near
 
 	push	eax
-	pushf					; to save int enable flag	
+	pushf					; to save int enable flag
 	cli					; disable interupts while setting up swapper
 
 	mov	al,TIMETYPE			; setup to modify timer 0
@@ -279,7 +279,7 @@ PROC	Set_Timer_Rate Near
 	pop	eax
 
 	ret
-ENDP	Set_Timer_Rate
+Set_Timer_Rate	ENDP
 
 ;***************************************************************************
 ;* SET_TIMER_FREQUENCY -- Set the frequency of the timer.                  *
@@ -295,9 +295,9 @@ ENDP	Set_Timer_Rate
 ;* HISTORY:                                                                *
 ;*   07/06/1994 SKB : Created.                                             *
 ;*=========================================================================*
-PROC	Set_Timer_Frequency C NEAR
-	USES	eax,ebx,ecx,edx
-	ARG	freq:DWORD
+Set_Timer_Frequency PROC	NEAR C
+	USES	eax,ebx,ecx,edx,
+	freq:DWORD
 	LOCAL	clockrate:DWORD
 	LOCAL	clockfreq:DWORD
 
@@ -312,7 +312,7 @@ PROC	Set_Timer_Frequency C NEAR
 	cmp	ecx,SYSTEM_TIMER_FREQ		; compare it with system frequency
 	jg	??user_is_fastest		; is user frequency faster?
 	mov	ecx,SYSTEM_TIMER_FREQ		; no, set clock freq to system frequency.
-??user_is_fastest:   
+??user_is_fastest:
 
 	; now get the rate that the clock will be set at.
 	; ecx is still max frequency.
@@ -377,12 +377,12 @@ PROC	Set_Timer_Frequency C NEAR
 ;* HISTORY:                                                                *
 ;*   07/06/1994 SKB : Created.                                             *
 ;*=========================================================================*
-	PROC	Install_Timer_Interrupt C Near
-	USES	ebx,ecx,edx
-	ARG	rm_ptr:DWORD
-	ARG	rm_size:DWORD
-	ARG	freq:DWORD
-	ARG	partial:DWORD
+Install_Timer_Interrupt PROC	Near C
+	USES	ebx,ecx,edx,
+	rm_ptr:DWORD,
+	rm_size:DWORD,
+	freq:DWORD,
+	partial:DWORD
 
 	; Are they attempting to set timer again?
 	cmp	[RealModePtr],0
@@ -425,7 +425,7 @@ PROC	Set_Timer_Frequency C NEAR
 	; now allocate real mode memory and copy the rm binary down to it.
 	mov	eax,0100h		; set function number
 	mov	ebx,[rm_size]		; get size of RM binary.
-	add	ebx,15			; round up 
+	add	ebx,15			; round up
 	shr	ebx,4			; convert to pages.
 	int	DPMI_INTR	 	; do call.
 	jc	??error		 	; check for error.
@@ -494,7 +494,7 @@ PROC	Set_Timer_Frequency C NEAR
 	mov	[(TimerType PTR esi).OldRMI],ecx
 
 	;==========================================================================
-	; only separate method of installation is posible. 
+	; only separate method of installation is posible.
 	; Now it is time to set the Protected mode interrupt Keyboard
 	; ax = function number (0205
 	; bl = number of interrupt to set
@@ -540,7 +540,7 @@ PROC	Set_Timer_Frequency C NEAR
 	ret
 ??error:
        	xor	eax,eax			; signal an error.
-	ret		
+	ret
 
 	ENDP
 
@@ -559,7 +559,7 @@ PROC	Set_Timer_Frequency C NEAR
 ;* HISTORY:                                                                *
 ;*   07/06/1994 SKB : Created.                                             *
 ;*=========================================================================*
-	PROC	Remove_Timer_Interrupt C NEAR
+Remove_Timer_Interrupt PROC	NEAR C
 	USES	ebx,ecx,edx
 
 	; check if timer was previosly install
@@ -601,7 +601,7 @@ PROC	Set_Timer_Frequency C NEAR
 ??vectors_not_set:
 
 	; Call function to set the rate of the chip, ebx = rate.
-	test	[InitFlags],IF_RATE_CHANGE	; was it changed?	
+	test	[InitFlags],IF_RATE_CHANGE	; was it changed?
 	jz	??rate_not_changed
 	mov	ebx,0FFFFh			; back to 18.2 time per second.
 	call	Set_Timer_Rate			; call function to set timer.
@@ -628,7 +628,7 @@ PROC	Set_Timer_Frequency C NEAR
 
 ??mem_not_allocated:
 
-	; Now we can unlock all stuff needed for the interrupt.  
+	; Now we can unlock all stuff needed for the interrupt.
 	; Unlock code
 	test	[InitFlags],IF_LOCKED_PM_CODE
 	jz	??code_not_locked
@@ -665,7 +665,7 @@ PROC	Set_Timer_Frequency C NEAR
        	xor	eax,eax			; signal an error.
 	ret
 
-	ENDP	
+	ENDP
 
 
 
@@ -687,9 +687,9 @@ PROC	Set_Timer_Frequency C NEAR
 ;* HISTORY:                                                                *
 ;*   07/12/1994 SKB : Created.                                             *
 ;*=========================================================================*
-	PROC	Get_Num_Interrupts C Near
-	USES	esi
-	ARG	realmode:DWORD
+Get_Num_Interrupts PROC	Near C
+	USES	esi,
+	realmode:DWORD
 
 	mov	esi,[RealModePtr]
 	cmp	[realmode],0
@@ -715,7 +715,7 @@ PROC	Set_Timer_Frequency C NEAR
 ;* HISTORY:                                                                *
 ;*   07/06/1994 SKB : Created.                                             *
 ;*=========================================================================*
-	PROC	Get_System_Tick_Count C Near
+Get_System_Tick_Count PROC	Near C
 	USES	esi
 
 	mov	esi,[RealModePtr]
@@ -742,7 +742,7 @@ PROC	Set_Timer_Frequency C NEAR
 ;* HISTORY:                                                                *
 ;*   07/12/1994 SKB : Created.                                             *
 ;*=========================================================================*
-	PROC	Get_User_Tick_Count C Near
+Get_User_Tick_Count PROC	Near C
 	USES	esi
 
 	mov	esi,[RealModePtr]
@@ -770,7 +770,7 @@ MACRO	SET_DS_ESI_TO_RM
 	mov	esi,[RealModePtr]		; Point to start of RM data.
 ENDM
 
-	
+
 MACRO	INCREMENT_TIMERS
 	; Expects ESI to point to real mode memory.
 
@@ -814,7 +814,7 @@ MACRO	ENABLE_CLOCK_INT
 	out	INTCHIP0,al 	; 8259 interrupt chip controller 0
 ENDM
 
-LABEL 	LockedCodeStart	BYTE
+LockedCodeStart 	LABEL	BYTE
 
 ;***************************************************************************
 ;* TIMER_INTERRUPT -- Temp routine to mimic a timer system calling ours     *
@@ -833,7 +833,7 @@ LABEL 	LockedCodeStart	BYTE
 
 	PROC	Timer_Interrupt	Near
 ;////////////////////////////// Call prot mode interrupt vector ////////////////////////////////////////
-; This routine will do what it needs to, 
+; This routine will do what it needs to,
 ; then it will decide if the old vector should be called.
 ; if so, it calls it and never returns to this function.
 ; if not, we do our own return.
@@ -868,7 +868,7 @@ LABEL 	LockedCodeStart	BYTE
 	; Now take care of calling the old DOS timer interrupt vector.
 	; This must be the last operation of this module since if we call
 	; DOS, we will never return.
-	mov	ax,[(TimerType PTR ds:esi).DosAdder] 
+	mov	ax,[(TimerType PTR ds:esi).DosAdder]
 	add	[(TimerType PTR esi).DosFraction],ax
 	jnc	??no_dos_call					; if not, skip the call.
 
@@ -886,7 +886,7 @@ LABEL 	LockedCodeStart	BYTE
 	; Step 6.
 	pop	ds es gs fs
 	popad
-	pop	ebp  
+	pop	ebp
 
 	; Step 7.
 	iretd				; transfer control to original handler.
@@ -899,9 +899,9 @@ LABEL 	LockedCodeStart	BYTE
 	pop	ds es gs fs
 	popad
 
-	pop	ebp  
+	pop	ebp
 	add	esp,8
-	popfd	
+	popfd
 
 	iretd
 ;////////////////////////////// Call prot mode interrupt vector ////////////////////////////////////////
@@ -928,13 +928,13 @@ LABEL 	LockedCodeStart	BYTE
 ;*   03/14/1995 PWG : Created.                                             *
 ;*=========================================================================*
 
-	PROC	Timer_Interrupt_Func C Far
+Timer_Interrupt_Func PROC	Far C
 	pushfd					; save off the flags
 	pushad					; save off the main registers
 	push	fs gs es ds			; save off the seg registers
-	
+
 	SET_DS_ESI_TO_RM			; Set ds:esi to point to real mode stuff.
-	INCREMENT_TIMERS			; Increment Westwoods timers	
+	INCREMENT_TIMERS			; Increment Westwoods timers
 
 	pop	ds es gs fs
 	popad
@@ -942,7 +942,7 @@ LABEL 	LockedCodeStart	BYTE
 	retf
 	ENDP
 
-LABEL 	LockedCodeEnd		BYTE
+LockedCodeEnd 	LABEL		BYTE
 
 ;***************************************************************************
 ;* DISABLE_TIMER_INTERRUPT_ONLY -- Disables at the hardware level          *
@@ -960,7 +960,7 @@ LABEL 	LockedCodeEnd		BYTE
 ;*   06/07/1995 DRD : Created.                                             *
 ;*=========================================================================*
 
-	PROC	Disable_Timer_Interrupt C Near
+Disable_Timer_Interrupt PROC	Near C
 	push	eax
 	pushf
 
@@ -994,7 +994,7 @@ LABEL 	LockedCodeEnd		BYTE
 ;*   06/07/1995 DRD : Created.                                             *
 ;*=========================================================================*
 
-	PROC	Enable_Timer_Interrupt C Near
+Enable_Timer_Interrupt PROC	Near C
 	push	eax
 	pushf
 

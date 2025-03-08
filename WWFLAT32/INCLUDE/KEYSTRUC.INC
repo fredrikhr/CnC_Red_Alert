@@ -34,7 +34,7 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-STRUC	KeyboardType
+KeyboardType	STRUC
 	SoundOn			DW	?	; toggled by alt S
 	MusicOn			DW	?	; toggled by alt M
 	KeyFlags			DD	?	; all but repeat for now
@@ -42,7 +42,7 @@ STRUC	KeyboardType
 	KeyMouseMove	DB	6  DUP(?)
 	ScreenEdge		DW	18 DUP (?)
 	Bits				DB	8  DUP (?)
-	CondPassKey		DW	17 DUP (?) 
+	CondPassKey		DW	17 DUP (?)
 	CondPassCond	DW	17 DUP (?)
 	EscRoutine		DD	?
 	ExtCodes			DB	16 DUP (?)
@@ -79,7 +79,7 @@ STRUC	KeyboardType
 	ExtIndex			DW	?
 
 	KeyOldRMI			DD	?	; The origianl RM interrupt seg:off.
-	KeyOldPMIOffset	DD	?	; The origianl PM interrupt offset		
+	KeyOldPMIOffset	DD	?	; The origianl PM interrupt offset
 	KeyOldPMISelector	DD	?	; The original PM interrupt segment.
 
 	KeyCodeOffset			DW	?	; Offset of the code in the RM stuff.
@@ -88,7 +88,7 @@ STRUC	KeyboardType
 	PMIssuedKeyInt			DD	?	; did Protected mode pass this through?
 
 	BrkOldRMI				DD	?	; The origianl RM interrupt seg:off.
-	BrkOldPMIOffset		DD	?	; The origianl PM interrupt offset		
+	BrkOldPMIOffset		DD	?	; The origianl PM interrupt offset
 	BrkOldPMISelector		DD	?	; The original PM interrupt segment.
 
 	BrkCodeOffset			DW	?	; Offset of the code in the RM stuff.
@@ -97,7 +97,7 @@ STRUC	KeyboardType
 	PMIssuedBrkInt			DD	?	; did Protected mode pass this through?
 	KeyIntDisabled			DD	?
 
-	DbgOldPMIOffset		DD	?	; The origianl PM interrupt offset		
+	DbgOldPMIOffset		DD	?	; The origianl PM interrupt offset
 	DbgOldPMISelector		DD	?	; The original PM interrupt segment.
 
 	;---------------------------------------------------------------------------
@@ -112,7 +112,7 @@ STRUC	KeyboardType
 	MouseOffsetX		DW	?	; Fractional step values used if a mouse
 	MouseOffsetY		DW	?	;   moves at less than one pixel at a time
 	MState				DD	?	; Tracks if mouse is hidden (TRUE) or not (FALSE)
-	MouseXOld     		DW	?	; Holds last MouseX and MouseY to determine if 
+	MouseXOld     		DW	?	; Holds last MouseX and MouseY to determine if
 	MouseYOld     		DW	?	;   mouse needs to be redrawn
 	MCState				DW	?	; Tracks if mouse conditional hidden (TRUE) or not
 	MouseCXLeft			DD	?	; Conditional hide mouse left x position
@@ -144,7 +144,7 @@ STRUC	KeyboardType
 	VESAMouseDraw		dw	?
 	VESAMouseShadow	dw	?
 
-	VesaPtr				dd ?	
+	VesaPtr				dd ?
 	VesaBankTable	   DD	8 dup (?)
 	Adjust_XPos			dd ?
 	Adjust_YPos			dd ?

@@ -37,17 +37,17 @@
 ;*   Vesa_Blit_To_Vesa -- Copies a section of vesa screen to vesa screen   *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-INCLUDE "mcgaprim.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <mcgaprim.inc>
+INCLUDE <.\gbuffer.inc>
 
 
 GLOBAL	Vesa_Blit_To_Linear		:NEAR
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* VESA_BLIT_TO_LINEAR -- Copies vesa screen to graphic buffer             *
@@ -65,10 +65,10 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   01/16/1995 PWG : Created.                                             *
 ;*=========================================================================*
-      	PROC	Vesa_Blit_To_Linear C near 
+Vesa_Blit_To_Linear PROC	near C
 	ret
-	ENDP	Vesa_Blit_To_Linear
+Vesa_Blit_To_Linear	ENDP
 
-END	
+END
 
 

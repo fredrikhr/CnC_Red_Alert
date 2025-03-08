@@ -35,17 +35,17 @@
 ;*   Left_Reverse_Skip -- Skips bytes in a data stream			   *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 ;********************* Model & Processor Directives ************************
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
 
 ;******************************** Includes *********************************
-INCLUDE "shape.inc"
+INCLUDE <shape.inc>
 
 
 ;********************************* Code ************************************
-	CODESEG
+	.CODE; Converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* Left_Reverse_Skip -- Skips bytes in a data stream			   *
@@ -91,7 +91,7 @@ PROC	Left_Reverse_Skip NOLANGUAGE NEAR
 	jecxz	??out			; if we're done then get outta here
 
 	;--------------------------------------------------------------------
-	; If we have a run then get the next byte which is the length.  
+	; If we have a run then get the next byte which is the length.
 	;--------------------------------------------------------------------
 ??on_run:
 	mov	al,[BYTE PTR edi]	; get the count of zeros to run
@@ -110,7 +110,7 @@ PROC	Left_Reverse_Skip NOLANGUAGE NEAR
 	mov	edx,0			; no scaling, so clear EDX
 	ret				; return back to the real function
 
-	ENDP	Left_Reverse_Skip
+Left_Reverse_Skip	ENDP
 
 	END
 

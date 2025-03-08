@@ -37,27 +37,27 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
 GLOBAL 		Processor          :NEAR
-		    
+
 
 PROC_80386	equ	0
 PROC_80486	equ	1
 PROC_80586	equ	2
 
-DATASEG
+.DATA; Converted from TASM: DATASEG
 cpu_id_586	dw	0
-			
-CODESEG
 
-PROC	Processor C near
+.CODE; Converted from TASM: CODESEG
+
+Processor PROC	near C
 	USES ebx
 	LOCAL	ptype:WORD
 
-	pushfd	
+	pushfd
 
 ; At least a 386 -- check for 486.
 	mov	[WORD PTR ptype],PROC_80386	; 80386
@@ -66,36 +66,36 @@ PROC	Processor C near
 	mov	ebx,eax
 	xor	eax,40000h
 	push	eax
-	popfd	
-	pushfd	
+	popfd
+	pushfd
 	pop	eax
 	xor	eax,ebx
 	je	short ??fini
 
 ; At least a 486 -- check for 586(Pentium)
 	mov	[ptype],PROC_80486	; 80486
-			       
+
 	; Some machines have a problem with this fLAG
 	; and thus make us think they are a 586 but they are
-	; really a 486. A possible way around this is to 
+	; really a 486. A possible way around this is to
 	; capture the Illegal instruction vector, then  do
 	; an instruction only available on the 586.
-	
+
 	; for now this is just commented out
-	pushfd	
+	pushfd
 	pop	eax
 	mov	ebx,eax
 	xor	eax,200000h
 	push	eax
-	popfd	
-	pushfd	
+	popfd
+	pushfd
 	pop	eax
 	xor	eax,ebx
 	je	short ??fini
 
 ; At least a 586(Pentium) -- check for higher.
 	mov	[ptype],PROC_80586	; 80486
-;	mov	eax,1	       
+;	mov	eax,1
 ;	DW	0fA2h		; CPUID opcode.
 ;	shr	ax,8
 ;	and	ax,0fh
@@ -105,12 +105,12 @@ PROC	Processor C near
 
 ; Final cleanup and exit.
 ??fini:
-	popfd	
+	popfd
 	sub	eax,eax
 	mov	ax,[ptype]
-	ret	
+	ret
 
-ENDP	Processor
+Processor	ENDP
 
 END
 

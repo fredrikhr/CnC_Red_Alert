@@ -39,14 +39,14 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
 GLOBAL	 Clip_Rect	:NEAR
 GLOBAL	 Confine_Rect	:NEAR
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* Clip_Rect -- clip a given rectangle against a given window		   *
@@ -66,25 +66,25 @@ CODESEG
 ;*=========================================================================*
 ; int Clip_Rect (int* x, int* y, int* dw, int* dh, int width, int height);          			   *
 
-	PROC	Clip_Rect C near
-	uses	ebx,ecx,edx,esi,edi
-	arg	x:dword
-	arg	y:dword
-	arg	w:dword
-	arg	h:dword
-	arg	width:dword
-	arg	height:dword
+Clip_Rect PROC	near C
+	uses	ebx,ecx,edx,esi,edi,
+	x:dword,
+	y:dword,
+	w:dword,
+	h:dword,
+	width:dword,
+	height:dword
 
 ;This Clipping algorithm is a derivation of the very well known
 ;Cohen-Sutherland Line-Clipping test. Due to its simplicity and efficiency
-;it is probably the most commontly implemented algorithm both in software 
-;and hardware for clipping lines, rectangles, and convex polygons against 
-;a rectagular clipping window. For reference see 
+;it is probably the most commontly implemented algorithm both in software
+;and hardware for clipping lines, rectangles, and convex polygons against
+;a rectagular clipping window. For reference see
 ;"COMPUTER GRAPHICS principles and practice by Foley, Vandam, Feiner, Hughes
 ; pages 113 to 177".
 ; Briefly consist in computing the Sutherland code for both end point of
 ; the rectangle to find out if the rectangle is:
-; - trivially accepted (no further clipping test, return the oroginal data) 
+; - trivially accepted (no further clipping test, return the oroginal data)
 ; - trivially rejected (return with no action, return error code)
 ; - retangle must be iteratively clipped again edges of the clipping window
 ;   and return the clipped rectangle
@@ -114,7 +114,7 @@ CODESEG
 	shld	edx,eax,1 	; bit3 of code1 = sign bit of (x1 - 0)
 	sub	esi,[width]	; get the difference (x0 - (width + 1))
 	sub	eax,[width]	; get the difference (x1 - (width + 1))
-	dec	esi		
+	dec	esi
 	dec	eax
 	shld	ecx,esi,1	; bit2 of code0 = sign bit of (x0 - (width + 1))
 	shld	edx,eax,1	; bit2 of code1 = sign bit of (x0 - (width + 1))
@@ -136,11 +136,11 @@ CODESEG
 	; now perform the rejection test
 	mov	eax,-1		; set return code to false
 	mov	bl,cl 		; save code0 for future use
-	test	dl,cl  		; if any two pair of bit in code0 and code1 is set 
+	test	dl,cl  		; if any two pair of bit in code0 and code1 is set
 	jnz	??clip_out	; then rectangle is outside the window
 
 	; now perform the aceptance test
-	xor	eax,eax		; set return code to true	
+	xor	eax,eax		; set return code to true
 	or	bl,dl		; if all pair of bits in code0 and code1 are reset
 	jz	??clip_out	; then rectangle is insize the window.								      '
 
@@ -148,7 +148,7 @@ CODESEG
 	mov	eax,-1		; set return code to false
 	test	cl,1000b	; if bit3 of code0 is set then the rectangle
 	jz	??left_ok	; spill out the left edge of the window
-	mov	edi,[x]		; edi = a pointer to x0 
+	mov	edi,[x]		; edi = a pointer to x0
 	mov	ebx,[w]		; ebx = a pointer to dw
 	mov	esi,[edi]	; esi = x0
 	mov	[dword ptr edi],0 ; set x0 to 0 "this the left edge value"
@@ -157,7 +157,7 @@ CODESEG
 ??left_ok:
 	test	cl,0010b	; if bit1 of code0 is set then the rectangle
 	jz	??bottom_ok	; spill out the bottom edge of the window
-	mov	edi,[y]		; edi = a pointer to y0 
+	mov	edi,[y]		; edi = a pointer to y0
 	mov	ebx,[h]		; ebx = a pointer to dh
 	mov	esi,[edi]	; esi = y0
 	mov	[dword ptr edi],0 ; set y0 to 0 "this the bottom edge value"
@@ -184,10 +184,10 @@ CODESEG
 	jle	??clip_out	; if (width-x0) = 0 then the clipped retangle
 				; has no width we are done
 ??clip_ok:
-	mov	eax,1  	; signal the calling program that the rectangle was modify     
+	mov	eax,1  	; signal the calling program that the rectangle was modify
 ??clip_out:
 	ret
-	ENDP	Clip_Rect
+Clip_Rect	ENDP
 
 
 ;***************************************************************************
@@ -198,31 +198,31 @@ CODESEG
 ;*                                                                         *
 ;* OUTPUT: a) Zero if the rectangle is totally contained by the 	   *
 ;*	      clipping window.						   *
-;*	   c) A positive value if the rectangle	was shifted in position    *	   
+;*	   c) A positive value if the rectangle	was shifted in position    *
 ;*	      to fix inside the clipping window, also the values pointed   *
 ;*	      by x, y, will adjusted to a new values	 		   *
 ;*									   *
-;*  NOTE:  this function make not attempt to verify if the rectangle is	   *	
+;*  NOTE:  this function make not attempt to verify if the rectangle is	   *
 ;*	   bigger than the clipping window and at the same time wrap around*
 ;*	   it. If that is the case the result is meaningless		   *
 ;*=========================================================================*
 ; int Confine_Rect (int* x, int* y, int dw, int dh, int width, int height);          			   *
 
-	PROC	Confine_Rect C near
-	uses	ebx, esi,edi
-	arg	x:dword
-	arg	y:dword
-	arg	w:dword
-	arg	h:dword
-	arg	width :dword
-	arg	height:dword
+Confine_Rect PROC	near C
+	uses	ebx, esi,edi,
+	x:dword,
+	y:dword,
+	w:dword,
+	h:dword,
+	width :dword,
+	height:dword
 
 	xor	eax,eax
 	mov	ebx,[x]
 	mov	edi,[w]
 
 	mov	esi,[ebx]
-	add	edi,[ebx] 
+	add	edi,[ebx]
 
 	sub	edi,[width]
 	neg	esi
@@ -244,7 +244,7 @@ CODESEG
 	mov	edi,[h]
 
 	mov	esi,[ebx]
-	add	edi,[ebx] 
+	add	edi,[ebx]
 
 	sub	edi,[height]
 	neg	esi
@@ -264,7 +264,7 @@ CODESEG
 ??confi_out:
 	ret
 
-	ENDP	Confine_Rect
+Confine_Rect	ENDP
 
  	END
 

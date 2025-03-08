@@ -39,13 +39,13 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
 GLOBAL             Operating_System         :NEAR
 GLOBAL             OperatingSystem          :WORD
-					      
+
 DOS		equ	1
 WIN31STD	equ	2
 WIN31ENH	equ	3
@@ -53,12 +53,12 @@ WIN30ENH	equ	4
 WIN30STD	equ	5
 WIN30REAL	equ	6
 
-DATASEG
+.DATA; Converted from TASM: DATASEG
 
 OperatingSystem	dw	0
 
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* Operating_System -- Determines what the operating system is.            *
@@ -72,15 +72,15 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   01/26/1993  SB : Created.                                             *
 ;*=========================================================================*
-PROC	Operating_System C near 
+Operating_System PROC	near C
 	USES ebx,ecx,edx,es,edi
-		      	 	
+
 
 	; Check for Windows 3.1
 	mov	eax,160Ah		; WIN31CHECK
-	int	2fh	   
+	int	2fh
 	or	ax,ax
-	jz	short RunningUnderWin31	
+	jz	short RunningUnderWin31
 
 	;check for Windows 3.0 enhanced mode
 	mov 	eax,1600h		; WIN386CHECK
@@ -141,7 +141,7 @@ Exit:
 	mov [WORD PTR OperatingSystem], ax
 	ret
 
-ENDP	Operating_System
+Operating_System	ENDP
 
 
 

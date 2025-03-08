@@ -36,14 +36,14 @@
 ;*   Vesa_Get_Pixel -- Gets a pixel from a video viewport                  *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-INCLUDE "mcgaprim.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <mcgaprim.inc>
+INCLUDE <.\gbuffer.inc>
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 ;***************************************************************************
 ;* VESA_GET_PIXEL -- Gets a pixel from a video viewport                    *
 ;*                                                                         *
@@ -59,7 +59,7 @@ CODESEG
 ;*   01/16/1995 PWG : Created.                                             *
 ;*=========================================================================*
 
-     	PROC	Vesa_Get_Pixel C near 
+Vesa_Get_Pixel PROC	near C
 	ret
-	ENDP	Vesa_Get_Pixel
+Vesa_Get_Pixel	ENDP
 END

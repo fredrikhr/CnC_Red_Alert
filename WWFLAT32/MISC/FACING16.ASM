@@ -37,14 +37,14 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
 GLOBAL	 Desired_Facing16	:NEAR
 ;	INCLUDE	"wwlib.i"
 
-	DATASEG
+	.DATA; Converted from TASM: DATASEG
 
 ; 16 direction desired facing lookup table.  Build the index according
 ; to the following bits:
@@ -59,7 +59,7 @@ NewFacing16	DB	 3, 2, 4,-1, 1, 2,0,-1
 		DB	 5, 6, 4,-1, 7, 6,8,-1
 		DB	11,10,12,-1, 9,10,8,-1
 
-	CODESEG
+	.CODE; Converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* DESIRED_FACING16 -- Converts coordinates into a facing number.          *
@@ -82,13 +82,12 @@ NewFacing16	DB	 3, 2, 4,-1, 1, 2,0,-1
 ;*=========================================================================*
 ; long Desired_Facing16(long x1, long y1, long x2, long y2);
 
-	PROC	Desired_Facing16 C near
-	USES	ebx, ecx, edx
-
-	ARG	x1:DWORD
-	ARG	y1:DWORD
-	ARG	x2:DWORD
-	ARG	y2:DWORD
+Desired_Facing16 PROC	near C
+	USES	ebx, ecx, edx,
+	x1:DWORD,
+	y1:DWORD,
+	x2:DWORD,
+	y2:DWORD
 
 	xor	ebx,ebx			; Index byte (built).
 
@@ -140,10 +139,10 @@ NewFacing16	DB	 3, 2, 4,-1, 1, 2,0,-1
 
 	ret
 
-	ENDP	Desired_Facing16
+Desired_Facing16	ENDP
 
 	END
-	
+
 
 
 

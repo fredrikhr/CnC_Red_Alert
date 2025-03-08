@@ -36,15 +36,15 @@
 ;*   Decompress_Frame_Unlock -- Unlocks the JLB audio compression code     *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
-	CODESEG
+	; Converted from TASM: IDEAL
+	.386P	; Converted from TASM: P386
+	.MODEL	FLAT	; Converted from TASM: MODEL	USE32 FLAT
+	; Converted from TASM: LOCALS	??
+	.CODE; Converted from TASM: CODESEG
 
-DPMI_INTR		equ	31h	
+DPMI_INTR		equ	31h
 
-LABEL 	LockedCodeStart	BYTE
+LockedCodeStart 	LABEL	BYTE
 
 CODE_2BIT	EQU	0
 CODE_4BIT	EQU	1
@@ -72,12 +72,11 @@ _4bitdecode	DB	-9,-8,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,8
 ;*   03/14/1995 PWG : Created.                                             *
 ;*=========================================================================*
 
-	GLOBAL	Decompress_Frame:NEAR
-	PROC	Decompress_Frame C NEAR USES ebx ecx edx esi edi
-
-	ARG	source:DWORD
-	ARG	dest:DWORD
-	ARG	count:DWORD
+;	GLOBAL	Decompress_Frame:NEAR
+Decompress_Frame	PROC	NEAR C USES ebx ecx edx esi edi,
+	source:DWORD,
+	dest:DWORD,
+	count:DWORD
 
 	LOCAL	previous:BYTE
 	LOCAL	incount:DWORD
@@ -232,7 +231,7 @@ _4bitdecode	DB	-9,-8,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,8
 	cmp	ah,CODE_2BIT
 	jne	??zerodelta
 
-;	A sequence of 2bit deltas follow.  AL equals the number of 
+;	A sequence of 2bit deltas follow.  AL equals the number of
 ;	packed delta bytes to process.
 
 ??bit2loop:
@@ -363,9 +362,9 @@ _4bitdecode	DB	-9,-8,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,8
 	mov	eax,[incount]
 	ret
 
-	ENDP	Decompress_Frame
+Decompress_Frame	ENDP
 
-LABEL 	LockedCodeEnd	BYTE
+LockedCodeEnd 	LABEL	BYTE
 
 
 ;***************************************************************************
@@ -380,8 +379,8 @@ LABEL 	LockedCodeEnd	BYTE
 ;* HISTORY:								   *
 ;*   06/26/1995 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	Decompress_Frame_Lock:NEAR
-	PROC	Decompress_Frame_Lock C NEAR USES ebx ecx edx esi edi
+;	GLOBAL	Decompress_Frame_Lock:NEAR
+Decompress_Frame_Lock	PROC	NEAR C USES ebx ecx edx esi edi
 
 	mov	eax,0600h			; function number.
 	mov	ecx,OFFSET LockedCodeStart	; ecx must have start of memory.
@@ -398,7 +397,7 @@ LABEL 	LockedCodeEnd	BYTE
 ??exit:
 	ret
 
-	ENDP	Decompress_Frame_Lock
+Decompress_Frame_Lock	ENDP
 
 ;***************************************************************************
 ;* DECOMPRESS_FRAME_UNLOCK -- Unlocks the JLB audio compression code       *
@@ -412,8 +411,8 @@ LABEL 	LockedCodeEnd	BYTE
 ;* HISTORY:								   *
 ;*   06/26/1995 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	Decompress_Frame_Unlock:NEAR
-	PROC	Decompress_Frame_Unlock C NEAR USES ebx ecx edx esi edi
+;	GLOBAL	Decompress_Frame_Unlock:NEAR
+Decompress_Frame_Unlock	PROC	NEAR C USES ebx ecx edx esi edi
 
 	mov	eax , 0601h
 	mov	ecx,OFFSET LockedCodeStart	; ecx must have start of memory.
@@ -430,7 +429,7 @@ LABEL 	LockedCodeEnd	BYTE
 ??exit:
 	ret
 
-	ENDP	Decompress_Frame_Unlock
+Decompress_Frame_Unlock	ENDP
 
 
 

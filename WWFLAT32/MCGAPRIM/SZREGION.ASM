@@ -35,16 +35,16 @@
 ;*   VVPC::Size_Of_Region - calculate MCGA region size			   *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-INCLUDE "mcgaprim.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <mcgaprim.inc>
+INCLUDE <.\gbuffer.inc>
 
 GLOBAL	MCGA_Size_Of_Region	: NEAR
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* VVPC::Size_Of_Region - calculate MCGA region size			   *
@@ -59,18 +59,17 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   03/01/1995 BWG : Created.                                             *
 ;*=========================================================================*
-	PROC	MCGA_Size_Of_Region C near 
-	USES	ebx,ecx,edx
-
-	ARG    	this:DWORD				; this is a member function
-	ARG	width:DWORD				; width of region
-	ARG	height:DWORD				; height of region
+MCGA_Size_Of_Region PROC	near C
+	USES	ebx,ecx,edx,
+	this:DWORD				; this is a member function,
+	width:DWORD				; width of region,
+	height:DWORD				; height of region
 
 	;*===================================================================
 	; Get the viewport information
 	;*===================================================================
 	mov	ebx,[this]				; get a pointer to viewport
-	xor	eax,eax					
+	xor	eax,eax
 	mov	ecx,[(GraphicViewPort ebx).GVPHeight]	; ecx = height of viewport
 	mov	edx,[(GraphicViewPort ebx).GVPWidth]	; edx = width of viewport
 
@@ -96,7 +95,7 @@ CODESEG
 ??hok:	mul	ebx					; size = w * h
 
 	ret
-	ENDP	MCGA_Size_Of_Region
+MCGA_Size_Of_Region	ENDP
 
 	END
 

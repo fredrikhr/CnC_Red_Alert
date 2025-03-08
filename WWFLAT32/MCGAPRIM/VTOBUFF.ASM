@@ -35,15 +35,15 @@
 ;*   Vesa_To_Buffer -- Copies a vesa viewport to a linear buffer           *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-INCLUDE "mcgaprim.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <mcgaprim.inc>
+INCLUDE <.\gbuffer.inc>
 
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 
 
 ;***************************************************************************
@@ -60,7 +60,7 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   01/16/1995 PWG : Created.                                             *
 ;*=========================================================================*
-      	PROC	Vesa_To_Buffer C near
+Vesa_To_Buffer PROC	near C
 	ret
-	ENDP	Vesa_To_Buffer
+Vesa_To_Buffer	ENDP
 END

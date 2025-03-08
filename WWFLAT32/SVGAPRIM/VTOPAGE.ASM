@@ -35,17 +35,17 @@
 ;*   Buffer_To_Page(GVC) -- Copies a linear buffer to a graphic viewport   *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
-LOCALS ??
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
+; Converted from TASM: LOCALS ??
 
 TRANSP	equ  0
 
-INCLUDE "svgaprim.inc"
-INCLUDE "gbuffer.inc"
+INCLUDE <svgaprim.inc>
+INCLUDE <gbuffer.inc>
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* VVC::TOPAGE -- Copies a linear buffer to a virtual viewport		   *
@@ -69,18 +69,18 @@ CODESEG
 ;*   06/15/1994 PWG : Created.                                             *
 ;*   12/09/1994 PWG : Made SVGA Modifications                              *
 ;*=========================================================================*
-	PROC	Vesa_Buffer_To_Page C near 
+Vesa_Buffer_To_Page PROC	near C
 	USES	ebx,ecx,edx,esi,edi
 
 	;*===================================================================
 	;* define the arguements that our function takes.
-	;*===================================================================
-	ARG	x_pixel     :DWORD		; x pixel position in source
-	ARG	y_pixel     :DWORD		; y pixel position in source
-	ARG	pixel_width :DWORD		; width of rectangle to blit
-	ARG	pixel_height:DWORD		; height of rectangle to blit
-	ARG    	src         :DWORD		; this is a member function
-	ARG	dest        :DWORD		; what are we blitting to
+	;*===================================================================,
+	x_pixel     :DWORD		; x pixel position in source,
+	y_pixel     :DWORD		; y pixel position in source,
+	pixel_width :DWORD		; width of rectangle to blit,
+	pixel_height:DWORD		; height of rectangle to blit,
+	src         :DWORD		; this is a member function,
+	dest        :DWORD		; what are we blitting to
 
 ;	ARG	trans       :DWORD			; do we deal with transparents?
 
@@ -101,8 +101,8 @@ CODESEG
 
 ; Clip dest Rectangle against source Window boundaries.
 
-	mov	[ scr_x1 ] , 0 
-	mov	[ scr_y1 ] , 0 
+	mov	[ scr_x1 ] , 0
+	mov	[ scr_y1 ] , 0
 	mov  	esi , [ dest ]	    ; get ptr to dest
 	xor 	ecx , ecx
 	xor 	edx , edx
@@ -143,7 +143,7 @@ CODESEG
 	test	cl , 1000b
 	jz	??dest_left_ok
 	mov	eax , [ x_pixel ]
-	neg	eax 
+	neg	eax
 	mov	[ x_pixel ] , 0
 	mov	[ scr_x1 ] , eax
 
@@ -151,7 +151,7 @@ CODESEG
 	test	cl , 0010b
 	jz	??dest_bottom_ok
 	mov	eax , [ y_pixel ]
-	neg	eax 
+	neg	eax
 	mov	[ y_pixel ] , 0
 	mov	[ scr_y1 ] , eax
 
@@ -168,7 +168,7 @@ CODESEG
 
 ??do_blit:
 
-       cld	
+       cld
 
        mov	eax , [ (VideoViewPort esi) . VIVPXAdd ]
        add	eax , [ (VideoViewPort esi) . VIVPWidth ]
@@ -207,7 +207,7 @@ CODESEG
        jz	??real_out
 
 
-; ********************************************************************       
+; ********************************************************************
 ; Forward bitblit only
 
 IF TRANSP
@@ -216,10 +216,10 @@ IF TRANSP
 ENDIF
 
 
-; the inner loop is so efficient that 
+; the inner loop is so efficient that
 ; the optimal consept no longer apply because
 ; the optimal byte have to by a number greather than 9 bytes
-       cmp	eax , 10        
+       cmp	eax , 10
        jl	??forward_loop_bytes
 
 ??forward_loop_dword:
@@ -234,10 +234,10 @@ ENDIF
        cmp	edi , 0b0000h
        jge	??no_trailing
        mov	ecx , 0b0000h
-       sub	ecx , edi 
+       sub	ecx , edi
        sub	ebx , ecx
        rep	movsb
-??no_trailing:  
+??no_trailing:
        add	edi , [ cpu_video_page ]
        call	Vesa_Asm_Set_Win			; set the window
 
@@ -265,7 +265,7 @@ ENDIF
        rep	movsb
        add	esi , [ scr_ajust_width ]
        add	edi , [ dest_ajust_width ]
-       dec	edx 
+       dec	edx
        jnz	??forward_loop_dword
        ret
 
@@ -280,10 +280,10 @@ ENDIF
        cmp	edi , 0b0000h
        jge	??no_trailing_bytes
        mov	ecx , 0b0000h
-       sub	ecx , edi 
+       sub	ecx , edi
        sub	ebx , ecx
        rep	movsb
-??no_trailing_bytes:  
+??no_trailing_bytes:
        add	edi , [ cpu_video_page ]
        Call	Vesa_Asm_Set_Win			; set the window
 ??in_range_bytes:
@@ -303,7 +303,7 @@ IF  TRANSP
 
        mov	ecx , eax
        and	ecx , 01fh
-       lea	ecx , [ ecx + ecx * 4 ]	
+       lea	ecx , [ ecx + ecx * 4 ]
        neg	ecx
        shr	eax , 5
        lea	ecx , [ ??transp_reference + ecx * 2 ]
@@ -311,10 +311,10 @@ IF  TRANSP
 
 
 ??forward_loop_trans:
-       mov	ecx , eax 
+       mov	ecx , eax
        jmp	[ y1_pixel ]
 ??forward_trans_line:
-       REPT	32	
+       REPT	32
        local	transp_pixel
        		mov	bl , [ esi ]
        		test	bl , bl
@@ -325,11 +325,11 @@ IF  TRANSP
 	    	inc	edi
 	ENDM
     ??transp_reference:
-       dec	ecx 
+       dec	ecx
        jge	??forward_trans_line
        add	esi , [ scr_ajust_width ]
        add	edi , [ dest_ajust_width ]
-       dec	edx 
+       dec	edx
        jnz	??forward_loop_trans
        ret
 ENDIF
@@ -338,6 +338,6 @@ ENDIF
        ret
 
 
-	ENDP	Vesa_Buffer_To_Page
+Vesa_Buffer_To_Page	ENDP
 END
 

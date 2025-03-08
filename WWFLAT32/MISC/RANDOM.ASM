@@ -35,19 +35,19 @@
 ;*                                                                         *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
 Global Random		:NEAR
 Global Get_Random_Mask	:NEAR
 Global RandNumb		:DWORD
 
-	DATASEG
+	.DATA; Converted from TASM: DATASEG
 
 RandNumb	DD	12349876H
 
-	CODESEG
+	.CODE; Converted from TASM: CODESEG
 
 ; ----------------------------------------------------------------
 ;
@@ -65,7 +65,7 @@ RandNumb	DD	12349876H
 ;
 ;*
 
-	PROC	Random C near
+Random PROC	near C
 	USES	esi
 
 	lea	esi, [RandNumb]		; get offset in segment of RandNumb
@@ -74,7 +74,7 @@ RandNumb	DD	12349876H
 	shr	al,1			; shift right 1 bit (bit0 in carry)
 	shr	al,1
 	rcl	[BYTE PTR esi+2],1	; rcl byte 3 of RandNumb
-	rcl	[BYTE PTR esi+1],1 	; rcl byte 2 of RandNumb 
+	rcl	[BYTE PTR esi+1],1 	; rcl byte 2 of RandNumb
 	cmc				; complement carry
 	sbb	al,[esi]		; sbb byte 1 of RandNumb
 	shr	al,1			; sets carry
@@ -84,7 +84,7 @@ RandNumb	DD	12349876H
 
 	ret
 
-	ENDP	Random
+Random	ENDP
 
 
 ;-----------------------------------------------------------------
@@ -95,9 +95,9 @@ RandNumb	DD	12349876H
 ;
 ;*
 
-	PROC	Get_Random_Mask C near
-	USES	ecx
-	ARG	maxval:DWORD
+Get_Random_Mask PROC	near C
+	USES	ecx,
+	maxval:DWORD
 
 ; This function takes as a parameter a maximum value, for example, 61.  It
 ; then tries to create an AND mask that is big enough to enclose that number.
@@ -112,7 +112,7 @@ RandNumb	DD	12349876H
 	dec	eax			; dec it to create the mask.
 ??invalid:
 	ret
-	ENDP	Get_Random_Mask
+Get_Random_Mask	ENDP
 ;----------------------------------------------------------------------------
 
 	END

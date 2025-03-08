@@ -34,17 +34,17 @@
 ;* Functions:                                                              *
 ;*   Draw_Reverse -- Draws a reversed row of pixels to the viewport        *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
 
 ;******************************** Includes *********************************
-INCLUDE "shape.inc"
+INCLUDE <shape.inc>
 
 
 ;********************************* Code ************************************
-	CODESEG
+	.CODE; Converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* Draw_Reverse -- Draws a reversed row of pixels to the viewport          *
@@ -66,14 +66,14 @@ INCLUDE "shape.inc"
 ;* HISTORY:                                                                *
 ;*   04/14/1992 PWG : Created.                                             *
 ;*   08/19/1993 SKB : Split drawshp.asm into several modules.              *
-;*   06/02/1994 BR  : Converted to 32-bit.				   *	
+;*   06/02/1994 BR  : Converted to 32-bit.				   *
 ;*   08/09/1994 IML : Optimized for 32-bit.				   *
 ;*   09/06/1994 IML : Integrated p_* and ds_* routines.			   *
 ;*=========================================================================*
 PROC	Draw_Reverse NOLANGUAGE NEAR
 
 	mov	[StashEDX],edx			; save edx
-	mov	edx,[Flags]			
+	mov	edx,[Flags]
 	mov	eax,0				; init to zero
 	sub	[WidthCount],ecx		; decrement bytes remaining by pixels
 						;   to draw
@@ -129,7 +129,7 @@ PROC	Draw_Reverse NOLANGUAGE NEAR
 	or	eax,eax
 	jz	short ??is_transparent
 
-??no_fading_draw_loop:	
+??no_fading_draw_loop:
 	mov	[edi],al			; store color value to viewport
 
 ??is_transparent:
@@ -142,9 +142,9 @@ PROC	Draw_Reverse NOLANGUAGE NEAR
 	inc	esi
 	or	eax,eax				; is the byte a transparent run?
 	jz	??general_is_run		;   if yes then handle the run
-	
+
 ??test_priority:
-	test	edx,SHAPE_PRIORITY		
+	test	edx,SHAPE_PRIORITY
 	jnz	short ??priority
 
 ??test_predator:
@@ -166,7 +166,7 @@ PROC	Draw_Reverse NOLANGUAGE NEAR
 	mov	ebx,[IsTranslucent]		; is it a translucent color?
 	mov	bh,[BYTE PTR ebx + eax]
 	or	bh,bh
-	js	short ??test_fading		
+	js	short ??test_fading
 
 	and	ebx,0FF00h			; clear all of ebx except bh
 						; we have the index to the translation table
@@ -181,9 +181,9 @@ PROC	Draw_Reverse NOLANGUAGE NEAR
 	jnz	??fading
 	jmp	short ??general_draw_loop
 
-??priority:	
+??priority:
 	mov	ebx,[MaskAdjust]		; get mask page	offset
-	mov	bl,[BYTE PTR ebx + edi]		; get mask value  
+	mov	bl,[BYTE PTR ebx + edi]		; get mask value
 
 	and	bl,CLEAR_UNUSED_BITS		; clear unused bits
 
@@ -196,7 +196,7 @@ PROC	Draw_Reverse NOLANGUAGE NEAR
 
 ??predator:
 	mov	ebx,[PartialCount]
-	add	ebx,[PartialPred]	
+	add	ebx,[PartialPred]
 	or	bh,bh
 	jnz	short ??draw_pred		; is this a predator pixel?
 	mov	[PartialCount],ebx
@@ -222,7 +222,7 @@ PROC	Draw_Reverse NOLANGUAGE NEAR
 	mov	al,[edi]			; get the destination color and
 	mov	ebx,[ShadowingTable]		;  index into the shadow table
 	mov	al,[BYTE PTR ebx + eax]
-	jmp	??general_draw_loop			
+	jmp	??general_draw_loop
 
 ??fading:
 	mov	[StashECX],ecx			; preserve ecx for later
@@ -235,7 +235,7 @@ PROC	Draw_Reverse NOLANGUAGE NEAR
 	jnz	short ??fade_loop
 
 	mov	ecx,[StashECX]			; restore ecx for main draw loop
-	jmp	??general_draw_loop			
+	jmp	??general_draw_loop
 
 ??general_is_run:
 	mov	al,[esi]
@@ -244,12 +244,12 @@ PROC	Draw_Reverse NOLANGUAGE NEAR
 	sub	ecx,eax				; chop down the width to do
 	jg	??general_draw_continue			; while more to do, loop back up
 
-??out:	
+??out:
 	add	[WidthCount],ecx		; adjust for source ending in a run
 	mov	edx,[StashEDX]
-	ret	
+	ret
 
-	ENDP	Draw_Reverse
+Draw_Reverse	ENDP
 
 
 	END

@@ -35,20 +35,20 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
 
-LOCALS ??
+; Converted from TASM: LOCALS ??
 
 
 ;******************************************************************************
 ; External declares so these functions can be called
 ;
-GLOBAL  		Pack_2_Plane:NEAR
+;GLOBAL  		Pack_2_Plane:NEAR
 
-	CODESEG
+	.CODE; Converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* PACK_2_PLANE -- packed to planar scanline conversion                    *
@@ -67,7 +67,7 @@ GLOBAL  		Pack_2_Plane:NEAR
 ;*=========================================================================*
 ;									   *
 ;	This is the original function that is converted to asm
-;  
+;
 ;PRIVATE VOID Pack_2_Plane(UBYTE * buffer, BYTE * pageptr, BYTE planebit)
 ;{
 ;  WORD currbit=0x80;		// current bit to be written to
@@ -87,46 +87,45 @@ GLOBAL  		Pack_2_Plane:NEAR
 ;  }
 ;}
 
-PROC	Pack_2_Plane C NEAR 
-	USES	ebx,ecx,esi,edi
- 	ARG	buffer:DWORD
-	ARG	page:DWORD
-	ARG	planebit:WORD
+Pack_2_Plane PROC	NEAR C USES	ebx ecx esi edi,
+ 	buffer:DWORD,
+	_page:DWORD,
+	planebit:WORD
 
 
 	mov	edi,[buffer]
-	mov	esi,[page]
+	mov	esi,[_page]
 
 	mov	ax,[planebit]		; move bit set for current plane (planebit) to ax
 					; the low byte will only be used
-	      
+
 	mov	ecx,320d	      	; set counter to 320 columns (320x200 picture)
-	mov	ah,80h			; set bit 7 of current_bit 
+	mov	ah,80h			; set bit 7 of current_bit
 	dec	edi			; this will get incremented at the start
 
 ??top_loop:				; while (columns left)
 	cmp	ah,80h			;   if current_bit is bit 7
-	jnz	short ??same_dest			
+	jnz	short ??same_dest
 					;   Then
 	inc	edi			;     buffer++  increment pointer
-	mov	[BYTE PTR edi],0	;     *buffer = 0 
+	mov	BYTE PTR [edi],0	;     *buffer = 0
 
 ??same_dest:				;   EndIf
 	mov	bl,al
 	and	bl,[esi]		;   if (planebit & *pageptr)
 	jz	short ??no_set_bit
 
-	or	[BYTE PTR edi],ah     	;     Then *buffer |= current_bit
+	or	BYTE PTR [edi],ah     	;     Then *buffer |= current_bit
 
 ??no_set_bit:
 	inc	esi			;   pageptr++	goto next in source byte
 	ror	ah,1			;   rotate current_bit right one
-	dec	ecx			; 
+	dec	ecx			;
 	jnz	??top_loop
 
 	ret
 
-	ENDP	Pack_2_Plane
+Pack_2_Plane	ENDP
 
 	END
 

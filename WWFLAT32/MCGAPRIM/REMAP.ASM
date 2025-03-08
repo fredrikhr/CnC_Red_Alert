@@ -35,28 +35,28 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-INCLUDE "mcgaprim.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <mcgaprim.inc>
+INCLUDE <.\gbuffer.inc>
 
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 
-	PROC	MCGA_Remap C NEAR
+MCGA_Remap PROC	NEAR C
 	USES	eax,ebx,ecx,edx,esi,edi
 
 	;*===================================================================
 	;* Define the arguements that our function takes.
-	;*===================================================================
-	ARG	this	:DWORD
-	ARG	x0_pixel:DWORD
-	ARG	y0_pixel:DWORD
-	ARG	width	:DWORD
-	ARG	height	:DWORD
-	ARG	remap	:DWORD
+	;*===================================================================,
+	this	:DWORD,
+	x0_pixel:DWORD,
+	y0_pixel:DWORD,
+	width	:DWORD,
+	height	:DWORD,
+	remap	:DWORD
 
 	;*===================================================================
 	; Define some locals so that we can handle things quickly
@@ -130,7 +130,7 @@ CODESEG
 
 
 ??do_remap:
-       cld	
+       cld
        mov	edi , [ (VideoViewPort esi) . VIVPOffset ]
        mov	eax , [ (VideoViewPort esi) . VIVPXAdd ]
        mov	ebx , [ x1_pixel ]
@@ -154,7 +154,7 @@ CODESEG
        mov	ebx , [ counter_x ]
 ??inner_loop:
        mov	dl , [ edi ]
-       mov	dl , [ eax + edx ]	
+       mov	dl , [ eax + edx ]
        mov	[ edi ] , dl
        inc	edi
        dec	ebx
@@ -169,6 +169,6 @@ CODESEG
 ??real_out:
 	ret
 
-	ENDP	MCGA_Remap
+MCGA_Remap	ENDP
 
 	END

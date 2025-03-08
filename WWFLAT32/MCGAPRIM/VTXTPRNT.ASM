@@ -35,15 +35,15 @@
 ;*   Vesa_Print -- Prints a text string to a Vesa Viewport                 *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-INCLUDE "mcgaprim.inc"
-INCLUDE "gbuffer.inc"
+INCLUDE <mcgaprim.inc>
+INCLUDE <gbuffer.inc>
 
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 
 
 ;***************************************************************************
@@ -60,9 +60,9 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   01/17/1995 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Vesa_Print C near
+Vesa_Print PROC	near C
 	ret
-	ENDP	Vesa_Print
+Vesa_Print	ENDP
 
 
 END

@@ -34,7 +34,7 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-STRUC	KeyboardType
+KeyboardType	STRUC
 	SoundOn			DW	?	; toggled by alt S
 	MusicOn			DW	?	; toggled by alt M
 	KeyFlags			DD	?	; all but repeat for now

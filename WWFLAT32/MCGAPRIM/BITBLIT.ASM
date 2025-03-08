@@ -33,31 +33,26 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
-LOCALS ??
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
+; Converted from TASM: LOCALS ??
 
-INCLUDE "mcgaprim.inc"
-INCLUDE "gbuffer.inc"
+INCLUDE <mcgaprim.inc>
+INCLUDE <gbuffer.inc>
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 
-	PROC	Linear_Blit_To_Linear C near 
-	USES	ebx,ecx,edx,esi,edi
-
-	;*===================================================================
-	;* define the arguements that our function takes.
-	;*===================================================================
-	ARG    	this        :DWORD		; this is a member function
-	ARG	dest        :DWORD		; what are we blitting to
-	ARG	x_pixel     :DWORD		; x pixel position in source
-	ARG	y_pixel     :DWORD		; y pixel position in source
-	ARG	dest_x0     :dword
-	ARG	dest_y0     :dword
-	ARG	pixel_width :DWORD		; width of rectangle to blit
-	ARG	pixel_height:DWORD		; height of rectangle to blit
-	ARG	trans       :DWORD			; do we deal with transparents?
+Linear_Blit_To_Linear PROC	near C USES	ebx ecx edx esi edi,
+	_this        :DWORD,		; this is a member function
+	dest        :DWORD,		; what are we blitting to
+	x_pixel     :DWORD,		; x pixel position in source
+	y_pixel     :DWORD,		; y pixel position in source
+	dest_x0     :dword,
+	dest_y0     :dword,
+	pixel_width :DWORD,		; width of rectangle to blit
+	pixel_height:DWORD,		; height of rectangle to blit
+	trans       :DWORD		; do we deal with transparents?
 
 	;*===================================================================
 	; Define some locals so that we can handle things quickly
@@ -73,30 +68,31 @@ CODESEG
 
 ;This Clipping algorithm is a derivation of the very well known
 ;Cohen-Sutherland Line-Clipping test. Due to its simplicity and efficiency
-;it is probably the most commontly implemented algorithm both in software 
-;and hardware for clipping lines, rectangles, and convex polygons against 
-;a rectagular clipping window. For reference see 
+;it is probably the most commontly implemented algorithm both in software
+;and hardware for clipping lines, rectangles, and convex polygons against
+;a rectagular clipping window. For reference see
 ;"COMPUTER GRAPHICS principles and practice by Foley, Vandam, Feiner, Hughes
 ; pages 113 to 177".
 ; Briefly consist in computing the Sutherland code for both end point of
 ; the rectangle to find out if the rectangle is:
-; - trivially accepted (no further clipping test, display rectangle) 
+; - trivially accepted (no further clipping test, display rectangle)
 ; - trivially rejected (return with no action)
 ; - retangle must be iteratively clipped again edges of the clipping window
 ;   and the remaining retangle is display.
 
 ; Clip Source Rectangle against source Window boundaries.
-	mov  	esi,[this]	    ; get ptr to src
-	xor 	ecx,ecx		    ; Set sutherland code to zero 	
+	assume	esi:PTR VideoViewPort
+	mov  	esi,[_this]	    ; get ptr to src
+	xor 	ecx,ecx		    ; Set sutherland code to zero
 	xor 	edx,edx		    ; Set sutherland code to zero
 
-   ; compute the difference in the X axis and get the bit signs into ecx , edx 
-	mov	edi,[(VideoViewPort esi).VIVPWidth]  ; get width into register
-	mov	ebx,[x_pixel]	    ; Get first end point x_pixel into register	
+   ; compute the difference in the X axis and get the bit signs into ecx , edx
+	mov	edi,[esi].VIVPWidth  ; get width into register
+	mov	ebx,[x_pixel]	    ; Get first end point x_pixel into register
 	mov	eax,[x_pixel]	    ; Get second end point x_pixel into register
 	add	ebx,[pixel_width]   ; second point x1_pixel = x + width
 	shld	ecx, eax,1	    ; the sign bit of x_pixel is sutherland code0 bit4
-	mov	[x1_pixel],ebx	    ; save second for future use 
+	mov	[x1_pixel],ebx	    ; save second for future use
 	inc	edi		    ; move the right edge by one unit
 	shld	edx,ebx,1	    ; the sign bit of x1_pixel is sutherland code0 bit4
 	sub	eax,edi		    ; compute the difference x0_pixel - width
@@ -106,7 +102,7 @@ CODESEG
 
    ; the following code is just a repeticion of the above code
    ; in the Y axis.
-	mov	edi,[(VideoViewPort esi).VIVPHeight] ; get height into register
+	mov	edi,[esi].VIVPHeight ; get height into register
 	mov	ebx,[y_pixel]
 	mov	eax,[y_pixel]
 	add	ebx,[pixel_height]
@@ -143,20 +139,20 @@ CODESEG
 ??scr_bottom_ok:
 	test	dl,0100b	       ; if bit 3 in code1 is set then
 	jz	??scr_right_ok	       ; x1_pixel is greater than the width
-	mov	eax,[(VideoViewPort esi).VIVPWidth] ; get width into register
-	mov	[ x1_pixel ],eax       ; set x1_pixel to width. 
+	mov	eax,[esi].VIVPWidth ; get width into register
+	mov	[ x1_pixel ],eax       ; set x1_pixel to width.
 ??scr_right_ok:
 	test	dl,0001b	       ; if bit 0 in code1 is set then
 	jz	??clip_against_dest    ; y1_pixel is greater than the width
-	mov	eax,[(VideoViewPort esi).VIVPHeight]  ; get height into register
-	mov	[ y1_pixel ],eax       ; set y1_pixel to height. 
+	mov	eax,[esi].VIVPHeight  ; get height into register
+	mov	[ y1_pixel ],eax       ; set y1_pixel to height.
 
 ; Clip Source Rectangle against destination Window boundaries.
 ??clip_against_dest:
- 
-   ; build the destination rectangle before clipping 
-   ; dest_x1 = dest_x0 + ( x1_pixel - x_pixel ) 
-   ; dest_y1 = dest_y0 + ( y1_pixel - y_pixel ) 
+
+   ; build the destination rectangle before clipping
+   ; dest_x1 = dest_x0 + ( x1_pixel - x_pixel )
+   ; dest_y1 = dest_y0 + ( y1_pixel - y_pixel )
 	mov	eax,[dest_x0]	     ; get dest_x0 into eax
 	mov	ebx,[dest_y0]	     ; get dest_y0 into ebx
 	sub	eax,[x_pixel]	     ; subtract x_pixel from eax
@@ -167,12 +163,12 @@ CODESEG
 	mov	[dest_y1],ebx	     ; save eax into dest_y1
 
 
-  ; The followin code is a repeticion of the Sutherland clipping 
+  ; The followin code is a repeticion of the Sutherland clipping
   ; descrived above.
 	mov  	esi,[dest]	    ; get ptr to src
 	xor 	ecx,ecx
 	xor 	edx,edx
-	mov	edi,[(VideoViewPort esi).VIVPWidth]  ; get width into register
+	mov	edi,[esi].VIVPWidth  ; get width into register
 	mov	eax,[dest_x0]
 	mov	ebx,[dest_x1]
 	shld	ecx,eax,1
@@ -183,7 +179,7 @@ CODESEG
 	shld	ecx,eax,1
 	shld	edx,ebx,1
 
-	mov	edi,[( VideoViewPort esi) . VIVPHeight ] ; get height into register
+	mov	edi,[esi].VIVPHeight ; get height into register
 	mov	eax,[dest_y0]
 	mov	ebx,[dest_y1]
 	shld	ecx,eax,1
@@ -219,7 +215,7 @@ CODESEG
 ??dest_bottom_ok:
 	test	dl,0100b
 	jz	??dest_right_ok
-	mov	ebx,[ (VideoViewPort esi) . VIVPWidth ]  ; get width into register
+	mov	ebx,[esi].VIVPWidth ; get width into register
 	mov	eax,[ dest_x1 ]
 	mov	[ dest_x1 ],ebx
 	sub	eax,ebx
@@ -228,7 +224,7 @@ CODESEG
 ??dest_right_ok:
 	test	dl,0001b
 	jz	??do_blit
-	mov	ebx,[ (VideoViewPort esi) . VIVPHeight ]  ; get width into register
+	mov	ebx,[esi].VIVPHeight ; get width into register
 	mov	eax,[ dest_y1 ]
 	mov	[ dest_y1 ],ebx
 	sub	eax,ebx
@@ -237,11 +233,12 @@ CODESEG
 
 ; Here is where	we do the actual blit
 ??do_blit:
-       cld	
-       mov	ebx,[this]
-       mov	esi,[(VideoViewPort ebx).VIVPOffset]
-       mov	eax,[(VideoViewPort ebx).VIVPXAdd]
-       add	eax,[(VideoViewPort ebx).VIVPWidth]
+       cld
+	   assume ebx:PTR VideoViewPort
+       mov	ebx,[_this]
+       mov	esi,[ebx].VIVPOffset
+       mov	eax,[ebx].VIVPXAdd
+       add	eax,[ebx].VIVPWidth
        mov	ecx,eax
        mul	[y_pixel]
        add	esi,[x_pixel]
@@ -253,9 +250,9 @@ CODESEG
        mov	[scr_ajust_width ],ecx
 
        mov	ebx,[dest]
-       mov	edi,[(VideoViewPort ebx).VIVPOffset]
-       mov	eax,[(VideoViewPort ebx).VIVPXAdd]
-       add	eax,[ (VideoViewPort ebx).VIVPWidth]
+       mov	edi,[ebx].VIVPOffset
+       mov	eax,[ebx].VIVPXAdd
+       add	eax,[ebx].VIVPWidth
        mov	ecx,eax
        mul	[ dest_y0 ]
        add	edi,[ dest_x0 ]
@@ -276,17 +273,17 @@ CODESEG
        jz	??real_out
        jl	??backupward_blit
 
-; ********************************************************************       
+; ********************************************************************
 ; Forward bitblit
 
        test	[ trans ],1
        jnz	??forward_Blit_trans
 
 
-; the inner loop is so efficient that 
+; the inner loop is so efficient that
 ; the optimal consept no longer apply because
 ; the optimal byte have to by a number greather than 9 bytes
-       cmp	eax,10        
+       cmp	eax,10
        jl	??forward_loop_bytes
 
 ??forward_loop_dword:
@@ -304,33 +301,33 @@ CODESEG
        rep	movsb
        add	esi,[ scr_ajust_width ]
        add	edi,[ dest_ajust_width ]
-       dec	edx 
+       dec	edx
        jnz	??forward_loop_dword
        ret
 
 ??forward_loop_bytes:
-       mov	ecx,eax 
+       mov	ecx,eax
        rep	movsb
        add	esi,[ scr_ajust_width ]
        add	edi,[ dest_ajust_width ]
-       dec	edx 
+       dec	edx
        jnz	??forward_loop_bytes
        ret
 
 ??forward_Blit_trans:
        mov	ecx,eax
        and	ecx,01fh
-       lea	ecx,[ ecx + ecx * 4 ]	
+       lea	ecx,[ ecx + ecx * 4 ]
        neg	ecx
        shr	eax,5
        lea	ecx,[ ??transp_reference + ecx * 2 ]
        mov	[ y1_pixel ],ecx
 
 ??forward_loop_trans:
-       mov	ecx,eax 
+       mov	ecx,eax
        jmp	[ y1_pixel ]
 ??forward_trans_line:
-       REPT	32	
+       REPT	32
        local	transp_pixel
        		mov	bl,[ esi ]
        		test	bl,bl
@@ -341,11 +338,11 @@ CODESEG
 	    	inc	edi
 	ENDM
     ??transp_reference:
-       dec	ecx 
+       dec	ecx
        jge	??forward_trans_line
        add	esi,[ scr_ajust_width ]
        add	edi,[ dest_ajust_width ]
-       dec	edx 
+       dec	edx
        jnz	??forward_loop_trans
        ret
 
@@ -370,9 +367,9 @@ CODESEG
        test	[ trans ],1
        jnz	??backward_Blit_trans
 
-        cmp	eax,15        
-        jl	??backward_loop_bytes	
-		   
+        cmp	eax,15
+        jl	??backward_loop_bytes
+
 ??backward_loop_dword:
 	push	edi
 	push	esi
@@ -397,7 +394,7 @@ CODESEG
         sub	edi,[ dest_area ]
 	dec	edx
 	jge	??backward_loop_dword
-	cld	
+	cld
 	ret
 
 ??backward_loop_bytes:
@@ -411,25 +408,25 @@ CODESEG
         sub	edi,[ dest_area ]
 	dec	edx
 	jge	??backward_loop_bytes
-	cld	
+	cld
 	ret
 
 ??backward_Blit_trans:
        mov	ecx,eax
        and	ecx,01fh
-       lea	ecx,[ ecx + ecx * 4 ]	
+       lea	ecx,[ ecx + ecx * 4 ]
        neg	ecx
        shr	eax,5
        lea	ecx,[ ??back_transp_reference + ecx * 2 ]
        mov	[ y1_pixel ],ecx
 
 ??backward_loop_trans:
-       mov	ecx,eax 
+       mov	ecx,eax
        push	edi
        push	esi
        jmp	[ y1_pixel ]
 ??backward_trans_line:
-       REPT	32	
+       REPT	32
        local	transp_pixel
        		mov	bl,[ esi ]
        		test	bl,bl
@@ -440,20 +437,20 @@ CODESEG
 	    	dec	edi
 	ENDM
     ??back_transp_reference:
-       dec	ecx 
+       dec	ecx
        jge	??backward_trans_line
        pop	esi
        pop	edi
        sub	esi,[ source_area ]
        sub	edi,[ dest_area ]
-       dec	edx 
+       dec	edx
        jge	??backward_loop_trans
        cld
        ret
 
 ??real_out:
        ret
-       ENDP	Linear_Blit_To_Linear
+Linear_Blit_To_Linear	ENDP
 
 
 

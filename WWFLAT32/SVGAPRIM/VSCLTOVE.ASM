@@ -37,20 +37,20 @@
 ;*   Vesa_Scale_To_Vesa -- Scales a vesa viewport to a vesa viewport       *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-INCLUDE "mcgaprim.inc"
-INCLUDE "gbuffer.inc"
+INCLUDE <mcgaprim.inc>
+INCLUDE <gbuffer.inc>
 
 
-GLOBAL 	Vesa_Asm_Set_Win   : near			
+GLOBAL 	Vesa_Asm_Set_Win   : near
 GLOBAL	cpu_video_page     : dword
 GLOBAL	cpu_page_limit     : dword
 
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 
 
 ;***************************************************************************
@@ -67,23 +67,23 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   01/16/1995 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Linear_Scale_To_Vesa C near
+Linear_Scale_To_Vesa PROC	near C
 
 	;*===================================================================
 	;* Define the arguements that our function takes.
-	;*===================================================================
-	ARG	this:DWORD		; pointer to source view port
-	ARG	dest:DWORD		; pointer to destination view port
-	ARG	src_x:DWORD		; source x offset into view port
-	ARG	src_y:DWORD		; source y offset into view port
-	ARG	dst_x:DWORD		; dest x offset into view port
-	ARG	dst_y:DWORD		; dest y offset into view port
-	ARG	src_width:DWORD		; width of source rectangle
-	ARG	src_height:DWORD	; height of source rectangle
-	ARG	dst_width:DWORD		; width of dest rectangle
-	ARG	dst_height:DWORD	; width of dest height
-	ARG	trans:DWORD		; is this transparent?
-	ARG	remap:DWORD		; pointer to table to remap source
+	;*===================================================================,
+	this:DWORD		; pointer to source view port,
+	dest:DWORD		; pointer to destination view port,
+	src_x:DWORD		; source x offset into view port,
+	src_y:DWORD		; source y offset into view port,
+	dst_x:DWORD		; dest x offset into view port,
+	dst_y:DWORD		; dest y offset into view port,
+	src_width:DWORD		; width of source rectangle,
+	src_height:DWORD	; height of source rectangle,
+	dst_width:DWORD		; width of dest rectangle,
+	dst_height:DWORD	; width of dest height,
+	trans:DWORD		; is this transparent?,
+	remap:DWORD		; pointer to table to remap source
 
 	;*===================================================================
 	;* Define local variables to hold the viewport characteristics
@@ -106,7 +106,7 @@ CODESEG
 	local	dx_frac : dword
 	local	dx_intr : dword
 
-	local	scan_line     : dword	
+	local	scan_line     : dword
 	local	counter_x     : dword
 	local	counter_y     : dword
 	local	remap_counter :dword
@@ -127,21 +127,21 @@ CODESEG
 
 	mov	eax , [ src_x ]
 	mov	ebx , [ src_y ]
-	mov	[ src_x0 ] , eax 
-	mov	[ src_y0 ] , ebx 
+	mov	[ src_x0 ] , eax
+	mov	[ src_y0 ] , ebx
 	add	eax , [ src_width ]
 	add	ebx , [ src_height ]
-	mov	[ src_x1 ] , eax 
-	mov	[ src_y1 ] , ebx 
+	mov	[ src_x1 ] , eax
+	mov	[ src_y1 ] , ebx
 
 	mov	eax , [ dst_x ]
 	mov	ebx , [ dst_y ]
-	mov	[ dst_x0 ] , eax 
-	mov	[ dst_y0 ] , ebx 
+	mov	[ dst_x0 ] , eax
+	mov	[ dst_y0 ] , ebx
 	add	eax , [ dst_width ]
 	add	ebx , [ dst_height ]
-	mov	[ dst_x1 ] , eax 
-	mov	[ dst_y1 ] , ebx 
+	mov	[ dst_x1 ] , eax
+	mov	[ dst_y1 ] , ebx
 
 ; Clip Source Rectangle against source Window boundaries.
 	mov  	esi , [ this ]	    ; get ptr to src
@@ -217,7 +217,7 @@ CODESEG
 	sub	eax , [ src_y ]
 	imul	[ dst_height ]
 	idiv	[ src_height ]
-	add	eax , [ dst_y ] 
+	add	eax , [ dst_y ]
 	mov	[ dst_y1 ] , eax
 
 ; Clip destination Rectangle against source Window boundaries.
@@ -301,7 +301,7 @@ CODESEG
 
 ??do_scaling:
 
-       cld	
+       cld
        mov	ebx , [ this ]
        mov	esi , [ (VideoViewPort ebx) . VIVPOffset ]
        mov	eax , [ (VideoViewPort ebx) . VIVPXAdd ]
@@ -369,22 +369,22 @@ CODESEG
  ??outter_loop:
        mov	ebx , [ scan_line ]
        push	esi
-       add	ebx , edi 
+       add	ebx , edi
        xor	ecx , ecx
        add	ebx , [ cpu_video_page ]
        push	edi
        cmp	ebx , [ cpu_page_limit ]
        jl	??in_range
        mov	ebx , [ scan_line ]
-       jmp      ??trailing_entry 
-  ??trailing_bytes: 
+       jmp      ??trailing_entry
+  ??trailing_bytes:
        mov	cl , [ esi ]
        add	ecx , eax
        adc	esi , edx
        mov	[ edi ] , cl
        inc	edi
        dec	ebx
-  ??trailing_entry: 
+  ??trailing_entry:
        cmp	edi , 0b0000h
        jl	??trailing_bytes
        add	edi , [ cpu_video_page ]
@@ -404,7 +404,7 @@ CODESEG
        mov	ebx , [ counter_x ]
        jmp	[ entry ]
  ??inner_loop:
-       REPT	32	
+       REPT	32
 	       mov	cl , [ esi ]
 	       add	ecx , eax
 	       adc	esi , edx
@@ -435,7 +435,7 @@ CODESEG
 ; *************************************************************************
 ; normal scale with remap
 
-??normal_remap:	
+??normal_remap:
        mov	ecx , ebx
        mov	[ dx_frac ] , eax
        mov	[ dx_intr ] , edx
@@ -451,7 +451,7 @@ CODESEG
  ??remapoutter_loop:
        mov	ebx , [ scan_line ]
        push	esi
-       add	ebx , edi 
+       add	ebx , edi
        xor	ecx , ecx
        add	ebx , [ cpu_video_page ]
        push	edi
@@ -459,8 +459,8 @@ CODESEG
        jl	??remap_in_range
        mov	edx , [ scan_line ]
        xor	ebx , ebx
-       jmp    ??remap_trailing_entry 
- ??remap_trailing_bytes: 
+       jmp    ??remap_trailing_entry
+ ??remap_trailing_bytes:
        mov	bl , [ esi ]
        add	ecx , [ dx_frac ]
        adc	esi , [ dx_intr ]
@@ -471,14 +471,14 @@ CODESEG
  ??remap_trailing_entry:
        cmp	edi , 0b0000h
        jl	??remap_trailing_bytes
-??remap_no_trailing:  
+??remap_no_trailing:
        add	edi , [ cpu_video_page ]
        call	Vesa_Asm_Set_Win			; set the window
 ??remap_end_of_scanline:
        mov	bl , [ esi ]
        add	ecx , [ dx_frac ]
        adc	esi , [ dx_intr ]
-       mov	cl , [ eax + ebx ] 
+       mov	cl , [ eax + ebx ]
        mov	[ edi ] , cl
        inc	edi
        dec	edx
@@ -495,7 +495,7 @@ CODESEG
        xor	ebx , ebx
        jmp	[ entry ]
  ??remapinner_loop:
-       REPT	32	
+       REPT	32
 	       mov	bl , [ esi ]
 	       add	ecx , [ dx_frac ]
 	       adc	esi , edx
@@ -504,7 +504,7 @@ CODESEG
 	       inc	edi
        ENDM
  ??remapref_point:
-       dec	[ remap_counter ] 
+       dec	[ remap_counter ]
        jge	??remapinner_loop
  ??remap_next_line:
        pop	edi
@@ -544,7 +544,7 @@ CODESEG
  ??tr_outter_loop:
        mov	ebx , [ scan_line ]
        push	esi
-       add	ebx , edi 
+       add	ebx , edi
        xor	ecx , ecx
        add	ebx , [ cpu_video_page ]
        push	edi
@@ -552,8 +552,8 @@ CODESEG
        jl	??tr_in_range
 
        mov	ebx , [ scan_line ]
-       jmp     ??tr_trailing_entry 
-  ??tr_trailing_bytes: 
+       jmp     ??tr_trailing_entry
+  ??tr_trailing_bytes:
        mov	cl , [ esi ]
        test	cl , cl
        jz	??tr_skip
@@ -563,7 +563,7 @@ CODESEG
        adc	esi , edx
        inc	edi
        dec	ebx
-  ??tr_trailing_entry: 
+  ??tr_trailing_entry:
        cmp	edi , 0b0000h
        jl	??tr_trailing_bytes
        add	edi , [ cpu_video_page ]
@@ -586,7 +586,7 @@ CODESEG
        mov	ebx , [ counter_x ]
        jmp	[ entry ]
  ??tr_inner_loop:
-       REPT	32	
+       REPT	32
        local	skip
 	       mov	cl , [ esi ]
 	       test	cl , cl
@@ -622,7 +622,7 @@ CODESEG
 ; *************************************************************************
 ; normal scale with remap and transparency
 
-??trans_remap:	
+??trans_remap:
        mov	ecx , ebx
        mov	[ dx_frac ], eax
        mov	[ dx_intr ] , edx
@@ -638,7 +638,7 @@ CODESEG
  ??trans_remapoutter_loop:
        mov	ebx , [ scan_line ]
        push	esi
-       add	ebx , edi 
+       add	ebx , edi
        xor	ecx , ecx
        add	ebx , [ cpu_video_page ]
        push	edi
@@ -646,8 +646,8 @@ CODESEG
        jl	??trans_remap_in_range
        mov	edx , [ scan_line ]
        xor	ebx , ebx
-       jmp    ??trans_remap_trailing_bytes1 
-  ??trans_remap_trailing_bytes: 
+       jmp    ??trans_remap_trailing_bytes1
+  ??trans_remap_trailing_bytes:
        mov	bl , [ esi ]
        test	bl , bl
        jz	??trans_remp
@@ -658,10 +658,10 @@ CODESEG
        adc	esi , [ dx_intr ]
        inc	edi
        dec	edx
-  ??trans_remap_trailing_bytes1: 
+  ??trans_remap_trailing_bytes1:
        cmp	edi , 0b0000h
        jl	??trans_remap_trailing_bytes
-??trans_remap_no_trailing:  
+??trans_remap_no_trailing:
        add	edi , [ cpu_video_page ]
        call	Vesa_Asm_Set_Win			; set the window
 ??trans_remap_end_of_scanline:
@@ -689,7 +689,7 @@ CODESEG
        xor	ebx , ebx
        jmp	[ entry ]
  ??trans_remapinner_loop:
-       REPT	32	
+       REPT	32
        local	skip
 	       mov	bl , [ esi ]
 	       test	bl , bl
@@ -703,7 +703,7 @@ CODESEG
 	       inc	edi
        ENDM
  ??trans_remapref_point:
-       dec	[ remap_counter ] 
+       dec	[ remap_counter ]
        jge	??trans_remapinner_loop
  ??trans_remap_next_line:
        pop	edi
@@ -725,6 +725,6 @@ CODESEG
 ??all_done:
 	ret
 
-	ENDP	Linear_Scale_To_Vesa
+Linear_Scale_To_Vesa	ENDP
 
 END

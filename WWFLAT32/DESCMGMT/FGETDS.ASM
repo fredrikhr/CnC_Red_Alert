@@ -36,15 +36,15 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
 
-GLOBAL             GetDs          :NEAR
-		    
+;GLOBAL             GetDs          :NEAR
+
 ;============================================================================
-CODESEG
+.CODE; Converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* GETDS -- Return the current Data selector.                              *
@@ -61,13 +61,13 @@ CODESEG
 ;*   03/28/1994  jaw: Created.                                             *
 ;*=========================================================================*
 
-PROC GetDs 	C near 
-     
+GetDs 	PROC near C
+
 	xor	eax,eax
 	mov	ax,ds
 	ret
 ;====================
-ENDP GetDs	
+GetDs ENDP
 
 
 END

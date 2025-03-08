@@ -35,15 +35,15 @@
 ;*   VVPC::Clear -- Clears a virtual viewport instance                     *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-INCLUDE "mcgaprim.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <mcgaprim.inc>
+INCLUDE <.\gbuffer.inc>
 
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* GVPC::FILL_RECT -- Fills a rectangular region of a graphic view port	   *
@@ -62,18 +62,18 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   06/07/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	MCGA_Fill_Rect C near 
+MCGA_Fill_Rect PROC	near C
 	USES	eax,ebx,ecx,edx,esi,edi,ebp
 
 	;*===================================================================
 	;* define the arguements that our function takes.
-	;*===================================================================
-	ARG    	this:DWORD			; this is a member function
-	ARG	x1_pixel:WORD
-	ARG	y1_pixel:WORD
-	ARG	x2_pixel:WORD
-	ARG	y2_pixel:WORD
-	ARG    	color:BYTE			; what color should we clear to
+	;*===================================================================,
+	this:DWORD			; this is a member function,
+	x1_pixel:WORD,
+	y1_pixel:WORD,
+	x2_pixel:WORD,
+	y2_pixel:WORD,
+	color:BYTE			; what color should we clear to
 	;*===================================================================
 	; Define some locals so that we can handle things quickly
 	;*===================================================================
@@ -98,9 +98,9 @@ CODESEG
 	;*===================================================================
 	;* move the important parameters into local registers
 	;*===================================================================
-	movsx	eax,[x1_pixel]				
-	movsx	ebx,[y1_pixel]				
-	movsx	ecx,[x2_pixel]				
+	movsx	eax,[x1_pixel]
+	movsx	ebx,[y1_pixel]
+	movsx	ecx,[x2_pixel]
 	movsx	edx,[y2_pixel]
 
 	;*===================================================================
@@ -182,7 +182,7 @@ CODESEG
 	ja	??out
 	cmp	edx,[VPheight]
 	ja	??out
-	
+
 	;*===================================================================
 	;* Get the offset into the virtual viewport.
 	;*===================================================================
@@ -191,7 +191,7 @@ CODESEG
 	mov	eax,ebx			; move the y pixel into eax
 	mul	[VPbpr]			; multiply by bytes per row
 	add	edi,eax			; add the result into the x position
-	mov	ebx,[this]		
+	mov	ebx,[this]
 	add	edi,[(GraphicViewPort ebx).GVPOffset]
 
 	mov	edx,esi			; restore edx back to real value
@@ -206,10 +206,10 @@ CODESEG
 	mov	ah,al					; extend across WORD
 	mov	ebx,eax					; extend across DWORD in
 	shl	eax,16					;   several steps
-	mov	ax,bx		
+	mov	ax,bx
 
 	;*===================================================================
-	; If there is no row offset then adjust the width to be the size of 
+	; If there is no row offset then adjust the width to be the size of
 	;   the entire viewport and adjust the height to be 1
 	;*===================================================================
 	mov	esi,[VPxadd]
@@ -269,6 +269,6 @@ CODESEG
 ??out:
 ??exit:
 	ret
-	ENDP	MCGA_Fill_Rect
-	
+MCGA_Fill_Rect	ENDP
+
 END

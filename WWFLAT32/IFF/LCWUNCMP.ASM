@@ -36,13 +36,13 @@
 ;*                                                                         *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-GLOBAL            LCW_Uncompress          :NEAR
+;GLOBAL            LCW_Uncompress          :NEAR
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 
 ; ----------------------------------------------------------------
 ;
@@ -54,13 +54,10 @@ CODESEG
 
 
 
-PROC	LCW_Uncompress C near 
-
-	USES ebx,ecx,edx,edi,esi
-	
-	ARG	source:DWORD 	   
-	ARG	dest:DWORD
-	ARG	length:DWORD
+LCW_Uncompress PROC	near C USES ebx ecx edx edi esi,
+	source:DWORD,
+	dest:DWORD,
+	_length:DWORD
 ;LOCALS
 	LOCAL a1stdest:DWORD
 	LOCAL maxlen:DWORD
@@ -71,7 +68,7 @@ PROC	LCW_Uncompress C near
 
 	mov	edi,[dest]
 	mov	esi,[source]
-	mov	edx,[length]
+	mov	edx,[_length]
 
 ;
 ;
@@ -96,7 +93,7 @@ PROC	LCW_Uncompress C near
 	mov	eax,[lastbyte]
 	sub	eax,edi		; get the remaining byte to uncomp
 	jz	short ??out		; were done
-	
+
 	mov	[maxlen],eax	; save for string commands
 	mov	esi,ebx		; mov in the source index
 
@@ -104,18 +101,18 @@ PROC	LCW_Uncompress C near
 	lodsb
 	or	al,al		; see if its a short run
 	js	short ??notshort
-	
+
 	mov	ah,al		; put rel offset high nibble in ah
 	and	ah,0Fh		; only 4 bits count
-	
+
 	sub	ecx,ecx
 	mov	cl,al		; put count nibble in ch
 	shr	cl,4		; get run -3
 	add	ecx,3		; get actual run length
-	
+
 	cmp	ecx,[maxlen]	; is it too big to fit?
 	jbe	short ??rsok		; if not, its ok
-	
+
 	mov	ecx,[maxlen]	; if so, max it out so it dosen't overrun
 
 ??rsok:
@@ -123,7 +120,7 @@ PROC	LCW_Uncompress C near
 	mov	ebx,esi		; save the source offset
 	mov	esi,edi		; get the current dest
 	sub	esi,eax		; get relative offset
-	
+
 	rep movsb
 
 	jmp	??loop
@@ -131,16 +128,16 @@ PROC	LCW_Uncompress C near
 ??notshort:
 	test	al,40h		; is it a length?
 	jne	short ??notlength	; if not it could be med or long run
-	
+
 	cmp	al,80h		; is it the end?
 	je	short ??out		; if so its over
-	
+
 	mov	cl,al		; put the byte in count register
 	and	ecx,3Fh		; and off the extra bits
-	
+
 	cmp	ecx,[maxlen]	; is it too big to fit?
 	jbe	short ??lenok		; if not, its ok
-	
+
 	mov	ecx,[maxlen]	; if so, max it out so it dosen't overrun
 
 ??lenok:
@@ -158,22 +155,22 @@ PROC	LCW_Uncompress C near
 	mov	cl,al		; get the entire code
 	and	ecx,3Fh		; and off all but the size -3
 	add	ecx,3		; add 3 for byte count
-	
+
 	cmp	al,0FEh
 	jne	short ??notrunlength
-	
+
 	sub	eax,eax
 	lodsw
-	
+
 	mov	ecx,eax
-	
+
 	sub	eax,eax
 	lodsb
-	
+
 	mov	ebx,esi		; save the source offset
 	cmp	ecx,[maxlen]	; is it too big to fit?
 	jbe	short ??runlenok		; if not, its ok
-	
+
 	mov	ecx,[maxlen]	; if so, max it out so it dosen't overrun
 
 ??runlenok:
@@ -184,7 +181,7 @@ PROC	LCW_Uncompress C near
 ??notrunlength:
 	cmp	al,0FFh		; is it a long run?
 	jne	short ??notlong	; if not use the code as the size
-	
+
 	sub	eax,eax
 	lodsw			; if so, get the size
 	mov	ecx,eax		; put int the count byte
@@ -196,7 +193,7 @@ PROC	LCW_Uncompress C near
 	mov	esi,eax		; use this as a source
 	cmp	ecx,[maxlen]	; is it too big to fit?
 	jbe	short ??runok		; if not, its ok
-	
+
 	mov	ecx,[maxlen]	; if so, max it out so it dosen't overrun
 
 ??runok:
@@ -208,14 +205,14 @@ PROC	LCW_Uncompress C near
 	mov	eax,edi
 	mov	ebx,[dest]
 	sub	eax,ebx
-	
+
 	ret
 
-ENDP	LCW_Uncompress
+LCW_Uncompress	ENDP
 
 ;***********************************************************
 
 
 	END
-        
+
 

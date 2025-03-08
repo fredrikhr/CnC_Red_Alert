@@ -35,17 +35,17 @@
 ;*   Buffer_To_Page -- Copies a linear buffer to a virtual viewport	   *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
 TRANSP	equ  0
 
 
-INCLUDE "mcgaprim.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <mcgaprim.inc>
+INCLUDE <.\gbuffer.inc>
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* VVC::TOPAGE -- Copies a linear buffer to a virtual viewport		   *
@@ -68,18 +68,18 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   06/15/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	MCGA_Buffer_To_Page C near 
+MCGA_Buffer_To_Page PROC	near C
 	USES	eax,ebx,ecx,edx,esi,edi
 
 	;*===================================================================
 	;* define the arguements that our function takes.
-	;*===================================================================
-	ARG	x_pixel     :DWORD		; x pixel position in source
-	ARG	y_pixel     :DWORD		; y pixel position in source
-	ARG	pixel_width :DWORD		; width of rectangle to blit
-	ARG	pixel_height:DWORD		; height of rectangle to blit
-	ARG    	src         :DWORD		; this is a member function
-	ARG	dest        :DWORD		; what are we blitting to
+	;*===================================================================,
+	x_pixel     :DWORD		; x pixel position in source,
+	y_pixel     :DWORD		; y pixel position in source,
+	pixel_width :DWORD		; width of rectangle to blit,
+	pixel_height:DWORD		; height of rectangle to blit,
+	src         :DWORD		; this is a member function,
+	dest        :DWORD		; what are we blitting to
 
 ;	ARG	trans       :DWORD			; do we deal with transparents?
 
@@ -88,8 +88,8 @@ CODESEG
 	;*===================================================================
 	LOCAL 	x1_pixel :dword
 	LOCAL	y1_pixel :dword
-	local	scr_x 	: dword	
-	local	scr_y 	: dword	
+	local	scr_x 	: dword
+	local	scr_y 	: dword
 	LOCAL	dest_ajust_width:DWORD
 	LOCAL	scr_ajust_width:DWORD
 	LOCAL	dest_area   :  dword
@@ -100,8 +100,8 @@ CODESEG
 
 ; Clip dest Rectangle against source Window boundaries.
 
-	mov	[ scr_x ] , 0 
-	mov	[ scr_y ] , 0 
+	mov	[ scr_x ] , 0
+	mov	[ scr_y ] , 0
 	mov  	esi , [ dest ]	    ; get ptr to dest
 	xor 	ecx , ecx
 	xor 	edx , edx
@@ -142,7 +142,7 @@ CODESEG
 	test	cl , 1000b
 	jz	??dest_left_ok
 	mov	eax , [ x_pixel ]
-	neg	eax 
+	neg	eax
 	mov	[ x_pixel ] , 0
 	mov	[ scr_x ] , eax
 
@@ -150,7 +150,7 @@ CODESEG
 	test	cl , 0010b
 	jz	??dest_bottom_ok
 	mov	eax , [ y_pixel ]
-	neg	eax 
+	neg	eax
 	mov	[ y_pixel ] , 0
 	mov	[ scr_y ] , eax
 
@@ -167,7 +167,7 @@ CODESEG
 
 ??do_blit:
 
-       cld	
+       cld
 
        mov	eax , [ (VideoViewPort esi) . VIVPXAdd ]
        add	eax , [ (VideoViewPort esi) . VIVPWidth ]
@@ -203,7 +203,7 @@ CODESEG
        jle	??real_out
 
 
-; ********************************************************************       
+; ********************************************************************
 ; Forward bitblit only
 
 IF TRANSP
@@ -212,10 +212,10 @@ IF TRANSP
 ENDIF
 
 
-; the inner loop is so efficient that 
+; the inner loop is so efficient that
 ; the optimal consept no longer apply because
 ; the optimal byte have to by a number greather than 9 bytes
-       cmp	eax , 10        
+       cmp	eax , 10
        jl	??forward_loop_bytes
 
 ??forward_loop_dword:
@@ -233,7 +233,7 @@ ENDIF
        rep	movsb
        add	esi , [ scr_ajust_width ]
        add	edi , [ dest_ajust_width ]
-       dec	edx 
+       dec	edx
        jnz	??forward_loop_dword
        ret
 
@@ -254,7 +254,7 @@ IF  TRANSP
 
        mov	ecx , eax
        and	ecx , 01fh
-       lea	ecx , [ ecx + ecx * 4 ]	
+       lea	ecx , [ ecx + ecx * 4 ]
        neg	ecx
        shr	eax , 5
        lea	ecx , [ ??transp_reference + ecx * 2 ]
@@ -262,10 +262,10 @@ IF  TRANSP
 
 
 ??forward_loop_trans:
-       mov	ecx , eax 
+       mov	ecx , eax
        jmp	[ y1_pixel ]
 ??forward_trans_line:
-       REPT	32	
+       REPT	32
        local	transp_pixel
        		mov	bl , [ esi ]
        		inc	esi
@@ -276,11 +276,11 @@ IF  TRANSP
        		inc	edi
 	ENDM
     ??transp_reference:
-       dec	ecx 
+       dec	ecx
        jge	??forward_trans_line
        add	esi , [ scr_ajust_width ]
        add	edi , [ dest_ajust_width ]
-       dec	edx 
+       dec	edx
        jnz	??forward_loop_trans
        ret
 ENDIF
@@ -289,6 +289,6 @@ ENDIF
        ret
 
 
-	ENDP	MCGA_Buffer_To_Page 
+MCGA_Buffer_To_Page	ENDP
 END
 

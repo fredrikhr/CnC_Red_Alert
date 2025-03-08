@@ -37,15 +37,15 @@
 ;*   __DRAW_LINE -- Assembly routine to draw a line                        *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-INCLUDE "mcgaprim.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <mcgaprim.inc>
+INCLUDE <.\gbuffer.inc>
 
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* VVC::DRAW_LINE -- Scales a virtual viewport to another virtual viewport *
@@ -63,18 +63,18 @@ CODESEG
 ;*   06/16/1994 PWG : Created.                                             *
 ;*   08/30/1994 IML : Fixed clipping bug.				   *
 ;*=========================================================================*
-	PROC	MCGA_Draw_Line C NEAR
+MCGA_Draw_Line PROC	NEAR C
 	USES	eax,ebx,ecx,edx,esi,edi
 
 	;*==================================================================
 	;* Define the arguements that the function takes.
-	;*==================================================================
-	ARG	this:DWORD		; associated graphic view port
-	ARG	x1_pixel:DWORD		; the start x pixel position
-	ARG	y1_pixel:DWORD		; the start y pixel position
-	ARG	x2_pixel:DWORD		; the dest x pixel position
-	ARG	y2_pixel:DWORD		; the dest y pixel position
-	ARG	color:DWORD		; the color we are drawing
+	;*==================================================================,
+	this:DWORD		; associated graphic view port,
+	x1_pixel:DWORD		; the start x pixel position,
+	y1_pixel:DWORD		; the start y pixel position,
+	x2_pixel:DWORD		; the dest x pixel position,
+	y2_pixel:DWORD		; the dest y pixel position,
+	color:DWORD		; the color we are drawing
 
 	;*==================================================================
 	;* Define the local variables that we will use on the stack
@@ -90,10 +90,10 @@ CODESEG
 	;*==================================================================
 	;* Take care of find the clip minimum and maximums
 	;*==================================================================
-	mov	ebx,[this]		
+	mov	ebx,[this]
 	xor	eax,eax
-	mov	[clip_min_x],eax	
-	mov	[clip_min_y],eax	
+	mov	[clip_min_x],eax
+	mov	[clip_min_y],eax
 	mov	eax,[(GraphicViewPort ebx).GVPWidth]
 	mov	[clip_max_x],eax
 	add	eax,[(GraphicViewPort ebx).GVPXAdd]
@@ -104,7 +104,7 @@ CODESEG
 	;*==================================================================
 	;* Adjust max pixels as they are tested inclusively.
 	;*==================================================================
-	dec	[clip_max_x]	
+	dec	[clip_max_x]
 	dec	[clip_max_y]
 
 	;*==================================================================
@@ -125,7 +125,7 @@ CODESEG
 	;* PORTABLE start
 	;*==================================================================
 
-	cmp	eax,[clip_min_x]		
+	cmp	eax,[clip_min_x]
 	jl	short ??clip_it
 	cmp	eax,[clip_max_x]
 	jg	short ??clip_it
@@ -279,7 +279,7 @@ CODESEG
 	or	esi,8
 
 ??a_not_right:
-	retn	
+	retn
 
 	;*==================================================================
 	;* Draw the line to the screen.
@@ -424,7 +424,7 @@ CODESEG
 
 ??out:
 	ret
-	ENDP	MCGA_Draw_Line
+MCGA_Draw_Line	ENDP
 
 
 END

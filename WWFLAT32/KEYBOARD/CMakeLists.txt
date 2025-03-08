@@ -5,6 +5,7 @@ string(JOIN "_" PROJECT_COMPONENT_NAME
   ${PROJECT_COMPONENT_SUBDIR_NAME}
 )
 project_component(OBJECT_LIBRARY)
+target_compile_definitions(${PROJECT_COMPONENT_NAME} PUBLIC _X86_ __interrupt=)
 target_include_directories(${PROJECT_COMPONENT_NAME} PUBLIC
   ${PROJECT_COMPONENT_ROOT_INCLUDE_DIR}
 )

@@ -35,14 +35,14 @@
 ;*   Text_Print -- Assembly text print routine.                            *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
 
 
-GLOBAL	C FontPtr:DWORD
-GLOBAL	Text_Print:NEAR
+EXTERN	C FontPtr:DWORD
+;GLOBAL	Text_Print:NEAR
 
 ; The header of the font file looks like this:
 ; 	UWORD	FontLength;		0
@@ -63,9 +63,9 @@ FONTHEIGHTBLOCK		EQU	12
 FONTINFOMAXHEIGHT	EQU	4
 FONTINFOMAXWIDTH	EQU	5
 
-LOCALS ??
+; Converted from TASM: LOCALS ??
 
-	DATASEG
+	.DATA; Converted from TASM: DATASEG
 
 ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 		DB	008H,009H,00AH,00BH,00CH,00DH,00EH,00FH
@@ -114,7 +114,7 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 
 		DB	00FH
 
-	CODESEG
+	.CODE; Converted from TASM: CODESEG
 
 
 ;***************************************************************************
@@ -130,19 +130,18 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 ;* HISTORY:                                                                *
 ;*   06/28/1994 SKB : Created.                                             *
 ;*=========================================================================*
-	PROC	Text_Print C near
-	USES	ebx,ecx,edx,esi,edi
-	ARG	vpselector:WORD
-	ARG	vpoffset:DWORD
-	ARG	vpwidth:DWORD
-	ARG	vpheight:DWORD
-	ARG	vpxadd:DWORD
-	ARG	string:DWORD
-	ARG	x_pixel:DWORD
-	ARG	y_pixel:DWORD
-	ARG	fcolor:DWORD
-	ARG	bcolor:DWORD
-		
+Text_Print PROC	near C USES	ebx ecx edx esi edi,
+	vpselector:WORD,
+	vpoffset:DWORD,
+	vpwidth:DWORD,
+	vpheight:DWORD,
+	vpxadd:DWORD,
+	string:DWORD,
+	x_pixel:DWORD,
+	y_pixel:DWORD,
+	fcolor:DWORD,
+	bcolor:DWORD
+
 	LOCAL	infoblock:DWORD		; pointer to info block
 	LOCAL	offsetblock:DWORD	; pointer to offset block  (UWORD *)
 	LOCAL	widthblock:DWORD	; pointer to width block   (BYTE  *)
@@ -153,7 +152,7 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 	LOCAL	nextdraw:DWORD		; bufferwidth - width of cur character.
 	LOCAL	startdraw:DWORD		; where next character will start being drawn.
 
-	LOCAL	char:DWORD		; current character value.	
+	LOCAL	char:DWORD		; current character value.
 
 	LOCAL	maxheight:BYTE		; max height of characters in font.
 	LOCAL	bottomblank:BYTE	; amount of empty space below current character.
@@ -166,12 +165,12 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 	mov	es,ax			; Set up selector to write to.
 
 	mov	eax,[vpwidth]		; get the width of the viewport
-	add	eax,[vpxadd]		; add amount to add to get to left edge of next line.	
+	add	eax,[vpxadd]		; add amount to add to get to left edge of next line.
 	mov	[bufferwidth],eax     	; save it off for later use.
 
 	mul	[y_pixel]		; multiply rowsize * y_pixel start.
 	mov	edi,[vpoffset]		; get start of the viewport
-	add	edi,eax			; add x,y position to start of vp to get starting row address.	
+	add	edi,eax			; add x,y position to start of vp to get starting row address.
 	mov	[curline],edi		; save 0,y address for line feed stuff.
 	add	edi,[x_pixel]		; add to get starting column in starting row.
 	mov	[startdraw],edi		; save it off.
@@ -187,13 +186,13 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 	; esi (FontPtr) is added to each to get the true address of each block.
 	; Many registers are used for P5 optimizations.
 	; ebx is used for InfoBlock which is then used in the next section.
-	movzx	eax,[WORD PTR esi+FONTOFFSETBLOCK]	; get offset to offset block
-	movzx	ebx,[WORD PTR esi+FONTINFOBLOCK]      	; get offset to info block (must be ebx for height test)
-	movzx	ecx,[WORD PTR esi+FONTWIDTHBLOCK] 	; get offset to width block
-	movzx	edx,[WORD PTR esi+FONTHEIGHTBLOCK]	; get offset to height block
+	movzx	eax,WORD PTR [esi+FONTOFFSETBLOCK]	; get offset to offset block
+	movzx	ebx,WORD PTR [esi+FONTINFOBLOCK]  	; get offset to info block (must be ebx for height test)
+	movzx	ecx,WORD PTR [esi+FONTWIDTHBLOCK] 	; get offset to width block
+	movzx	edx,WORD PTR [esi+FONTHEIGHTBLOCK]	; get offset to height block
 
-	add	eax,esi				; add offset of FontPtr to offset block  
-	add	ebx,esi				; add offset of FontPtr to info block 
+	add	eax,esi				; add offset of FontPtr to offset block
+	add	ebx,esi				; add offset of FontPtr to info block
 	add	ecx,esi				; add offset of FontPtr to width block
 	add	edx,esi				; add offset of FontPtr to height block
 
@@ -206,7 +205,7 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 	; Test to make sure the height of the max character will fit on this line
 	; and and not fall out of the viewport.
 	; remember we set ebx to FONTINFOBLOCK above.
-	movzx	eax,[BYTE PTR ebx + FONTINFOMAXHEIGHT]; get the max height in font.
+	movzx	eax,BYTE PTR [ebx + FONTINFOMAXHEIGHT]; get the max height in font.
 	mov	[maxheight],al			; save it for later use.
 	add	eax,[y_pixel]			; add current y_value.
 	cmp	eax,[vpheight]			; are we over the edge?
@@ -230,16 +229,16 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 	; something with it.
 ??next_char:
 	; while (*string++)
-	xor	eax,eax				; zero out since we will just load al.	
-	mov	esi,[string]			; get address on next character.	
+	xor	eax,eax				; zero out since we will just load al.
+	mov	esi,[string]			; get address on next character.
 	lodsb					; load the character into al.
 	test	eax,0FFH			; test to see if character is a NULL
 	jz	??done				; character is NULL, get outa here.
 
 	mov	edi,[startdraw]			; Load the starting address.
 
-	mov	[string],esi			; save index into string. (incremented by lodsb)	
-	
+	mov	[string],esi			; save index into string. (incremented by lodsb)
+
 	cmp	eax,13				; is the character a line feed?
 	je	??line_feed			; if so, go to special case.
 
@@ -248,7 +247,7 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 
 	add	eax,[widthblock]		; figure address of width of character.
 	mov	ecx,[x_pixel]			; get current x_pixel.
-	movzx	edx,[BYTE PTR eax]	 	; get the width of the character in dl.
+	movzx	edx,BYTE PTR [eax]	; get the width of the character in dl.
 	add	ecx,edx				; add width of char to current x_pixel.
 	add	[startdraw],edx			; save start draw for next character.
 
@@ -268,8 +267,8 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 	; get offset of data for character into esi.
 	shl	ebx,1				; mult by 2 to later use as a WORD index.
 	mov	esi,[offsetblock]		; get pointer to begining of offset block.
-	add	esi,ebx				; index into offset block.	
-	movzx	esi,[WORD PTR esi]		; get true offset into data block from FontPtr.
+	add	esi,ebx				; index into offset block.
+	movzx	esi,WORD PTR [esi]	; get true offset into data block from FontPtr.
 	add	esi,[FontPtr]			; Now add FontPtr address to get true address.
 
 	; Get top and bottom blank sizes and the true height of the character.
@@ -292,7 +291,7 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 	jz	??draw_char			; if not go and draw the real character.
 
 	xor	eax,eax				; get color 0 for background.
-	xlat	[ebx]				; get translated color into al
+	xlat	;[ebx]				; get translated color into al
 	test	al,al				; is it transparent black
 	jnz	??loop_top			; if not go and write the color
 
@@ -302,7 +301,7 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 	mov	ecx,edx				; save width since edx will be destroyed by mul.
 	mul	[bufferwidth]			; multiply that by the width of the buffer.
 	mov	edx,ecx				; restore the width
-	add	edi,eax				; update the pointer.	
+	add	edi,eax				; update the pointer.
 	jmp	short ??draw_char		; now go draw the character.
 
 ;----------------------------------------- fill Top blank area ----------------------------------------
@@ -325,13 +324,13 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 ??draw_char:
 	movzx	ecx,[charheight]		; get the height of character to count down rows.
 	test	ecx,ecx				; is there any data? (blank would not have any)
-	jz	??next_char			; if no data, go on to next character.	
+	jz	??next_char			; if no data, go on to next character.
 
 ??while_data:
 	lodsb					; get byte value from font data
 	mov	ah,al				; save hinibble
 	and	eax,0F00FH	       		; mask of low nibble in al hi nibble in ah.
-	xlat	[ebx]				; get new color
+	xlat	;[ebx]				; get new color
 
 	test	al,al				; is it a transparent?
 	jz	short ??skiplo			; skip over write
@@ -345,13 +344,13 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 	; test the time difference between looking up in a large table when shr al,4 is not done as
 	; compared to using only a 16 byte table when using the shr al,4
 	;shr	al,4				; shift the hi nibble down to low nibble
-	xlat	[ebx]				; get new color
+	xlat	;[ebx]				; get new color
 
 	test	al,al				; is it a transparent?
 	jz	short ??skiphi			; skip over write
 	mov	[es:edi],al			; write it out
 ??skiphi:
-	
+
 	inc	edi
 	dec	dh				; decrement our width.
 	jnz	short ??while_data		; check if done with width of char
@@ -368,7 +367,7 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 	jz	??next_char			; then skip to go to next character
 
 	xor	eax,eax				; get color 0 for background.
-	xlat	[ebx]				; get translated color into al
+	xlat	;[ebx]				; get translated color into al
 	test	al,al				; is it transparent black
 	jz	??next_char			; skip the top black section to let the background through
 
@@ -393,7 +392,7 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 
 ;----------------------------------- special case line feeds ----------------------------------------
 
-??force_line_feed:	
+??force_line_feed:
 	; decrement pointer *string so that it will be back at same character
 	; when it goes through the loop.
 	mov	eax,[string]			; get string pointer.
@@ -409,8 +408,8 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 	jg	??overflow			; if so, we are outa here.
 
 	mov	eax,[bufferwidth]      		; get bytes to next line.
-	mov	edi,[curline]			; get start of current line.	
-	mul	ecx				; mult max height * next line.	
+	mov	edi,[curline]			; get start of current line.
+	mul	ecx				; mult max height * next line.
 
 	add	edi,eax				; add adjustment to current line.
 	add	[y_pixel],ecx			; increment to our next y position.
@@ -426,8 +425,8 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 ??done:
 	mov	eax,[startdraw]			; return this so calling routine
 	ret					; can figure out where to draw next.
-		
-	ENDP	Text_Print
+
+Text_Print	ENDP
 
 
 

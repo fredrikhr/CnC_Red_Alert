@@ -39,20 +39,20 @@
 ;*                                                                         *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-LOCALS ??
+; Converted from TASM: LOCALS ??
 
 DOS	equ	21h
 
-GLOBAL	 Max_Device			:NEAR
-GLOBAL	 get_max_device 		:NEAR
-GLOBAL	 Init_Device_Table		:NEAR
-					 
+;GLOBAL	 Max_Device			:NEAR
+;GLOBAL	 get_max_device 		:NEAR
+;GLOBAL	 Init_Device_Table		:NEAR
 
-CODESEG
+
+.CODE; Converted from TASM: CODESEG
 
 ; ----------------------------------------------------------------
 ;
@@ -69,12 +69,12 @@ CODESEG
 ; WORD Max_Device(VOID);
 ;
 
-PROC	Max_Device C NEAR
-	
+Max_Device PROC	NEAR C
+
 	call	get_max_device		; get max devices in ax
 	ret
 
-ENDP	Max_Device
+Max_Device	ENDP
 
 ;----------------------------------------------------------------------------
 
@@ -84,9 +84,8 @@ ENDP	Max_Device
 ;
 ; returns max devices in AX
 
-PROC	get_max_device C NEAR 
-	USES ebx,edx
-	
+get_max_device PROC	NEAR C USES ebx edx
+
 	mov	ah,25			; get current drive service
 	int	DOS			; drive returned in al
 	mov	dl,al
@@ -108,10 +107,10 @@ PROC	get_max_device C NEAR
 	pop	ebx
 	pop	ds
 	jnc	short ??later		; if c clear, no error
-	
+
 	cmp	al,0Fh			; was it invalid? (0Fh = invalid)
 	jne	short ??later			; yes, so LATER
-	
+
 	dec	edx
 	jmp	??back_loop		; try, try again
 
@@ -119,7 +118,7 @@ PROC	get_max_device C NEAR
 	mov	eax,edx			; restore ax
 	ret
 
-ENDP	get_max_device
+get_max_device	ENDP
 
 ;----------------------------------------------------------------------------
 
@@ -129,10 +128,8 @@ ENDP	get_max_device
 ; VOID Init_Device_Table(BYTE *table);
 ;
 
-PROC	Init_Device_Table C NEAR 
-
-	USES eax,ebx,edi,edx
-	ARG	table:DWORD	   	; Pointer to device table.
+Init_Device_Table PROC	NEAR C USES eax ebx edi edx,
+	table:DWORD	   	; Pointer to device table.
 	LOCAL	curr_drive:BYTE	   	; Copy of current drive number.
 
 	mov	edi,[table]
@@ -159,7 +156,7 @@ PROC	Init_Device_Table C NEAR
 	pop	ds
 
 	jnc	short ??it_is_real		; jump if no error
-	cmp	al,01			; 1 = invalid command, 
+	cmp	al,01			; 1 = invalid command,
 					; 0F = invalid device
 	je	short ??set_as_current	; 1? it is ok (RAM device)
 	jmp	short ??invalid		; 0Fh, it was not a device
@@ -168,7 +165,7 @@ PROC	Init_Device_Table C NEAR
 ??it_is_real:
 	cmp	al,0			; was it a fixed device?
 	je	short ??set_as_current	; yes, it's ok
-	
+
 	dec	al			; make it a drive #
 	cmp	al,dl			; is it a valid drive?
 	je	short ??set_as_current
@@ -181,7 +178,7 @@ PROC	Init_Device_Table C NEAR
 	stosb
 	cmp	[curr_drive],0		; are we done checking?
 	jge	??next_drive	   	; no, go to next
-	
+
 	jmp	short ??later
 
 ??set_as_current:
@@ -189,14 +186,14 @@ PROC	Init_Device_Table C NEAR
 	stosb
 	cmp	dl,0			; are we before the A drive (invalid)
 	jl	short ??later			; yes, we are done checking
-	
+
 	jmp	??next_drive		; keep processing
 
 ??later:
 	cld
 	ret
 
-ENDP	Init_Device_Table
+Init_Device_Table	ENDP
 
 ;----------------------------------------------------------------------------
 

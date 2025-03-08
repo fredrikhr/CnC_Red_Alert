@@ -18,7 +18,7 @@
 
 ; This is the control structure at the start of a loaded icon set.  It must match
 ; the structure in ICONSET.C!
-	STRUC	IControl_Type
+IControl_Type	STRUC
 Width		DW	?	; Width in pixels (per icon).
 Height		DW	?	; Height in pixels (per icon).
 Count		DW	?	; Number of icons in this set.

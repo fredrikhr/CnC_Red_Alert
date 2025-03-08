@@ -36,17 +36,17 @@
 ;*   Vesa_Asm_Next_Window -- Sets to the next vesa window                  *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
-LOCALS  ??
+; Converted from TASM: IDEAL
+.386P	; Converted from TASM: P386
+.MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
+; Converted from TASM: LOCALS  ??
 
 
 GLOBAL	Vesa_Asm_Set_Win :near
 
-DATASEG
+.DATA; Converted from TASM: DATASEG
 
-CODESEG
+.CODE; Converted from TASM: CODESEG
 
 
 ;***************************************************************************
@@ -61,10 +61,10 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   12/08/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Vesa_Asm_Set_Win C near 
+Vesa_Asm_Set_Win PROC	near C
 
 	ret
-	ENDP	Vesa_Asm_Set_Win
+Vesa_Asm_Set_Win	ENDP
 
 
 
