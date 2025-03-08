@@ -29,4 +29,5 @@ add_subdirectory(WINVQ/VQA32/OLD)
 add_subdirectory(WINVQ/VQAVIEW)
 add_subdirectory(WINVQ/VQM32)
 
+add_subdirectory(WIN32LIB)
 add_subdirectory(WWFLAT32)
