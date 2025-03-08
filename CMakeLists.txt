@@ -13,6 +13,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMAKE")
 include(language_file_extensions)
 set_file_extensions_local_globs()
 
+option(PHARLAP_TNT "PHARLAP_TNT" OFF)
+
 add_subdirectory(TOOLS/AUDIOMAK)
 add_subdirectory(TOOLS/MIX)
 
