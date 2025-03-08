@@ -17,15 +17,15 @@
 ;
 
 
-	IDEAL
-IDEAL_MODE	EQU	1
-	VERSION T300		; Code written for V3.0 TASM version.
-	IDEAL
-	P386N			; target machine.
-	SMART			; Enable optimizations.
-	WARN			; Full warnings.
-	LOCALS ??
-	MODEL	LARGE @filename
+	;MASM
+IDEAL_MODE	EQU	0
+	;VERSION T300		; Code written for V3.0 TASM version.
+	;MASM
+	.386P			; target machine.
+	;SMART			; Enable optimizations.
+	;WARN			; Full warnings.
+	;LOCALS ??
+	.MODEL	LARGE; @filename
 ;	INCLUDE	"d:\library\wwlib.i"
 
 CODE_2BIT	EQU	0
@@ -41,18 +41,18 @@ MAGICNUMBER2	EQU	0BABEBABEh
 ;	WARN			; Full warnings.
 ;	LOCALS ??
 
-	CODESEG
+	.CODE
 
 _2bitdecode	DB	-2, -1, 0, 1
 ;_2bitdecode	DB	-2, -1, 1, 2
 _4bitdecode	DB	-9,-8,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,8
 ;_4bitdecode	DB	-16,-13,-10,-8,-6,-4,-2,-1,1,2,4,6,8,10,13,16
 
-	GLOBAL	C Decompress_Frame:FAR
-	PROC	C Decompress_Frame FAR USES bx cx edx ds si es di bp
-	ARG	source:DWORD
-	ARG	dest:DWORD
-	ARG	count:WORD
+;	GLOBAL	C Decompress_Frame:FAR
+Decompress_Frame	PROC	FAR C USES bx cx edx ds si es di bp,
+	source:DWORD,
+	dest:DWORD,
+	count:WORD
 
 	LOCAL	previous:BYTE
 	LOCAL	incount:WORD
@@ -193,7 +193,7 @@ _4bitdecode	DB	-9,-8,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,8
 	cmp	ah,CODE_2BIT
 	jne	??zerodelta
 
-	; A sequence of 2bit deltas follow.  AL equals the number of 
+	; A sequence of 2bit deltas follow.  AL equals the number of
 	; packed delta bytes to process.
 ??bit2loop:
 	; Fetch packed delta codes.
@@ -226,7 +226,7 @@ _4bitdecode	DB	-9,-8,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,8
 	shr	bx,2
 	and	bl,00000011b
 	add	dl,[cs:_2bitdecode+bx]		; Add in delta
-	
+
 	pushf
 	cmp	[cs:_2bitdecode+bx],0
 	jl	short ??neg4
@@ -239,7 +239,7 @@ _4bitdecode	DB	-9,-8,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,8
 	jc	short ??ok4
 	xor	dl,dl
 ??ok4:
-	
+
 	mov	dh,dl
 	ror	edx,8
 
@@ -247,7 +247,7 @@ _4bitdecode	DB	-9,-8,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,8
 	shr	bx,4
 	and	bl,00000011b
 	add	dl,[cs:_2bitdecode+bx]		; Add in delta
-     
+
 	pushf
 	cmp	[cs:_2bitdecode+bx],0
 	jl	short ??neg5
@@ -260,7 +260,7 @@ _4bitdecode	DB	-9,-8,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,8
 	jc	short ??ok5
 	xor	dl,dl
 ??ok5:
-	
+
 	mov	dh,dl
 	ror	edx,8
 
@@ -268,7 +268,7 @@ _4bitdecode	DB	-9,-8,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,8
 	shr	bx,6
 	and	bl,00000011b
 	add	dl,[cs:_2bitdecode+bx]		; Add in delta
-	
+
 	pushf
 	cmp	[cs:_2bitdecode+bx],0
 	jl	short ??neg6
@@ -281,7 +281,7 @@ _4bitdecode	DB	-9,-8,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,8
 	jc	short ??ok6
 	xor	dl,dl
 ??ok6:
-	
+
 	;mov	dh,dl
 	ror	edx,8
 
@@ -316,7 +316,7 @@ _4bitdecode	DB	-9,-8,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,8
 	mov	ax,[incount]
 	ret
 
-	ENDP	Decompress_Frame
+Decompress_Frame	ENDP
 
 	END
 
