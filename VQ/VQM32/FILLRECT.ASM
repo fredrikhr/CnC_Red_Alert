@@ -42,11 +42,11 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
-	CODESEG
+	;MASM
+	.386P
+	.MODEL	FLAT
+	;LOCALS	??
+	.CODE
 
 ;****************************************************************************
 ;*
@@ -72,19 +72,20 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C Eor_Region:NEAR
-	PROC	Eor_Region C NEAR USES eax ebx ecx edx edi
-	ARG	x1_pixel:DWORD
-	ARG	y1_pixel:DWORD
-	ARG	x2_pixel:DWORD
-	ARG	y2_pixel:DWORD
-	ARG	color:DWORD
+;	GLOBAL	C Eor_Region:NEAR
+Eor_Region	PROC	NEAR C USES eax ebx ecx edx edi,
+	x1_pixel:DWORD,
+	y1_pixel:DWORD,
+	x2_pixel:DWORD,
+	y2_pixel:DWORD,
+	color:DWORD
+
 	LOCAL	eorit:DWORD
 
 	mov	[eorit],1
 	jmp	short Fill_Rect_Entry
 
-	ENDP	Eor_Region
+Eor_Region	ENDP
 
 
 ;****************************************************************************
@@ -112,18 +113,19 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C Fill_Rect:NEAR
-	PROC	Fill_Rect C NEAR USES eax ebx ecx edx edi
-	ARG	x1_pixel:DWORD
-	ARG	y1_pixel:DWORD
-	ARG	x2_pixel:DWORD
-	ARG	y2_pixel:DWORD
-	ARG	color:DWORD
+;	GLOBAL	C Fill_Rect:NEAR
+Fill_Rect	PROC	NEAR C USES eax ebx ecx edx edi,
+	x1_pixel:DWORD,
+	y1_pixel:DWORD,
+	x2_pixel:DWORD,
+	y2_pixel:DWORD,
+	color:DWORD
+
 	LOCAL	eorit:DWORD
 
 	mov	[eorit],0
 
-Fill_Rect_Entry:
+Fill_Rect_Entry::
 	cld			; always go forward
 	mov	edi,0A0000h
 
@@ -210,7 +212,7 @@ Fill_Rect_Entry:
 ??exit:
 	ret
 
-	ENDP	Fill_Rect
+Fill_Rect	ENDP
 
 	END
 

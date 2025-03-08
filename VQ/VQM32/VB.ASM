@@ -42,12 +42,12 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
-	INCLUDE	"video.i"
-	CODESEG
+	;MASM
+	.386P
+	.MODEL	FLAT
+	;LOCALS	??
+	INCLUDE	<video.i>
+	.CODE
 
 ;****************************************************************************
 ;*
@@ -70,9 +70,9 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C WaitNoVB:NEAR
-	PROC	WaitNoVB C NEAR USES edx
-	ARG	vbibit:DWORD
+;	GLOBAL	C WaitNoVB:NEAR
+WaitNoVB	PROC	NEAR C USES edx,
+	vbibit:DWORD
 
 	mov	eax,[vbibit]
 	and	al,1
@@ -89,7 +89,7 @@
 	jnz	short ??no_scan_yet
 	ret
 
-	ENDP	WaitNoVB
+WaitNoVB	ENDP
 
 
 ;****************************************************************************
@@ -113,9 +113,9 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C WaitVB:NEAR
-	PROC	WaitVB C NEAR USES
-	ARG	vbibit:DWORD
+;	GLOBAL	C WaitVB:NEAR
+WaitVB	PROC	NEAR C,
+	vbibit:DWORD
 
 	mov	eax,[vbibit]
 	and	al,1
@@ -132,6 +132,6 @@
 	jz	short ??no_vbl_yet
 	ret
 
-	ENDP	WaitVB
+WaitVB	ENDP
 
 	END

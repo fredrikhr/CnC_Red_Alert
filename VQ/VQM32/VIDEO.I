@@ -36,7 +36,7 @@
 ;*
 ;****************************************************************************
 
-	INCLUDE	"vesavid.i"
+	INCLUDE	<vesavid.i>
 
 ;----------------------------------------------------------------------------
 ; Video Modes
@@ -63,18 +63,18 @@ XMODE_360X480	EQU	055h
 ; VBIbit   - Polarity of vertical blank bit.
 ; Extended - Pointer to mode specified data structure.
 
-	STRUC	DisplayInfo
+DisplayInfo	STRUC
 Mode	DD	?
 XRes	DD	?
 YRes	DD	?
 VBIbit	DD	?
 Extended	DD	?
-	ENDS	DisplayInfo
+DisplayInfo	ENDS
 
 ;----------------------------------------------------------------------------
 ; Function definitions
 ;----------------------------------------------------------------------------
 
-	GLOBAL C GetDisplayInfo:NEAR
-	GLOBAL C GetVBIBit:NEAR
+GetDisplayInfo	PROTO	NEAR C
+GetVBIBit	PROTO	NEAR C
 

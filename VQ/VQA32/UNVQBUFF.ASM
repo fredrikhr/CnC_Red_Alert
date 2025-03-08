@@ -47,14 +47,14 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
-	INCLUDE	"vga.i"
-	INCLUDE	"vesavid.i"
-	INCLUDE	"vqaplay.i"
-	CODESEG
+	;MASM
+	.386P
+	.MODEL	FLAT
+;	.LOCALS	??
+	INCLUDE	<vga.i>
+	INCLUDE	<vesavid.i>
+	INCLUDE	<vqaplay.i>
+	.CODE
 
 SKIP_PTR	EQU	8000h
 
@@ -89,21 +89,21 @@ SKIP_PTR	EQU	8000h
 ;*
 ;****************************************************************************
 
-	GLOBAL	C UnVQ_2x2:NEAR
-	PROC	UnVQ_2x2 C NEAR USES ebx ecx edx esi edi
-
-	ARG	codebook:NEAR PTR
-	ARG	pointers:NEAR PTR
-
 	IF	PHARLAP_TNT
-	ARG	buffer:QWORD	;KLUDGE - bcc32 pads FARPTR
+	;KLUDGE - bcc32 pads FARPTR
+	UnVQ_2x2_buffer_ArgType EQU QWORD
 	ELSE
-	ARG	buffer:NEAR PTR
+	UnVQ_2x2_buffer_ArgType EQU NEAR PTR
 	ENDIF
 
-	ARG	blocksperrow:DWORD
-	ARG	numrows:DWORD
-	ARG	bufwidth:DWORD
+;	GLOBAL	C UnVQ_2x2:NEAR
+UnVQ_2x2	PROC	NEAR C USES ebx ecx edx esi edi,
+	codebook:NEAR PTR,
+	pointers:NEAR PTR,
+	buffer:UnVQ_2x2_buffer_ArgType,
+	blocksperrow:DWORD,
+	numrows:DWORD,
+	bufwidth:DWORD
 
 	LOCAL	data_end:DWORD
 	LOCAL	cb_offset:DWORD
@@ -235,7 +235,7 @@ SKIP_PTR	EQU	8000h
 
 	ret
 
-	ENDP	UnVQ_2x2
+UnVQ_2x2	ENDP
 	ENDIF	;VQABLOCK_2X2
 
 
@@ -269,21 +269,21 @@ SKIP_PTR	EQU	8000h
 ;*
 ;****************************************************************************
 
-	GLOBAL	C UnVQ_2x3:NEAR
-	PROC	UnVQ_2x3 C NEAR USES ebx ecx edx esi edi
-
-	ARG	codebook:NEAR PTR
-	ARG	pointers:NEAR PTR
-
 	IF	PHARLAP_TNT
-	ARG	buffer:QWORD	;KLUDGE - bcc32 pads FARPTR
+	;KLUDGE - bcc32 pads FARPTR
+	UnVQ_2x3_buffer_ArgType EQU QWORD
 	ELSE
-	ARG	buffer:NEAR PTR
+	UnVQ_2x3_buffer_ArgType EQU NEAR PTR
 	ENDIF
 
-	ARG	blocksperrow:DWORD
-	ARG	numrows:DWORD
-	ARG	bufwidth:DWORD
+;	GLOBAL	C UnVQ_2x3:NEAR
+UnVQ_2x3	PROC	NEAR C USES ebx ecx edx esi edi,
+	codebook:NEAR PTR,
+	pointers:NEAR PTR,
+	buffer:UnVQ_2x3_buffer_ArgType,
+	blocksperrow:DWORD,
+	numrows:DWORD,
+	bufwidth:DWORD
 
 	LOCAL	data_end:DWORD
 	LOCAL	cb_offset:DWORD
@@ -432,7 +432,7 @@ SKIP_PTR	EQU	8000h
 
 	ret
 
-	ENDP	UnVQ_2x3
+UnVQ_2x3	ENDP
 	ENDIF	;VQABLOCK_2X3
 
 
@@ -611,15 +611,14 @@ SKIP_PTR	EQU	8000h
 ;;;	ENDP	UnVQ_4x2
 ;;;	ENDIF	;VQABLOCK_4X2
 
-	GLOBAL	C UnVQ_4x2:NEAR
-	PROC	UnVQ_4x2 C NEAR USES ebx ecx edx esi edi
-
-	ARG	codebook:NEAR PTR
-	ARG	pointers:NEAR PTR
-	ARG	buffer:NEAR PTR
-	ARG	blocksperrow:DWORD
-	ARG	numrows:DWORD
-	ARG	bufwidth:DWORD
+;	GLOBAL	C UnVQ_4x2:NEAR
+UnVQ_4x2	PROC	NEAR C USES ebx ecx edx esi edi,
+	codebook:NEAR PTR,
+	pointers:NEAR PTR,
+	buffer:NEAR PTR,
+	blocksperrow:DWORD,
+	numrows:DWORD,
+	bufwidth:DWORD
 
 	LOCAL	data_end:DWORD
 	LOCAL	cb_offset:DWORD
@@ -645,7 +644,7 @@ SKIP_PTR	EQU	8000h
 	mov	[entries],eax
 	add	eax,esi
 	mov	[data_end],eax
-	
+
 	mov	edi,[buffer]
 	mov	[edi_startval],edi
 
@@ -729,7 +728,7 @@ SKIP_PTR	EQU	8000h
 ??End_of_data:
 	ret
 
-	ENDP	UnVQ_4x2
+UnVQ_4x2	ENDP
 	ENDIF	;VQABLOCK_4X2
 
 
@@ -763,21 +762,21 @@ SKIP_PTR	EQU	8000h
 ;*
 ;****************************************************************************
 
-	GLOBAL	C UnVQ_4x4:NEAR
-	PROC	UnVQ_4x4 C NEAR USES ebx ecx edx esi edi
-
-	ARG	codebook:NEAR PTR
-	ARG	pointers:NEAR PTR
-
 	IF	PHARLAP_TNT
-	ARG	buffer:QWORD	;KLUDGE - bcc32 pads FARPTR
+	;KLUDGE - bcc32 pads FARPTR
+	UnVQ_4x4_buffer_ArgType EQU QWORD
 	ELSE
-	ARG	buffer:NEAR PTR
+	UnVQ_4x4_buffer_ArgType EQU NEAR PTR
 	ENDIF
 
-	ARG	blocksperrow:DWORD
-	ARG	numrows:DWORD
-	ARG	bufwidth:DWORD
+;	GLOBAL	C UnVQ_4x4:NEAR
+UnVQ_4x4	PROC	NEAR C USES ebx ecx edx esi edi,
+	codebook:NEAR PTR,
+	pointers:NEAR PTR,
+	buffer:UnVQ_4x4_buffer_ArgType,
+	blocksperrow:DWORD,
+	numrows:DWORD,
+	bufwidth:DWORD
 
 	LOCAL	data_end:DWORD
 	LOCAL	cb_offset:DWORD
@@ -794,7 +793,7 @@ SKIP_PTR	EQU	8000h
 
 	mov	eax,[bufwidth]		;Compute the offset to the next
 	shl	eax,2		; row of blocks
-	mov	[rowoffset],eax 
+	mov	[rowoffset],eax
 
 	mov	esi,[pointers]
 	mov	eax,[numrows]		;Compute the end address of the
@@ -947,7 +946,7 @@ SKIP_PTR	EQU	8000h
 
 	ret
 
-	ENDP	UnVQ_4x4
+UnVQ_4x4	ENDP
 	ENDIF	;VQABLOCK_4X4
 
 
@@ -982,21 +981,21 @@ SKIP_PTR	EQU	8000h
 ;*
 ;****************************************************************************
 
-	GLOBAL	C UnVQ_4x2_Woofer:NEAR
-	PROC	UnVQ_4x2_Woofer C NEAR USES ebx ecx edx esi edi
-
-	ARG	codebook:NEAR PTR
-	ARG	pointers:NEAR PTR
-
 	IF	PHARLAP_TNT
-	ARG	buffer:QWORD	;KLUDGE - bcc32 pads FARPTR
+	;KLUDGE - bcc32 pads FARPTR
+	UnVQ_4x2_Woofer_buffer_ArgType EQU QWORD
 	ELSE
-	ARG	buffer:NEAR PTR
+	UnVQ_4x2_Woofer_buffer_ArgType EQU NEAR PTR
 	ENDIF
 
-	ARG	blocksperrow:DWORD
-	ARG	numrows:DWORD
-	ARG	bufwidth:DWORD
+;	GLOBAL	C UnVQ_4x2_Woofer:NEAR
+UnVQ_4x2_Woofer	PROC	NEAR C USES ebx ecx edx esi edi,
+	codebook:NEAR PTR,
+	pointers:NEAR PTR,
+	buffer:UnVQ_4x2_Woofer_buffer_ArgType,
+	blocksperrow:DWORD,
+	numrows:DWORD,
+	bufwidth:DWORD
 
 	LOCAL	data_end:DWORD
 	LOCAL	cb_offset:DWORD
@@ -1144,7 +1143,7 @@ SKIP_PTR	EQU	8000h
 
 	ret
 
-	ENDP	UnVQ_4x2_Woofer
+UnVQ_4x2_Woofer	ENDP
 	ENDIF	;VQABLOCK_4X2
 	ENDIF	;VQABLOCK_WOOFER
 

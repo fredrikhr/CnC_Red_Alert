@@ -42,11 +42,11 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
-	CODESEG
+	;MASM
+	.386P
+	.MODEL	FLAT
+	;LOCALS	??
+	.CODE
 
 ;****************************************************************************
 ;*
@@ -70,12 +70,11 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C LCW_Compress:NEAR
-	PROC	LCW_Compress C NEAR USES ebx ecx edx esi edi
-
-	ARG	source:DWORD
-	ARG	dest:DWORD
-	ARG	datasize:DWORD
+;	.GLOBAL	C LCW_Compress:NEAR
+LCW_Compress	PROC	NEAR C USES ebx ecx edx esi edi,
+	source:DWORD,
+	dest:DWORD,
+	datasize:DWORD
 
 	LOCAL	inlen:DWORD
 	LOCAL	a1stdest:DWORD
@@ -224,11 +223,11 @@
 
 ??len:
 	mov	ebx,[lenoff]		;Get the offset of the length code
-	cmp	[BYTE PTR ebx],0BFh	;See if its maxed out
+	cmp	BYTE PTR [ebx],0BFh	;See if its maxed out
 	je	??lenin1		;If so put out a new len code
 
 ??stolen:
-	inc	[BYTE PTR ebx] 	;Inc the count code
+	inc	BYTE PTR [ebx] 	;Inc the count code
 	lodsb			;Get the byte
 	stosb			;Store it
 	mov	[inlen],1		;We are now in a length so save it
@@ -261,6 +260,6 @@
 	sub	eax,[a1stdest]		;Sub the first for the compressed size
 	ret
 
-	ENDP	LCW_Compress
+LCW_Compress	ENDP
 
 	END

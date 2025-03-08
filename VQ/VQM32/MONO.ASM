@@ -53,12 +53,12 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
+	;MASM
+	.386P
+	.MODEL	FLAT
+	;LOCALS	??
 
-	DATASEG
+	.DATA
 
 MonoEnabled	DD	1
 MonoX	DD	0
@@ -84,7 +84,7 @@ BoxData	DB	1,0,0		; Upper left corner.
 
 PageMap	DD	0,1,2,3,4,5,6,7
 
-	CODESEG
+	.CODE
 
 ;****************************************************************************
 ;*
@@ -107,13 +107,13 @@ PageMap	DD	0,1,2,3,4,5,6,7
 ;*
 ;****************************************************************************
 
-	GLOBAL	C Mono_Enable:NEAR
-	PROC	Mono_Enable C NEAR
+;	GLOBAL	C Mono_Enable:NEAR
+Mono_Enable	PROC	NEAR C
 
 	mov	[MonoEnabled],1
 	ret
 
-	ENDP	Mono_Enable
+Mono_Enable	ENDP
 
 
 ;****************************************************************************
@@ -137,13 +137,13 @@ PageMap	DD	0,1,2,3,4,5,6,7
 ;*
 ;****************************************************************************
 
-	GLOBAL	C Mono_Disable:NEAR
-	PROC	Mono_Disable C NEAR
+;	GLOBAL	C Mono_Disable:NEAR
+Mono_Disable	PROC	NEAR C
 
 	mov	[MonoEnabled],0
 	ret
 
-	ENDP	Mono_Disable
+Mono_Disable	ENDP
 
 
 ;****************************************************************************
@@ -167,13 +167,13 @@ PageMap	DD	0,1,2,3,4,5,6,7
 ;*
 ;****************************************************************************
 
-	GLOBAL	C Mono_X:NEAR
-	PROC	Mono_X C NEAR
+;	GLOBAL	C Mono_X:NEAR
+Mono_X	PROC	NEAR C
 
 	mov	eax,[MonoX]
 	ret
 
-	ENDP	Mono_X
+Mono_X	ENDP
 
 
 ;****************************************************************************
@@ -197,13 +197,13 @@ PageMap	DD	0,1,2,3,4,5,6,7
 ;*
 ;****************************************************************************
 
-	GLOBAL	C Mono_Y:NEAR
-	PROC	Mono_Y C NEAR
+;	GLOBAL	C Mono_Y:NEAR
+Mono_Y	PROC	NEAR C
 
 	mov	eax,[MonoY]
 	ret
 
-	ENDP	Mono_Y
+Mono_Y	ENDP
 
 
 ;****************************************************************************
@@ -227,11 +227,10 @@ PageMap	DD	0,1,2,3,4,5,6,7
 ;*
 ;****************************************************************************
 
-	GLOBAL	C Mono_Set_Cursor:NEAR
-	PROC	Mono_Set_Cursor C NEAR USES eax ebx edx
-
-	ARG	xpos:DWORD
-	ARG	ypos:DWORD
+;	GLOBAL	C Mono_Set_Cursor:NEAR
+Mono_Set_Cursor	PROC	NEAR C USES eax ebx edx,
+	xpos:DWORD,
+	ypos:DWORD
 
 	cmp	[MonoEnabled],0
 	je	short ??fini
@@ -270,7 +269,7 @@ PageMap	DD	0,1,2,3,4,5,6,7
 ??fini:
 	ret
 
-	ENDP	Mono_Set_Cursor
+Mono_Set_Cursor	ENDP
 
 
 ;****************************************************************************
@@ -295,8 +294,8 @@ PageMap	DD	0,1,2,3,4,5,6,7
 ;*
 ;****************************************************************************
 
-	GLOBAL	C Mono_Clear_Screen:NEAR
-	PROC	Mono_Clear_Screen C NEAR USES es eax ecx edi
+;	GLOBAL	C Mono_Clear_Screen:NEAR
+Mono_Clear_Screen	PROC	NEAR C USES es eax ecx edi
 
 ;	Exit if mono disabled
 
@@ -314,12 +313,12 @@ PageMap	DD	0,1,2,3,4,5,6,7
 	xor	eax,eax		;Set char & attributes to 0
 	mov	ecx,8000h/4		;Number of longwords to clear
 	rep	stosd		;Clear the mono screen.
-	call	Mono_Set_Cursor C,eax,eax
+	invoke	Mono_Set_Cursor,eax,eax
 
 ??fini:
 	ret
 
-	ENDP	Mono_Clear_Screen
+Mono_Clear_Screen	ENDP
 
 
 ;****************************************************************************
@@ -344,9 +343,9 @@ PageMap	DD	0,1,2,3,4,5,6,7
 ;*
 ;****************************************************************************
 
-	GLOBAL	C Mono_Scroll:NEAR
-	PROC	Mono_Scroll C NEAR USES es eax ebx ecx esi edi
-	ARG	lines:DWORD
+;	GLOBAL	C Mono_Scroll:NEAR
+Mono_Scroll	PROC	NEAR C USES es eax ebx ecx esi edi,
+	lines:DWORD
 
 ;	Exit if mono disabled
 
@@ -391,7 +390,7 @@ PageMap	DD	0,1,2,3,4,5,6,7
 ??fini:
 	ret
 
-	ENDP	Mono_Scroll
+Mono_Scroll	ENDP
 
 
 ;****************************************************************************
@@ -415,10 +414,10 @@ PageMap	DD	0,1,2,3,4,5,6,7
 ;*
 ;****************************************************************************
 
-	GLOBAL	C Mono_Put_Char:NEAR
-	PROC	Mono_Put_Char C NEAR USES es eax edi
-	ARG	character:DWORD
-	ARG	attrib:DWORD
+;	GLOBAL	C Mono_Put_Char:NEAR
+Mono_Put_Char	PROC	NEAR C USES es eax edi,
+	character:DWORD,
+	attrib:DWORD
 
 ;	Exit if mono disabled
 
@@ -443,12 +442,12 @@ PageMap	DD	0,1,2,3,4,5,6,7
 ;	Update cursor position.
 
 	inc	[MonoX]		; X position moves.
-	call	Mono_Set_Cursor C,[MonoX],[MonoY]
+	invoke	Mono_Set_Cursor,[MonoX],[MonoY]
 
 ??fini:
 	ret
 
-	ENDP	Mono_Put_Char
+Mono_Put_Char	ENDP
 
 
 ;****************************************************************************
@@ -477,14 +476,14 @@ PageMap	DD	0,1,2,3,4,5,6,7
 ;*
 ;****************************************************************************
 
-	GLOBAL	C Mono_Draw_Rect:NEAR
-	PROC	Mono_Draw_Rect C NEAR
-	ARG	xpos:DWORD
-	ARG	ypos:DWORD
-	ARG	width:DWORD
-	ARG	height:DWORD
-	ARG	attrib:DWORD
-	ARG	thick:DWORD
+;	GLOBAL	C Mono_Draw_Rect:NEAR
+Mono_Draw_Rect	PROC	NEAR C,
+	xpos:DWORD,
+	ypos:DWORD,
+	_width:DWORD,
+	height:DWORD,
+	attrib:DWORD,
+	thick:DWORD
 
 ;	Exit if mono disabled
 
@@ -503,20 +502,20 @@ PageMap	DD	0,1,2,3,4,5,6,7
 
 ;	Prep width and height.
 
-	cmp	[width],2
+	cmp	[_width],2
 	jb	??fini
 
 	cmp	[height],2
 	jb	??fini
 
-	sub	[width],2
+	sub	[_width],2
 	sub	[height],2
 
 ;	Set cursor position to upperleft corner of box
 
 	push	[MonoY]
 	push	[MonoX]		;Save current cursor position
-	call	Mono_Set_Cursor C,[xpos],[ypos]
+	invoke	Mono_Set_Cursor,[xpos],[ypos]
 
 ;	Draw the rectangle
 
@@ -525,12 +524,12 @@ PageMap	DD	0,1,2,3,4,5,6,7
 ;	Determine the number of characters to output
 
 ??drawloop:
-	mov	ecx,[width]
-	cmp	[BYTE PTR esi+2],1
+	mov	ecx,[_width]
+	cmp	BYTE PTR [esi+2],1
 	je	short ??gotlen
 
 	mov	ecx,[height]
-	cmp	[BYTE PTR esi+2],2
+	cmp	BYTE PTR [esi+2],2
 	je	short ??gotlen
 
 	mov	ecx,1
@@ -540,15 +539,15 @@ PageMap	DD	0,1,2,3,4,5,6,7
 
 ??runloop:
 	xor	eax,eax
-	mov	al,[BYTE PTR edi]
-	call	Mono_Put_Char C,eax,[attrib]	;Output the character.
+	mov	al,BYTE PTR [edi]
+	invoke	Mono_Put_Char,eax,[attrib]	;Output the character.
 
-	mov	al,[BYTE PTR esi+1]
+	mov	al,BYTE PTR [esi+1]
 	cbw
 	cwde
 	add	eax,[MonoY]
 	push	eax
-	mov	al,[BYTE PTR esi]
+	mov	al,BYTE PTR [esi]
 	cbw
 	cwde
 	add	eax,[MonoX]
@@ -563,7 +562,7 @@ PageMap	DD	0,1,2,3,4,5,6,7
 ??donerun:
 	add	esi,3
 	inc	edi
-	cmp	[BYTE PTR esi+2],-1
+	cmp	BYTE PTR [esi+2],-1
 	jne	??drawloop
 
 ;	Restore cursor to original position.
@@ -575,7 +574,7 @@ PageMap	DD	0,1,2,3,4,5,6,7
 	popad
 	ret
 
-	ENDP	Mono_Draw_Rect
+Mono_Draw_Rect	ENDP
 
 
 ;****************************************************************************
@@ -605,13 +604,13 @@ PageMap	DD	0,1,2,3,4,5,6,7
 ;*
 ;****************************************************************************
 
-	GLOBAL	C _Mono_Text_Print:NEAR
-	PROC	_Mono_Text_Print C NEAR USES eax esi
-	ARG	text:NEAR PTR
-	ARG	xpos:DWORD
-	ARG	ypos:DWORD
-	ARG	attrib:DWORD
-	ARG	update:DWORD
+;	GLOBAL	C _Mono_Text_Print:NEAR
+_Mono_Text_Print	PROC	NEAR C USES eax esi,
+	text:NEAR PTR,
+	xpos:DWORD,
+	ypos:DWORD,
+	attrib:DWORD,
+	update:DWORD
 
 ;	Save the current cursor position.
 
@@ -620,7 +619,7 @@ PageMap	DD	0,1,2,3,4,5,6,7
 	cmp	[text],0		;Exit if the string is NULL
 	je	short ??fini
 
-	call	Mono_Set_Cursor C,[xpos],[ypos]
+	invoke	Mono_Set_Cursor,[xpos],[ypos]
 
 ;	Print string to the mono screen
 
@@ -639,7 +638,7 @@ PageMap	DD	0,1,2,3,4,5,6,7
 
 ??normal:
 	xor	ah,ah
-	call	Mono_Put_Char C,eax,[attrib]
+	invoke	Mono_Put_Char,eax,[attrib]
 
 ;	Perform adjustments if wrapping past right margin.
 
@@ -647,14 +646,14 @@ PageMap	DD	0,1,2,3,4,5,6,7
 	jb	short ??nowrap
 
 	inc	[ypos]
-	call	Mono_Set_Cursor C,0,[ypos]
+	invoke	Mono_Set_Cursor,0,[ypos]
 	jmp	short ??nowrap
 
 	; Move to start of next line.
 
 ??cr:
 	inc	[ypos]
-	call	Mono_Set_Cursor C,[xpos],[ypos]
+	invoke	Mono_Set_Cursor,[xpos],[ypos]
 
 ;	Scroll the monochrome screen if necessary.
 
@@ -662,7 +661,7 @@ PageMap	DD	0,1,2,3,4,5,6,7
 	cmp	[MonoY],25
 	jb	short ??noscroll
 
-	call	Mono_Scroll C,1
+	invoke	Mono_Scroll,1
 	dec	[ypos]
 
 ??noscroll:
@@ -679,7 +678,7 @@ PageMap	DD	0,1,2,3,4,5,6,7
 	pop	eax
 	ret
 
-	ENDP	_Mono_Text_Print
+_Mono_Text_Print	ENDP
 
 
 ;****************************************************************************
@@ -710,24 +709,24 @@ PageMap	DD	0,1,2,3,4,5,6,7
 ;*
 ;****************************************************************************
 
-	GLOBAL	C Mono_Text_Print:NEAR
-	PROC	Mono_Text_Print C NEAR USES
-	ARG	text:NEAR PTR
-	ARG	xpos:DWORD
-	ARG	ypos:DWORD
-	ARG	attrib:DWORD
+;	GLOBAL	C Mono_Text_Print:NEAR
+Mono_Text_Print	PROC	NEAR C,
+	text:NEAR PTR,
+	xpos:DWORD,
+	ypos:DWORD,
+	attrib:DWORD
 
 ;	Exit if mono disabled
 
 	cmp	[MonoEnabled],0
 	je	short ??fini
 
-	call	_Mono_Text_Print C,[text],[xpos],[ypos],[attrib],0
+	invoke	_Mono_Text_Print,[text],[xpos],[ypos],[attrib],0
 
 ??fini:
 	ret
 
-	ENDP	Mono_Text_Print
+Mono_Text_Print	ENDP
 
 
 ;****************************************************************************
@@ -752,21 +751,21 @@ PageMap	DD	0,1,2,3,4,5,6,7
 ;*
 ;****************************************************************************
 
-	GLOBAL	C Mono_Print:NEAR
-	PROC	Mono_Print C NEAR
-	ARG	text:NEAR PTR
+;	GLOBAL	C Mono_Print:NEAR
+Mono_Print	PROC	NEAR C,
+	text:NEAR PTR
 
 ;	Exit if mono disabled
 
 	cmp	[MonoEnabled],0
 	je	short ??fini
 
-	call	_Mono_Text_Print C,[text],[MonoX],[MonoY],2,1
+	invoke	_Mono_Text_Print,[text],[MonoX],[MonoY],2,1
 
 ??fini:
 	ret
 
-	ENDP	Mono_Print
+Mono_Print	ENDP
 
 
 ;****************************************************************************
@@ -790,9 +789,10 @@ PageMap	DD	0,1,2,3,4,5,6,7
 ;*
 ;****************************************************************************
 
-	GLOBAL	C Mono_View_Page:NEAR
-	PROC	Mono_View_Page C NEAR USES ds es eax ebx ecx edi esi
-	ARG	page:DWORD
+;	GLOBAL	C Mono_View_Page:NEAR
+Mono_View_Page	PROC	NEAR C USES ds es eax ebx ecx edi esi,
+	_page:DWORD
+
 	LOCAL	oldpage:DWORD
 
 ;	Prepare the original page number for return to caller.
@@ -808,7 +808,7 @@ PageMap	DD	0,1,2,3,4,5,6,7
 
 ;	If the desired page is already displayed, then don't do anything.
 
-	mov	eax,[page]
+	mov	eax,[_page]
 	cmp	eax,ebx
 	je	short ??fini
 
@@ -864,8 +864,8 @@ PageMap	DD	0,1,2,3,4,5,6,7
 ??fini:
 	mov      	eax,[oldpage]
 	ret
-	
-	ENDP	Mono_View_Page
+
+Mono_View_Page	ENDP
 
 	END
 

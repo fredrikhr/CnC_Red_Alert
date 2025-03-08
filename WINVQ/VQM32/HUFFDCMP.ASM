@@ -42,20 +42,20 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
+	;MASM
+	.386P
+	.MODEL	FLAT
+	;LOCALS	??
 
-	STRUC	TreeNode
+TreeNode	STRUC
 count	DD	?	;Weight of the node
 child0	DW	?	;Child node 0
 child1	DW	?	;Child node 1
-	ENDS	TreeNode
+TreeNode	ENDS
 
 HUFF_EOS	EQU	256
 
-	CODESEG
+	.CODE
 
 ;****************************************************************************
 ;*
@@ -84,13 +84,12 @@ HUFF_EOS	EQU	256
 ;*
 ;****************************************************************************
 
-	GLOBAL	C HuffDecompress:NEAR
-	PROC	HuffDecompress C NEAR USES esi edi ebx ecx edx
-
-	ARG	data:NEAR PTR
-	ARG	buffer:NEAR PTR
-	ARG	length:DWORD
-	ARG	temp:NEAR PTR
+;	GLOBAL	C HuffDecompress:NEAR
+HuffDecompress	PROC	NEAR C USES esi edi ebx ecx edx,
+	data:NEAR PTR,
+	buffer:NEAR PTR,
+	_length:DWORD,
+	temp:NEAR PTR
 
 	LOCAL	next:DWORD
 
@@ -138,7 +137,7 @@ HUFF_EOS	EQU	256
 ;*	Fill empty nodes with 0
 
 ??zerocount:
-	mov	[DWORD PTR ebx],ecx
+	mov	DWORD PTR [ebx],ecx
 	inc	edx		;i++
 	add	ebx,8		;Next node
 
@@ -146,7 +145,7 @@ HUFF_EOS	EQU	256
 	cmp	edx,256
 	jl	short ??getcounts
 
-	mov	[WORD PTR ebx],1
+	mov	WORD PTR [ebx],1
 	mov	[data],esi
 
 ;*---------------------------------------------------------------------------
@@ -157,11 +156,11 @@ HUFF_EOS	EQU	256
 ;*	The two minimum nodes are then marked as inactive. This process
 ;*	repeats until their is only one node left, which is the root.
 ;*---------------------------------------------------------------------------
-	
+
 	mov	eax,[temp]		;Nodes array
 	mov	esi,eax
 	add	eax,(513 * 8)		;Node[513] = guaranteed maximum
-	mov	[DWORD PTR eax],-1
+	mov	DWORD PTR [eax],-1
 
 	mov	[next],((HUFF_EOS + 1) * 8)
 
@@ -172,13 +171,13 @@ HUFF_EOS	EQU	256
 	mov	ebx,esi		;nodes[i]
 
 ??sortnodes:
-	cmp	[WORD PTR ebx],0	;Only check non-zero nodes
+	cmp	WORD PTR [ebx],0	;Only check non-zero nodes
 	jz	??nextnode
 
 ;*	nodes[i].count < nodes[first].count
 
 	mov	eax,[DWORD PTR esi + edx]
-	cmp	eax,[DWORD PTR ebx]
+	cmp	eax,DWORD PTR [ebx]
 	jbe	??checklast
 
 	mov	edi,edx		;last = first
@@ -189,7 +188,7 @@ HUFF_EOS	EQU	256
 
 ??checklast:
 	mov	eax,[DWORD PTR esi + edi]
-	cmp	eax,[DWORD PTR ebx]
+	cmp	eax,DWORD PTR [ebx]
 	jbe	??nextnode
 
 	mov	edi,ecx		;last = i
@@ -207,19 +206,19 @@ HUFF_EOS	EQU	256
 
 	mov	ebx,[next]
 	add	ebx,esi
-	mov	[WORD PTR ebx+4],dx	;nodes[next].child0 = first
-	mov	[WORD PTR ebx+6],di	;nodes[next].child1 = last
+	mov	WORD PTR [ebx+4],dx	;nodes[next].child0 = first
+	mov	WORD PTR [ebx+6],di	;nodes[next].child1 = last
 
 	add	edx,esi
-	mov	eax,[DWORD PTR edx]	;nodes[first].count
+	mov	eax,DWORD PTR [edx]	;nodes[first].count
 	add	edi,esi
-	mov	[DWORD PTR ebx],eax
-	
+	mov	DWORD PTR [ebx],eax
+
 	mov	ecx,[DWORD PTR edi]	;nodes[last].count
 	xor	eax,eax
-	add	[DWORD PTR ebx],ecx
+	add	DWORD PTR [ebx],ecx
 
-	mov	[DWORD PTR edx],eax	;nodes[first].count = 0
+	mov	DWORD PTR [edx],eax	;nodes[first].count = 0
 	mov	[DWORD PTR edi],eax	;nodes[lats].count = 0
 	add	[next],8
 	jmp	??sortnext
@@ -245,7 +244,7 @@ HUFF_EOS	EQU	256
 
 ??decodeloop:
 	mov	edx,[next]		;node = root
-	
+
 ??walktree:
 	mov	ecx,4
 	add	ecx,edx
@@ -255,7 +254,7 @@ HUFF_EOS	EQU	256
 	add	ecx,2
 
 ??getnode:
-	mov	dx,[WORD PTR ebx + ecx]		;nodes[node].child
+	mov	dx,WORD PTR [ebx + ecx]		;nodes[node].child
 	shr	al,1
 	jnz	short ??checkleaf
 
@@ -278,7 +277,7 @@ HUFF_EOS	EQU	256
 	sub	eax,[buffer]
 	ret
 
-	ENDP	HuffDecompress
+HuffDecompress	ENDP
 
 
 ;****************************************************************************
@@ -307,17 +306,16 @@ HUFF_EOS	EQU	256
 ;*
 ;****************************************************************************
 
-	GLOBAL	C BuildHuffTree:NEAR
-	PROC	BuildHuffTree C NEAR USES esi edi ebx ecx edx
+;	GLOBAL	C BuildHuffTree:NEAR
+BuildHuffTree	PROC	NEAR C USES esi edi ebx ecx edx,
+	temp:NEAR PTR
 
-	ARG	temp:NEAR PTR
-	
 	LOCAL	next:DWORD
 
 	mov	eax,[temp]		;Nodes array
 	mov	esi,eax
 	add	eax,(513 * 8)		;Node[513] = guaranteed maximum
-	mov	[DWORD PTR eax],-1
+	mov	DWORD PTR [eax],-1
 
 	mov	[next],((HUFF_EOS + 1) * 8)
 
@@ -328,13 +326,13 @@ HUFF_EOS	EQU	256
 	mov	ebx,esi		;nodes[i]
 
 ??sortnodes:
-	cmp	[WORD PTR ebx],0	;Only check non-zero nodes
+	cmp	WORD PTR [ebx],0	;Only check non-zero nodes
 	jz	??nextnode
 
 ;*	nodes[i].count < nodes[first].count
 
 	mov	eax,[DWORD PTR esi + edx]
-	cmp	eax,[DWORD PTR ebx]
+	cmp	eax,DWORD PTR [ebx]
 	jbe	??checklast
 
 	mov	edi,edx		;last = first
@@ -345,7 +343,7 @@ HUFF_EOS	EQU	256
 
 ??checklast:
 	mov	eax,[DWORD PTR esi + edi]
-	cmp	eax,[DWORD PTR ebx]
+	cmp	eax,DWORD PTR [ebx]
 	jbe	??nextnode
 
 	mov	edi,ecx		;last = i
@@ -363,19 +361,19 @@ HUFF_EOS	EQU	256
 
 	mov	ebx,[next]
 	add	ebx,esi		;nodes[next]
-	mov	[WORD PTR ebx+4],dx	;nodes[next].child0 = first
-	mov	[WORD PTR ebx+6],di	;nodes[next].child1 = last
+	mov	WORD PTR [ebx+4],dx	;nodes[next].child0 = first
+	mov	WORD PTR [ebx+6],di	;nodes[next].child1 = last
 
 	add	edx,esi
-	mov	eax,[DWORD PTR edx]	;nodes[first].count
+	mov	eax,DWORD PTR [edx]	;nodes[first].count
 	add	edi,esi
-	mov	[DWORD PTR ebx],eax
+	mov	DWORD PTR [ebx],eax
 
 	mov	ecx,[DWORD PTR edi]	;nodes[last].count
-	xor	eax,eax 
-	add	[DWORD PTR ebx],ecx
+	xor	eax,eax
+	add	DWORD PTR [ebx],ecx
 
-	mov	[DWORD PTR edx],eax	;nodes[first].count = 0
+	mov	DWORD PTR [edx],eax	;nodes[first].count = 0
 	mov	[DWORD PTR edi],eax	;nodes[lats].count = 0
 	add	[next],8
 	jmp	??sortnext
@@ -385,7 +383,7 @@ HUFF_EOS	EQU	256
 	sub	eax,8
 	ret
 
-	ENDP	BuildHuffTree
+BuildHuffTree	ENDP
 
 	END
 

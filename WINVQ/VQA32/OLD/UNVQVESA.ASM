@@ -41,14 +41,14 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
-	INCLUDE	"vga.i"
-	INCLUDE	"vesavid.i"
-	INCLUDE	"vqaplay.i"
-	CODESEG
+	;MASM
+	.386P
+	.MODEL	FLAT
+	;LOCALS	??
+	INCLUDE	<vga.i>
+	INCLUDE	<vesavid.i>
+	INCLUDE	<vqaplay.i>
+	.CODE
 
 SKIP_PTR	EQU	8000h
 
@@ -76,7 +76,7 @@ SKIP_PTR	EQU	8000h
 ;*     NONE
 ;*
 ;****************************************************************************
- 
+
 ;---------------------------------------------------------------------------
 ; SET_2_PIXELS:
 ; - Loads 2 bytes from codebook, expands them into words in eax
@@ -288,21 +288,23 @@ SKIP_PTR	EQU	8000h
 ; The actual procedure:
 ;===========================================================================
 
-	GLOBAL	C UnVQ_4x2_VESA320_32K:NEAR
-	PROC	UnVQ_4x2_VESA320_32K C NEAR
-
-	ARG	codebook:NEAR PTR
-	ARG	pointers:NEAR PTR
-
 	IF	PHARLAP_TNT
-	ARG	pal:QWORD	;KLUDGE - bcc32 pads FARPTR
+	;KLUDGE - bcc32 pads FARPTR
+	UnVQ_4x2_VESA320_32K_pal_ArgType	EQU	QWORD
+	UnVQ_4x2_VESA320_32K_pal_ArgName	EQU	pal
 	ELSE
-	ARG	palette:NEAR PTR
+	UnVQ_4x2_VESA320_32K_pal_ArgType	EQU	NEAR PTR
+	UnVQ_4x2_VESA320_32K_pal_ArgName	EQU	palette
 	ENDIF
 
-	ARG	grains_per_win:DWORD
-	ARG	dummy1:DWORD
-	ARG	dummy2:DWORD
+;	GLOBAL	C UnVQ_4x2_VESA320_32K:NEAR
+UnVQ_4x2_VESA320_32K	PROC	NEAR C,
+	codebook:NEAR PTR,
+	pointers:NEAR PTR,
+	UnVQ_4x2_VESA320_32K_pal_ArgName:UnVQ_4x2_VESA320_32K_pal_ArgType,
+	grains_per_win:DWORD,
+	dummy1:DWORD,
+	dummy2:DWORD
 
 	LOCAL	rowcount:DWORD		; # rows drawn
 	LOCAL	esi_save:DWORD
@@ -371,7 +373,7 @@ SKIP_PTR	EQU	8000h
 	popad
 	ret
 
-	ENDP	UnVQ_4x2_VESA320_32K
+UnVQ_4x2_VESA320_32K	ENDP
 
 	ENDIF	;VQABLOCK_4X2
 	ENDIF	;VQAVESA_ON

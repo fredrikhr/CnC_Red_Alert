@@ -23,7 +23,7 @@
 ;*---------------------------------------------------------------------------
 ;*
 ;* FILE
-;*     audunzap.asm 
+;*     audunzap.asm
 ;*
 ;* DESCRIPTION
 ;*     Audio uncompress (32-Bit protected mode)
@@ -42,11 +42,11 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
-	CODESEG
+	;MASM
+	.386P
+	.MODEL	FLAT
+	;LOCALS	??
+	.CODE
 
 CODE_2BIT	EQU	0
 CODE_4BIT	EQU	1
@@ -81,12 +81,15 @@ _4bitdecode	DB	-9,-8,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,8
 ;*
 ;****************************************************************************
 
-	GLOBAL	C AudioUnzap:NEAR
-	PROC	AudioUnzap C NEAR USES ebx ecx edx esi edi
+	;GLOBAL	C AudioUnzap:NEAR
+	AudioUnzap	PROC	NEAR C USES ebx ecx edx esi edi,
+ source:DWORD,
+ dest:DWORD,
+ count:DWORD
 
-	ARG	source:DWORD
-	ARG	dest:DWORD
-	ARG	count:DWORD
+	;ARG	source:DWORD
+	;ARG	dest:DWORD
+	;ARG	count:DWORD
 
 	LOCAL	previous:BYTE
 	LOCAL	incount:DWORD
@@ -239,7 +242,7 @@ _4bitdecode	DB	-9,-8,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,8
 	cmp	ah,CODE_2BIT
 	jne	??zerodelta
 
-;	A sequence of 2bit deltas follow.  AL equals the number of 
+;	A sequence of 2bit deltas follow.  AL equals the number of
 ;	packed delta bytes to process.
 
 ??bit2loop:
@@ -369,7 +372,7 @@ _4bitdecode	DB	-9,-8,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,8
 	mov	eax,[incount]
 	ret
 
-	ENDP	AudioUnzap
+AudioUnzap ENDP
 
 	END
 

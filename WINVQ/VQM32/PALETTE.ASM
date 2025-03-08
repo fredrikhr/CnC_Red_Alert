@@ -46,7 +46,7 @@
 ;* writes; on very fast machines, this means that the system may not be
 ;* able to handle a rapid-fire of RGB values.  So, a "safe" routine is
 ;* provided that has wait states between each out.
-;* 
+;*
 ;* Reference: Progammers Guide to the EGA & VGA Cards, Ferraro, 2nd ed.
 ;* (Chapter 8.)
 ;*
@@ -66,15 +66,15 @@
 ;*     ReadPalette      - Read the palette from the display adapter.
 ;*     SetDAC           - Set a single palette color in the DAC.
 ;*     TranslatePalette - Translate 24-bit color to 15-bit color.
-;*      
+;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
-	INCLUDE	"vga.i"
-	CODESEG
+	;MASM
+	.386P
+	.MODEL	FLAT
+	;LOCALS	??
+	INCLUDE	<vga.i>
+	.CODE
 
 ;****************************************************************************
 ;*
@@ -98,12 +98,11 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C SetPalette:NEAR
-	PROC	SetPalette C NEAR USES eax ecx edx esi ds
-
-	ARG	palette:NEAR PTR
-	ARG	numbytes:DWORD
-	ARG	slowpal:DWORD
+;	.GLOBAL	C SetPalette:NEAR
+SetPalette	PROC	NEAR C USES eax ecx edx esi ds,
+	palette:NEAR PTR,
+	numbytes:DWORD,
+	slowpal:DWORD
 
 	pushf
 	cld
@@ -117,7 +116,7 @@
 
 	mov	esi,[palette]
 	mov	edx,PEL_WRITE_ADDR
-	xor	al,al			
+	xor	al,al
 	out	dx,al	;Select color to write too.
 	inc	al	;Step to the next color for next loop
 	inc	edx	;DX = PEL_DATA
@@ -125,7 +124,7 @@
 	rep 	outsb	;Write 256 * RGB out to the palette
 	popf
 	ret
-	
+
 ;----------------------------------------------------------------------------
 ;	Safe palette set
 ;----------------------------------------------------------------------------
@@ -157,7 +156,7 @@
 	popf
 	ret
 
-	ENDP	SetPalette
+SetPalette	ENDP
 
 
 ;****************************************************************************
@@ -180,10 +179,9 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C ReadPalette:NEAR
-	PROC	ReadPalette C NEAR USES ecx edx edi es
-
-	ARG	palette:NEAR PTR
+;	.GLOBAL	C ReadPalette:NEAR
+ReadPalette	PROC	NEAR C USES ecx edx edi es,
+	palette:NEAR PTR
 
 	mov	edi,[palette]
 	mov	ecx,256
@@ -209,7 +207,7 @@
 	jnz	??Read_loop
 	ret
 
-	ENDP	ReadPalette
+ReadPalette	ENDP
 
 
 ;****************************************************************************
@@ -235,13 +233,12 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C SetDAC:NEAR
-	PROC	SetDAC C NEAR USES edx
-
-	ARG	color_num:DWORD
-	ARG	red:BYTE
-	ARG	green:BYTE
-	ARG	blue:BYTE
+;	.GLOBAL	C SetDAC:NEAR
+SetDAC	PROC	NEAR C USES edx,
+	color_num:DWORD,
+	red:BYTE,
+	green:BYTE,
+	blue:BYTE
 
 	mov	edx,PEL_WRITE_ADDR
 	mov	eax,[color_num]
@@ -261,7 +258,7 @@
 	out	dx,al	;Set blue gun
 	ret
 
-	ENDP	SetDAC
+SetDAC	ENDP
 
 
 ;****************************************************************************
@@ -286,34 +283,33 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C TranslatePalette:NEAR
-	PROC	TranslatePalette C NEAR USES ecx edx edi esi
-
-	ARG	pal24:NEAR PTR
-	ARG	pal15:NEAR PTR
-	ARG	numbytes:DWORD
+;	.GLOBAL	C TranslatePalette:NEAR
+TranslatePalette	PROC	NEAR C USES ecx edx edi esi,
+	pal24:NEAR PTR,
+	pal15:NEAR PTR,
+	numbytes:DWORD
 
 	mov	esi,[pal24]
 	mov	edi,[pal15]
 	mov	ecx,[numbytes]
 
 ??TranslatePalette:
-	mov	ah,[BYTE PTR esi]	;AH = red
-	mov	al,[BYTE PTR esi+1]	;AL = green
-	mov	dl,[BYTE PTR esi+2]	;DL = blue
+	mov	ah,BYTE PTR [esi]	;AH = red
+	mov	al,BYTE PTR [esi+1]	;AL = green
+	mov	dl,BYTE PTR [esi+2]	;DL = blue
 	shr	ah,1		;Red = lower 5 bits of AH
 	shl	al,2		;Green = upper 6 bits of AL
 	shr	dl,1		;Blue = lower 5 bits of DL
 	shl	eax,2		;Make room for blue
 	and	al,0E0h		;Trim off bottom bit of green
 	or	al,dl		;Load in blue bits
-	mov	[WORD PTR edi],ax	;Store the value
+	mov	WORD PTR [edi],ax	;Store the value
 	add	esi,3		;Increment to next RGB values
 	add	edi,2		;Increment to next palette word
 	sub	ecx,3
 	ja	??TranslatePalette
 	ret
 
-	ENDP	TranslatePalette
+TranslatePalette	ENDP
 
 	END

@@ -35,11 +35,11 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
-	CODESEG
+	;MASM
+	.386P
+	.MODEL	FLAT
+	;LOCALS	??
+	.CODE
 
 XPIXEL_MAX		EQU	320
 YPIXEL_MAX		EQU	200
@@ -62,15 +62,15 @@ FONTINFOMAXWIDTH	EQU	5
 ;
 ; Draws a character to the screen only if given coordinates that will allow
 ; the entire character to be drawn on the screen else will exit.
-; 
+;
 ; NOTE: This is a routine called by Text_Print.
 ;
 ;*
-	GLOBAL	C Draw_Char:NEAR
-	PROC	Draw_Char C NEAR USES eax ebx ecx edx esi edi 
-	ARG	fontchar:DWORD
-	ARG	x_pixel:DWORD
-	ARG	y_pixel:DWORD
+;	GLOBAL	C Draw_Char:NEAR
+Draw_Char	PROC	NEAR C USES eax ebx ecx edx esi edi,
+	fontchar:DWORD,
+	x_pixel:DWORD,
+	y_pixel:DWORD
 
 	LOCAL	infoblock:DWORD
 	LOCAL	offsetblock:DWORD
@@ -173,7 +173,7 @@ FONTINFOMAXWIDTH	EQU	5
 	je	short ??skiplead	; skip drawing top background lines
 
 	mov	al,0
-	xlat	[ebx]		; get background color
+	xlat	;[ebx]		; get background color
 
 	or	al,al		; check for none zero color
 	jne	short ??lheight	; update background color
@@ -211,7 +211,7 @@ FONTINFOMAXWIDTH	EQU	5
 	lodsb				; get byte value from font data
 	mov	ah,al			; save hinibble
 	and	al,00FH			; get lonibble
-	xlat	[ebx]			; get new color
+	xlat	;[ebx]			; get new color
 	or	al,al
 	je	short ??chklowidth		; skip color zero
 
@@ -224,7 +224,7 @@ FONTINFOMAXWIDTH	EQU	5
 
 	mov	al,ah			; get byte value
 	and	al,0F0H			; get hinibble
-	xlat	[ebx]			; get new color
+	xlat	;[ebx]			; get new color
 	or	al,al
 	je	short ??chkhiwidth		; skip color zero
 
@@ -246,7 +246,7 @@ FONTINFOMAXWIDTH	EQU	5
 	jle	short ??exit			; skip drawing bottom background lines
 
 	mov	al,0
-	xlat	[ebx]			; get background color
+	xlat	;[ebx]			; get background color
 	or	al,al			; check for color zero
 	je	short ??exit			; skip drawing
 
@@ -266,7 +266,7 @@ FONTINFOMAXWIDTH	EQU	5
 ??exit:
 	ret
 
-	ENDP	Draw_Char
+Draw_Char	ENDP
 
 ;***********************************************************
 
@@ -281,11 +281,11 @@ FONTINFOMAXWIDTH	EQU	5
 ;
 ; Bounds Checking: forces start and end to a range of 0-15
 ;*
-	GLOBAL	C Set_Font_Palette_Range:NEAR
-	PROC	Set_Font_Palette_Range C NEAR USES eax ebx ecx edi esi
-	ARG	palette:NEAR PTR
-	ARG	start:DWORD
-	ARG	endval:DWORD
+;	GLOBAL	C Set_Font_Palette_Range:NEAR
+Set_Font_Palette_Range	PROC	NEAR C USES eax ebx ecx edi esi,
+	palette:NEAR PTR,
+	start:DWORD,
+	endval:DWORD
 
 	cld
 	mov	esi,[palette]
@@ -319,7 +319,7 @@ FONTINFOMAXWIDTH	EQU	5
 ??exit:
 	ret
 
-	ENDP	Set_Font_Palette_Range
+Set_Font_Palette_Range	ENDP
 
 ;***********************************************************
 
@@ -330,18 +330,18 @@ FONTINFOMAXWIDTH	EQU	5
 ; VOID Draw_Char_Setup(VOID);
 ;
 ; This routine sets up code segment variables for Draw_Char.
-; 
+;
 ; NOTE: This is a routine called by Set_Font.
 ;
 ;*
-	GLOBAL	C Draw_Char_Setup:NEAR
-	PROC	Draw_Char_Setup C NEAR
+;	GLOBAL	C Draw_Char_Setup:NEAR
+Draw_Char_Setup	PROC	NEAR C
 
 	ret
 
-	ENDP	Draw_Char_Setup
+Draw_Char_Setup	ENDP
 
-	DATASEG
+	.DATA
 
 ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 	DB	008H,009H,00AH,00BH,00CH,00DH,00EH,00FH

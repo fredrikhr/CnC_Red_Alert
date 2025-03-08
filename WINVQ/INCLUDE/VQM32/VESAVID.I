@@ -79,7 +79,7 @@ VESA_MAX EQU	VESA_1024X768_65K
 ; TotalMemory  - ???
 ; Reserved     - Pads structure to 256 bytes total
 
-	STRUC	VESAInfo
+VESAInfo	STRUC
 Signature	DD	?
 Ver	DW	?
 OEMString	DD	?
@@ -87,7 +87,7 @@ Capabilities	DD	?
 AvailModes	DD	?
 TotalMemory	DW	?
 Reserved	DB	236 DUP (?)
-	ENDS	VESAInfo
+VESAInfo	ENDS
 
 ; VESAModeInfo - Information about this VESA mode.
 ;                (Filled in by VESA BIOS Function 1)
@@ -104,10 +104,10 @@ Reserved	DB	236 DUP (?)
 ; WinSize          - size of windows in KB (ie 64, 32)
 ; WinA_Segment     - location of Window A in CPU space (usually 0xa000)
 ; WinB_Segment     - location of Window B in CPU space (usually 0xb000)
-; WinFunc          - address of window-setting function (This is provided 
+; WinFunc          - address of window-setting function (This is provided
 ;                    as an alternative to Int 10 for speed.)
 ; BytesPerScanline - # bytes per scan line
-; 
+;
 ; Optional info (available if bit 1 of Attributes is set):
 ;
 ; XRes             - X-resolution
@@ -123,11 +123,11 @@ Reserved	DB	236 DUP (?)
 ;                    03h = 4 plane planar mode
 ;                    04h = packed pixel mode (1 byte/pixel)
 ;                    05h = non-chain 4, 256-color mode
-;                    06-0Fh = 
+;                    06-0Fh =
 ;                    10-FFh = OEM-specific
 ; BankSize         - Bank size in KB
 
-		STRUC	VESAModeInfo 
+VESAModeInfo	STRUC
 Attributes		DW	?
 WinA_Attributes	DB	?
 WinB_Attributes	DB	?
@@ -158,17 +158,17 @@ RsvdMaskSize		DB	?
 RsvdFieldPosition	DB	?
 DirectColorModeInfo	DB	?
 pad		DB	216 DUP (?)
-		ENDS	VESAModeInfo
+VESAModeInfo	ENDS
 
 ;----------------------------------------------------------------------------
 ; Function definitions
 ;----------------------------------------------------------------------------
 
-	GLOBAL C InitVESA:PROC
-	GLOBAL C UninitVESA:PROC
-	GLOBAL C SetVESAMode:PROC
-	GLOBAL C ReadVESAModeInfo:PROC
-	GLOBAL C SetVESAWindow:PROC
+InitVESA			PROTO C
+UninitVESA			PROTO C
+SetVESAMode			PROTO C	,:DWORD
+ReadVESAModeInfo	PROTO C	,:DWORD
+SetVESAWindow		PROTO C	,:DWORD
 
 ;----------------------------------------------------------------------------
 ;
@@ -191,11 +191,11 @@ pad		DB	216 DUP (?)
 ;
 ;----------------------------------------------------------------------------
 
-	MACRO	SET_WINDOW grain_num
+SET_WINDOW	MACRO	grain_num
 	push	esi
 	push	edi
 	push	es
-	call	SetVESAWindow C,grain_num
+	invoke	SetVESAWindow,grain_num
 	pop	es
 	pop	edi
 	pop	esi

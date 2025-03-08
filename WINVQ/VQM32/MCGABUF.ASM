@@ -44,12 +44,12 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
-	INCLUDE	"vga.i"
-	CODESEG
+	;MASM
+	.386P
+	.MODEL	FLAT
+	;LOCALS	??
+	INCLUDE	<vga.i>
+	.CODE
 
 ;****************************************************************************
 ;*
@@ -71,8 +71,8 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C ClearVRAM:NEAR
- 	PROC	ClearVRAM C NEAR USES eax ecx edi es
+;	.GLOBAL	C ClearVRAM:NEAR
+ClearVRAM 	PROC	NEAR C USES eax ecx edi es
 
 	IF	PHARLAP_TNT
 	mov	eax,01Ch	;Set ES selector to video memory
@@ -89,7 +89,7 @@
 	rep	stosd
 	ret
 
-	ENDP	ClearVRAM
+ClearVRAM	ENDP
 
 
 ;****************************************************************************
@@ -113,11 +113,10 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C MCGA_BufferCopy:NEAR
-	PROC	MCGA_BufferCopy C NEAR USES ecx esi edi es
-
-	ARG	buffer:NEAR PTR
-	ARG	dummy:NEAR PTR
+;	.GLOBAL	C MCGA_BufferCopy:NEAR
+MCGA_BufferCopy	PROC	NEAR C USES ecx esi edi es,
+	buffer:NEAR PTR,
+	dummy:NEAR PTR
 
 	IF	PHARLAP_TNT
 	mov	eax,01Ch
@@ -132,7 +131,7 @@
 	rep 	movsd	;Transfer the data
 	ret
 
-	ENDP	MCGA_BufferCopy
+MCGA_BufferCopy	ENDP
 
 
 ;****************************************************************************
@@ -158,13 +157,12 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C MCGA_Blit:NEAR
-	PROC	MCGA_Blit C NEAR USES ecx edx esi edi
-
-	ARG	buffer:NEAR PTR
-	ARG	screen:NEAR PTR
-	ARG	imgwidth:DWORD
-	ARG	imgheight:DWORD
+;	.GLOBAL	C MCGA_Blit:NEAR
+MCGA_Blit	PROC	NEAR C USES ecx edx esi edi,
+	buffer:NEAR PTR,
+	screen:NEAR PTR,
+	imgwidth:DWORD,
+	imgheight:DWORD
 
 	IF	PHARLAP_TNT
 	push	es
@@ -190,7 +188,7 @@
 
 	ret
 
-	ENDP	MCGA_Blit
+MCGA_Blit	ENDP
 
 	END
 

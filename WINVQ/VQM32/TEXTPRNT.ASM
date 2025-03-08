@@ -39,11 +39,11 @@
 ;*                                                                         *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
-	CODESEG
+	;MASM
+	.386P
+	.MODEL	FLAT
+	;LOCALS	??
+	.CODE
 
 XPIXEL_MAX    EQU	320
 YPIXEL_MAX	EQU	200
@@ -57,12 +57,12 @@ FONTHEIGHTBLOCK	EQU	12
 FONTINFOMAXHEIGHT	EQU	4
 FONTINFOMAXWIDTH	EQU	5
 
-	EXTRN	C Char_Pixel_Width:NEAR
-	EXTRN	C Draw_Char:NEAR
-	EXTRN	C Set_Font_Palette_Range:NEAR
+	Char_Pixel_Width		PROTO	NEAR C	,:DWORD
+	Draw_Char				PROTO	NEAR C	,:DWORD, :DWORD, :DWORD
+	Set_Font_Palette_Range	PROTO	NEAR C	,:NEAR PTR, :DWORD, :DWORD
 	EXTRN	FontPtr:NEAR PTR
 	EXTRN	FontYSpacing:DWORD
-	
+
 ;----------------------------------------------------------------------------
 ; TEXT_PRINT
 ;
@@ -79,13 +79,13 @@ FONTINFOMAXWIDTH	EQU	5
 ; if y_pixel >= YPIXEL_MAX, then exit
 ;*
 
-	GLOBAL	C Text_Print:NEAR
-	PROC	Text_Print C NEAR USES ebx ecx edx edi esi
-	ARG	string:NEAR PTR
-	ARG	x_pixel:DWORD
-	ARG	y_pixel:DWORD
-	ARG	fcol:DWORD
-	ARG	bcol:DWORD
+;	.GLOBAL	C Text_Print:NEAR
+Text_Print	PROC	NEAR C USES ebx ecx edx edi esi,
+	string:NEAR PTR,
+	x_pixel:DWORD,
+	y_pixel:DWORD,
+	fcol:DWORD,
+	bcol:DWORD
 
 	LOCAL	fwidth:DWORD	;Pixel width of font.
 	LOCAL	fgbg:DWORD	;Two bytes of background & foreground colors.
@@ -101,9 +101,9 @@ FONTINFOMAXWIDTH	EQU	5
 	or	eax,eax
 	je	??exit
 
-	movzx	ebx,[WORD PTR eax+FONTINFOBLOCK]
+	movzx	ebx,WORD PTR [eax+FONTINFOBLOCK]
 	add	ebx,eax
-	movzx	eax,[BYTE PTR ebx+FONTINFOMAXHEIGHT]
+	movzx	eax,BYTE PTR [ebx+FONTINFOMAXHEIGHT]
 	mov	[fontheight],eax
 	mov	esi,[string]
 
@@ -119,7 +119,7 @@ FONTINFOMAXWIDTH	EQU	5
 	mov	ah,[BYTE PTR fcol]
 	mov	[fgbg],eax
 	lea	eax,[fgbg]
-	call	Set_Font_Palette_Range C,eax,0,1
+	invoke	Set_Font_Palette_Range ,eax,0,1
 
 ; start of loop to print string
 
@@ -149,7 +149,7 @@ FONTINFOMAXWIDTH	EQU	5
 	jmp	??loop
 
 ??chkxy:
-	call	Char_Pixel_Width C,edx
+	invoke	Char_Pixel_Width ,edx
 
 	; Check to see if this character would spill past the right edge
 	; of the screen. If it would then drop down a line.
@@ -160,7 +160,7 @@ FONTINFOMAXWIDTH	EQU	5
 	cmp	eax,XPIXEL_MAX		; check x pos
 	ja	short ??onelinedown
 
-	call	Draw_Char C,edx,ebx,ecx
+	invoke	Draw_Char ,edx,ebx,ecx
 
 	add	ebx,[fwidth]		; add font width
 	jmp	??loop
@@ -171,7 +171,7 @@ FONTINFOMAXWIDTH	EQU	5
 	mov	eax,[lines]
 	ret
 
-	ENDP	Text_Print
+Text_Print	ENDP
 
 ;----------------------------------------------------------------------------
 	END

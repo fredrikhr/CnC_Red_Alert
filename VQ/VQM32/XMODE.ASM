@@ -46,13 +46,13 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
-	INCLUDE	"vga.i"
-	INCLUDE	"video.i"
-	CODESEG
+	;MASM
+	.386P
+	.MODEL	FLAT
+	;LOCALS	??
+	INCLUDE	<vga.i>
+	INCLUDE	<video.i>
+	.CODE
 
 ;****************************************************************************
 ;*
@@ -77,10 +77,9 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C SetXMode:NEAR
-	PROC	SetXMode C NEAR USES edx
-
-	ARG	mode:DWORD
+;	GLOBAL	C SetXMode:NEAR
+SetXMode	PROC	NEAR C USES edx,
+	mode:DWORD
 
 ??Set320x200:
 	cmp	[mode],XMODE_320X200	;320x200?
@@ -412,7 +411,7 @@
 ??Done:
 	ret
 
-	ENDP	SetXMode
+SetXMode	ENDP
 
 
 ;****************************************************************************
@@ -435,8 +434,8 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C ClearXMode:NEAR
-	PROC	ClearXMode C NEAR USES eax ecx edi es
+;	GLOBAL	C ClearXMode:NEAR
+ClearXMode	PROC	NEAR C USES eax ecx edi es
 
 	IF	PHARLAP_TNT
 	mov	eax,01Ch
@@ -451,7 +450,7 @@
 	rep	stosd
 	ret
 
-	ENDP	ClearXMode
+ClearXMode	ENDP
 
 
 ;****************************************************************************
@@ -476,10 +475,9 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C ShowXPage:NEAR
-	PROC	ShowXPage C NEAR USES eax ebx ecx edx
-
-	ARG	StartOffset:DWORD
+;	GLOBAL	C ShowXPage:NEAR
+ShowXPage	PROC	NEAR C USES eax ebx ecx edx,
+	StartOffset:DWORD
 
 	mov	edx,R_CRT_CONTROLLER
 	mov	bl,CRT_STARTADDR_LOW
@@ -492,7 +490,7 @@
 	out	dx,ax
 	ret
 
-	ENDP	ShowXPage
+ShowXPage	ENDP
 
 
 ;****************************************************************************
@@ -517,11 +515,10 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C Xmode_BufferCopy_320x200:NEAR
-	PROC	Xmode_BufferCopy_320x200 C NEAR USES eax ecx edx edi esi es
-
-	ARG	buffer:NEAR PTR
-	ARG	screen:NEAR PTR
+;	GLOBAL	C Xmode_BufferCopy_320x200:NEAR
+Xmode_BufferCopy_320x200	PROC	NEAR C USES eax ecx edx edi esi es,
+	buffer:NEAR PTR,
+	screen:NEAR PTR
 
 	LOCAL	save_esi:DWORD
 	LOCAL	save_edi:DWORD
@@ -529,7 +526,7 @@
 ;----------------------------------------------------------------------------
 ;	Initialize
 ;----------------------------------------------------------------------------
-	
+
 	IF	PHARLAP_TNT
 	mov	eax,01Ch	;Set ES selector to VRAM.
 	mov	es,ax
@@ -632,7 +629,7 @@ x_loop_4:
 	jnz	short x_loop_4
 	ret
 
-	ENDP	Xmode_BufferCopy_320x200
+Xmode_BufferCopy_320x200	ENDP
 
 
 ;****************************************************************************
@@ -662,19 +659,18 @@ x_loop_4:
 ;*
 ;****************************************************************************
 
-	GLOBAL	C Xmode_Blit:NEAR
-	PROC	Xmode_Blit C NEAR USES ecx edx esi edi es
-
-	ARG	buffer:NEAR PTR
-	ARG	screen:NEAR PTR
-	ARG	imgwidth:DWORD
-	ARG	imgheight:DWORD
+;	GLOBAL	C Xmode_Blit:NEAR
+Xmode_Blit	PROC	NEAR C USES ecx edx esi edi es,
+	buffer:NEAR PTR,
+	screen:NEAR PTR,
+	imgwidth:DWORD,
+	imgheight:DWORD
 
 	LOCAL	rowcount:DWORD
 	LOCAL	xplane:DWORD
 	LOCAL	edi_startval:DWORD
 	LOCAL	esi_startval:DWORD
-	LOCAL	xadd:DWORD
+	LOCAL	_xadd:DWORD
 
 ;----------------------------------------------------------------------------
 ;	Initialize
@@ -693,7 +689,7 @@ x_loop_4:
 	mov	edx,320	;Compute modulo
 	sub	edx,[imgwidth]
 	shr	edx,2
-	mov	[xadd],edx
+	mov	[_xadd],edx
 
 ;----------------------------------------------------------------------------
 ;	Transfer the data on plane at a time.
@@ -705,7 +701,7 @@ x_loop_4:
 	SET_PLANE [xplane]	;Set plane to transfer to
 	mov	eax,[imgheight]
 	mov	[rowcount],eax
-	mov	edx,[xadd]
+	mov	edx,[_xadd]
 
 ??Do_row:
 	mov	ecx,[imgwidth]	;Length of row to copy in DWORDS
@@ -742,7 +738,7 @@ x_loop_4:
 	jnz	??Do_plane
 	ret
 
-	ENDP	Xmode_Blit
+Xmode_Blit	ENDP
 
 	END
 

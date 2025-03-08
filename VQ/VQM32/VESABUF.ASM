@@ -47,12 +47,12 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
-	INCLUDE	"video.i"
-	CODESEG
+	;MASM
+	.386P
+	.MODEL	FLAT
+	;LOCALS	??
+	INCLUDE	<video.i>
+	.CODE
 
 ;---------------------------------------------------------------------------
 ; DRAW_BLOCK_ROWS: draws 'numrows' rows of 2x2 blocks
@@ -60,7 +60,7 @@
 ; Set DS:SI to current source location
 ; Uses: ax, cx, dx
 ;---------------------------------------------------------------------------
-	MACRO	DRAW_BLOCK_ROWS numrows
+DRAW_BLOCK_ROWS	MACRO	numrows
 	LOCAL	??Start_row
 	LOCAL	??Not_finished_a_line
 	LOCAL	??Done
@@ -70,7 +70,7 @@
 	mov	ecx,320
 
 ??Not_finished_a_line:
-	mov	al,[BYTE PTR esi]
+	mov	al,BYTE PTR [esi]
 	mov	ah,al
 	inc	esi
 
@@ -78,8 +78,8 @@
 	mov	[WORD PTR es:edi],ax
 	mov	[WORD PTR es:edi+640],ax
 	ELSE
-	mov	[WORD PTR edi],ax
-	mov	[WORD PTR edi+640],ax
+	mov	WORD PTR [edi],ax
+	mov	WORD PTR [edi+640],ax
 	ENDIF
 
 	add	edi,2
@@ -100,13 +100,13 @@
 ; Set DS:SI to current source location
 ; Uses: ax, cx
 ;---------------------------------------------------------------------------
-	MACRO	DRAW_BLOCK_ROW numblks
+DRAW_BLOCK_ROW	MACRO	numblks
 	LOCAL	??Not_done
 
 	mov	ecx,numblks
 
 ??Not_done:
-	mov	al,[BYTE PTR esi]
+	mov	al,BYTE PTR [esi]
 	mov	ah,al
 	inc	esi
 
@@ -114,8 +114,8 @@
 	mov	[WORD PTR es:edi],ax
 	mov	[WORD PTR es:edi+640],ax
 	ELSE
-	mov	[WORD PTR edi],ax
-	mov	[WORD PTR edi+640],ax
+	mov	WORD PTR [edi],ax
+	mov	WORD PTR [edi+640],ax
 	ENDIF
 
 	add	edi,2
@@ -130,20 +130,20 @@
 ; Set DS:SI to current source location
 ; Uses: ax, cx
 ;---------------------------------------------------------------------------
-	MACRO	DRAW_PIXEL_ROW numblks
+DRAW_PIXEL_ROW	MACRO	numblks
 	LOCAL	??Not_done
 
 	mov	ecx,numblks
 
 ??Not_done:
-	mov	al,[BYTE PTR esi]
+	mov	al,BYTE PTR [esi]
 	mov	ah,al
 	inc	esi
 
 	IF	PHARLAP_TNT
 	mov	[WORD PTR es:edi],ax
 	ELSE
-	mov	[WORD PTR edi],ax
+	mov	WORD PTR [edi],ax
 	ENDIF
 
 	add	edi,2
@@ -260,11 +260,10 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C Buf_320x200_To_VESA_320x200:NEAR
-	PROC	Buf_320x200_To_VESA_320x200 C NEAR USES ebx ecx edx esi edi
-
-	ARG	buffer:NEAR PTR
-	ARG	grains_per_win:DWORD
+;	GLOBAL	C Buf_320x200_To_VESA_320x200:NEAR
+Buf_320x200_To_VESA_320x200	PROC	NEAR C USES ebx ecx edx esi edi,
+	buffer:NEAR PTR,
+	grains_per_win:DWORD
 
 	LOCAL	grain_num:DWORD
 
@@ -338,7 +337,7 @@
 	ENDIF
 	ret
 
-	ENDP	Buf_320x200_To_VESA_320x200
+Buf_320x200_To_VESA_320x200	ENDP
 
 
 ;****************************************************************************
@@ -348,7 +347,7 @@
 ;*
 ;* SYNOPSIS
 ;*     Buf_320x200_To_VESA_640x400(Buffer, GrainPerWin)
-;*     
+;*
 ;*     void Buf_320x200_To_VESA_640x400(char *, long);
 ;*
 ;* FUNCTION
@@ -362,11 +361,10 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C Buf_320x200_To_VESA_640x400:NEAR
-	PROC	Buf_320x200_To_VESA_640x400 C NEAR USES ebx ecx edx esi edi
-
-	ARG	buffer:NEAR PTR
-	ARG	grains_per_win:DWORD
+;	GLOBAL	C Buf_320x200_To_VESA_640x400:NEAR
+Buf_320x200_To_VESA_640x400	PROC	NEAR C USES ebx ecx edx esi edi,
+	buffer:NEAR PTR,
+	grains_per_win:DWORD
 
 	LOCAL	grain_num:DWORD
 
@@ -483,7 +481,7 @@
 
 	ret
 
-	ENDP	Buf_320x200_To_VESA_640x400
+Buf_320x200_To_VESA_640x400	ENDP
 
 
 ;****************************************************************************
@@ -493,7 +491,7 @@
 ;*
 ;* SYNOPSIS
 ;*     Buf_320x200_To_VESA_32K(Buffer, Palette, GrainPerWin)
-;*     
+;*
 ;*     void Buf_320x200_To_VESA_32K(char *, char *, long);
 ;*
 ;* FUNCTION
@@ -508,12 +506,11 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C Buf_320x200_To_VESA_32K:NEAR
-	PROC	Buf_320x200_To_VESA_32K C NEAR USES ebx ecx edx esi edi
-
-	ARG	buffer:NEAR PTR
-	ARG	palette:NEAR PTR
-	ARG	grains_per_win:DWORD
+;	GLOBAL	C Buf_320x200_To_VESA_32K:NEAR
+Buf_320x200_To_VESA_32K	PROC	NEAR C USES ebx ecx edx esi edi,
+	buffer:NEAR PTR,
+	palette:NEAR PTR,
+	grains_per_win:DWORD
 
 ;----------------------------------------------------------------------------
 ;	Initialize
@@ -540,19 +537,19 @@
 ??Buf0Loop:
 	xor	eax,eax
 	mov	ebx,[palette]
-	mov	al,[BYTE PTR esi]
+	mov	al,BYTE PTR [esi]
 	add	ebx,eax
 	inc	esi
 	add	ebx,eax
 
 ;	store the 15-bit palette value
 
-	mov	ax,[WORD PTR ebx]
+	mov	ax,WORD PTR [ebx]
 
 	IF	PHARLAP_TNT
 	mov	[WORD PTR es:edi],ax
 	ELSE
-	mov	[WORD PTR edi],ax
+	mov	WORD PTR [edi],ax
 	ENDIF
 
 	add	edi,2
@@ -572,19 +569,19 @@
 ??Buf1Loop:
 	xor	eax,eax
 	mov	ebx,[palette]
-	mov	al,[BYTE PTR esi]
+	mov	al,BYTE PTR [esi]
 	add	ebx,eax
 	inc	esi
 	add	ebx,eax
 
 ;	Store the 15-bit palette value
 
-	mov	ax,[WORD PTR ebx]
+	mov	ax,WORD PTR [ebx]
 
 	IF	PHARLAP_TNT
 	mov	[WORD PTR es:edi],ax
 	ELSE
-	mov	[WORD PTR edi],ax
+	mov	WORD PTR [edi],ax
 	ENDIF
 
 	add	edi,2
@@ -597,7 +594,7 @@
 
 	ret
 
-	ENDP	Buf_320x200_To_VESA_32K
+Buf_320x200_To_VESA_32K	ENDP
 
 
 ;****************************************************************************
@@ -622,12 +619,11 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C Copy_Row:NEAR
-	PROC	Copy_Row C NEAR USES ecx esi edi
-	
-	ARG	source:NEAR PTR
-	ARG	dest:NEAR PTR
-	ARG	numbytes:DWORD
+;	GLOBAL	C Copy_Row:NEAR
+Copy_Row	PROC	NEAR C USES ecx esi edi,
+	source:NEAR PTR,
+	dest:NEAR PTR,
+	numbytes:DWORD
 
 	IF	PHARLAP_TNT
 	push	es
@@ -647,7 +643,7 @@
 
 	ret
 
-	ENDP	Copy_Row
+Copy_Row	ENDP
 
 
 ;****************************************************************************
@@ -673,13 +669,12 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C Copy_Word_Row:NEAR
-	PROC	Copy_Word_Row C NEAR USES ebx ecx esi edi
-
-	ARG	source:NEAR PTR
-	ARG	dest:NEAR PTR
-	ARG	palette:NEAR PTR
-	ARG	numbytes:DWORD
+;	GLOBAL	C Copy_Word_Row:NEAR
+Copy_Word_Row	PROC	NEAR C USES ebx ecx esi edi,
+	source:NEAR PTR,
+	dest:NEAR PTR,
+	palette:NEAR PTR,
+	numbytes:DWORD
 
 	IF	PHARLAP_TNT
 	push	es
@@ -714,9 +709,9 @@
 	pop	es
 	ENDIF
 
-	ret  
+	ret
 
-	ENDP	Copy_Word_Row
+Copy_Word_Row	ENDP
 
 	END
 
