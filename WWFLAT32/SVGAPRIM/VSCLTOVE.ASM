@@ -45,9 +45,9 @@ INCLUDE <mcgaprim.inc>
 INCLUDE <gbuffer.inc>
 
 
-GLOBAL 	Vesa_Asm_Set_Win   : near
-GLOBAL	cpu_video_page     : dword
-GLOBAL	cpu_page_limit     : dword
+EXTERNDEF C	Vesa_Asm_Set_Win   : near
+EXTERNDEF C	cpu_video_page     : dword
+EXTERNDEF C	cpu_page_limit     : dword
 
 
 .CODE; Converted from TASM: CODESEG
@@ -67,23 +67,34 @@ GLOBAL	cpu_page_limit     : dword
 ;* HISTORY:                                                                *
 ;*   01/16/1995 PWG : Created.                                             *
 ;*=========================================================================*
-Linear_Scale_To_Vesa PROC	near C
+;*===================================================================
+;* Define the arguements that our function takes.
+;*===================================================================,
+;	this:DWORD		; pointer to source view port,
+;	dest:DWORD		; pointer to destination view port,
+;	src_x:DWORD		; source x offset into view port,
+;	src_y:DWORD		; source y offset into view port,
+;	dst_x:DWORD		; dest x offset into view port,
+;	dst_y:DWORD		; dest y offset into view port,
+;	src_width:DWORD	; width of source rectangle,
+;	src_height:DWORD	; height of source rectangle,
+;	dst_width:DWORD	; width of dest rectangle,
+;	dst_height:DWORD	; width of dest height,
+;	trans:DWORD		; is this transparent?,
 
-	;*===================================================================
-	;* Define the arguements that our function takes.
-	;*===================================================================,
-	this:DWORD		; pointer to source view port,
-	dest:DWORD		; pointer to destination view port,
-	src_x:DWORD		; source x offset into view port,
-	src_y:DWORD		; source y offset into view port,
-	dst_x:DWORD		; dest x offset into view port,
-	dst_y:DWORD		; dest y offset into view port,
-	src_width:DWORD		; width of source rectangle,
-	src_height:DWORD	; height of source rectangle,
-	dst_width:DWORD		; width of dest rectangle,
-	dst_height:DWORD	; width of dest height,
-	trans:DWORD		; is this transparent?,
-	remap:DWORD		; pointer to table to remap source
+Linear_Scale_To_Vesa PROC	near C,
+	_this:DWORD,
+	dest:DWORD,
+	src_x:DWORD,
+	src_y:DWORD,
+	dst_x:DWORD,
+	dst_y:DWORD,
+	src_width:DWORD,
+	src_height:DWORD,
+	dst_width:DWORD,
+	dst_height:DWORD,
+	trans:DWORD,
+	remap:DWORD
 
 	;*===================================================================
 	;* Define local variables to hold the viewport characteristics
@@ -144,10 +155,11 @@ Linear_Scale_To_Vesa PROC	near C
 	mov	[ dst_y1 ] , ebx
 
 ; Clip Source Rectangle against source Window boundaries.
-	mov  	esi , [ this ]	    ; get ptr to src
+	mov  	esi , [ _this ]	    ; get ptr to src
+      assume esi:ptr VideoViewPort
 	xor 	ecx , ecx
 	xor 	edx , edx
-	mov	edi , [ (VideoViewPort esi) . VIVPWidth ]  ; get width into register
+	mov	edi , [ esi ] . VIVPWidth     ; get width into register
 	mov	eax , [ src_x0 ]
 	mov	ebx , [ src_x1 ]
 	shld	ecx , eax , 1
@@ -158,7 +170,7 @@ Linear_Scale_To_Vesa PROC	near C
 	shld	ecx , eax , 1
 	shld	edx , ebx , 1
 
-	mov	edi,[ ( VideoViewPort esi) . VIVPHeight ] ; get height into register
+	mov	edi , [ esi ] . VIVPHeight    ; get height into register
 	mov	eax , [ src_y0 ]
 	mov	ebx , [ src_y1 ]
 	shld	ecx , eax , 1
@@ -201,7 +213,7 @@ Linear_Scale_To_Vesa PROC	near C
 ??src_bottom_ok:
 	test	bl , 0100b
 	jz	??src_right_ok
-	mov	eax , [ (VideoViewPort esi) . VIVPWidth ]  ; get width into register
+	mov	eax , [ esi ] . VIVPWidth     ; get width into register
 	mov	[ src_x1 ] , eax
 	sub	eax , [ src_x ]
 	imul	[ dst_width ]
@@ -212,7 +224,7 @@ Linear_Scale_To_Vesa PROC	near C
 ??src_right_ok:
 	test	bl , 0001b
 	jz	??clip_against_dest
-	mov	eax , [ (VideoViewPort esi) . VIVPHeight ]  ; get width into register
+	mov	eax , [ esi ] . VIVPHeight    ; get width into register
 	mov	[ src_y1 ] , eax
 	sub	eax , [ src_y ]
 	imul	[ dst_height ]
@@ -225,7 +237,7 @@ Linear_Scale_To_Vesa PROC	near C
 	mov  	esi , [ dest ]	    ; get ptr to src
 	xor 	ecx , ecx
 	xor 	edx , edx
-	mov	edi , [ (VideoViewPort esi) . VIVPWidth ]  ; get width into register
+	mov	edi , [ esi ] . VIVPWidth     ; get width into register
 	mov	eax , [ dst_x0 ]
 	mov	ebx , [ dst_x1 ]
 	shld	ecx , eax , 1
@@ -236,7 +248,7 @@ Linear_Scale_To_Vesa PROC	near C
 	shld	ecx , eax , 1
 	shld	edx , ebx , 1
 
-	mov	edi,[ ( VideoViewPort esi) . VIVPHeight ] ; get height into register
+	mov	edi , [ esi ] . VIVPHeight    ; get height into register
 	mov	eax , [ dst_y0 ]
 	mov	ebx , [ dst_y1 ]
 	shld	ecx , eax , 1
@@ -279,7 +291,7 @@ Linear_Scale_To_Vesa PROC	near C
 ??dst_bottom_ok:
 	test	bl , 0100b
 	jz	??dst_right_ok
-	mov	eax , [ (VideoViewPort esi) . VIVPWidth ]  ; get width into register
+	mov	eax , [ esi ] . VIVPWidth     ; get width into register
 	mov	[ dst_x1 ] , eax
 	sub	eax , [ dst_x ]
 	imul	[ src_width ]
@@ -291,7 +303,7 @@ Linear_Scale_To_Vesa PROC	near C
 	test	bl , 0001b
 	jz	??do_scaling
 
-	mov	eax , [ (VideoViewPort esi) . VIVPHeight ]  ; get width into register
+	mov	eax , [ esi ] . VIVPHeight    ; get width into register
 	mov	[ dst_y1 ] , eax
 	sub	eax , [ dst_y ]
 	imul	[ src_height ]
@@ -302,19 +314,20 @@ Linear_Scale_To_Vesa PROC	near C
 ??do_scaling:
 
        cld
-       mov	ebx , [ this ]
-       mov	esi , [ (VideoViewPort ebx) . VIVPOffset ]
-       mov	eax , [ (VideoViewPort ebx) . VIVPXAdd ]
-       add	eax , [ (VideoViewPort ebx) . VIVPWidth ]
+       mov	ebx , [ _this ]
+       assume ebx:ptr VideoViewPort
+       mov	esi , [ ebx ] . VIVPOffset
+       mov	eax , [ ebx ] . VIVPXAdd
+       add	eax , [ ebx ] . VIVPWidth
        mov	[ src_win_width ] , eax
        mul	[ src_y0 ]
        add	esi , [ src_x0 ]
        add	esi , eax
 
        mov	ebx , [ dest ]
-       mov	edi , [ (VideoViewPort ebx) . VIVPOffset ]
-       mov	eax , [ (VideoViewPort ebx) . VIVPXAdd ]
-       add	eax , [ (VideoViewPort ebx) . VIVPWidth ]
+       mov	edi , [ ebx ] . VIVPOffset
+       mov	eax , [ ebx ] . VIVPXAdd
+       add	eax , [ ebx ] . VIVPWidth
        mov	[ dst_win_width ] , eax
        mul	[ dst_y0 ]
        add	edi , [ dst_x0 ]
@@ -378,7 +391,7 @@ Linear_Scale_To_Vesa PROC	near C
        mov	ebx , [ scan_line ]
        jmp      ??trailing_entry
   ??trailing_bytes:
-       mov	cl , [ esi ]
+       mov	cl , BYTE PTR [ esi ]
        add	ecx , eax
        adc	esi , edx
        mov	[ edi ] , cl
@@ -390,14 +403,14 @@ Linear_Scale_To_Vesa PROC	near C
        add	edi , [ cpu_video_page ]
        call	Vesa_Asm_Set_Win			; set the window
 ??end_of_scanline:
-       mov	cl , [ esi ]
+       mov	cl , BYTE PTR [ esi ]
        add	ecx , eax
        adc	esi , edx
        mov	[ edi ] , cl
        inc	edi
        dec	ebx
        jg	??end_of_scanline
-       sub	[ dword ptr esp ] , 010000h
+       sub	dword ptr [ esp ] , 010000h
        jmp	??next_line
 
 ??in_range:
@@ -405,10 +418,10 @@ Linear_Scale_To_Vesa PROC	near C
        jmp	[ entry ]
  ??inner_loop:
        REPT	32
-	       mov	cl , [ esi ]
+	       mov	cl , BYTE PTR [ esi ]
 	       add	ecx , eax
 	       adc	esi , edx
-	       mov	[ edi ] , cl
+	       mov	BYTE PTR [ edi ] , cl
 	       inc	edi
        ENDM
  ??ref_point:
@@ -461,10 +474,10 @@ Linear_Scale_To_Vesa PROC	near C
        xor	ebx , ebx
        jmp    ??remap_trailing_entry
  ??remap_trailing_bytes:
-       mov	bl , [ esi ]
+       mov	bl , BYTE PTR [ esi ]
        add	ecx , [ dx_frac ]
        adc	esi , [ dx_intr ]
-       mov	cl , [ eax + ebx ]
+       mov	cl , BYTE PTR [ eax + ebx ]
        mov	[ edi ] , cl
        inc	edi
        dec	edx
@@ -475,15 +488,15 @@ Linear_Scale_To_Vesa PROC	near C
        add	edi , [ cpu_video_page ]
        call	Vesa_Asm_Set_Win			; set the window
 ??remap_end_of_scanline:
-       mov	bl , [ esi ]
+       mov	bl , BYTE PTR [ esi ]
        add	ecx , [ dx_frac ]
        adc	esi , [ dx_intr ]
-       mov	cl , [ eax + ebx ]
+       mov	cl , BYTE PTR [ eax + ebx ]
        mov	[ edi ] , cl
        inc	edi
        dec	edx
        jg	??remap_end_of_scanline
-       sub	[ dword ptr esp ] , 010000h
+       sub	dword ptr [ esp ] , 010000h
        jmp	??remap_next_line
 ??remap_in_range:
        mov	ebx , [ counter_x ]
@@ -496,11 +509,11 @@ Linear_Scale_To_Vesa PROC	near C
        jmp	[ entry ]
  ??remapinner_loop:
        REPT	32
-	       mov	bl , [ esi ]
+	       mov	bl , BYTE PTR [ esi ]
 	       add	ecx , [ dx_frac ]
 	       adc	esi , edx
-	       mov	cl , [ eax + ebx ]
-	       mov	[ edi ] , cl
+	       mov	cl , BYTE PTR [ eax + ebx ]
+	       mov	BYTE PTR [ edi ] , cl
 	       inc	edi
        ENDM
  ??remapref_point:
@@ -554,7 +567,7 @@ Linear_Scale_To_Vesa PROC	near C
        mov	ebx , [ scan_line ]
        jmp     ??tr_trailing_entry
   ??tr_trailing_bytes:
-       mov	cl , [ esi ]
+       mov	cl , BYTE PTR [ esi ]
        test	cl , cl
        jz	??tr_skip
       mov	[ edi ] , cl
@@ -569,7 +582,7 @@ Linear_Scale_To_Vesa PROC	near C
        add	edi , [ cpu_video_page ]
        call	Vesa_Asm_Set_Win			; set the window
 ??tr_end_of_scanline:
-       mov	cl , [ esi ]
+       mov	cl , BYTE PTR [ esi ]
        test	cl , cl
        jz	??tr_skip1
        mov	[ edi ] , cl
@@ -579,7 +592,7 @@ Linear_Scale_To_Vesa PROC	near C
        inc	edi
        dec	ebx
        jg	??tr_end_of_scanline
-       sub	[ dword ptr esp ] , 010000h
+       sub	dword ptr [ esp ] , 010000h
        jmp	??tr_next_line
 
 ??tr_in_range:
@@ -588,10 +601,10 @@ Linear_Scale_To_Vesa PROC	near C
  ??tr_inner_loop:
        REPT	32
        local	skip
-	       mov	cl , [ esi ]
+	       mov	cl , BYTE PTR [ esi ]
 	       test	cl , cl
 	       jz	skip
-	       mov	[ edi ] , cl
+	       mov	BYTE PTR [ edi ] , cl
 	    skip:
 	       add	ecx , eax
 	       adc	esi , edx
@@ -648,10 +661,10 @@ Linear_Scale_To_Vesa PROC	near C
        xor	ebx , ebx
        jmp    ??trans_remap_trailing_bytes1
   ??trans_remap_trailing_bytes:
-       mov	bl , [ esi ]
+       mov	bl , BYTE PTR [ esi ]
        test	bl , bl
        jz	??trans_remp
-       mov	cl , [ eax + ebx ]
+       mov	cl , BYTE PTR [ eax + ebx ]
        mov	[ edi ] , cl
     ??trans_remp:
        add	ecx , [ dx_frac ]
@@ -665,10 +678,10 @@ Linear_Scale_To_Vesa PROC	near C
        add	edi , [ cpu_video_page ]
        call	Vesa_Asm_Set_Win			; set the window
 ??trans_remap_end_of_scanline:
-       mov	bl , [ esi ]
+       mov	bl , BYTE PTR [ esi ]
        test	bl , bl
        jz	??trans_remp1
-       mov	cl , [ eax + ebx ]
+       mov	cl , BYTE PTR [ eax + ebx ]
        mov	[ edi ] , cl
    ??trans_remp1:
        add	ecx , [ dx_frac ]
@@ -676,7 +689,7 @@ Linear_Scale_To_Vesa PROC	near C
        inc	edi
        dec	edx
        jg	??trans_remap_end_of_scanline
-       sub	[ dword ptr esp ] , 010000h
+       sub	dword ptr [ esp ] , 010000h
        jmp	??trans_remap_next_line
 
 ??trans_remap_in_range:
@@ -691,11 +704,11 @@ Linear_Scale_To_Vesa PROC	near C
  ??trans_remapinner_loop:
        REPT	32
        local	skip
-	       mov	bl , [ esi ]
+	       mov	bl , BYTE PTR [ esi ]
 	       test	bl , bl
 	       jz	skip
-	       mov	cl , [ eax + ebx ]
-	       mov	[ edi ] , cl
+	       mov	cl , BYTE PTR [ eax + ebx ]
+	       mov	BYTE PTR [ edi ] , cl
 	  skip:
 
 	       add	ecx , [ dx_frac ]

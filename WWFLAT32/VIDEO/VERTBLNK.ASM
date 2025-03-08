@@ -45,10 +45,10 @@
 
 ; Converted from TASM: LOCALS ??
 
-GLOBAL             Get_Vert_Blank       : NEAR
-GLOBAL             Wait_Vert_Blank      : NEAR
-GLOBAL		   get_vga_state	: NEAR
-GLOBAL		   set_vga_mode		: NEAR
+EXTERNDEF C        Get_Vert_Blank       : NEAR
+EXTERNDEF C        Wait_Vert_Blank      : NEAR
+EXTERNDEF C		   get_vga_state	: NEAR
+EXTERNDEF C		   set_vga_mode		: NEAR
 
 
 .CODE; Converted from TASM: CODESEG
@@ -67,8 +67,7 @@ GLOBAL		   set_vga_mode		: NEAR
 
 ;----------------------------------------------------------------------------
 
-Get_Vert_Blank PROC	near C
-	USES edx
+Get_Vert_Blank PROC	near C	USES edx
 
 	mov	dx,03DAH	; CRTC status register
 	in	al,dx
@@ -81,8 +80,7 @@ Get_Vert_Blank	ENDP
 ;----------------------------------------------------------------------------
 
 ;----------------------------------------------------------------------------
-Wait_Vert_Blank PROC	near C
-	USES eax,ebx,edx,
+Wait_Vert_Blank PROC	near C	USES eax ebx edx,
 	blank:DWORD
 
 	mov	ebx,[blank]	; get vertical blank 0 or 1 for on
@@ -112,8 +110,7 @@ Wait_Vert_Blank	ENDP
 
 ; WORD get_vga_state (VOID) ;
 
-get_vga_state PROC	near C
-	USES  ebx
+get_vga_state PROC	near C	USES  ebx
 	mov   eax,0f00h
 	int   10h
 	and   eax, 0ffh

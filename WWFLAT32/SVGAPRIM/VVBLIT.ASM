@@ -48,21 +48,29 @@ POOLSIZE equ	8000
 
 .CODE; Converted from TASM: CODESEG
 
-Vesa_Blit_To_Vesa PROC	near C
-	USES	ebx,ecx,edx,esi,edi
+;*===================================================================
+;* define the arguements that our function takes.
+;*===================================================================,
+;	this        :DWORD		; this is a member function,
+;	dest        :DWORD		; what are we blitting to,
+;	x_pixel     :DWORD		; x pixel position in source,
+;	y_pixel     :DWORD		; y pixel position in source,
+;	dest_x0     :dword,
+;	dest_y0     :dword,
+;	pixel_width :DWORD		; width of rectangle to blit,
+;	pixel_height:DWORD		; height of rectangle to blit,
+;	trans       :DWORD		; do we deal with transparents?
 
-	;*===================================================================
-	;* define the arguements that our function takes.
-	;*===================================================================,
-	this        :DWORD		; this is a member function,
-	dest        :DWORD		; what are we blitting to,
-	x_pixel     :DWORD		; x pixel position in source,
-	y_pixel     :DWORD		; y pixel position in source,
+Vesa_Blit_To_Vesa PROC	near C USES	ebx ecx edx esi edi,
+	_this       :DWORD,		; this is a member function
+	dest        :DWORD,		; what are we blitting to
+	x_pixel     :DWORD,		; x pixel position in source
+	y_pixel     :DWORD,		; y pixel position in source
 	dest_x0     :dword,
 	dest_y0     :dword,
-	pixel_width :DWORD		; width of rectangle to blit,
-	pixel_height:DWORD		; height of rectangle to blit,
-	trans       :DWORD			; do we deal with transparents?
+	pixel_width :DWORD,		; width of rectangle to blit
+	pixel_height:DWORD,		; height of rectangle to blit
+	trans       :DWORD		; do we deal with transparents?
 
 	;*===================================================================
 	; Define some locals so that we can handle things quickly
@@ -79,13 +87,14 @@ Vesa_Blit_To_Vesa PROC	near C
 	local	count_dy     : dword
 	local	mem_page     : dword
 	local   vesa_page    : dword
-	local	mem_pool     : byte : POOLSIZE
+	local	mem_pool [POOLSIZE] : byte
 
 ; Clip Source Rectangle against source Window boundaries.
-	mov  	esi , [ this ]	    ; get ptr to src
+	mov  	esi , [ _this ]	    ; get ptr to src
+       assume esi : ptr VideoViewPort
 	xor 	ecx , ecx
 	xor 	edx , edx
-	mov	edi , [ (VideoViewPort esi) . VIVPWidth ]  ; get width into register
+	mov	edi , [esi].VIVPWidth  ; get width into register
 	mov	ebx , [ x_pixel ]
 	mov	eax , [ x_pixel ]
 	add	ebx , [ pixel_width ]
@@ -98,7 +107,7 @@ Vesa_Blit_To_Vesa PROC	near C
 	shld	ecx , eax , 1
 	shld	edx , ebx , 1
 
-	mov	edi,[ ( VideoViewPort esi) . VIVPHeight ] ; get height into register
+	mov	edi,[esi].VIVPHeight ; get height into register
 	mov	ebx , [ y_pixel ]
 	mov	eax , [ y_pixel ]
 	add	ebx , [ pixel_height ]
@@ -131,12 +140,12 @@ Vesa_Blit_To_Vesa PROC	near C
 ??scr_bottom_ok:
 	test	dl , 0100b
 	jz	??scr_right_ok
-	mov	eax , [ (VideoViewPort esi) . VIVPWidth ]  ; get width into register
+	mov	eax , [esi].VIVPWidth  ; get width into register
 	mov	[ x1_pixel ] , eax
 ??scr_right_ok:
 	test	dl , 0001b
 	jz	??clip_against_dest
-	mov	eax , [ (VideoViewPort esi) . VIVPHeight ]  ; get width into register
+	mov	eax , [esi].VIVPHeight  ; get width into register
 	mov	[ y1_pixel ] , eax
 
 
@@ -155,7 +164,7 @@ Vesa_Blit_To_Vesa PROC	near C
 	mov  	esi , [ dest ]	    ; get ptr to src
 	xor 	ecx , ecx
 	xor 	edx , edx
-	mov	edi , [ (VideoViewPort esi) . VIVPWidth ]  ; get width into register
+	mov	edi , [esi].VIVPWidth  ; get width into register
 	mov	eax , [ dest_x0 ]
 	mov	ebx , [ dest_x1 ]
 	shld	ecx , eax , 1
@@ -166,7 +175,7 @@ Vesa_Blit_To_Vesa PROC	near C
 	shld	ecx , eax , 1
 	shld	edx , ebx , 1
 
-	mov	edi,[ ( VideoViewPort esi) . VIVPHeight ] ; get height into register
+	mov	edi,[esi].VIVPHeight ; get height into register
 	mov	eax , [ dest_y0 ]
 	mov	ebx , [ dest_y1 ]
 	shld	ecx , eax , 1
@@ -202,7 +211,7 @@ Vesa_Blit_To_Vesa PROC	near C
 ??dest_bottom_ok:
 	test	dl , 0100b
 	jz	??dest_right_ok
-	mov	ebx , [ (VideoViewPort esi) . VIVPWidth ]  ; get width into register
+	mov	ebx , [esi].VIVPWidth  ; get width into register
 	mov	eax , [ dest_x1 ]
 	mov	[ dest_x1 ] , ebx
 	sub	eax , ebx
@@ -211,7 +220,7 @@ Vesa_Blit_To_Vesa PROC	near C
 ??dest_right_ok:
 	test	dl , 0001b
 	jz	??do_blit
-	mov	ebx , [ (VideoViewPort esi) . VIVPHeight ]  ; get width into register
+	mov	ebx , [esi].VIVPHeight  ; get width into register
 	mov	eax , [ dest_y1 ]
 	mov	[ dest_y1 ] , ebx
 	sub	eax , ebx
@@ -220,10 +229,11 @@ Vesa_Blit_To_Vesa PROC	near C
 ??do_blit:
 
        cld
-       mov	ebx , [ this ]
-       mov	esi , [ (VideoViewPort ebx) . VIVPOffset ]
-       mov	eax , [ (VideoViewPort ebx) . VIVPXAdd ]
-       add	eax , [ (VideoViewPort ebx) . VIVPWidth ]
+       mov	ebx , [ _this ]
+       assume ebx : ptr VideoViewPort
+       mov	esi , [ebx].VIVPOffset
+       mov	eax , [ebx].VIVPXAdd
+       add	eax , [ebx].VIVPWidth
        mov	ecx , eax
        mul	[ y_pixel ]
        add	esi , [ x_pixel ]
@@ -235,9 +245,9 @@ Vesa_Blit_To_Vesa PROC	near C
        mov	[ scr_ajust_width ] , ecx
 
        mov	ebx , [ dest ]
-       mov	edi , [ (VideoViewPort ebx) . VIVPOffset ]
-       mov	eax , [ (VideoViewPort ebx) . VIVPXAdd ]
-       add	eax , [ (VideoViewPort ebx) . VIVPWidth ]
+       mov	edi , [ebx].VIVPOffset
+       mov	eax , [ebx].VIVPXAdd
+       add	eax , [ebx].VIVPWidth
        mov	ecx , eax
        mul	[ dest_y0 ]
        add	edi , [ dest_x0 ]
@@ -261,7 +271,7 @@ Vesa_Blit_To_Vesa PROC	near C
        mov	[ total_lines ] , edx
        mov	eax , POOLSIZE
        xor	edx , edx
-       idiv	[ dword ptr esp ]
+       idiv	dword ptr [ esp ]
        mov	[ count_dy ] , eax
        pop	eax
 

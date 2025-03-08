@@ -69,17 +69,22 @@ INCLUDE <gbuffer.inc>
 ;*   06/15/1994 PWG : Created.                                             *
 ;*   12/09/1994 PWG : Made SVGA Modifications                              *
 ;*=========================================================================*
-Vesa_Buffer_To_Page PROC	near C
-	USES	ebx,ecx,edx,esi,edi
+;*===================================================================
+;* define the arguements that our function takes.
+;*===================================================================,
+;	x_pixel     :DWORD		; x pixel position in source,
+;	y_pixel     :DWORD		; y pixel position in source,
+;	pixel_width :DWORD		; width of rectangle to blit,
+;	pixel_height:DWORD		; height of rectangle to blit,
+;	src         :DWORD		; this is a member function,
+;	dest        :DWORD		; what are we blitting to
 
-	;*===================================================================
-	;* define the arguements that our function takes.
-	;*===================================================================,
-	x_pixel     :DWORD		; x pixel position in source,
-	y_pixel     :DWORD		; y pixel position in source,
-	pixel_width :DWORD		; width of rectangle to blit,
-	pixel_height:DWORD		; height of rectangle to blit,
-	src         :DWORD		; this is a member function,
+Vesa_Buffer_To_Page PROC	near C USES	ebx ecx edx esi edi,
+	x_pixel     :DWORD,		; x pixel position in source
+	y_pixel     :DWORD,		; y pixel position in source
+	pixel_width :DWORD,		; width of rectangle to blit
+	pixel_height:DWORD,		; height of rectangle to blit
+	src         :DWORD,		; this is a member function
 	dest        :DWORD		; what are we blitting to
 
 ;	ARG	trans       :DWORD			; do we deal with transparents?
@@ -104,9 +109,10 @@ Vesa_Buffer_To_Page PROC	near C
 	mov	[ scr_x1 ] , 0
 	mov	[ scr_y1 ] , 0
 	mov  	esi , [ dest ]	    ; get ptr to dest
+       assume esi : ptr VideoViewPort
 	xor 	ecx , ecx
 	xor 	edx , edx
-	mov	edi , [ (VideoViewPort esi) . VIVPWidth ]  ; get width into register
+	mov	edi , [esi].VIVPWidth  ; get width into register
 	mov	ebx , [ x_pixel ]
 	mov	eax , [ x_pixel ]
 	add	ebx , [ pixel_width ]
@@ -119,7 +125,7 @@ Vesa_Buffer_To_Page PROC	near C
 	shld	ecx , eax , 1
 	shld	edx , ebx , 1
 
-	mov	edi,[ ( VideoViewPort esi) . VIVPHeight ] ; get height into register
+	mov	edi,[esi].VIVPHeight ; get height into register
 	mov	ebx , [ y_pixel ]
 	mov	eax , [ y_pixel ]
 	add	ebx , [ pixel_height ]
@@ -158,21 +164,21 @@ Vesa_Buffer_To_Page PROC	near C
 ??dest_bottom_ok:
 	test	dl , 0100b
 	jz	??dest_right_ok
-	mov	eax , [ (VideoViewPort esi) . VIVPWidth ]  ; get width into register
+	mov	eax , [esi].VIVPWidth  ; get width into register
 	mov	[ x1_pixel ] , eax
 ??dest_right_ok:
 	test	dl , 0001b
 	jz	??do_blit
-	mov	eax , [ (VideoViewPort esi) . VIVPHeight ]  ; get width into register
+	mov	eax , [esi].VIVPHeight  ; get width into register
 	mov	[ y1_pixel ] , eax
 
 ??do_blit:
 
        cld
 
-       mov	eax , [ (VideoViewPort esi) . VIVPXAdd ]
-       add	eax , [ (VideoViewPort esi) . VIVPWidth ]
-       mov	edi , [ (VideoViewPort esi) . VIVPOffset ]
+       mov	eax , [esi].VIVPXAdd
+       add	eax , [esi].VIVPWidth
+       mov	edi , [esi].VIVPOffset
 
        mov	ecx , eax
        mul	[ y_pixel ]

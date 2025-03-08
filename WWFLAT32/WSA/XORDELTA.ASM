@@ -63,8 +63,8 @@ TO_PAGE		equ	2
 ;	PROC	C Copy_Delta_Buffer
 ;
 
-GLOBAL 	Apply_XOR_Delta:NEAR
-GLOBAL 	Apply_XOR_Delta_To_Page_Or_Viewport:NEAR
+EXTERNDEF C 	Apply_XOR_Delta:NEAR
+EXTERNDEF C 	Apply_XOR_Delta_To_Page_Or_Viewport:NEAR
 
 
 
@@ -86,9 +86,8 @@ GLOBAL 	Apply_XOR_Delta_To_Page_Or_Viewport:NEAR
 ;* HISTORY:                                                                *
 ;*   05/23/1994 SKB : Created.                                             *
 ;*=========================================================================*
-Apply_XOR_Delta PROC	near C
-	USES 	ebx,ecx,edx,edi,esi,
-	target:DWORD 		; pointers.,
+Apply_XOR_Delta PROC	near C	USES 	ebx ecx edx edi esi,
+	target:DWORD,	; pointers.
 	delta:DWORD		; pointers.
 
 	; Optimized for 486/pentium by rearanging instructions.
@@ -214,12 +213,11 @@ Apply_XOR_Delta	ENDP
 ;*=========================================================================*
 
 ;PUBLIC Apply_XOR_Delta_To_Page_Or_Viewport(UWORD page_seg, BYTE *delta_ptr, WORD width, WORD flags, WORD descriptor)
-Apply_XOR_Delta_To_Page_Or_Viewport PROC	near C
-	USES 	ebx,ecx,edx,edi,esi,
-	target:DWORD		; pointer to the destination buffer.,
-	delta:DWORD		; pointer to the delta buffer.,
-	width:DWORD		; width of animation.,
-	nextrow:DWORD		; Page/Buffer width - anim width.,
+Apply_XOR_Delta_To_Page_Or_Viewport PROC	near C	USES 	ebx ecx edx edi esi,
+	target:DWORD,		; pointer to the destination buffer.
+	delta:DWORD,		; pointer to the delta buffer.
+	_width:DWORD,	; width of animation.
+	nextrow:DWORD,		; Page/Buffer width - anim width.
 	copy:DWORD		; should it be copied or xor'd?
 
 
@@ -236,7 +234,7 @@ Apply_XOR_Delta_To_Page_Or_Viewport PROC	near C
 	mov	edx,eax			; use dx to count the relative column.
 
 	push	ebx			; push nextrow onto the stack for Copy/XOR_Delta_Buffer.
-	mov	ebx,[width]		; bx will hold the max column for speed compares
+	mov	ebx,[_width]		; bx will hold the max column for speed compares
 
 ; At this point, all the registers have been set up.  Now call the correct function
 ; to either copy or xor the data.

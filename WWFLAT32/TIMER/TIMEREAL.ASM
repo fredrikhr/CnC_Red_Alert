@@ -35,8 +35,8 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 ; Converted from TASM: IDEAL
-MODEL TINY
-.386P	; Converted from TASM: P386N
+.MODEL TINY
+.386	; Converted from TASM: P386N
 
 ; Converted from TASM: LOCALS ??
 
@@ -92,7 +92,7 @@ NumRMInts		DD	0	; Number of RM interrupts.
 
 
 ; This is here for easy comparison with the PM version.
-MACRO INCREMENT_TIMERS
+INCREMENT_TIMERS	MACRO
 	inc	[NumRMInts]		; For testing.
 
 
@@ -102,8 +102,8 @@ MACRO INCREMENT_TIMERS
 	sub	[SysCurRate],ax		; Sub from our rate counter.
 	ja	??end_sys			; If !below zero, do not inc.
 
-	mov	bx,[WORD PTR SysRate]	; Get rate of timer.
-	mov	dx,[WORD PTR SysError]	; Get amount of error.
+	mov	bx,WORD PTR [SysRate]	; Get rate of timer.
+	mov	dx,WORD PTR [SysError]	; Get amount of error.
 	add	[SysCurRate],bx		; Add rate to the current.
 
 	sub	[SysCurError],dx	; Subtract err from error count.
@@ -118,8 +118,8 @@ MACRO INCREMENT_TIMERS
 	sub	[UserCurRate],ax	; Sub from our rate counter.
 	ja	??end_user		; If !below zero, do not inc.
 
-	mov	bx,[WORD PTR UserRate]	; Get rate of timer.
-	mov	dx,[WORD PTR UserError]	; Get amount of error.
+	mov	bx,WORD PTR [UserRate]	; Get rate of timer.
+	mov	dx,WORD PTR [UserError]	; Get amount of error.
 	add	[UserCurRate],bx	; Add rate to the current.
 
 	sub	[UserCurError],dx	; Subtract err from error count.
@@ -149,7 +149,7 @@ ENDM
 ;* HISTORY:                                                                *
 ;*   07/08/1994 SKB : Created.                                             *
 ;*=========================================================================*
-RM_Timer_Interrupt_Handler label
+RM_Timer_Interrupt_Handler label PTR
 start_RM_Timer_Interrupt_Handler:
 
 	push	ax
@@ -160,8 +160,8 @@ start_RM_Timer_Interrupt_Handler:
 	mov	ax,cs			; Set data segment to code segment
 	mov	ds,ax			;   since data is in code seg.
 
-	cmp	[WORD PTR PMIssuedInt],0; Check to see if PM made Int call.
-	mov	[WORD PTR PMIssuedInt],0; Make it false.
+	cmp	WORD PTR [PMIssuedInt],0; Check to see if PM made Int call.
+	mov	WORD PTR [PMIssuedInt],0; Make it false.
 	jne	??call_int_chain	; if so, just call Int Chain.
 
 
@@ -211,7 +211,7 @@ Call_Interrupt_Chain:
 	call	[OldRMI]		;
 	retf
 
-STACK	   ; Don't really need this
+.STACK	   ; Don't really need this
 
 END
 

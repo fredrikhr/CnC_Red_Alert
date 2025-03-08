@@ -70,7 +70,7 @@ INCLUDE <shape.inc>
 ;*   08/09/1994 IML : Optimized for 32-bit.				   *
 ;*   09/06/1994 IML : Integrated p_* and ds_* routines.			   *
 ;*=========================================================================*
-PROC	Draw_Reverse NOLANGUAGE NEAR
+Draw_Reverse	PROC	NEAR
 
 	mov	[StashEDX],edx			; save edx
 	mov	edx,[Flags]
@@ -164,7 +164,7 @@ PROC	Draw_Reverse NOLANGUAGE NEAR
 	jz	short ??test_fading
 
 	mov	ebx,[IsTranslucent]		; is it a translucent color?
-	mov	bh,[BYTE PTR ebx + eax]
+	mov	bh,BYTE PTR [ebx + eax]
 	or	bh,bh
 	js	short ??test_fading
 
@@ -174,7 +174,7 @@ PROC	Draw_Reverse NOLANGUAGE NEAR
 	mov	al,[edi]			; mov pixel at destination to al
 	add	ebx,[Translucent]		; get the ptr to it!
 						; Add the (trans_color * 256) of the translation equ.
-	mov	al,[BYTE PTR ebx + eax]		; get new pixel in al
+	mov	al,BYTE PTR [ebx + eax]		; get new pixel in al
 
 ??test_fading:
 	test	edx,SHAPE_FADING
@@ -183,7 +183,7 @@ PROC	Draw_Reverse NOLANGUAGE NEAR
 
 ??priority:
 	mov	ebx,[MaskAdjust]		; get mask page	offset
-	mov	bl,[BYTE PTR ebx + edi]		; get mask value
+	mov	bl,BYTE PTR [ebx + edi]		; get mask value
 
 	and	bl,CLEAR_UNUSED_BITS		; clear unused bits
 
@@ -191,7 +191,7 @@ PROC	Draw_Reverse NOLANGUAGE NEAR
 	jge	short ??test_predator		;  background?
 
 	mov	ebx,[BackAdjust]		; get background page offset
-	mov	al,[BYTE PTR ebx + edi]		; get background pixel
+	mov	al,BYTE PTR [ebx + edi]		; get background pixel
 	jmp	??general_draw_loop
 
 ??predator:
@@ -212,7 +212,7 @@ PROC	Draw_Reverse NOLANGUAGE NEAR
 
 ??compact:
 	mov	ebx,[ColorTable]		; get the address of the color table
-	mov	al,[BYTE PTR ebx + eax]		; convert it into the proper byte
+	mov	al,BYTE PTR [ebx + eax]		; convert it into the proper byte
 	jmp	??test_shadow
 
 ??shadow:
@@ -221,7 +221,7 @@ PROC	Draw_Reverse NOLANGUAGE NEAR
 
 	mov	al,[edi]			; get the destination color and
 	mov	ebx,[ShadowingTable]		;  index into the shadow table
-	mov	al,[BYTE PTR ebx + eax]
+	mov	al,BYTE PTR [ebx + eax]
 	jmp	??general_draw_loop
 
 ??fading:
@@ -230,7 +230,7 @@ PROC	Draw_Reverse NOLANGUAGE NEAR
 	mov	ecx,[FadingNum]
 
 ??fade_loop:
-	mov	al, [BYTE PTR ebx + eax]
+	mov	al, BYTE PTR [ebx + eax]
 	dec	ecx
 	jnz	short ??fade_loop
 

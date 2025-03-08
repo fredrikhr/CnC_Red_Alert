@@ -43,8 +43,8 @@
 .386P	; Converted from TASM: P386
 .MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-GLOBAL             Operating_System         :NEAR
-GLOBAL             OperatingSystem          :WORD
+EXTERNDEF C        Operating_System         :NEAR
+EXTERNDEF C        OperatingSystem          :WORD
 
 DOS		equ	1
 WIN31STD	equ	2
@@ -72,8 +72,7 @@ OperatingSystem	dw	0
 ;* HISTORY:                                                                *
 ;*   01/26/1993  SB : Created.                                             *
 ;*=========================================================================*
-Operating_System PROC	near C
-	USES ebx,ecx,edx,es,edi
+Operating_System PROC	near C	USES ebx ecx edx es edi
 
 
 	; Check for Windows 3.1

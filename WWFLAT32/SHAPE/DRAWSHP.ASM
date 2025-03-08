@@ -46,10 +46,10 @@
 
 VVPC_IMAGE	STRUC
    		Off  	dd  ?
-		Width  	dd  ?
+		_Width  	dd  ?
 		Height  dd  ?
-  		Page    dd  ?
-ENDS
+  		_Page    dd  ?
+VVPC_IMAGE	ENDS
 
 
 
@@ -58,7 +58,7 @@ GVPC_IMAGE STRUC
 		 Xpos		dd	   	?
 		 Ypos		dd	   	?
 		 GraphicBuff	dd	   	?
-ENDS
+GVPC_IMAGE	ENDS
 
 
 ;******************************** Includes *********************************
@@ -66,13 +66,13 @@ INCLUDE <shape.inc>
 
 
 ;****************************** Declarations ********************************
-GLOBAL	 Draw_Shape:NEAR
-GLOBAL	 LCW_Uncompress:NEAR
-GLOBAL	_ShapeBuffer:DWORD
-GLOBAL	_ShapeBufferSize:DWORD
+EXTERNDEF	C	Draw_Shape:NEAR
+EXTERNDEF	C	LCW_Uncompress:NEAR
+EXTERNDEF	_ShapeBuffer:DWORD
+EXTERNDEF	_ShapeBufferSize:DWORD
 
-GLOBAL	MaskPage	       : dword
-GLOBAL	BackGroundPage	       : dword
+EXTERNDEF	MaskPage	       : dword
+EXTERNDEF	BackGroundPage	       : dword
 
 
 ;********************************* Data ************************************
@@ -286,17 +286,12 @@ buff_ptr	DD	?	; pointer to buffer containing viewport
 ;*   09/06/1994 IML : Ammendments for integration of p_* and ds_* routines.*
 ;*   09/14/1994 IML : Now handles LCW compression.			   *
 ;*=========================================================================*
-Draw_Shape PROC	NEAR C
-	USES eax,ebx,ecx,edx,edi,esi
-
-	;--------------------------------------------------------------------
-	; Arguments:
-	;--------------------------------------------------------------------,
-	gvp_ptr:DWORD		; pointer to graphic viewport info,
-	shape_ptr:DWORD		; the shape pointer to draw,
-	draw_x:DWORD		; the destination x pixel,
-	draw_y:DWORD		; the destination y pixel,
-	flags:DWORD		; the flags for drawing the shape
+Draw_Shape PROC	NEAR C	USES eax ebx ecx edx edi esi,
+	gvp_ptr:DWORD,		; pointer to graphic viewport info,
+	shape_ptr:DWORD,	; the shape pointer to draw,
+	draw_x:DWORD,		; the destination x pixel,
+	draw_y:DWORD,		; the destination y pixel,
+	_flags:DWORD			; the flags for drawing the shape
 
 IF FALSE
 	;--------------------------------------------------------------------
@@ -374,7 +369,7 @@ ENDIF
 	;--------------------------------------------------------------------
 	; Allocate stack space for our local variables.
 	;--------------------------------------------------------------------
-	LOCAL	Local_Stack:BYTE:Local_Size
+	LOCAL	Local_Stack[Local_Size]:BYTE
 
 	;--------------------------------------------------------------------
 	; Make sure the shape pointer is not NULL
@@ -388,18 +383,19 @@ ENDIF
 	;--------------------------------------------------------------------
 ??valid_shp:
 	mov	edi,[gvp_ptr]					; get pointer to graphic viewport info
-	mov	esi, [(type GVPC_IMAGE  ptr edi). vvpc . Off ] ; extract viewport pointer
+	assume edi:ptr GVPC_IMAGE
+	mov	esi, [edi]. vvpc . Off  ; extract viewport pointer
 	mov	[viewport_ptr],esi
-	mov	ebx,[(type GVPC_IMAGE ptr edi) . vvpc . Width ]	; extract viewport width
+	mov	ebx,[edi] . vvpc . _Width 	; extract viewport width
 	mov	[viewport_width],ebx
-	mov	eax,[(type GVPC_IMAGE ptr edi) . vvpc . Height ]	; extract viewport height
+	mov	eax,[edi] . vvpc . Height 	; extract viewport height
 	mov	[viewport_height],eax
-	mov	ecx,[(type GVPC_IMAGE ptr edi) . vvpc . Page ]	; calculate y add value
+	mov	ecx,[edi] . vvpc . _Page 	; calculate y add value
 	add	ecx,ebx
 	mov	[viewport_yadd],ecx
-	mov	eax,[(type GVPC_IMAGE ptr edi) . Xpos ]		; extract viewport x-coord
+	mov	eax,[edi] . Xpos 		; extract viewport x-coord
 	mov	[viewport_x],eax
-	mov	eax, [(type GVPC_IMAGE ptr edi) . Ypos ]	; extract viewport y-coord
+	mov	eax, [edi] . Ypos 	; extract viewport y-coord
 	mov	[viewport_y],eax
 	mul	ecx				; calculate buffer pointer
 	add	eax,[viewport_x]
@@ -411,10 +407,10 @@ ENDIF
 	; If this shape is a compact shape, set that bit in the flags arg
 	;--------------------------------------------------------------------
 	mov	edi,[shape_ptr]			; check for compact shape flag
-	test	[BYTE PTR edi],MAKESHAPE_COMPACT
+	test	BYTE PTR [edi],MAKESHAPE_COMPACT
 
 	jz	??do_args			; if not process flags as is
-	or	[flags],SHAPE_COMPACT		; mark it as a compact shape
+	or	[_flags],SHAPE_COMPACT		; mark it as a compact shape
 
 	;====================================================================
 	; Pull off optional arguments:
@@ -427,25 +423,25 @@ ENDIF
 	;--------------------------------------------------------------------
 	; Initialize optional argument values:
 	;--------------------------------------------------------------------
-	mov	[ColorTable],0			; default = NULL
-	mov	[FadingTable],0			; default = NULL
-	mov	[FadingNum],0			; default = no fading
-	mov	[IsTranslucent],0		; default = NULL
-	mov	[Translucent],0			; default = NULL
-	mov	[PriLevel],0			; default = no priority
-	mov	[ScaleX],100h			; default = unity X scaling
-	mov	[ScaleY],100h			; default = unity Y scaling
-	mov	[ShadowingTable],0		; default = NULL
+	mov	DWORD PTR [ColorTable],0			; default = NULL
+	mov	DWORD PTR [FadingTable],0			; default = NULL
+	mov	DWORD PTR [FadingNum],0			; default = no fading
+	mov	DWORD PTR [IsTranslucent],0		; default = NULL
+	mov	DWORD PTR [Translucent],0			; default = NULL
+	mov	BYTE PTR [PriLevel],0			; default = no priority
+	mov	DWORD PTR [ScaleX],100h			; default = unity X scaling
+	mov	DWORD PTR [ScaleY],100h			; default = unity Y scaling
+	mov	DWORD PTR [ShadowingTable],0		; default = NULL
 
 	;--------------------------------------------------------------------
 	; SHAPE_COLOR: DWORD color_table[256]
 	;--------------------------------------------------------------------
 ??color:
-	test	[flags],SHAPE_COLOR 		; does it have a color table
+	test	[_flags],SHAPE_COLOR 		; does it have a color table
 	jz	??fading 			; if not skip to fading
-	or	[flags],SHAPE_COMPACT		; mark it as a compact shape
+	or	[_flags],SHAPE_COMPACT		; mark it as a compact shape
 						;  (for remapping purposes only)
-	mov	eax,[flags + edi]
+	mov	eax,[_flags + edi]
 	mov	[ColorTable],eax		; save address of color table
 	add	edi,4				; point to next optional argument
 
@@ -453,17 +449,17 @@ ENDIF
 	; SHAPE_FADING: DWORD fade_table[256], DWORD fade_count
 	;--------------------------------------------------------------------
 ??fading:
-	test	[flags],SHAPE_FADING		; are we fading this shape
+	test	[_flags],SHAPE_FADING		; are we fading this shape
 	jz	??ghost				; skip to ghosting check
-	mov	eax,[flags + edi]
+	mov	eax,[_flags + edi]
 	mov	[FadingTable],eax		; save address of fading tbl
 
-	mov	eax,[flags + edi + 4]		; get fade num
+	mov	eax,[_flags + edi + 4]		; get fade num
 
 	add	edi,8				; next argument
 	cmp	eax,0				; check if it's 0
 	jnz	??set_fading			; if not, store fade num
-	and	[flags],NOT SHAPE_FADING	; otherwise, don't fade
+	and	[_flags],NOT SHAPE_FADING	; otherwise, don't fade
 
 ??set_fading:
 	mov	[FadingNum],eax
@@ -472,11 +468,11 @@ ENDIF
 	; SHAPE_GHOST: DWORD is_translucent tbl, DWORD translucent tbl
 	;--------------------------------------------------------------------
 ??ghost:
-	test	[flags],SHAPE_GHOST		; are we ghosting this shape
+	test	[_flags],SHAPE_GHOST		; are we ghosting this shape
 	jz	??init_predator			; skip to predator check
-	mov	eax,[flags + edi]
+	mov	eax,[_flags + edi]
 	mov	[IsTranslucent],eax		; save ptr to is_trans. tbl
-	mov	eax,[flags + edi + 4]
+	mov	eax,[_flags + edi + 4]
 	mov	[Translucent],eax		; save ptr to translucent tbl
 	add	edi,8				; next argument
 
@@ -484,12 +480,12 @@ ENDIF
 	; SHAPE_PREDATOR: Initialize the predator effect variables
 	;--------------------------------------------------------------------
 ??init_predator:
-	test	[flags],SHAPE_PREDATOR		; is predator effect on
+	test	[_flags],SHAPE_PREDATOR		; is predator effect on
 	jz	??partial			; if not skip to partial
 	inc	[PredCount]			; the pred table is byte aligned
 	and	[PredCount],PRED_MASK		; keep entries within bounds
 	mov	eax,[PredCount]
-	mov	al,[BYTE PTR PredTable + eax]
+	mov	al,BYTE PTR [PredTable + eax]
 	mov	[PredValue],eax			; put the pred value cs
 	mov	[PartialCount],0		; clear the partial count
 	mov	[PartialPred],100h		; init partial to off
@@ -498,9 +494,9 @@ ENDIF
 	; SHAPE_PARTIAL: DWORD partial_pred_value (0-255)
 	;--------------------------------------------------------------------
 ??partial:
-	test	[flags],SHAPE_PARTIAL		; is this a partial pred?
+	test	[_flags],SHAPE_PARTIAL		; is this a partial pred?
 	jz	??priority			; if not check priority
-	mov	eax,[flags + edi]		; pull the partial value
+	mov	eax,[_flags + edi]		; pull the partial value
 	mov	[PartialPred],eax		; store it off
 	add	edi,4				; next argument
 
@@ -508,9 +504,9 @@ ENDIF
 	; SHAPE_PRIORITY: DWORD priority_level
 	;--------------------------------------------------------------------
 ??priority:
-	test	[flags],SHAPE_PRIORITY		; is this a priority draw
+	test	[_flags],SHAPE_PRIORITY		; is this a priority draw
 	jz	??scale				; if not skip to scale
-	mov	eax,[flags + edi]
+	mov	eax,[_flags + edi]
 	mov	[PriLevel],al			; store priority level
 	add	edi,4				; next argument
 	mov	eax,[MaskPage]			; calculate priority buffer
@@ -524,11 +520,11 @@ ENDIF
 	; SHAPE_SCALING: DWORD x_scale, WORD y_scale
 	;--------------------------------------------------------------------
 ??scale:
-	test	[flags],SHAPE_SCALING		; are we scaling this shape.
+	test	[_flags],SHAPE_SCALING		; are we scaling this shape.
 	jz	??shadow			; if not then skip scale y value
-	mov	eax,[flags + edi]
+	mov	eax,[_flags + edi]
 	mov	[ScaleX],eax
-	mov	eax,[flags + edi + 4]
+	mov	eax,[_flags + edi + 4]
 	mov	[ScaleY],eax
 	add	edi,8				; next argument
 
@@ -536,9 +532,9 @@ ENDIF
 	; SHAPE_SHADOW: DWORD shadow_table[256]
 	;--------------------------------------------------------------------
 ??shadow:
-	test	[flags],SHAPE_SHADOW		; are we ghosting this shape
+	test	[_flags],SHAPE_SHADOW		; are we ghosting this shape
 	jz	short ??get_header		; if not then skip
-	mov	eax,[flags + edi]
+	mov	eax,[_flags + edi]
 	mov	[ShadowingTable],eax		; save address of shadow table
 	add	edi,4				; next argument
 
@@ -548,13 +544,13 @@ ENDIF
 	; Get Shape header values
 	;====================================================================
 	mov	esi,[shape_ptr]			; prepare to read header
-	movzx	eax,[WORD PTR esi]
+	movzx	eax,WORD PTR [esi]
 	mov	[ShapeType],eax			; extract shape type
-	movzx	eax,[BYTE PTR esi + 2]
+	movzx	eax,BYTE PTR [esi + 2]
 	mov	[ShapeHeight],eax
-	movzx	eax,[WORD PTR esi + 3]		; extract shape height
+	movzx	eax,WORD PTR [esi + 3]		; extract shape height
 	mov	[ShapeWidth],eax
-	movzx	eax,[WORD PTR esi + 8]		; extract uncompressed data length
+	movzx	eax,WORD PTR [esi + 8]		; extract uncompressed data length
 	mov	[UncompDataLen],eax
 	add	esi,10				; reposition index
 
@@ -574,12 +570,12 @@ ENDIF
 	;
 	;....................... <16-color shape: ...........................
 	;
-	test	[ShapeType],MAKESHAPE_VARIABLE
+	test	DWORD PTR [ShapeType],MAKESHAPE_VARIABLE
 	jz	??check_16
-	movzx	eax,[BYTE PTR esi]		; read # colors
+	movzx	eax,BYTE PTR [esi]		; read # colors
 	mov	[NumColors],eax			; save # colors
 	inc	esi
-	test	[flags],SHAPE_COLOR		; don't set ColorTable if
+	test	[_flags],SHAPE_COLOR		; don't set ColorTable if
 	jnz	??norm_get_data_addr		;  it was passed in
 	mov	[ColorTable],esi		; save color table pointer
 
@@ -590,10 +586,10 @@ ENDIF
 
 	;....................... 16-color shape: ............................
 ??check_16:
-	test	[ShapeType],MAKESHAPE_COMPACT
+	test	DWORD PTR [ShapeType],MAKESHAPE_COMPACT
 	jz	??256_get_data_addr
-	mov	[NumColors],16			; save # colors
-	test	[flags],SHAPE_COLOR		; don't set ColorTable if
+	mov	DWORD PTR [NumColors],16; save # colors
+	test	[_flags],SHAPE_COLOR		; don't set ColorTable if
 	jnz	??16_get_data_addr		;  it was passed in
 	mov	[ColorTable],esi		; save color table pointer
 
@@ -617,7 +613,7 @@ ENDIF
 	; at least 8 entries.
 	;--------------------------------------------------------------------
 ??setup_procs:
-	mov	ebx,[flags]		; load flags value
+	mov	ebx,[_flags]		; load flags value
 	and	ebx,07h			; clip high bits
 	add	ebx,ebx			; mult by 4 to get DWORD offset
 	add	ebx,ebx
@@ -633,7 +629,7 @@ ENDIF
 	; Now compute scaled width & height.  If the shape scales down to 0
 	; either horizontally or vertically, exit.
 	;====================================================================
-	test	[flags],SHAPE_SCALING	; skip if no scaling
+	test	[_flags],SHAPE_SCALING	; skip if no scaling
 	jz	??no_scaling
 	;
 	;........................ scaled width: .............................
@@ -674,7 +670,7 @@ ENDIF
 	;
 	;........................ adjust draw_x .............................
 	;
-	test	[flags],SHAPE_CENTER	; skip if not centered
+	test	[_flags],SHAPE_CENTER	; skip if not centered
 	jz	??handle_vp_rel
 	mov	eax,[draw_x]		; load in draw_x
 	mov	edx,[ScaledWidth]	; load in ScaledWidth
@@ -695,7 +691,7 @@ ENDIF
 	; viewport's coordinates
 	;====================================================================
 ??handle_vp_rel:
-	test	[flags],SHAPE_VIEWPORT_REL	; skip if not vp-relative
+	test	[_flags],SHAPE_VIEWPORT_REL	; skip if not vp-relative
 	jz	??compute_horz_clip
 	mov	eax,[viewport_x]
 	add	[draw_x],eax			; draw_x += viewport_x
@@ -793,7 +789,7 @@ ENDIF
 	;	&(shape's data)
 	; - otherwise the shape data is already uncompressed
 	;====================================================================
-	test	[ShapeType],MAKESHAPE_NOCOMP
+	test	DWORD PTR [ShapeType],MAKESHAPE_NOCOMP
 	jnz	??uncompressed
 
 	mov	eax,[UncompDataLen]
@@ -817,7 +813,7 @@ ENDIF
 	; Set the global Flags variable
 	;--------------------------------------------------------------------
 ??copy_flags:
-	mov	eax,[flags]
+	mov	eax,[_flags]
 	mov	[Flags],eax
 
 	;====================================================================
@@ -847,7 +843,7 @@ ENDIF
 	;
 	;................. Adjust for horizontal reversal ...................
 	;
-	test	[flags],SHAPE_HORZ_REV
+	test	[_flags],SHAPE_HORZ_REV
 	jz	??adjust_vert_offset
 	add	ebx,[PixelWidth]
 	dec	ebx			; EBX = true x-offset
@@ -862,7 +858,7 @@ ENDIF
 	;.................. Adjust for vertical reversal ....................
 	;
 ??adjust_vert_offset:
-	test	[flags],SHAPE_VERT_REV
+	test	[_flags],SHAPE_VERT_REV
 	jz	??adjust_pointer
 	add	eax,[PixelHeight]
 	dec	eax			; EAX = true y-offset
@@ -885,7 +881,7 @@ ENDIF
 	;--------------------------------------------------------------------
 	; Finally, if VERT_REV, negate yadd to move up not down:
 	;--------------------------------------------------------------------
-	test	[flags],SHAPE_VERT_REV
+	test	[_flags],SHAPE_VERT_REV
 	jz	??init_xtotal
 	neg	[viewport_yadd]		; move up, not down
 
@@ -919,7 +915,7 @@ ENDIF
 	;====================================================================
 	mov	esi,[ShapeData]		; ESI = shape buffer starting point
 	mov	edi,[StartDraw]		; EDI = drawing address
-	mov	[YTotal],0		; initialize accumulated scale
+	mov	DWORD PTR [YTotal],0		; initialize accumulated scale
 
 	;====================================================================
 	; Clip the top-clipped lines. The object here is to set ESI to the
@@ -960,19 +956,19 @@ ENDIF
 	;
 	mov	[LineStart],esi		; save this line's byte position
 	mov	ecx,[ShapeWidth]	; set up ECX for RSkipRout
-	call	[RSkipRout]		; skip 'ShapeWidth' bytes
+	call	DWORD PTR [RSkipRout]		; skip 'ShapeWidth' bytes
 	;
 	;............... see if this row would have been drawn ..............
 	;
 	mov	eax,[ScaleY]
 	add	[YTotal],eax		; accumulate scale factor
-	test	[YTotal],0FF00h		; check to see if we draw the line
+	test	DWORD PTR [YTotal],0FF00h		; check to see if we draw the line
 	jz	??clip_y_loop		; if not loop again
 	;
 	;...................... decrement HeightCount .......................
 	;
 	mov	eax,0			; clear EAX
-	xchg	al,[BYTE PTR YTotal+1]	; get # lines, clear it in YTotal
+	xchg	al,BYTE PTR [YTotal+1]	; get # lines, clear it in YTotal
 	sub	[HeightCount],eax	; subtract # drawn lines from HtCt
 	jg	??clip_y_loop		; if more lines remain, loop again
 	jns	??draw_loop		; is exactly 0; we're done clipping
@@ -1019,13 +1015,13 @@ ENDIF
 	;
 	mov	eax,[ScaleY]		; get y scaling factor
 	add	[YTotal],eax		; accumulate YTotal
-	test	[YTotal],0FF00h		; see if we need to draw anything
+	test	DWORD PTR [YTotal],0FF00h		; see if we need to draw anything
 	jnz  	??draw_line		; draw this line
 	;
 	;......................... skip this line ...........................
 	;
 	mov	ecx,[ShapeWidth]	; load shape's width in bytes
-	call	[RSkipRout]		; skip this row & loop again
+	call	DWORD PTR [RSkipRout]		; skip this row & loop again
 	jmp	??draw_loop
 
 	;
@@ -1046,8 +1042,8 @@ ENDIF
 	mov	eax,[ShapeWidth]	; load shape width
 	mov	[WidthCount],eax	; set up for LSkipRout
 	mov	ecx,[LeftClipBytes]	; bytes, not pixels!
-	call	[LSkipRout]		; skip the bytes
-	cmp	[WidthCount],0
+	call	DWORD PTR [LSkipRout]		; skip the bytes
+	cmp	DWORD PTR [WidthCount],0
 	jz	??next_line		; The whole line was 0's
 	;....................................................................
 	; Draw middle pixels:
@@ -1060,14 +1056,14 @@ ENDIF
 ??draw_middle:
 	add	ecx,[PixelWidth]	; since ECX could overrun, add width
 	jle	??draw_right		; if ECX<=0, no middle pixels to draw
-	call	[DrawRout]		; draw the pixels
+	call	DWORD PTR [DrawRout]		; draw the pixels
 	;
 	;................... skip past right-clipped pixels .................
 	;
 ??draw_right:
 	mov	ecx,[WidthCount]	; ECX = remaining # bytes
 	jecxz	??next_line		; don't bother if no bytes remain
-	call	[RSkipRout]		; skip right-clipped bytes
+	call	DWORD PTR [RSkipRout]		; skip right-clipped bytes
 	;
 	;----------------------- go to the next line ------------------------
 	;
@@ -1081,12 +1077,12 @@ ENDIF
 	;
 	;................. decrement our pixel row counter ..................
 	;
-	dec	[PixelHeight]		; count down a line
+	dec	DWORD PTR [PixelHeight]		; count down a line
 	jz	??exit			; we're done!
 	;
 	;.................. decrement YTotal's high byte ....................
 	;
-	dec	[BYTE PTR YTotal + 1]	; decrement high byte
+	dec	BYTE PTR [YTotal + 1]	; decrement high byte
 	jz	??draw_loop		; draw next line if 0
 	;
 	;....................... re-draw this line ..........................
@@ -1115,7 +1111,7 @@ Draw_Shape	ENDP
 ;* HISTORY:                                                                *
 ;*   08/24/1993 SKB : Created.                                             *
 ;*=========================================================================*
-PROC	Not_Supported NOLANGUAGE NEAR
+Not_Supported	PROC	NEAR C
 
 	ret
 

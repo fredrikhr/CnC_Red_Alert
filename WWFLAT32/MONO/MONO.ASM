@@ -16,7 +16,7 @@
 ;	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ;
 
-;***************************************************************************
+;***************************************************************************
 ;**     C O N F I D E N T I A L --- W E S T W O O D   S T U D I O S       **
 ;***************************************************************************
 ;*                                                                         *
@@ -60,18 +60,18 @@
 ;
 ; External declares so these functions can be called
 ;
-GLOBAL          MonoScreen              :DWORD
-GLOBAL          MonoEnabled             :DWORD
+EXTERNDEF C    MonoScreen              :DWORD
+EXTERNDEF C    MonoEnabled             :DWORD
 
-GLOBAL         Mono_Set_Cursor         :NEAR	; done
-GLOBAL         Mono_Clear_Screen       :NEAR	; done
-GLOBAL         Mono_Scroll             :NEAR	; done
-GLOBAL         Mono_Put_Char           :NEAR	; done
-GLOBAL         Mono_Draw_Rect          :NEAR	; done
-GLOBAL        _Mono_Text_Print         :NEAR	; done
-GLOBAL         Mono_Text_Print         :NEAR	; done
-GLOBAL         Mono_Print              :NEAR 	; done
-GLOBAL         Mono_View_Page          :NEAR	; done
+EXTERNDEF C    Mono_Set_Cursor         :NEAR	; done
+EXTERNDEF C    Mono_Clear_Screen       :NEAR	; done
+EXTERNDEF C    Mono_Scroll             :NEAR	; done
+EXTERNDEF C    Mono_Put_Char           :NEAR	; done
+EXTERNDEF C    Mono_Draw_Rect          :NEAR	; done
+EXTERNDEF C   _Mono_Text_Print         :NEAR	; done
+EXTERNDEF C    Mono_Text_Print         :NEAR	; done
+EXTERNDEF C    Mono_Print              :NEAR 	; done
+EXTERNDEF C    Mono_View_Page          :NEAR	; done
 
 ;
 ; Equates used in this file
@@ -151,9 +151,7 @@ PageMap DD      0,1,2,3,4,5,6,7
 ; void Mono_Set_Cursor(int x, int y);
 
 
-Mono_Set_Cursor    PROC near C
-
-        USES eax , ebx , edx,
+Mono_Set_Cursor    PROC near C  USES eax ebx edx,
         xpos : DWORD,
         ypos : DWORD
 
@@ -224,9 +222,7 @@ Mono_Set_Cursor    ENDP
 ;*=========================================================================*
 ; void Mono_Clear_Screen(void);
 
-Mono_Clear_Screen  PROC near C
-
-        USES eax , ecx , edi
+Mono_Clear_Screen  PROC near C  USES eax ecx edi
 
         cmp     [MonoEnabled],0
         je      ??exit
@@ -272,9 +268,7 @@ Mono_Clear_Screen    ENDP
 ;* HISTORY:                                                                *
 ;*=========================================================================*
 ; void Mono_Scroll(DWORD lines);
-Mono_Scroll        PROC near C
-
-        USES 	eax , ebx , ecx , edx , edi , esi,
+Mono_Scroll        PROC near C  USES 	eax ebx ecx edx edi esi,
         lines : DWORD
 
         cmp     [MonoEnabled],0
@@ -354,9 +348,7 @@ Mono_Scroll    ENDP
 ;*=========================================================================*
 ; void Mono_Put_Char(char character, int attrib=2);
 
-Mono_Put_Char      PROC near C
-
-        USES    eax , edi,
+Mono_Put_Char      PROC near C  USES    eax edi,
         character : BYTE,
         attrib    : DWORD
 
@@ -412,12 +404,10 @@ Mono_Put_Char    ENDP
 ;*=========================================================================*
 ; void Mono_Draw_Rect(int x, int y, int w, int h, int attrib=2, int thick=0);
 
-Mono_Draw_Rect     PROC near C
-
-        USES eax , ebx , ecx , esi , edi,
+Mono_Draw_Rect     PROC near C  USES eax ebx ecx esi edi,
         xpos:DWORD,
         ypos:DWORD,
-        width:DWORD,
+        _width:DWORD,
         height:DWORD,
         attrib:DWORD,
         thick:DWORD
@@ -443,13 +433,13 @@ Mono_Draw_Rect     PROC near C
         add     edi,eax
 
         ; Prep width and height.
-        cmp     [width],2
+        cmp     [_width],2
         jb      ??fini
 
         cmp     [height],2
         jb      ??fini
 
-        sub     [width],2
+        sub     [_width],2
         sub     [height],2
 
         ; Preserve cursor position for later restore.
@@ -468,12 +458,12 @@ Mono_Draw_Rect     PROC near C
 
 ??drawloop:
         ; Determine the number of characters to output.
-        mov     ecx,[width]
-        cmp     [BYTE PTR esi+2],1
+        mov     ecx,[_width]
+        cmp     BYTE PTR [esi+2],1
         je      short ??gotlen
 
         mov     ecx,[height]
-        cmp     [BYTE PTR esi+2],2
+        cmp     BYTE PTR [esi+2],2
         je      short ??gotlen
 
         mov     ecx,1
@@ -483,7 +473,7 @@ Mono_Draw_Rect     PROC near C
 
 ??runloop:
         sub     ebx,ebx
-        mov     bl,[BYTE PTR edi]
+        mov     bl,BYTE PTR [edi]
 
 ;       mov     ebx,eax
         sub     eax,eax
@@ -494,11 +484,11 @@ Mono_Draw_Rect     PROC near C
         call    Mono_Put_Char
         add     esp,8
 
-        movsx   eax,[BYTE PTR esi+1]
+        movsx   eax,BYTE PTR [esi+1]
 ;       cbw
         add     eax,[MonoY]
         push    eax
-        movsx   eax,[BYTE PTR esi]
+        movsx   eax,BYTE PTR [esi]
 ;       cbw
         add     eax,[MonoX]
         dec     eax                     ; Undo cursor advance.
@@ -514,7 +504,7 @@ Mono_Draw_Rect     PROC near C
         ; Advance to next control entry.
         add     esi,3
         inc     edi
-        cmp     [BYTE PTR esi+2],-1
+        cmp     BYTE PTR [esi+2],-1
         jne     ??drawloop
 
         ; Restore cursor to original position.
@@ -543,9 +533,7 @@ Mono_Draw_Rect    ENDP
 ;*=========================================================================*
 ; void Mono_Text_Print(void *text, int x, int y, int attrib, int update);
 
-_Mono_Text_Print   PROC near C
-
-        USES eax,ebx,ecx,edx,edi,esi,
+_Mono_Text_Print   PROC near C  USES eax ebx ecx edx edi esi,
         text:DWORD,
         xpos:DWORD,
         ypos:DWORD,
@@ -582,7 +570,7 @@ _Mono_Text_Print   PROC near C
 
 ??charloop:
         xor     eax,eax
-        mov     al,[BYTE PTR esi]               ; Fetch character to output.
+        mov     al,BYTE PTR [esi]               ; Fetch character to output.
         inc     esi
 
         ; Stop processing on a NULL character.
@@ -659,8 +647,7 @@ _Mono_Text_Print    ENDP
 
 ;=====================================================================
 
-Mono_Text_Print    PROC near C
-        USES    eax,
+Mono_Text_Print    PROC near C  USES    eax,
         text:DWORD,
         xpos:DWORD,
         ypos:DWORD,
@@ -706,9 +693,7 @@ Mono_Text_Print    ENDP
 ;*=========================================================================*
 ; void Mono_Print(void *text);
 
-Mono_Print         PROC near C
-
-        USES eax,
+Mono_Print         PROC near C  USES eax,
         text:DWORD
 
         cmp     [MonoEnabled],0
@@ -756,10 +741,8 @@ Mono_Print    ENDP
 ; int cdecl Mono_View_Page(int page);
 
 
-Mono_View_Page     PROC near C
-
-        USES eax,ebx,ecx,edx,edi,esi,
-        page:DWORD
+Mono_View_Page     PROC near C  USES eax ebx ecx edx edi esi,
+        _page:DWORD
 
         LOCAL   oldpage:DWORD
 
@@ -780,7 +763,7 @@ Mono_View_Page     PROC near C
         mov     [oldpage],ebx
 
         ; If the desired page is already displayed, then don't do anything.
-        mov     eax,[page]
+        mov     eax,[_page]
         cmp     eax,ebx
         je      short ??fini
 

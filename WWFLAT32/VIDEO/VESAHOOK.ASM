@@ -47,12 +47,12 @@ DPMI_INTR equ 031h
 ;//////////////////////////////////////////////////////////////////////////////////////
 ;/////////////////////////////////// Prototypes //////////////////////////////////////
 
-GLOBAL	  RMVesaVector    : DWORD
-GLOBAL	  RMVesaRegs      : DWORD
-GLOBAL	  RMVesaVectorSel : DWORD
-GLOBAL	  Vesa_Hook    	  : NEAR
-GLOBAL	  Remove_Vesa 	  : NEAR
-GLOBAL	  VesaFunc	  : dword
+EXTERNDEF C	  RMVesaVector    : DWORD
+EXTERNDEF C	  RMVesaRegs      : DWORD
+EXTERNDEF C	  RMVesaVectorSel : DWORD
+EXTERNDEF C	  Vesa_Hook    	  : NEAR
+EXTERNDEF C	  Remove_Vesa 	  : NEAR
+EXTERNDEF C	  VesaFunc	  : dword
 
 ;//////////////////////////////////////////////////////////////////////////////////////
 ;//////////////////////////////////////// Data ////////////////////////////////////////
@@ -74,8 +74,7 @@ RMVesaVectorSel DD	0
 
 	.CODE; Converted from TASM: CODESEG
 
-Vesa_Hook PROC	Near C
-	USES	ebx,ecx,edx,ecx,edi,esi,
+Vesa_Hook PROC	Near C      USES	ebx ecx edx ecx edi esi,
 	vesa_ptr:DWORD
 
 	; Are they attempting to set timer again?
@@ -155,12 +154,11 @@ Vesa_Hook PROC	Near C
  ??error:
        mov 	eax , -1
        ret
-      ENDP
+Vesa_Hook      ENDP
 
 
 
-Remove_Vesa PROC	Near C
-	USES	ebx,ecx,edx,ecx,edi,esi,
+Remove_Vesa PROC	Near C      USES	ebx ecx edx ecx edi esi,
 	vesa_ptr:DWORD
 
 
@@ -198,7 +196,7 @@ Remove_Vesa PROC	Near C
 	mov	[RMVesaVectorSel],0
 ??exit:
        ret
-      ENDP
+Remove_Vesa      ENDP
 
 
 END

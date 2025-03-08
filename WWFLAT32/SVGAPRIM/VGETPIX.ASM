@@ -62,20 +62,20 @@ INCLUDE <gbuffer.inc>
 ;* HISTORY:                                                                *
 ;*   06/07/1994 PWG : Created.                                             *
 ;*=========================================================================*
-Vesa_Get_Pixel PROC	near C
-	USES	ebx,ecx,edx,edi,
-	this:DWORD				; this is a member function,
-	x_pixel:DWORD				; x position of pixel to set,
+Vesa_Get_Pixel PROC	near C	USES	ebx ecx edx edi,
+	_this:DWORD,				; this is a member function,
+	x_pixel:DWORD,				; x position of pixel to set,
 	y_pixel:DWORD				; y position of pixel to set
 
 	;*===================================================================
 	; Get the viewport information and put bytes per row in ecx
 	;*===================================================================
-	mov	ebx,[this]				; get a pointer to viewport
+	mov	ebx,[_this]				; get a pointer to viewport
+	assume ebx:PTR VideoViewPort
 	xor	eax,eax
-	mov	edi,[(VideoViewPort ebx).VIVPOffset]	; get the correct offset
-	mov	ecx,[(VideoViewPort ebx).VIVPHeight]	; edx = height of viewport
-	mov	edx,[(VideoViewPort ebx).VIVPWidth]	; ecx = width of viewport
+	mov	edi,[ebx].VIVPOffset	; get the correct offset
+	mov	ecx,[ebx].VIVPHeight	; edx = height of viewport
+	mov	edx,[ebx].VIVPWidth		; ecx = width of viewport
 
 	;*===================================================================
 	; Verify that the X pixel offset if legal
@@ -91,7 +91,7 @@ Vesa_Get_Pixel PROC	near C
 	mov	eax,[y_pixel]				; get the y position
 	cmp	eax,ecx					;  is it out of bounds
 	jae	??exit					; if so then get out
-	add	edx,[(VideoViewPort ebx).VIVPXAdd]	; otherwise find bytes per row
+	add	edx,[ebx].VIVPXAdd	; otherwise find bytes per row
 	mul	edx					; offset = bytes per row * y
 	add	edi,eax					; add it into the offset
 

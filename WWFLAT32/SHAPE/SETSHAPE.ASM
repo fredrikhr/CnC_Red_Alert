@@ -61,14 +61,13 @@ INCLUDE <shape.inc>
 ;* HISTORY:                                                                *
 ;*   10/26/1994 PWG : Created.                                             *
 ;*=========================================================================*
-GLOBAL	Set_Shape_Buffer:NEAR
+EXTERNDEF C	Set_Shape_Buffer:NEAR
 
-Set_Shape_Buffer PROC	near C
-	USES	eax,
+Set_Shape_Buffer PROC	near C	USES	eax,
 	buff:DWORD,
-	size:DWORD
+	_size:DWORD
 
-	mov	eax,[size]
+	mov	eax,[_size]
 	mov	[_ShapeBufferSize],eax
 
 	mov	eax,[buff]

@@ -49,11 +49,11 @@
 ; Set the assembly directives
 ;---------------------------------------------------------------------------
 ; Converted from TASM: IDEAL				; the product runs in ideal mode
-.386P	; Converted from TASM: P386N				; use 386 real mode instructions
-MODEL TINY			; code must be tiny so it fits
+.386	; Converted from TASM: P386N				; use 386 real mode instructions
+.MODEL TINY			; code must be tiny so it fits
 ; Converted from TASM: LOCALS ??			; ?? is the symbol for a local
-WARN				; generate all warnings we can
-JUMPS				; optimize jumps if possible
+;WARN				; generate all warnings we can
+OPTION LJMP			; optimize jumps if possible
 
 ;---------------------------------------------------------------------------
 ; Include all of the keyboard specific defines
@@ -191,9 +191,8 @@ CallRMIntAddr		DD	0	; PM address of CallRealIntOffset for speed.
 ;* HISTORY:                                                                *
 ;*   07/11/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	KeyNum_Translate:FAR
-KeyNum_Translate PROC	FAR C
-	USES	cx,di,es,ds,
+	EXTERNDEF C	KeyNum_Translate:FAR
+KeyNum_Translate PROC	FAR C	USES	cx di es ds,
 	keycode:WORD
 
 	mov	ax,cs				; since we are in tiny model
@@ -213,7 +212,7 @@ KeyNum_Translate PROC	FAR C
 	mov	di,OFFSET ExtRemapEnd
 	dec	di
 	sub	di,cx
-	mov	al,[es:di]
+	mov	al,es:[di]
 ??fini:
 	ret
 KeyNum_Translate	ENDP
@@ -230,9 +229,8 @@ KeyNum_Translate	ENDP
 ;* HISTORY:                                                                *
 ;*   07/11/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C Stuff_Key_WORD:FAR
-Stuff_Key_WORD PROC	FAR C
-	USES	si,bx,ds,
+	EXTERNDEF	C Stuff_Key_WORD:FAR
+Stuff_Key_WORD PROC	FAR C	USES	si bx ds,
 	code:WORD
 
 	mov	ax,cs				; since we are in tiny model
@@ -269,12 +267,11 @@ Stuff_Key_WORD	ENDP
 ;* HISTORY:                                                                *
 ;*   07/11/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C Stuff_Key_Num:FAR
-Stuff_Key_Num PROC	FAR C
-	USES	ax,bx,cx,dx,di,si,ds,
+	EXTERNDEF	C Stuff_Key_Num:FAR
+Stuff_Key_Num PROC	FAR C	USES	ax bx cx dx di si ds,
 	keycode:WORD
 	LOCAL	tail:WORD		; Original keybuffer tail (safety copy).
-	LOCAL	size:WORD		; Size of write.
+	LOCAL	_size:WORD		; Size of write.
 
 	pushf
 	cli				; disable interrupts
@@ -510,7 +507,7 @@ Stuff_Key_Num PROC	FAR C
 	add	sp,2
 	or	ax,ax
 	jne	??jmpnoroom
-	add	[size],2
+	add	[_size],2
 
 	; Record mouse coordinate Y.
 	push	[LocalMouseY]
@@ -518,7 +515,7 @@ Stuff_Key_Num PROC	FAR C
 	add	sp,2
 	or	ax,ax
 	jne	??jmpnoroom
-	add	[size],2
+	add	[_size],2
 
 ??ok:
 	; If PASSBREAKS is not active and this is a keyboard
@@ -601,8 +598,8 @@ Stuff_Key_Num	ENDP
 ;* HISTORY:                                                                *
 ;*   07/13/1994 PWG : Created.                                             *
 ;*=========================================================================*
-RM_Keystroke_Interrupt label
-	GLOBAL	C Keystroke_Interrupt:FAR
+RM_Keystroke_Interrupt label FAR PTR
+	EXTERNDEF	C Keystroke_Interrupt:FAR
 Keystroke_Interrupt PROC	FAR C
 
 IF 0
@@ -716,10 +713,13 @@ ELSE
 	mov	di,OFFSET ExtCodes	; get offset of extended codes table
 	mov	cx,(ExtNums-ExtCodes)	; get number of entrys in ext table
 	repne	scasb			; look for a match
-	jcxz	??absorbcode		; Not recognized, so throw it away.
+	jcxz	??absorbcodeljmp	; Not recognized, so throw it away.
 	mov	al,[(ExtNums - ExtCodes) - 1 + di] ; get the match
 	mov	[IsExtKey],FALSE	; it is not an extended key
 	jmp 	short ??notext
+
+??absorbcodeljmp:
+	jmp	??absorbcode
 
 ??normal:
 	cmp	al,07Ah
@@ -967,7 +967,7 @@ Keystroke_Interrupt	ENDP
 ;* HISTORY:                                                                *
 ;*   07/13/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C Break_Interrupt:FAR
+	EXTERNDEF	C Break_Interrupt:FAR
 Break_Interrupt PROC	FAR C
 
 	iret
@@ -1017,7 +1017,7 @@ ENDIF
 	call	Keystroke_Interrupt ;[OldRMI]
 	retf
 
-STACK	   ; Don't really need this
+.STACK	   ; Don't really need this
 
 ;***********************************************************
 END

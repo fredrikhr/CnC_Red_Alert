@@ -43,8 +43,8 @@
 
 INCLUDE <svgaprim.inc>
 
-GLOBAL	RMVesaVector	: DWORD
-GLOBAL	RMVesaRegs	: DWORD
+EXTERNDEF C	RMVesaVector	: DWORD
+EXTERNDEF C	RMVesaRegs	: DWORD
 
 
 DPMI_INTR	EQU	31h
@@ -68,7 +68,7 @@ DPMI_REGS STRUC
        _sp   dw ?
        _ss   dw ?
        	     dd ?
-ENDS
+DPMI_REGS	ENDS
 
 
 .DATA; Converted from TASM: DATASEG
@@ -76,7 +76,7 @@ ENDS
 cpu_video_page	dd           0h
 cpu_page_limit  dd	0b0000h
 CurrentBank	DD  	     0h		; current vesa bank
-RealFunc	DPMI_REGS   ?		; structure to call a real mode int
+RealFunc	DPMI_REGS   <>		; structure to call a real mode int
 
 
 	.CODE; Converted from TASM: CODESEG
@@ -123,9 +123,10 @@ Vesa_Asm_Set_Win PROC	near C
 	rep	stosd
 
 	mov     edi , [ RMVesaRegs ]
-	mov	[(type DPMI_REGS ptr edi ) . _eax ] , 04f05h
-	mov	[(type DPMI_REGS ptr edi ) . _ebx ] , 0
-	mov	[(type DPMI_REGS ptr edi ) . _edx ] , ebx
+	assume edi:PTR DPMI_REGS
+	mov	[edi ]._eax , 04f05h
+	mov	[edi ]._ebx , 0
+	mov	[edi ]._edx , ebx
 
 	mov	eax , 0300h
 	xor	ecx , ecx			; set amount to copy of stack

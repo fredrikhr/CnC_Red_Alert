@@ -19,4 +19,5 @@ add_library(${PROJECT_COMPONENT_ROOT_NAME} STATIC
   ${PROJECT_COMPONENT_ROOT_SOURCE_FILES}
 )
 
+add_subdirectory(SRCDEBUG)
 add_subdirectory(EXAMPLE)

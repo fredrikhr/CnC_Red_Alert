@@ -45,19 +45,19 @@ INCLUDE <gbuffer.inc>
 
 .CODE; Converted from TASM: CODESEG
 
-Vesa_Clear PROC	near C
-	USES	eax,ebx,ecx,edx,esi,edi,
-	this:DWORD				; this is a member function,
+Vesa_Clear PROC	near C USES	eax ebx ecx edx esi edi,
+	_this:DWORD,				; this is a member function,
 	color:BYTE				; what color should we clear to
 
 	cld 		 				; always go forward
 
-	mov	ebx,[this]				; get a pointer to viewport
-	mov	esi,[(GraphicViewPort ebx).GVPXAdd]	; esi = add for each line
-	mov	edi,[(GraphicViewPort ebx).GVPOffset]	; get the correct offset
+	mov	ebx,[_this]				; get a pointer to viewport
+       assume ebx:ptr GraphicViewPort
+	mov	esi,[ebx].GVPXAdd	; esi = add for each line
+	mov	edi,[ebx].GVPOffset	; get the correct offset
 	push	esi
-	mov	edx,[(GraphicViewPort ebx).GVPHeight]	; ecx = height of viewport
-	mov	esi,[(GraphicViewPort ebx).GVPWidth]	; edx = width of viewport
+	mov	edx,[ebx].GVPHeight	; ecx = height of viewport
+	mov	esi,[ebx].GVPWidth	; edx = width of viewport
 
 
 	;*===================================================================

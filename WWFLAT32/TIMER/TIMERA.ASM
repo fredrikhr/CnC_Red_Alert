@@ -144,24 +144,24 @@ TimerType STRUC
 	NumPMInts		DD	?	; Number of PM interrupts
 	NumRMInts		DD	?	; Number of RM interrupts.
 
-ENDS
+TimerType	ENDS
 
 
 ;//////////////////////////////////////////////////////////////////////////////////////
 ;/////////////////////////////////// Prototypes //////////////////////////////////////
 
-GLOBAL	 	Get_System_Tick_Count:NEAR
-GLOBAL	 	Get_User_Tick_Count:NEAR
-GLOBAL	 	Get_RM_Timer_Address:NEAR
-GLOBAL	 	Get_RM_Timer_Size:NEAR
-GLOBAL	 	Set_Timer_Frequency:NEAR
-GLOBAL	 	Timer_Interrupt:NEAR
-GLOBAL	 	Install_Timer_Interrupt:NEAR
-GLOBAL	 	Remove_Timer_Interrupt:NEAR
-GLOBAL	 	Get_Num_Interrupts:NEAR
-GLOBAL		Timer_Interrupt_Func:FAR
-GLOBAL		Disable_Timer_Interrupt:NEAR
-GLOBAL		Enable_Timer_Interrupt:NEAR
+EXTERNDEF C	 	Get_System_Tick_Count:NEAR
+EXTERNDEF C	 	Get_User_Tick_Count:NEAR
+EXTERNDEF C	 	Get_RM_Timer_Address:NEAR
+EXTERNDEF C	 	Get_RM_Timer_Size:NEAR
+EXTERNDEF C	 	Set_Timer_Frequency:NEAR
+EXTERNDEF C	 	Timer_Interrupt:NEAR
+EXTERNDEF C	 	Install_Timer_Interrupt:NEAR
+EXTERNDEF C	 	Remove_Timer_Interrupt:NEAR
+EXTERNDEF C	 	Get_Num_Interrupts:NEAR
+EXTERNDEF C		Timer_Interrupt_Func:FAR
+EXTERNDEF C		Disable_Timer_Interrupt:NEAR
+EXTERNDEF C		Enable_Timer_Interrupt:NEAR
 
 ;//////////////////////////////////////////////////////////////////////////////////////
 ;//////////////////////////////////////// Data ////////////////////////////////////////
@@ -224,7 +224,7 @@ Get_RM_Timer_Address PROC	Near C
 	mov	eax, OFFSET RealBinStart
 	ret
 
-	ENDP
+Get_RM_Timer_Address	ENDP
 
 ;***************************************************************************
 ;* GET_RM_TIMER_SIZE -- return size of real mode timer code.               *
@@ -245,7 +245,7 @@ Get_RM_Timer_Size PROC	Near C
 	mov	eax, OFFSET RealBinEnd - OFFSET RealBinStart
 	ret
 
-	ENDP
+Get_RM_Timer_Size	ENDP
 
 
 ;***************************************************************************
@@ -261,7 +261,7 @@ Get_RM_Timer_Size PROC	Near C
 ;* HISTORY:                                                                *
 ;*   07/11/1994 SKB : Created.                                             *
 ;*=========================================================================*
-PROC	Set_Timer_Rate Near
+Set_Timer_Rate	PROC	Near
 
 	push	eax
 	pushf					; to save int enable flag
@@ -295,8 +295,7 @@ Set_Timer_Rate	ENDP
 ;* HISTORY:                                                                *
 ;*   07/06/1994 SKB : Created.                                             *
 ;*=========================================================================*
-Set_Timer_Frequency PROC	NEAR C
-	USES	eax,ebx,ecx,edx,
+Set_Timer_Frequency PROC	NEAR C	USES	eax ebx ecx edx,
 	freq:DWORD
 	LOCAL	clockrate:DWORD
 	LOCAL	clockfreq:DWORD
@@ -317,27 +316,28 @@ Set_Timer_Frequency PROC	NEAR C
 	; now get the rate that the clock will be set at.
 	; ecx is still max frequency.
 	mov	esi,[RealModePtr]
+	assume esi:PTR TimerType
 
 	mov	eax,TIMER_CONST			; get the clock constant value.
 	xor	edx,edx				; zero for divide.
 	div	ecx				; rate = TC/freq => eax = eax/ecx;
-	mov	[(TimerType PTR esi).TrueRate],eax ; Set our true rate.
+	mov	[esi].TrueRate,eax ; Set our true rate.
 	mov	ebx,eax				; save for later. DO NOT USE UNTIL CALL
 
 	; Set up variables to call DOS correctly.
 	; When DosFraction overflows, DOS is called.
-	mov	[(TimerType PTR esi).DosAdder],ax	; Init count to until call dos.
-	mov	[(TimerType PTR esi).DosFraction],0	; init the fraction.
+	mov	[esi].DosAdder,ax	; Init count to until call dos.
+	mov	[esi].DosFraction,0	; init the fraction.
 
 	; now set up the system timer.
 	mov	ecx,SYSTEM_TIMER_FREQ			; get frequency.
 	mov	eax,TIMER_CONST				; get constant for formula rate=C/freq.
 	xor	edx,edx				   	; make sure zero for divide
 	div	ecx					; calculate rate
-	mov	[(TimerType PTR esi).SysCurRate],ax	; Init current stuff.
-	mov	[(TimerType PTR esi).SysCurError],ax	; Init current stuff.
-	mov	[(TimerType PTR esi).SysRate],eax	; Save rate of timer
-	mov	[(TimerType PTR esi).SysError],edx	; Save error of timer
+	mov	[esi].SysCurRate,ax	; Init current stuff.
+	mov	[esi].SysCurError,ax	; Init current stuff.
+	mov	[esi].SysRate,eax	; Save rate of timer
+	mov	[esi].SysError,edx	; Save error of timer
 	; Do not set SysTicks to zero since it always has the same frequency.  It
 	; should be zero out only when the system clock is installed.
 
@@ -346,11 +346,11 @@ Set_Timer_Frequency PROC	NEAR C
 	mov	eax,TIMER_CONST				; get constant for formula rate=C/freq.
 	xor	edx,edx				   	; make sure zero for divide
 	div	ecx					; calculate rate
-	mov	[(TimerType PTR esi).UserCurRate],ax	; Init current stuff.
-	mov	[(TimerType PTR esi).UserCurError],ax; Init current stuff.
-	mov	[(TimerType PTR esi).UserRate],eax	; Save rate of timer
-	mov	[(TimerType PTR esi).UserError],edx	; Save error of timer
-	mov	[(TimerType PTR esi).UserTicks],0	; User timer sets to zero when freq change.
+	mov	[esi].UserCurRate,ax	; Init current stuff.
+	mov	[esi].UserCurError,ax; Init current stuff.
+	mov	[esi].UserRate,eax	; Save rate of timer
+	mov	[esi].UserError,edx	; Save error of timer
+	mov	[esi].UserTicks,0	; User timer sets to zero when freq change.
 
 	; Call function to set the rate of the chip, ebx = rate from above.
 	call	Set_Timer_Rate
@@ -359,7 +359,7 @@ Set_Timer_Frequency PROC	NEAR C
 
 	ret
 
-	ENDP
+Set_Timer_Frequency	ENDP
 
 
 ;***************************************************************************
@@ -377,8 +377,7 @@ Set_Timer_Frequency PROC	NEAR C
 ;* HISTORY:                                                                *
 ;*   07/06/1994 SKB : Created.                                             *
 ;*=========================================================================*
-Install_Timer_Interrupt PROC	Near C
-	USES	ebx,ecx,edx,
+Install_Timer_Interrupt PROC	Near C	USES	ebx ecx edx,
 	rm_ptr:DWORD,
 	rm_size:DWORD,
 	freq:DWORD,
@@ -458,10 +457,11 @@ Install_Timer_Interrupt PROC	Near C
 
 	; restore esi to point to data and initialize some of it.
 	mov	esi,[RealModePtr]
+	assume esi:PTR TimerType
 	mov	eax,esi						; get real mode 32 offset.
 	shl	eax,12						; make seg in high eax.
-	mov	ax,[(TimerType PTR esi).CallRMIntOffset]	; create RM addr of call chain.
-	mov	[(TimerType PTR esi).CallRMIntAddr],eax		; save it for use in PM int.
+	mov	ax,[esi].CallRMIntOffset	; create RM addr of call chain.
+	mov	[esi].CallRMIntAddr,eax		; save it for use in PM int.
 
 	cmp	[partial],0
 	jne	??partial_exit
@@ -476,8 +476,8 @@ Install_Timer_Interrupt PROC	Near C
 	mov	bl,IRQ0INTNUM		; IRQ1 interrupt vector
 	int	DPMI_INTR		; do call.
 	jc	??error
-	mov	[(TimerType PTR esi).OldPMIOffset],edx	 ; save offset.
-	mov	[(TimerType PTR esi).OldPMISelector],ecx ; save selector.
+	mov	[esi].OldPMIOffset,edx	 ; save offset.
+	mov	[esi].OldPMISelector,ecx ; save selector.
 
 	;==========================================================================
 	; Get the real mode interrupt vector keyboard
@@ -491,7 +491,7 @@ Install_Timer_Interrupt PROC	Near C
 	jc	??error
 	shl 	edx,16
 	shld	ecx,edx,16
-	mov	[(TimerType PTR esi).OldRMI],ecx
+	mov	[esi].OldRMI,ecx
 
 	;==========================================================================
 	; only separate method of installation is posible.
@@ -519,7 +519,7 @@ Install_Timer_Interrupt PROC	Near C
 	mov	bl,IRQ0INTNUM
 	mov	ecx,[RealModePtr]     			; get address of real code int hand.
 	shr	ecx,4					; put segment in hi word.
-	mov	dx,[(TimerType PTR esi).CodeOffset]  ; Get address of code
+	mov	dx,[esi].CodeOffset  ; Get address of code
 	int	DPMI_INTR				; do call.
 	jc	??error
 	or	[InitFlags],IF_SET_VECTORS
@@ -528,9 +528,9 @@ Install_Timer_Interrupt PROC	Near C
 	mov	eax,[freq]
 	or	[InitFlags],IF_FUNCTIONAL
 	push	eax
-	call	NEAR Set_Timer_Frequency
-	mov	[(TimerType PTR esi).SysTicks],0	; Only place SysTicks in inited.
-	mov	[(TimerType PTR esi).UserTicks],0	; Timers start off on same foot.
+	call	Set_Timer_Frequency
+	mov	[esi].SysTicks,0	; Only place SysTicks in inited.
+	mov	[esi].UserTicks,0	; Timers start off on same foot.
 	pop	eax
 	or	[InitFlags],IF_RATE_CHANGE
 
@@ -542,7 +542,7 @@ Install_Timer_Interrupt PROC	Near C
        	xor	eax,eax			; signal an error.
 	ret
 
-	ENDP
+Install_Timer_Interrupt	ENDP
 
 
 ;***************************************************************************
@@ -559,11 +559,11 @@ Install_Timer_Interrupt PROC	Near C
 ;* HISTORY:                                                                *
 ;*   07/06/1994 SKB : Created.                                             *
 ;*=========================================================================*
-Remove_Timer_Interrupt PROC	NEAR C
-	USES	ebx,ecx,edx
+Remove_Timer_Interrupt PROC	NEAR C	USES	ebx ecx edx
 
 	; check if timer was previosly install
 	mov	esi,[RealModePtr]
+	assume esi:PTR TimerType
 	test	esi,esi
 	jz	??error
 
@@ -579,7 +579,7 @@ Remove_Timer_Interrupt PROC	NEAR C
 
 	mov	eax, 0201h
 	mov	bl,IRQ0INTNUM
-	mov	edx,[(TimerType esi).OldRMI]		; get the RM address.
+	mov	edx,[esi].OldRMI		; get the RM address.
 	shld	ecx , edx , 16
 	int	DPMI_INTR				; do call.
 	jc	??error
@@ -593,8 +593,8 @@ Remove_Timer_Interrupt PROC	NEAR C
 
 	mov	eax, 0205h
 	mov	bl,IRQ0INTNUM
-	mov	ecx,[(TimerType esi).OldPMISelector] 	; Get PM segment to put int ds later.
-	mov	edx,[(TimerType esi).OldPMIOffset] 	; Get PM offset
+	mov	ecx,[esi].OldPMISelector 	; Get PM segment to put int ds later.
+	mov	edx,[esi].OldPMIOffset 	; Get PM offset
 	int	DPMI_INTR		  ; do call.
 	jc	??error
 
@@ -665,7 +665,7 @@ Remove_Timer_Interrupt PROC	NEAR C
        	xor	eax,eax			; signal an error.
 	ret
 
-	ENDP
+Remove_Timer_Interrupt	ENDP
 
 
 
@@ -687,20 +687,20 @@ Remove_Timer_Interrupt PROC	NEAR C
 ;* HISTORY:                                                                *
 ;*   07/12/1994 SKB : Created.                                             *
 ;*=========================================================================*
-Get_Num_Interrupts PROC	Near C
-	USES	esi,
+Get_Num_Interrupts PROC	Near C	USES	esi,
 	realmode:DWORD
 
 	mov	esi,[RealModePtr]
+	assume esi:PTR TimerType
 	cmp	[realmode],0
 	je	??prot_mode
-	mov	eax,[(TimerType PTR esi).NumRMInts]
+	mov	eax,[esi].NumRMInts
 	ret
 ??prot_mode:
-	mov	eax,[(TimerType PTR esi).NumPMInts]
+	mov	eax,[esi].NumPMInts
 	ret
 
-	ENDP
+Get_Num_Interrupts	ENDP
 
 ;***************************************************************************
 ;* GET_SYSTEM_TICK_COUNT -- Returns the system tick count.                 *
@@ -715,18 +715,18 @@ Get_Num_Interrupts PROC	Near C
 ;* HISTORY:                                                                *
 ;*   07/06/1994 SKB : Created.                                             *
 ;*=========================================================================*
-Get_System_Tick_Count PROC	Near C
-	USES	esi
+Get_System_Tick_Count PROC	Near C	USES	esi
 
 	mov	esi,[RealModePtr]
+	assume esi:PTR TimerType
 	xor	eax,eax
 	cmp	esi,0
 	je	??fini
-	mov	eax,[(TimerType PTR esi).SysTicks]
+	mov	eax,[esi].SysTicks
 ??fini:
 	ret
 
-	ENDP
+Get_System_Tick_Count	ENDP
 
 
 ;***************************************************************************
@@ -742,14 +742,14 @@ Get_System_Tick_Count PROC	Near C
 ;* HISTORY:                                                                *
 ;*   07/12/1994 SKB : Created.                                             *
 ;*=========================================================================*
-Get_User_Tick_Count PROC	Near C
-	USES	esi
+Get_User_Tick_Count PROC	Near C	USES	esi
 
 	mov	esi,[RealModePtr]
-	mov	eax,[(TimerType PTR esi).UserTicks]
+	assume esi:PTR TimerType
+	mov	eax,[esi].UserTicks
 	ret
 
-	ENDP
+Get_User_Tick_Count	ENDP
 
 
 ;//////////////////////////////////////////////////////////////////////////////////////
@@ -759,7 +759,7 @@ Get_User_Tick_Count PROC	Near C
 ; the Timer_Interrupt function.
 
 
-MACRO	SET_DS_ESI_TO_RM
+SET_DS_ESI_TO_RM	MACRO
 	; Sets DS : ES to point to DGROUP _DATA selector
 	; Set esi to point to RealModePtr
 	; Corrupts eax
@@ -768,44 +768,46 @@ MACRO	SET_DS_ESI_TO_RM
 	mov	ds , ax
 	mov	es , ax
 	mov	esi,[RealModePtr]		; Point to start of RM data.
+	assume esi:PTR TimerType
 ENDM
 
 
-MACRO	INCREMENT_TIMERS
+INCREMENT_TIMERS	MACRO
+	assume esi:PTR TimerType
 	; Expects ESI to point to real mode memory.
 
-	inc	[(TimerType PTR esi).NumPMInts]		; For testing.
+	inc	[esi].NumPMInts		; For testing.
 
-	mov	eax,[(TimerType PTR esi).TrueRate]	; Get the rate of the PC clock.
-	sub	[(TimerType PTR esi).SysCurRate],ax	; Sub from our rate counter.
+	mov	eax,[esi].TrueRate	; Get the rate of the PC clock.
+	sub	[esi].SysCurRate,ax	; Sub from our rate counter.
 	ja	??end_sys				; If !below zero, do not inc.
-	mov	ebx,[(TimerType PTR esi).SysRate]	; Get rate of timer.
-	mov	ecx,[(TimerType PTR esi).SysError]	; Get amount of error.
-	add	[(TimerType PTR esi).SysCurRate],bx	; Add rate to the current.
-	sub	[(TimerType PTR esi).SysCurError],cx	; Subtract err from error count.
+	mov	ebx,[esi].SysRate	; Get rate of timer.
+	mov	ecx,[esi].SysError	; Get amount of error.
+	add	[esi].SysCurRate,bx	; Add rate to the current.
+	sub	[esi].SysCurError,cx	; Subtract err from error count.
 	jb	??error_adj_sys				; If wrapped don't inc.
-	inc	[(TimerType PTR esi).SysTicks]	; increment the timer.
+	inc	[esi].SysTicks	; increment the timer.
 	jmp	short ??end_sys
 ??error_adj_sys:
-	add	[(TimerType PTR esi).SysCurError],bx	; reajust the error by timer rate.
+	add	[esi].SysCurError,bx	; reajust the error by timer rate.
 ??end_sys:
-	sub	[(TimerType PTR esi).UserCurRate],ax ; Sub from our rate counter.
+	sub	[esi].UserCurRate,ax ; Sub from our rate counter.
 	ja	??end_user	     			; If !below zero, do not inc.
-	mov	ebx,[(TimerType PTR esi).UserRate]	; Get rate of timer.
-	mov	ecx,[(TimerType PTR esi).UserError]	; Get amount of error.
-	add	[(TimerType PTR esi).UserCurRate],bx	; Add rate to the current.
-	sub	[(TimerType PTR esi).UserCurError],cx; Subtract err from error count.
+	mov	ebx,[esi].UserRate	; Get rate of timer.
+	mov	ecx,[esi].UserError	; Get amount of error.
+	add	[esi].UserCurRate,bx	; Add rate to the current.
+	sub	[esi].UserCurError,cx; Subtract err from error count.
 	jb	??error_adj_user       			; If wrapped don't inc.
-	inc	[(TimerType PTR esi).UserTicks]	; increment the timer.
+	inc	[esi].UserTicks	; increment the timer.
 	jmp	short ??end_user
 ??error_adj_user:
-	add	[(TimerType PTR esi).UserCurError],bx; reajust the error by timer rate.
+	add	[esi].UserCurError,bx; reajust the error by timer rate.
 ??end_user:
 
 ENDM
 
 
-MACRO	ENABLE_CLOCK_INT
+ENABLE_CLOCK_INT	MACRO
 	; Signal 8259 that we are done and that it can bug us again.
 	; Corrupts al.
 
@@ -831,7 +833,7 @@ LockedCodeStart 	LABEL	BYTE
 ;*   07/06/1994 SKB : Created.                                             *
 ;*=========================================================================*
 
-	PROC	Timer_Interrupt	Near
+Timer_Interrupt	PROC	Near C
 ;////////////////////////////// Call prot mode interrupt vector ////////////////////////////////////////
 ; This routine will do what it needs to,
 ; then it will decide if the old vector should be called.
@@ -855,36 +857,42 @@ LockedCodeStart 	LABEL	BYTE
 
 	; Step 3 continued.  Push used varables.
 	pushad
-	push	fs gs es ds
+	push	fs
+	push 	gs
+	push	es
+	push	ds
 
 
 	; Step 4.  Now do processing before I chain.
 	; Set up ds:esi to point at start of real memory block (data is first)
 
-	call far Timer_Interrupt_Func
+	call Timer_Interrupt_Func
 
 	SET_DS_ESI_TO_RM			; Set ds:esi to point to real mode stuff.
 
 	; Now take care of calling the old DOS timer interrupt vector.
 	; This must be the last operation of this module since if we call
 	; DOS, we will never return.
-	mov	ax,[(TimerType PTR ds:esi).DosAdder]
-	add	[(TimerType PTR esi).DosFraction],ax
+	mov	ax,ds:[esi].DosAdder
+	add	[esi].DosFraction,ax
 	jnc	??no_dos_call					; if not, skip the call.
 
 	; Tell RM that we forced the int and not to update timers.
-	mov	[(TimerType PTR esi).PMIssuedInt],1		; Make it TRUE
+	mov	[esi].PMIssuedInt,1		; Make it TRUE
 
 	; Step 5.
 	; Now it is time to set up for the call by returning by poking
 	; the old interrupt handle address in.
-	mov	eax,[(TimerType PTR esi).OldPMIOffset]		; Get orig offset.
-	mov	ebx,[(TimerType PTR esi).OldPMISelector]	; Get orig selector.
-	mov	[ss:ebp+4],eax					; Poke offset.
-	mov	[ss:ebp+8],ebx					; Poke selector.
+	mov	eax,[esi].OldPMIOffset		; Get orig offset.
+	mov	ebx,[esi].OldPMISelector	; Get orig selector.
+	mov	ss:[ebp+4],eax					; Poke offset.
+	mov	ss:[ebp+8],ebx					; Poke selector.
 
 	; Step 6.
-	pop	ds es gs fs
+	pop	ds
+	pop	es
+	pop	gs
+	pop	fs
 	popad
 	pop	ebp
 
@@ -896,7 +904,10 @@ LockedCodeStart 	LABEL	BYTE
 	ENABLE_CLOCK_INT
 
 	; Restore all registers.
-	pop	ds es gs fs
+	pop	ds
+	pop	es
+	pop	gs
+	pop	fs
 	popad
 
 	pop	ebp
@@ -906,7 +917,7 @@ LockedCodeStart 	LABEL	BYTE
 	iretd
 ;////////////////////////////// Call prot mode interrupt vector ////////////////////////////////////////
 ;//////////////////////////////////////////////////////////////////////////////////////////////////////
-	ENDP
+Timer_Interrupt	ENDP
 
 
 
@@ -931,16 +942,22 @@ LockedCodeStart 	LABEL	BYTE
 Timer_Interrupt_Func PROC	Far C
 	pushfd					; save off the flags
 	pushad					; save off the main registers
-	push	fs gs es ds			; save off the seg registers
+	push	fs
+	push	gs
+	push	es
+	push	ds			; save off the seg registers
 
 	SET_DS_ESI_TO_RM			; Set ds:esi to point to real mode stuff.
 	INCREMENT_TIMERS			; Increment Westwoods timers
 
-	pop	ds es gs fs
+	pop	ds
+	pop	es
+	pop	gs
+	pop	fs
 	popad
 	popfd
 	retf
-	ENDP
+Timer_Interrupt_Func	ENDP
 
 LockedCodeEnd 	LABEL		BYTE
 
@@ -975,7 +992,7 @@ Disable_Timer_Interrupt PROC	Near C
 	popf			; possibly enable all interrupts (except 0)
 	pop	eax
 	retf
-	ENDP
+Disable_Timer_Interrupt	ENDP
 
 
 ;***************************************************************************
@@ -1009,7 +1026,7 @@ Enable_Timer_Interrupt PROC	Near C
 	popf			; possibly enable all interrupts
 	pop	eax
 	retf
-	ENDP
+Enable_Timer_Interrupt	ENDP
 
 
 	END

@@ -52,8 +52,8 @@ OPTIMAL_BYTE_COPY	equ	14
 ;******************************************************************************
 ; External declares so these functions can be called
 ;
-GLOBAL 	Mem_Copy	: NEAR
-GLOBAL  Largest_Mem_Block : near
+EXTERNDEF C	Mem_Copy	: NEAR
+EXTERNDEF C Largest_Mem_Block : near
 
 .CODE; Converted from TASM: CODESEG
 
@@ -78,8 +78,7 @@ GLOBAL  Largest_Mem_Block : near
 ; void Mem_Copy(void *source, void *dest, unsigned long bytes_to_copy);
 
 
-Mem_Copy 	PROC near C
-	USES	ecx , esi , edi , ebx,
+Mem_Copy 	PROC near C	USES	ecx esi edi ebx,
 	source:DWORD,
 	dest:DWORD,
 	bytes:DWORD
@@ -166,9 +165,8 @@ Mem_Copy 	PROC near C
 
 Mem_Copy	ENDP
 
-Largest_Mem_Block 	PROC near C
-	uses	esi , edi , ebx , ecx , edx
-	local	mem_struct : dword : 16
+Largest_Mem_Block 	PROC near C	uses	esi edi ebx ecx edx
+	local	mem_struct[16] : dword
 
 	mov	eax , 0500h
 	lea	edi , [ mem_struct ]

@@ -43,7 +43,7 @@
 .386P	; Converted from TASM: P386
 .MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-GLOBAL             Get_CPU		    :NEAR
+EXTERNDEF C        Get_CPU		    :NEAR
 
 
 .DATA; Converted from TASM: DATASEG
@@ -65,8 +65,7 @@ OperatingSystem	dw	0
 ;* HISTORY:                                                                *
 ;*   01/26/1993  SB : Created.                                             *
 ;*=========================================================================*
-Get_CPU PROC	near C
-	USES	ebx,ecx,edx,es,edi
+Get_CPU PROC	near C  USES	ebx ecx edx es edi
 IF 0
 	xor	eax,eax
         mov     ax,1
@@ -121,7 +120,7 @@ ENDIF
         popfd
         xor     edx,ecx                 ;test id bit
         jz      @@1                     ;80486
-P586
+.586P   ; Converted from TASM: P586
         mov     eax,1
         ;.586 or higher, cpuid returns cpu generation number in ax bits 8-11
         cpuid

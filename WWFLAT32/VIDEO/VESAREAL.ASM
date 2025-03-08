@@ -34,8 +34,8 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 ; Converted from TASM: IDEAL
-MODEL TINY
-.386P	; Converted from TASM: P386N
+.MODEL TINY
+.386	; Converted from TASM: P386N
 
 
 
@@ -44,9 +44,9 @@ MODEL TINY
 .CODE; Converted from TASM: CODESEG
 ;///////////////////////////////////// Code ////////////////////////////////////////
 
-Vesa_Funcion_Call label
+Vesa_Funcion_Call label ptr
 start:
- 	call	[dword ptr cs: 40h - 4]
+ 	call	dword ptr [cs: 40h - 4]
 	iret
 
 

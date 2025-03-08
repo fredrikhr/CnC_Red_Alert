@@ -26,16 +26,16 @@
 
 DPMI_INTR equ	031h
 
-GLOBAL 	DPMI_real_alloc   : near
-GLOBAL  DPMI_real_free    : near
-GLOBAL  DPMI_real_intr    : near
-GLOBAL  DPMI_real_call    : near
+EXTERNDEF C	DPMI_real_alloc   : near
+EXTERNDEF C	DPMI_real_free    : near
+EXTERNDEF C	DPMI_real_intr    : near
+EXTERNDEF C	DPMI_real_call    : near
 
 
 SEGSEL STRUC
 	  segmen  dw ?
  	  select  dw ?
-ENDS
+SEGSEL ENDS
 
 REGS STRUC
 	_eax   dd ?
@@ -45,7 +45,7 @@ REGS STRUC
 	_esi   dd ?
 	_edi   dd ?
 	_cflag dd ?
-ENDS
+REGS ENDS
 
 SREGS STRUC
 	_es  dw ?
@@ -54,7 +54,7 @@ SREGS STRUC
 	_ds  dw ?
         _fs  dw ?
 	_gs  dw ?
-ENDS
+SREGS ENDS
 
 DPMI_REGS STRUC
        _edi  dd ?
@@ -77,33 +77,33 @@ DPMI_REGS STRUC
        	     dd ?
 	     dd	?
    size_ref  db	?
-ENDS
+DPMI_REGS ENDS
 
 
 .CODE; Converted from TASM: CODESEG
 
 ; int  DPMI_real_alloc ( UINT , SEGREG * , USHORT * ) ;
 
-DPMI_real_alloc PROC near C
-	USES	ebx , edx,
+DPMI_real_alloc PROC near C	USES	ebx edx,
 	paragra        : DWORD,
 	blk_segptr    : DWORD,
 	largest_blkptr : DWORD
 
 	mov	eax, 0100h
 	mov	ebx, [paragra]
+	assume ebx:PTR SEGSEL
 	int	DPMI_INTR
 
 	jnc	??dpmi_succed
 	mov	ebx, [largest_blkptr]
-	mov	[ word ptr ebx ] , bx
+	mov	word ptr [ ebx ] , bx
 	movzx	eax , al
  	ret
 
 ??dpmi_succed:
 	mov	ebx, [blk_segptr]
-	mov	[(type SEGSEL ptr ebx). segmen ] , ax
-	mov	[(type SEGSEL ptr ebx). select ] , dx
+	mov	[ebx].segmen , ax
+	mov	[ebx].select , dx
 	xor	eax , eax
 	ret
 
@@ -113,8 +113,7 @@ DPMI_real_alloc ENDP
 ;**************************************************************************
 ; int  DPMI_real_free ( UINT ) ;
 
-DPMI_real_free PROC near C
-	USES	eax , edx,
+DPMI_real_free PROC near C	USES	eax edx,
 	blk_selec  : DWORD
 
 	mov	eax, 0101h
@@ -125,8 +124,7 @@ DPMI_real_free PROC near C
 DPMI_real_free ENDP
 
 
-DPMI_real_intr PROC near C
-	USES	eax , ebx , ecx , edx , edi , esi,
+DPMI_real_intr PROC near C	USES	eax ebx ecx edx edi esi,
 	vector  : dword,
 	regs_ptr: dword,
 	sreg_ptr: dword
@@ -141,30 +139,32 @@ DPMI_real_intr PROC near C
 	rep	stosd
 
   	mov	ebx , [ regs_ptr ]
-	mov	eax , [ (type REGS ptr ebx) . _eax ]
+	assume ebx: PTR REGS
+	mov	eax , [ ebx ] . _eax
 	mov	[ regblk . _eax ] , eax
 
-	mov	eax , [ (type REGS ptr ebx) . _ebx ]
+	mov	eax , [ ebx ] . _ebx
 	mov	[ regblk . _ebx ] , eax
 
-	mov	eax , [ (type REGS ptr ebx) . _ecx ]
+	mov	eax , [ ebx ] . _ecx
 	mov	[ regblk . _ecx ] , eax
 
-	mov	eax , [ (type REGS ptr ebx) . _edx ]
+	mov	eax , [ ebx ] . _edx
 	mov	[ regblk . _edx ] , eax
 
-	mov	eax , [ (type REGS ptr ebx) . _esi ]
+	mov	eax , [ ebx ] . _esi
 	mov	[ regblk . _esi ] , eax
 
-	mov	eax , [ (type REGS ptr ebx) . _edi ]
+	mov	eax , [ ebx ] . _edi
 	mov	[ regblk . _edi ] , eax
 
 
   	mov	ebx , [ sreg_ptr ]
-	mov	ax , [ (type SREGS ptr ebx) . _es ]
+	assume ebx:PTR SREGS
+	mov	ax , [ ebx ] . _es
 	mov	[ regblk . _es ] , ax
 
-	mov	ax , [ (type SREGS ptr ebx) . _ds ]
+	mov	ax , [ ebx ] . _ds
 	mov	[ regblk . _ds ] , ax
 
 	mov	eax , 0300h
@@ -176,38 +176,39 @@ DPMI_real_intr PROC near C
 	int	DPMI_INTR
 
   	mov	ebx , [ regs_ptr ]
+	assume ebx:PTR REGS
 	mov	eax , [ regblk . _eax ]
-	mov	[ (type REGS ptr ebx) . _eax ] , eax
+	mov	[ ebx ] . _eax  , eax
 
 	mov	eax , [ regblk . _ebx ]
-	mov	[ (type REGS ptr ebx) . _ebx ] , eax
+	mov	[ ebx ] . _ebx  , eax
 
 	mov	eax , [ regblk . _ecx ]
-	mov	[ (type REGS ptr ebx) . _ecx ] , eax
+	mov	[ ebx ] . _ecx  , eax
 
 	mov	eax , [ regblk . _edx ]
-	mov	[ (type REGS ptr ebx) . _edx ] , eax
+	mov	[ ebx ] . _edx  , eax
 
 	mov	eax , [ regblk . _esi ]
-	mov	[ (type REGS ptr ebx) . _esi ] , eax
+	mov	[ ebx ] . _esi  , eax
 
 	mov	eax , [ regblk . _edi ]
-	mov	[ (type REGS ptr ebx) . _edi ] , eax
+	mov	[ ebx ] . _edi  , eax
 
 
   	mov	ebx , [ sreg_ptr ]
+	assume ebx:PTR SREGS
 	mov	ax , [ regblk . _es ]
-	mov	[ (type SREGS ptr ebx) . _es ] , ax
+	mov	[ ebx ] . _es  , ax
 
 	mov	ax , [ regblk . _ds ]
-	mov	[ (type SREGS ptr ebx) . _ds ] , ax
+	mov	[ ebx ] . _ds  , ax
 
  	ret
 DPMI_real_intr ENDP
 
 
-DPMI_real_call PROC near C
-	USES	eax , ebx , ecx , edx , edi , esi,
+DPMI_real_call PROC near C	USES	eax ebx ecx edx edi esi,
 	vector  : dword,
 	regs_ptr: dword,
 	sreg_ptr: dword
@@ -223,30 +224,32 @@ DPMI_real_call PROC near C
 
 
   	mov	ebx , [ regs_ptr ]
-	mov	eax , [ (type REGS ptr ebx) . _eax ]
+	assume ebx:PTR REGS
+	mov	eax , [ ebx ] . _eax
 	mov	[ regblk . _eax ] , eax
 
-	mov	eax , [ (type REGS ptr ebx) . _ebx ]
+	mov	eax , [ ebx ] . _ebx
 	mov	[ regblk . _ebx ] , eax
 
-	mov	eax , [ (type REGS ptr ebx) . _ecx ]
+	mov	eax , [ ebx ] . _ecx
 	mov	[ regblk . _ecx ] , eax
 
-	mov	eax , [ (type REGS ptr ebx) . _edx ]
+	mov	eax , [ ebx ] . _edx
 	mov	[ regblk . _edx ] , eax
 
-	mov	eax , [ (type REGS ptr ebx) . _esi ]
+	mov	eax , [ ebx ] . _esi
 	mov	[ regblk . _esi ] , eax
 
-	mov	eax , [ (type REGS ptr ebx) . _edi ]
+	mov	eax , [ ebx ] . _edi
 	mov	[ regblk . _edi ] , eax
 
 
   	mov	ebx , [ sreg_ptr ]
-	mov	ax , [ (type SREGS ptr ebx) . _es ]
+	assume ebx:PTR SREGS
+	mov	ax , [ ebx ] . _es
 	mov	[ regblk . _es ] , ax
 
-	mov	ax , [ (type SREGS ptr ebx) . _ds ]
+	mov	ax , [ ebx ] . _ds
 	mov	[ regblk . _ds ] , ax
 
 ;	mov	eax , 0300h
@@ -258,27 +261,29 @@ DPMI_real_call PROC near C
 ;	int	DPMI_INTR
 
   	mov	ebx , [ regs_ptr ]
+	assume ebx:PTR REGS
 	mov	eax , [ regblk . _eax ]
-	mov	[ (type REGS ptr ebx) . _eax ] , eax
+	mov	[ ebx ] . _eax  , eax
 	mov	eax , [ regblk . _ebx ]
-	mov	[ (type REGS ptr ebx) . _ebx ] , eax
+	mov	[ ebx ] . _ebx  , eax
 	mov	eax , [ regblk . _ecx ]
-	mov	[ (type REGS ptr ebx) . _ecx ] , eax
+	mov	[ ebx ] . _ecx  , eax
 	mov	eax , [ regblk . _edx ]
-	mov	[ (type REGS ptr ebx) . _edx ] , eax
+	mov	[ ebx ] . _edx  , eax
 
 	mov	eax , [ regblk . _esi ]
-	mov	[ (type REGS ptr ebx) . _esi ] , eax
+	mov	[ ebx ] . _esi  , eax
 	mov	eax , [ regblk . _edi ]
-	mov	[ (type REGS ptr ebx) . _edi ] , eax
+	mov	[ ebx ] . _edi  , eax
 
 
   	mov	ebx , [ sreg_ptr ]
+	assume ebx:PTR SREGS
 	mov	ax , [ regblk . _es ]
-	mov	[ (type SREGS ptr ebx) . _es ] , ax
+	mov	[ ebx ] . _es  , ax
 
 	mov	ax , [ regblk . _ds ]
-	mov	[ (type SREGS ptr ebx) . _ds ] , ax
+	mov	[ ebx ] . _ds  , ax
 
  	ret
 DPMI_real_call ENDP

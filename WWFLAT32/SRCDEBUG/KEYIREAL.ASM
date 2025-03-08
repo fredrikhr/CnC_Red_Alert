@@ -56,11 +56,11 @@
 ; Set the assembly directives
 ;---------------------------------------------------------------------------
 ; Converted from TASM: IDEAL				; the product runs in ideal mode
-.386P	; Converted from TASM: P386N				; use 386 real mode instructions
-MODEL TINY			; code must be tiny so it fits
+.386	; Converted from TASM: P386N				; use 386 real mode instructions
+.MODEL TINY			; code must be tiny so it fits
 ; Converted from TASM: LOCALS ??			; ?? is the symbol for a local
-WARN				; generate all warnings we can
-JUMPS				; optimize jumps if possible
+;WARN				; generate all warnings we can
+;JUMPS				; optimize jumps if possible
 
 ;---------------------------------------------------------------------------
 ; Include all of the keyboard specific defines
@@ -73,10 +73,10 @@ RESTORE_VISIBLE_PAGE	EQU	0
 STORE_VISIBLE_PAGE	EQU	1
 
 
-GLOBAL	set_vesa_page 	:near
-GLOBAL	set_vesa_window :near
-GLOBAL	get_vesa_window :near
-GLOBAL	next_vesa_page	:near
+EXTERNDEF	set_vesa_page 	:near
+EXTERNDEF	set_vesa_window :near
+EXTERNDEF	get_vesa_window :near
+EXTERNDEF	next_vesa_page	:near
 
 ECHOON	equ 0
 ;---------------------------------------------------------------------------
@@ -224,7 +224,7 @@ XYAdjust	DB	-ADJUST, -ADJUST	; 91 -> upleft
 Button			DB	0	; current value of the mouse button
 MDisabled		DB	0	; Is the mouse driver disabled
 MInput			DB	1	; Defaults to mouse input allowed.
-Adjust			DW	0	; flag to adjust coordinates if necessary
+_Adjust		DW	0	; flag to adjust coordinates if necessary
 MouseStepX		DW	0	; step values if the mouse moves at
 MouseStepY		DW	0	;   more than one pixel at a time
 MouseOffsetX		DW	0	; Fractional step values used if a mouse
@@ -297,9 +297,8 @@ current_page		dw	0
 ;* HISTORY:                                                                *
 ;*   07/11/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	KeyNum_Translate:FAR
-KeyNum_Translate PROC	FAR C
-	USES	cx,di,es,ds,
+	EXTERNDEF C	KeyNum_Translate:FAR
+KeyNum_Translate PROC	FAR C	USES	cx di es ds,
 	keycode:WORD
 
 	mov	ax,cs				; since we are in tiny model
@@ -319,7 +318,7 @@ KeyNum_Translate PROC	FAR C
 	mov	di,OFFSET ExtRemapEnd
 	dec	di
 	sub	di,cx
-	mov	al,[es:di]
+	mov	al,es:[di]
 ??fini:
 	ret
 KeyNum_Translate	ENDP
@@ -336,24 +335,23 @@ KeyNum_Translate	ENDP
 ;* HISTORY:                                                                *
 ;*   07/11/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C Stuff_Key_WORD:FAR
-Stuff_Key_WORD PROC	FAR C
-	USES	si,bx,ds,
+	EXTERNDEF	C Stuff_Key_WORD:FAR
+Stuff_Key_WORD PROC	FAR C	USES	si bx ds,
 	code:WORD
 
 	mov	ax,cs				; since we are in tiny model
 	mov	ds,ax				; set cs = ds
 
-	mov	ax,[WORD PTR KeyBufferTail]
+	mov	ax,WORD PTR [KeyBufferTail]
 	mov	si,ax
 	add	ax,2
 	and	ax,0FFh				; New KeyBufferTail value.
-	cmp	[WORD PTR KeyBufferHead],ax
+	cmp	WORD PTR [KeyBufferHead],ax
 	je 	short ??noroom
 
 	mov	bx,[code]
 	mov	[KeyBuffer+si],bx		; Record the keystroke.
-	mov	[WORD PTR KeyBufferTail],ax
+	mov	WORD PTR [KeyBufferTail],ax
 	xor	ax,ax
 	ret
 
@@ -375,12 +373,11 @@ Stuff_Key_WORD	ENDP
 ;* HISTORY:                                                                *
 ;*   07/11/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C Stuff_Key_Num:FAR
-Stuff_Key_Num PROC	FAR C
-	USES	bx,cx,dx,di,si,ds,
+	EXTERNDEF	C Stuff_Key_Num:FAR
+Stuff_Key_Num PROC	FAR C	USES	bx cx dx di si ds,
 	keycode:WORD
 	LOCAL	tail:WORD		; Original keybuffer tail (safety copy).
-	LOCAL	size:WORD		; Size of write.
+	LOCAL	_size:WORD		; Size of write.
 
 	pushf
 	cli				; disable interrupts
@@ -406,14 +403,14 @@ Stuff_Key_Num PROC	FAR C
 
 ??validkey:
 
-	test	[WORD PTR KeyFlags],KEYMOUSE	; is the numeric keypad moving the mouse?
+	test	WORD PTR [KeyFlags],KEYMOUSE	; is the numeric keypad moving the mouse?
 	je	??no_pad_move
 
 	; ALT-cursor keys are undefined.  Pass them on to the program.
 	test	ah,ALTPRESS		; is either alt key down?
 	jne	??no_pad_move
 
-	test	[WORD PTR KeyFlags],SIMLBUTTON	; are we simulating left mouse presses
+	test	WORD PTR [KeyFlags],SIMLBUTTON	; are we simulating left mouse presses
 	je	short ??chkinsert
 
 	cmp	al,KN_RETURN
@@ -586,9 +583,9 @@ Stuff_Key_Num PROC	FAR C
 
 ??no_pad_move:
 	; Fetch working pointers to the keyboard ends.
-	mov	si,[WORD KeyBufferTail]
+	mov	si,WORD PTR [KeyBufferTail]
 	mov	[tail],si		; Safety record.
-	mov	di,[WORD PTR KeyBufferHead]
+	mov	di,WORD PTR [KeyBufferHead]
 
 	; Record the base keycode (if there is room).
 	push	ax
@@ -616,7 +613,7 @@ Stuff_Key_Num PROC	FAR C
 	add	sp,2
 	or	ax,ax
 	jne	??jmpnoroom
-	add	[size],2
+	add	[_size],2
 
 	; Record mouse coordinate Y.
 	push	[LocalMouseY]
@@ -624,7 +621,7 @@ Stuff_Key_Num PROC	FAR C
 	add	sp,2
 	or	ax,ax
 	jne	??jmpnoroom
-	add	[size],2
+	add	[_size],2
 
 ??ok:
 	; If PASSBREAKS is not active and this is a keyboard
@@ -707,8 +704,8 @@ Stuff_Key_Num	ENDP
 ;* HISTORY:                                                                *
 ;*   07/13/1994 PWG : Created.                                             *
 ;*=========================================================================*
-RM_Keystroke_Interrupt label
-	GLOBAL	C Keystroke_Interrupt:FAR
+RM_Keystroke_Interrupt label FAR PTR
+	EXTERNDEF	C Keystroke_Interrupt:FAR
 Keystroke_Interrupt PROC	FAR C
 
 IF 0
@@ -1181,8 +1178,8 @@ Keystroke_Interrupt	ENDP
 ;* HISTORY:                                                                *
 ;*   07/13/1994 PWG : Created.                                             *
 ;*=========================================================================*
-RM_Break_Interrupt label
-	GLOBAL	C Break_Interrupt:FAR
+RM_Break_Interrupt label FAR PTR
+	EXTERNDEF	C Break_Interrupt:FAR
 Break_Interrupt PROC	FAR C
 
 
@@ -1234,9 +1231,8 @@ Call_Interrupt_Chain:
 ;
 ;----------------------------------------------------------------------------
 
- 	GLOBAL	C Low_Hide_Mouse:FAR
-Low_Hide_Mouse PROC	FAR C
-	USES	ax,bx,cx,dx,ds
+ 	EXTERNDEF	C Low_Hide_Mouse:FAR
+Low_Hide_Mouse PROC	FAR C	USES	ax bx cx dx ds
 
 	mov	ax,cs				; since we are in tiny model
 	mov	ds,ax				; set cs = ds
@@ -1279,9 +1275,8 @@ Low_Hide_Mouse	ENDP
 ; NOTE: does not check if mouse is currently being updated.
 ;----------------------------------------------------------------------------
 
- 	GLOBAL	C Low_Show_Mouse:FAR
-Low_Show_Mouse PROC	FAR C
-	USES 	ax,bx,cx,dx,si,di,ds,es
+ 	EXTERNDEF	C Low_Show_Mouse:FAR
+Low_Show_Mouse PROC	FAR C	USES 	ax bx cx dx si di ds es
 	LOCAL	mousex:WORD		; Draw X position.
 	LOCAL	mousey:WORD		; Draw Y position.
 
@@ -1355,9 +1350,8 @@ Low_Show_Mouse	ENDP
 
 ;----------------------------------------------------------------------------
 ;----------------------------------------------------------------------------
-	GLOBAL	C Mouse_KeyNum:FAR
-Mouse_KeyNum PROC	FAR C
-	USES	bx,
+	EXTERNDEF	C Mouse_KeyNum:FAR
+Mouse_KeyNum PROC	FAR C	USES	bx,
 	state:WORD		; Current mouse state.
 	LOCAL	keynum:WORD		; Determined keynum.
 
@@ -1430,9 +1424,8 @@ Mouse_KeyNum	ENDP
 ; PROTOTYPE:
 ;	This routine is called from an interrupt.
 ;----------------------------------------------------------------------------
-RM_Mouse_Interrupt label
-Mouse_Int PROC	FAR C
-	USES	ax,bx,cx,dx,ds,si,es,di
+RM_Mouse_Interrupt label FAR PTR
+Mouse_Int PROC	FAR C	USES	ax bx cx dx ds si es di
 	LOCAL	cond:WORD		; Local copy of mouse event.
 	LOCAL	state:WORD		; Local copy of button state.
 
@@ -1479,7 +1472,7 @@ Mouse_Int PROC	FAR C
 
 ;------	In EEGA mode mouse X coordinates as 0..639.  Make adjustment
 ;	to keep within 0..319 range.
-	cmp	[Adjust],1		; if the x coordinate is returned
+	cmp	[_Adjust],1		; if the x coordinate is returned
 	jne	short ??noadjust	; incorrectly then
 	shr	cx,1			; adjust x coord from 640 pixel screen
 ??noadjust:
@@ -1677,9 +1670,8 @@ Mouse_Int	ENDP
 ;* HISTORY:                                                                *
 ;*   10/27/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C VGA_Mouse_Shadow_Buffer:FAR
-VGA_Mouse_Shadow_Buffer PROC	FAR C
-	USES	ax,bx,cx,dx,di,si,ds,es,
+	EXTERNDEF	C VGA_Mouse_Shadow_Buffer:FAR
+VGA_Mouse_Shadow_Buffer PROC	FAR C	USES	ax bx cx dx di si ds es,
 	store:WORD
 
 	local	x0 : word
@@ -1899,9 +1891,8 @@ VGA_Mouse_Shadow_Buffer	ENDP
 
 ;***************************************************************************
 
-	GLOBAL	C VGA_Draw_Mouse:FAR
-VGA_Draw_Mouse PROC	FAR C
-	USES	ax,bx,cx,dx,di,si,ds,es,
+	EXTERNDEF	C VGA_Draw_Mouse:FAR
+VGA_Draw_Mouse PROC	FAR C	USES	ax bx cx dx di si ds es,
 	mousex:WORD,
 	mousey:WORD
 
@@ -2096,9 +2087,8 @@ VGA_Draw_Mouse	ENDP
 ;* HISTORY:                                                                *
 ;*   10/27/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C VESA_Mouse_Shadow_Buffer:FAR
-VESA_Mouse_Shadow_Buffer PROC	FAR C
-	USES	ax,bx,cx,dx,di,si,ds,es,
+	EXTERNDEF	C VESA_Mouse_Shadow_Buffer:FAR
+VESA_Mouse_Shadow_Buffer PROC	FAR C	USES	ax bx cx dx di si ds es,
 	store:WORD
 
 	local	x0 : word
@@ -2343,9 +2333,8 @@ VESA_Mouse_Shadow_Buffer	ENDP
 
 ;***************************************************************************
 
-	GLOBAL	C VESA_Draw_Mouse:FAR
-VESA_Draw_Mouse PROC	FAR C
-	USES	ax,bx,cx,dx,di,si,ds,es,
+	EXTERNDEF	C VESA_Draw_Mouse:FAR
+VESA_Draw_Mouse PROC	FAR C	USES	ax bx cx dx di si ds es,
 	mousex:WORD,
 	mousey:WORD
 
@@ -2554,31 +2543,28 @@ VESA_Draw_Mouse	ENDP
 
 ;************************************************************************
 
-get_vesa_window PROC	near C
-uses	ax,bx
+get_vesa_window PROC	near C	uses	ax bx
 	mov	ax , 04f05h
 	mov	bh , 1
 	mov	bl , 0
 	call	[ dword ptr cs: VesaPtr ]
 	ret
-ENDP
+get_vesa_window	ENDP
 
 ;************************************************************************
 
-set_vesa_window PROC	near C
-uses	ax,bx,dx
+set_vesa_window PROC	near C	uses	ax bx dx
 	mov	ax , 04f05h
 	mov	bh , 0
 	mov	bl , 0
 	call	[ dword ptr cs: VesaPtr ]
 	ret
-ENDP
+set_vesa_window	ENDP
 
 
 ;***************************************************************************
 
-set_vesa_page PROC	near C
-USES	ax,bx,dx
+set_vesa_page PROC	near C	USES	ax bx dx
 
 	mov	bx , dx
 	shl	bx , 2
@@ -2591,8 +2577,7 @@ USES	ax,bx,dx
 	ret
 set_vesa_page	ENDP
 
-next_vesa_page PROC	near C
-USES	ax,bx,dx
+next_vesa_page PROC	near C	USES	ax bx dx
 	mov	bx , [ cs: current_page ]
 	add	bx , 4
 	mov	[ cs:current_page ] , bx

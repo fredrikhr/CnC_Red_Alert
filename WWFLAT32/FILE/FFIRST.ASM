@@ -106,23 +106,23 @@ Find_First 	PROC near C USES ebx ecx edx esi edi es ds,
 
 	sub	eax,eax
 	mov	al,[esi]	;get attrib byte
-	mov	[es:edi+4],eax
+	mov	es:[edi+4],eax
 	inc	esi
 
 	;get time
 	mov	ax,[esi]
 	add	esi,2
-	mov	[es:edi+8],ax
+	mov	es:[edi+8],ax
 
 	;get date
 	mov	ax,[esi]
 	add	esi,2
-	mov	[es:edi+10],ax
+	mov	es:[edi+10],ax
 
 	;get file size
 	mov	eax,[esi]
 	add	esi,4
-	mov	[es:edi],eax
+	mov	es:[edi],eax
 
 	add	edi,12
 
@@ -189,23 +189,23 @@ Find_Next PROC near C USES ebx ecx edx esi edi ds es,
 
 	sub	eax,eax
 	mov	al,[esi]		;get attrib byte
-	mov	[es:edi+4],eax
+	mov	es:[edi+4],eax
 	inc	esi
 
 	;get time
 	mov	ax,[esi]
 	add	esi,2
-	mov	[es:edi+8],ax
+	mov	es:[edi+8],ax
 
 	;get date
 	mov	ax,[esi]
 	add	esi,2
-	mov	[es:edi+10],ax
+	mov	es:[edi+10],ax
 
 	;get file size
 	mov	eax,[esi]
 	add	esi,4
-	mov	[es:edi],eax
+	mov	es:[edi],eax
 
 	add	edi,12
 

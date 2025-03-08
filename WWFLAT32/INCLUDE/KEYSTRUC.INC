@@ -150,7 +150,7 @@ KeyboardType	STRUC
 	Adjust_YPos			dd ?
 
 
-ENDS
+KeyboardType	ENDS
 
 ; InitFlags that are set to have a fully functional interrupt.
 IF_ALLOC_RM			equ	1		; Allocation of RM was successful.

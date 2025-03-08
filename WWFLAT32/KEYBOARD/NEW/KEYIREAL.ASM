@@ -56,7 +56,7 @@
 ; Set the assembly directives
 ;---------------------------------------------------------------------------
 ; Converted from TASM: IDEAL				; the product runs in ideal mode
-.386P	; Converted from TASM: P386N				; use 386 real mode instructions
+.386	; Converted from TASM: P386N				; use 386 real mode instructions
 MODEL TINY			; code must be tiny so it fits
 ; Converted from TASM: LOCALS ??			; ?? is the symbol for a local
 WARN				; generate all warnings we can

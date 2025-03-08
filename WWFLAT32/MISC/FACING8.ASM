@@ -41,8 +41,8 @@
 .MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
 
-GLOBAL	 Desired_Facing8	:NEAR
-;	INCLUDE	"wwlib.i"
+EXTERNDEF C	Desired_Facing8	:NEAR
+;	INCLUDE	<wwlib.i>
 
 	.DATA; Converted from TASM: DATASEG
 
@@ -82,8 +82,7 @@ NewFacing8	DB	1,2,1,0,7,6,7,0,3,2,3,4,5,6,5,4
 ;*=========================================================================*
 ; long Desired_Facing8(long x1, long y1, long x2, long y2);
 
-Desired_Facing8 PROC	near C
-	USES	ebx, ecx, edx,
+Desired_Facing8 PROC	near C	USES	ebx ecx edx,
 	x1:DWORD,
 	y1:DWORD,
 	x2:DWORD,

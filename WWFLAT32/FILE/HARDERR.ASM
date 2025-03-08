@@ -110,8 +110,8 @@ GENERAL_ERROR		equ	0Ch
 ;//////////////////////////////////////////////////////////////////////////////////////
 ;/////////////////////////////////// Prototypes ///////////////////////////////////////
 
-GLOBAL	 Install_Hard_Error_Handler :NEAR
-GLOBAL	 Remove_Hard_Error_Handler  :NEAR
+;GLOBAL	 Install_Hard_Error_Handler :NEAR
+;GLOBAL	 Remove_Hard_Error_Handler  :NEAR
 
 ;//////////////////////////////////////////////////////////////////////////////////////
 ;///////////////////////////////// Global/Local Data //////////////////////////////////
@@ -156,8 +156,7 @@ IF_FUNCTIONAL		equ	8		; crit error is in and functional.
 ;* HISTORY:                                                                *
 ;*   07/26/1994 SKB : Created.                                             *
 ;*=========================================================================*
-Install_Hard_Error_Handler PROC near C
-	USES eax,ebx,ecx,ds,es
+Install_Hard_Error_Handler PROC near C USES eax ebx ecx ds es
 	ret
 
 Install_Hard_Error_Handler ENDP
@@ -178,8 +177,7 @@ Install_Hard_Error_Handler ENDP
 ;*   07/26/1994 SKB : Created.                                             *
 ;*=========================================================================*
 
-Remove_Hard_Error_Handler PROC 	near C
-	USES 	ebx,ecx,edx,ds,es
+Remove_Hard_Error_Handler PROC 	near C USES 	ebx ecx edx ds es
 ;
 ; Restore the original interrupt vectors and exit
 ;
@@ -206,7 +204,7 @@ Remove_Hard_Error_Handler ENDP
 
 LockedCodeStart 	LABEL	BYTE
 
-	PROC Critical_Error_Handler NEAR
+Critical_Error_Handler	PROC NEAR
 
 Critical_Error_Handler ENDP
 

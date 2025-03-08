@@ -71,19 +71,26 @@ INCLUDE <gbuffer.inc>
 ;* HISTORY:                                                                *
 ;*   06/15/1994 PWG : Created.                                             *
 ;*=========================================================================*
-Vesa_To_Buffer PROC	near C
-	USES	ebx,ecx,edx,esi,edi
 
-	;*===================================================================
-	;* define the arguements that our function takes.
-	;*===================================================================,
-	this:DWORD		; this is a class member function,
-	x_pixel:DWORD		; Page X pixel coordinate.,
-	y_pixel:DWORD		; Page Y pixel coordinate.,
-	pixel_width:DWORD	; Width of region in pixels.,
-	pixel_height:DWORD	; Height of region in pixels.,
-	dest:DWORD		; the buffer to copy to,
-	size:DWORD		; the size of the buffer
+;*===================================================================
+;* define the arguements that our function takes.
+;*===================================================================,
+;	this:DWORD		; this is a class member function,
+;	x_pixel:DWORD		; Page X pixel coordinate.,
+;	y_pixel:DWORD		; Page Y pixel coordinate.,
+;	pixel_width:DWORD	; Width of region in pixels.,
+;	pixel_height:DWORD	; Height of region in pixels.,
+;	dest:DWORD		; the buffer to copy to,
+;	size:DWORD		; the size of the buffer
+
+Vesa_To_Buffer PROC	near C USES	ebx ecx edx esi edi,
+	_this:DWORD,		; this is a class member function
+	x_pixel:DWORD,	; Page X pixel coordinate.
+	y_pixel:DWORD,	; Page Y pixel coordinate.
+	pixel_width:DWORD,	; Width of region in pixels.
+	pixel_height:DWORD,	; Height of region in pixels.
+	dest:DWORD,		; the buffer to copy to
+	_size:DWORD		; the size of the buffer
 
 	;*===================================================================
 	; Define some locals so that we can handle things quickly
@@ -100,10 +107,11 @@ Vesa_To_Buffer PROC	near C
 	mov	[ dest_x1 ] , 0
 	mov	[ dest_y1 ] , 0
 
-	mov  	esi , [ this ]	    ; get ptr to dest
+	mov  	esi , [ _this ]             ; get ptr to dest
+       assume esi: ptr VideoViewPort
 	xor 	ecx , ecx
 	xor 	edx , edx
-	mov	edi , [ (VideoViewPort esi) . VIVPWidth ]  ; get width into register
+	mov	edi , [ esi ] . VIVPWidth   ; get width into register
 	mov	ebx , [ x_pixel ]
 	mov	eax , [ x_pixel ]
 	add	ebx , [ pixel_width ]
@@ -116,7 +124,7 @@ Vesa_To_Buffer PROC	near C
 	shld	ecx , eax , 1
 	shld	edx , ebx , 1
 
-	mov	edi,[ ( VideoViewPort esi) . VIVPHeight ] ; get height into register
+	mov	edi , [ esi ] . VIVPHeight  ; get height into register
 	mov	ebx , [ y_pixel ]
 	mov	eax , [ y_pixel ]
 	add	ebx , [ pixel_height ]
@@ -155,21 +163,21 @@ Vesa_To_Buffer PROC	near C
 ??scr_bottom_ok:
 	test	dl , 0100b
 	jz	??scr_right_ok
-	mov	eax , [ (VideoViewPort esi) . VIVPWidth ]  ; get width into register
+	mov	eax , [esi].VIVPWidth  ; get width into register
 	mov	[ x1_pixel ] , eax
 ??scr_right_ok:
 	test	dl , 0001b
 	jz	??do_blit
-	mov	eax , [ (VideoViewPort esi) . VIVPHeight ]  ; get width into register
+	mov	eax , [esi].VIVPHeight  ; get width into register
 	mov	[ y1_pixel ] , eax
 
 ??do_blit:
 
        cld
 
-       mov	eax , [ (VideoViewPort esi) . VIVPXAdd ]
-       add	eax , [ (VideoViewPort esi) . VIVPWidth ]
-       mov	edi , [ (VideoViewPort esi) . VIVPOffset ]
+       mov	eax , [esi].VIVPXAdd
+       add	eax , [esi].VIVPWidth
+       mov	edi , [esi].VIVPOffset
 
        mov	ecx , eax
        mul	[ y_pixel ]
@@ -203,7 +211,7 @@ Vesa_To_Buffer PROC	near C
 
        mov	ebx , [ pixel_width ]
        imul	ebx , edx
-       cmp	ebx , [ size ]
+       cmp	ebx , [ _size ]
        jg	??real_out
 
 

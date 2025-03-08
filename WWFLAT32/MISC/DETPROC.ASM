@@ -41,7 +41,7 @@
 .386P	; Converted from TASM: P386
 .MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-GLOBAL 		Processor          :NEAR
+EXTERNDEF C	Processor          :NEAR
 
 
 PROC_80386	equ	0
@@ -53,14 +53,13 @@ cpu_id_586	dw	0
 
 .CODE; Converted from TASM: CODESEG
 
-Processor PROC	near C
-	USES ebx
+Processor PROC	near C	USES ebx
 	LOCAL	ptype:WORD
 
 	pushfd
 
 ; At least a 386 -- check for 486.
-	mov	[WORD PTR ptype],PROC_80386	; 80386
+	mov	WORD PTR [ptype],PROC_80386	; 80386
 	pushfd
 	pop	eax
 	mov	ebx,eax

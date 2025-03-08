@@ -38,7 +38,7 @@
 .386P	; Converted from TASM: P386
 .MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-GLOBAL	Build_Fading_Table	:NEAR
+EXTERNDEF C	Build_Fading_Table	:NEAR
 
 	.CODE; Converted from TASM: CODESEG
 
@@ -53,8 +53,7 @@ GLOBAL	Build_Fading_Table	:NEAR
 ;
 ; Bounds Checking: None
 ;*
-Build_Fading_Table PROC	near C
-	USES	ebx, ecx, edi, esi,
+Build_Fading_Table PROC	near C	USES	ebx ecx edi esi,
 	palette:DWORD,
 	dest:DWORD,
 	color:DWORD,

@@ -40,9 +40,9 @@
 .386P	; Converted from TASM: P386
 .MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-GLOBAL	 Desired_Facing256	:NEAR
+EXTERNDEF C	 Desired_Facing256	:NEAR
 ;	INCLUDE	"wwlib.i"
-INCLUDE <.\gbuffer.inc>
+INCLUDE <gbuffer.inc>
 
 	.CODE; Converted from TASM: CODESEG
 
@@ -68,8 +68,7 @@ INCLUDE <.\gbuffer.inc>
 ;*   12/24/1991 JLB : Adapted.                                             *
 ;*=========================================================================*/
 ; LONG cdecl Desired_Facing256(LONG srcx, LONG srcy, LONG dstx, LONG dsty)
-Desired_Facing256 PROC	near C
-	USES	ebx, ecx, edx,
+Desired_Facing256 PROC	near C	USES	ebx ecx edx,
 	srcx:DWORD,
 	srcy:DWORD,
 	dstx:DWORD,

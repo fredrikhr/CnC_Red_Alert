@@ -41,7 +41,7 @@
 .386P	; Converted from TASM: P386
 .MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-GLOBAL	 Desired_Facing16	:NEAR
+EXTERNDEF C	Desired_Facing16	:NEAR
 ;	INCLUDE	"wwlib.i"
 
 	.DATA; Converted from TASM: DATASEG
@@ -82,8 +82,7 @@ NewFacing16	DB	 3, 2, 4,-1, 1, 2,0,-1
 ;*=========================================================================*
 ; long Desired_Facing16(long x1, long y1, long x2, long y2);
 
-Desired_Facing16 PROC	near C
-	USES	ebx, ecx, edx,
+Desired_Facing16 PROC	near C	USES	ebx ecx edx,
 	x1:DWORD,
 	y1:DWORD,
 	x2:DWORD,

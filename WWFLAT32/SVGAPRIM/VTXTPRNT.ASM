@@ -40,13 +40,13 @@
 .MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
 INCLUDE <svgaprim.inc>
-INCLUDE <.\gbuffer.inc>
+INCLUDE <gbuffer.inc>
 
 ;*=========================================================================*
 ;* Extern the font pointer which is defined by the font class		   *
 ;*=========================================================================*
-	GLOBAL	FontPtr:DWORD
-	GLOBAL	ColorXlat:BYTE
+	EXTERNDEF C	FontPtr:DWORD
+	EXTERNDEF C	ColorXlat:BYTE
 
 ;*=========================================================================*
 ;* Define the necessary equates for structures and bounds checking	   *
@@ -95,9 +95,8 @@ FONTINFOMAXWIDTH	EQU	5
 ;* HISTORY:                                                                *
 ;*   01/17/1995 PWG : Created.                                             *
 ;*=========================================================================*
-Vesa_Print PROC	near C
-	USES	ebx,ecx,edx,esi,edi,
-	this:DWORD,
+Vesa_Print PROC	near C	USES	ebx ecx edx esi edi,
+	_this:DWORD,
 	string:DWORD,
 	x_pixel:DWORD,
 	y_pixel:DWORD,
@@ -129,16 +128,17 @@ Vesa_Print PROC	near C
 
 ;-------------------------------- Where to draw -----------------------------------------------
 	; Set up memory location to start drawing.
-	mov  	ebx,[this]				; get a pointer to dest
-	mov	eax,[(GraphicViewPort ebx).GVPHeight]	; get height of viewport
+	mov  	ebx,[_this]				; get a pointer to dest
+	assume ebx:PTR GraphicViewPort
+	mov	eax,[ebx].GVPHeight	; get height of viewport
 	mov	[vpheight],eax				; save off height of viewport
-	mov	eax,[(GraphicViewPort ebx).GVPWidth]	; get width of viewport
+	mov	eax,[ebx].GVPWidth	; get width of viewport
 	mov	[vpwidth],eax				; save it off for later
-	add	eax,[(GraphicViewPort ebx).GVPXAdd]	; add in xadd for bytes_per_line
+	add	eax,[ebx].GVPXAdd	; add in xadd for bytes_per_line
 	mov	[bufferwidth],eax     			; save it off for later use.
 
 	mul	[y_pixel]				; multiply rowsize * y_pixel start.
-	mov	edi,[(GraphicViewPort ebx).GVPOffset]	; get start of the viewport
+	mov	edi,[ebx].GVPOffset	; get start of the viewport
 	add	edi,eax					; add y position to start of vp
 	mov	[curline],edi				; save 0,y address for line feed stuff.
 	add	edi,[x_pixel]				; add to get starting column in starting row.
@@ -158,10 +158,10 @@ Vesa_Print PROC	near C
 	; esi (FontPtr) is added to each to get the true address of each block.
 	; Many registers are used for P5 optimizations.
 	; ebx is used for InfoBlock which is then used in the next section.
-	movzx	eax,[WORD PTR esi+FONTOFFSETBLOCK]	; get offset to offset block
-	movzx	ebx,[WORD PTR esi+FONTINFOBLOCK]      	; get offset to info block (must be ebx for height test)
-	movzx	ecx,[WORD PTR esi+FONTWIDTHBLOCK] 	; get offset to width block
-	movzx	edx,[WORD PTR esi+FONTHEIGHTBLOCK]	; get offset to height block
+	movzx	eax,WORD PTR [esi+FONTOFFSETBLOCK]	; get offset to offset block
+	movzx	ebx,WORD PTR [esi+FONTINFOBLOCK]	; get offset to info block (must be ebx for height test)
+	movzx	ecx,WORD PTR [esi+FONTWIDTHBLOCK] 	; get offset to width block
+	movzx	edx,WORD PTR [esi+FONTHEIGHTBLOCK]	; get offset to height block
 
 	add	eax,esi				; add offset of FontPtr to offset block
 	add	ebx,esi				; add offset of FontPtr to info block
@@ -177,7 +177,7 @@ Vesa_Print PROC	near C
 	; Test to make sure the height of the max character will fit on this line
 	; and and not fall out of the viewport.
 	; remember we set ebx to FONTINFOBLOCK above.
-	movzx	eax,[BYTE PTR ebx + FONTINFOMAXHEIGHT]; get the max height in font.
+	movzx	eax,BYTE PTR [ebx + FONTINFOMAXHEIGHT]; get the max height in font.
 	mov	[maxheight],al			; save it for later use.
 	add	eax,[y_pixel]			; add current y_value.
 	cmp	eax,[vpheight]			; are we over the edge?
@@ -221,7 +221,7 @@ Vesa_Print PROC	near C
 
 	add	eax,[widthblock]		; figure address of width of character.
 	mov	ecx,[x_pixel]			; get current x_pixel.
-	movzx	edx,[BYTE PTR eax]	 	; get the width of the character in dl.
+	movzx	edx,BYTE PTR [eax] 	; get the width of the character in dl.
 	add	ecx,edx				; add width of char to current x_pixel.
 	add	[startdraw],edx			; save start draw for next character.
 
@@ -242,13 +242,13 @@ Vesa_Print PROC	near C
 	shl	ebx,1				; mult by 2 to later use as a WORD index.
 	mov	esi,[offsetblock]		; get pointer to begining of offset block.
 	add	esi,ebx				; index into offset block.
-	movzx	esi,[WORD PTR esi]		; get true offset into data block from FontPtr.
+	movzx	esi,WORD PTR [esi]	; get true offset into data block from FontPtr.
 	add	esi,[FontPtr]			; Now add FontPtr address to get true address.
 
 	; Get top and bottom blank sizes and the true height of the character.
 	add	ebx,[heightblock]		; point ebx to element in height array.
-	mov	al,[ebx+1]			; load the data height into dl.
-	mov	cl,[ebx]			; load the first data row into cl.
+	mov	al,BYTE PTR [ebx+1]			; load the data height into dl.
+	mov	cl,BYTE PTR [ebx]			; load the first data row into cl.
 	mov	bl,[maxheight]			; get the max height of characters.
 	mov	[charheight],al			; get number of rows with data.
 	add	al,cl				; add the two heights.
@@ -266,7 +266,7 @@ Vesa_Print PROC	near C
 	jz	??draw_char			; if not go and draw the real character.
 
 	xor	eax,eax				; get color 0 for background.
-	xlat	[ebx]				; get translated color into al
+	xlat	;[ebx]				; get translated color into al
 	test	al,al				; is it transparent black
 	jnz	??loop_top			; if not go and write the color
 
@@ -319,11 +319,11 @@ Vesa_Print PROC	near C
 	lodsb					; get byte value from font data
 	mov	ah,al				; save hinibble
 	and	eax,0F00FH	       		; mask of low nibble in al hi nibble in ah.
-	xlat	[ebx]				; get new color
+	xlat	;[ebx]				; get new color
 
 	test	al,al				; is it a transparent?
 	jz	short ??skiplo			; skip over write
-	mov	[es:edi],al			; write it out
+	mov	es:[edi],al			; write it out
 ??skiplo:
 	inc	edi
 	cmp	edi,0b0000h			; have we gone over win edge
@@ -338,7 +338,7 @@ Vesa_Print PROC	near C
 	; test the time difference between looking up in a large table when shr al,4 is not done as
 	; compared to using only a 16 byte table when using the shr al,4
 	;shr	al,4				; shift the hi nibble down to low nibble
-	xlat	[ebx]				; get new color
+	xlat	;[ebx]				; get new color
 
 	test	al,al				; is it a transparent?
 	jz	short ??skiphi			; skip over write
@@ -371,7 +371,7 @@ Vesa_Print PROC	near C
 	jz	??next_char			; then skip to go to next character
 
 	xor	eax,eax				; get color 0 for background.
-	xlat	[ebx]				; get translated color into al
+	xlat	;[ebx]				; get translated color into al
 	test	al,al				; is it transparent black
 	jz	??next_char			; skip the top black section to let the background through
 

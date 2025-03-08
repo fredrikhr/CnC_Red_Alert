@@ -38,7 +38,7 @@
 .386P	; Converted from TASM: P386
 .MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 
-GLOBAL	Shake_Screen	:NEAR
+EXTERNDEF C	Shake_Screen	:NEAR
 
 	.CODE; Converted from TASM: CODESEG
 
@@ -52,8 +52,7 @@ GLOBAL	Shake_Screen	:NEAR
 ; Bounds Checking: None
 ;
 ;*
-Shake_Screen PROC	near C
-	USES	ecx, edx,
+Shake_Screen PROC	near C	USES	ecx edx,
 	shakes:DWORD
 
 	mov	ecx,[shakes]

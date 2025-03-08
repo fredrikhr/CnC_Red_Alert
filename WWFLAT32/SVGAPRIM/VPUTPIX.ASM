@@ -64,20 +64,20 @@ INCLUDE <gbuffer.inc>
 ;* HISTORY:                                                                *
 ;*   06/08/1994 PWG : Created.                                             *
 ;*=========================================================================*
-Vesa_Put_Pixel PROC	near C
-	USES	eax,ebx,ecx,edx,edi,esi,
-	this:DWORD				; this is a member function,
-	x_pixel:DWORD				; x position of pixel to set,
-	y_pixel:DWORD				; y position of pixel to set,
+Vesa_Put_Pixel PROC	near C	USES	eax ebx ecx edx edi esi,
+	_this:DWORD,			; this is a member function,
+	x_pixel:DWORD,			; x position of pixel to set,
+	y_pixel:DWORD,			; y position of pixel to set,
 	color:BYTE				; what color should we clear to
 
 	;*===================================================================
 	; Get the viewport information and put bytes per row in ecx
 	;*===================================================================
-	mov	ebx,[this]				; get a pointer to viewport
-	mov	edi,[(VideoViewPort ebx).VIVPOffset]	; get the correct offset
-	mov	ecx,[(VideoViewPort ebx).VIVPHeight]	; edx = height of viewport
-	mov	edx,[(VideoViewPort ebx).VIVPWidth]	; ecx = width of viewport
+	mov	ebx,[_this]				; get a pointer to viewport
+	assume ebx:PTR VideoViewPort
+	mov	edi,[ebx].VIVPOffset	; get the correct offset
+	mov	ecx,[ebx].VIVPHeight	; edx = height of viewport
+	mov	edx,[ebx].VIVPWidth		; ecx = width of viewport
 
 	;*===================================================================
 	; Verify that the X pixel offset if legal
@@ -90,11 +90,11 @@ Vesa_Put_Pixel PROC	near C
 	;*===================================================================
 	; Verify that the Y pixel offset if legal
 	;*===================================================================
-	mov	eax,[y_pixel]				; get the y position
+	mov	eax,[y_pixel]			; get the y position
 	cmp	eax,ecx					;  is it out of bounds
 	jae	??exit					; if so then get out
-	add	edx,[(VideoViewPort ebx).VIVPXAdd]	; otherwise find bytes per row
-	mul	edx					; offset = bytes per row * y
+	add	edx,[ebx].VIVPXAdd		; otherwise find bytes per row
+	mul	edx						; offset = bytes per row * y
 	add	edi,eax					; add it into the offset
 
 	;*===================================================================

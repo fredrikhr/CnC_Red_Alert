@@ -54,7 +54,7 @@
 .MODEL	FLAT	; Converted from TASM: MODEL USE32 FLAT
 ; Converted from TASM: LOCALS ??			; ?? is the symbol for a local
 ;WARN				; generate all warnings we can
-JUMPS				; optimize jumps if possible
+;JUMPS				; optimize jumps if possible
 
 ;---------------------------------------------------------------------------
 ; Make some general equates for easy compatability
