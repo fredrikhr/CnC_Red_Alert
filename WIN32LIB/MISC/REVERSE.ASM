@@ -66,19 +66,19 @@ EXTERNDEF	 C Reverse_Long	:NEAR
 ; LONG Reverse_LONG(LONG number);
 ;
 ;*
-Reverse_Long	PROC	near C
-	ARG	number:DWORD
+Reverse_Long	PROC	near C,
+	number:DWORD
 
 IF 1
-	mov	eax,[DWORD PTR number]
+	mov	eax,DWORD PTR [number]
 	xchg	al,ah
 	ror	eax,16
 	xchg	al,ah
 ELSE
 
 	; This is old 16 bit code.
-	mov	ax,[WORD PTR number]
-	mov	dx,[WORD PTR number+2]
+	mov	ax,WORD PTR [number]
+	mov	dx,WORD PTR [number+2]
 	xchg	ah,dl
 	xchg	al,dh
 ENDIF
@@ -96,8 +96,8 @@ Reverse_Long	ENDP
 ; WORD Reverse_Short(WORD number);
 ;
 ;*
-Reverse_Short	PROC	near C
-	ARG	number:WORD
+Reverse_Short	PROC	near C,
+	number:WORD
 
 	mov	ax,[number]
 	xchg	ah,al
@@ -115,17 +115,17 @@ Reverse_Short	ENDP
 ; Long Swap_Long(Long number);
 ;
 ;*
-Swap_Long	PROC	near C
-	ARG	number:DWORD
+Swap_Long	PROC	near C,
+	number:DWORD
 
 IF 1
 	; 32 bit code.
-    	mov	eax,[DWORD PTR number]
+    	mov	eax,DWORD PTR [number]
 	ror	eax,16
 ELSE
 	; 16 bit code.
-	mov	ax,[WORD PTR number+2]
-	mov	dx,[WORD PTR number]
+	mov	ax,WORD PTR [number+2]
+	mov	dx,WORD PTR [number]
 ENDIF
 
 	ret

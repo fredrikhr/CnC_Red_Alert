@@ -48,8 +48,8 @@ TRUE  = 1
 ;****************************** Declarations ********************************
 EXTERNDEF 		C Set_Palette_Range:NEAR
 EXTERNDEF 		C Bump_Color:NEAR
-EXTERNDEF  	C CurrentPalette:BYTE:768
-EXTERNDEF		C PaletteTable:byte:1024
+EXTERNDEF  	C CurrentPalette:BYTE
+EXTERNDEF		C PaletteTable:BYTE
 
 
 ;********************************** Data ************************************
@@ -87,8 +87,8 @@ IF 1
 ;*   03/07/1995 PWG : Created.                                             *
 ;*=========================================================================*
 
-Set_Palette_Range	PROC	NEAR C
-	ARG	palette:DWORD
+Set_Palette_Range	PROC	NEAR C,
+	palette:DWORD
 
 	EXTERNDEF	Set_DD_Palette_:near
 	EXTERNDEF	Wait_Vert_Blank_:near
@@ -364,9 +364,8 @@ ENDIF
 ;*   04/27/1994 BR : Converted to 32-bit.                                  *
 ;*=========================================================================*
 ; BOOL cdecl Bump_Color(VOID *palette, WORD changable, WORD target);
-Bump_ColorPROC NEAR C
-	USES ebx,ecx,edi,esi
-	ARG	pal:DWORD, color:WORD, desired:WORD
+Bump_Color	PROC NEAR C	USES ebx ecx edi esi,
+	pal:DWORD, color:WORD, desired:WORD
 	LOCAL	changed:WORD		; Has palette changed?
 
 	mov	edi,[pal]		; Original palette pointer.
@@ -386,14 +385,14 @@ Bump_ColorPROC NEAR C
 
 	; Check the color gun.
 ??colorloop:
-	mov	al,[BYTE PTR esi]
-	sub	al,[BYTE PTR edi]	; Carry flag is set if subtraction needed.
+	mov	al,BYTE PTR [esi]
+	sub	al,BYTE PTR [edi]	; Carry flag is set if subtraction needed.
 	jz	short ??gotit
 	mov	[changed],TRUE
-	inc	[BYTE PTR edi]		; Presume addition.
+	inc	BYTE PTR [edi]		; Presume addition.
 	jnc	short ??gotit		; oops, subtraction needed so dec twice.
-	dec	[BYTE PTR edi]
-	dec	[BYTE PTR edi]
+	dec	BYTE PTR [edi]
+	dec	BYTE PTR [edi]
 ??gotit:
 	inc	edi
 	inc	esi

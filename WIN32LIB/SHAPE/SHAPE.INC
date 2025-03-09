@@ -104,52 +104,52 @@ PRED_MASK		EQU	0007h	; mask used for predator pixel puts
 ; careful to change the offsets.
 ;---------------------------------------------------------------------------
 ;.......................... proc addresses .................................
-LSkipRout	EQU DWORD PTR ebp - 04h		;DWORD  pointer to the skip routine
-RSkipRout	EQU DWORD PTR ebp - 08h		;DWORD  pointer to the skip routine
-DrawRout	EQU DWORD PTR ebp - 0Ch			;DWORD  pointer to the draw routine
+LSkipRout	EQU ebp - 04h		;DWORD  pointer to the skip routine
+RSkipRout	EQU ebp - 08h		;DWORD  pointer to the skip routine
+DrawRout	EQU ebp - 0Ch		;DWORD  pointer to the draw routine
 ;........................ optional arguments ...............................
-ColorTable	EQU DWORD PTR ebp - 10h		;DWORD	ptr to the shapes color table
-FadingTable	EQU DWORD PTR ebp - 14h		;DWORD  ptr to the fading table
+ColorTable	EQU ebp - 10h		;DWORD	ptr to the shapes color table
+FadingTable	EQU ebp - 14h		;DWORD  ptr to the fading table
 
-FadingNum	EQU DWORD PTR ebp - 18h		;DWORD  number of times to fade
-IsTranslucent	EQU DWORD PTR ebp - 1Ch	;DWORD	ptr to is_translucent table
-Translucent	EQU DWORD PTR ebp - 20h		;DWORD	ptr to actual translucent tbl
-PriLevel	EQU BYTE  PTR ebp - 24h			;BYTE	priority level of the object
-ScaleX		EQU DWORD PTR ebp - 28h		;DWORD  the x increment to scale by
-ScaleY		EQU DWORD PTR ebp - 2Ch		;DWORD  the y increment to scale by
-ShadowingTable	EQU DWORD PTR ebp - 30h	;DWORD	ptr to the shadowing table
+FadingNum	EQU ebp - 18h		;DWORD  number of times to fade
+IsTranslucent	EQU ebp - 1Ch	;DWORD	ptr to is_translucent table
+Translucent	EQU ebp - 20h		;DWORD	ptr to actual translucent tbl
+PriLevel	EQU ebp - 24h		;BYTE	priority level of the object
+ScaleX		EQU ebp - 28h		;DWORD  the x increment to scale by
+ScaleY		EQU ebp - 2Ch		;DWORD  the y increment to scale by
+ShadowingTable	EQU ebp - 30h	;DWORD	ptr to the shadowing table
 ;........................ Shape header values ..............................
-ShapeType	EQU DWORD PTR ebp - 34h 	;DWORD	shape type
-ShapeWidth	EQU DWORD PTR ebp - 38h 	;DWORD	shape's unscaled width
-ShapeHeight	EQU DWORD PTR ebp - 3Ch 	;DWORD	shape's unscaled height
-UncompDataLen	EQU DWORD PTR ebp - 40h ;DWORD	uncompressed data length
-ShapeData	EQU DWORD PTR ebp - 44h 	;DWORD	pointer to shape data
+ShapeType	EQU ebp - 34h 		;DWORD	shape type
+ShapeWidth	EQU ebp - 38h 		;DWORD	shape's unscaled width
+ShapeHeight	EQU ebp - 3Ch 		;DWORD	shape's unscaled height
+UncompDataLen	EQU ebp - 40h 	;DWORD	uncompressed data length
+ShapeData	EQU ebp - 44h 		;DWORD	pointer to shape data
 ;...................... Scaled shape dimensions ............................
-ScaledWidth	EQU DWORD PTR ebp - 48h 	;DWORD	shape's scaled width
-ScaledHeight	EQU DWORD PTR ebp - 4Ch ;DWORD	shape's scaled height
+ScaledWidth	EQU ebp - 48h 		;DWORD	shape's scaled width
+ScaledHeight	EQU ebp - 4Ch 	;DWORD	shape's scaled height
 ;...................... Pixel clipping variables ...........................
-LeftClipPixels	EQU DWORD PTR ebp - 50h ;DWORD	# left-clipped pixels
-RightClipPixels	EQU DWORD PTR ebp - 54h ;DWORD	# right-clipped pixels
-TopClipPixels	EQU DWORD PTR ebp - 58h ;DWORD	# top-clipped pixels
-BotClipPixels	EQU DWORD PTR ebp - 5Ch ;DWORD	# bottom-clipped pixels
-PixelWidth	EQU DWORD PTR ebp - 60h 	;DWORD	drawable area in pixels
-PixelHeight	EQU DWORD PTR ebp - 64h 	;DWORD	drawable area in pixels
+LeftClipPixels	EQU ebp - 50h 	;DWORD	# left-clipped pixels
+RightClipPixels	EQU ebp - 54h 	;DWORD	# right-clipped pixels
+TopClipPixels	EQU ebp - 58h 	;DWORD	# top-clipped pixels
+BotClipPixels	EQU ebp - 5Ch 	;DWORD	# bottom-clipped pixels
+PixelWidth	EQU ebp - 60h 		;DWORD	drawable area in pixels
+PixelHeight	EQU ebp - 64h 		;DWORD	drawable area in pixels
 ;......................... Drawing variables ...............................
-NumColors	EQU DWORD PTR ebp - 68h ;DWORD	# colors for 16-color shapes
-StartDraw	EQU DWORD PTR ebp - 6Ch ;DWORD	offset of drawing start pos
-NextLine	EQU DWORD PTR ebp - 70h ;DWORD	offset of next drawing line
-LeftClipBytes	EQU DWORD PTR ebp - 74h ;DWORD	# left-clipped bytes
-XTotal		EQU DWORD PTR ebp - 78h ;DWORD	accumulated x-pixels
-XTotalInit	EQU DWORD PTR ebp - 7Ch ;DWORD	initial roundoff for XTotal
-YTotal		EQU DWORD PTR ebp - 80h ;DWORD	accumulated y-pixels
-HeightCount	EQU DWORD PTR ebp - 84h ;DWORD	ht counter for drawing lines
-LineStart	EQU DWORD PTR ebp - 88h ;DWORD	address of start of line
-WidthCount	EQU DWORD PTR ebp - 8Ch ;DWORD	counts down # bytes skipped
-StashReg	EQU DWORD PTR ebp - 90h 	;DWORD	temp variable for draw routines
-MaskAdjust	EQU DWORD PTR ebp - 94h ;DWORD  priority buffer offset
-BackAdjust	EQU DWORD PTR ebp - 98h ;DWORD  background buffer offset
-StashECX	EQU DWORD PTR ebp - 9Ch 	;DWORD  temp variable for ECX register
-StashEDX	EQU DWORD PTR ebp -0A0h 	;DWORD  temp variable for EDX register
+NumColors	EQU ebp - 68h 		;DWORD	# colors for 16-color shapes
+StartDraw	EQU ebp - 6Ch 		;DWORD	offset of drawing start pos
+NextLine	EQU ebp - 70h 		;DWORD	offset of next drawing line
+LeftClipBytes	EQU ebp - 74h 	;DWORD	# left-clipped bytes
+XTotal		EQU ebp - 78h 		;DWORD	accumulated x-pixels
+XTotalInit	EQU ebp - 7Ch 		;DWORD	initial roundoff for XTotal
+YTotal		EQU ebp - 80h 		;DWORD	accumulated y-pixels
+HeightCount	EQU ebp - 84h 		;DWORD	ht counter for drawing lines
+LineStart	EQU ebp - 88h 		;DWORD	address of start of line
+WidthCount	EQU ebp - 8Ch 		;DWORD	counts down # bytes skipped
+StashReg	EQU ebp - 90h 		;DWORD	temp variable for draw routines
+MaskAdjust	EQU ebp - 94h 		;DWORD  priority buffer offset
+BackAdjust	EQU ebp - 98h 		;DWORD  background buffer offset
+StashECX	EQU ebp - 9Ch 		;DWORD  temp variable for ECX register
+StashEDX	EQU ebp -0A0h 		;DWORD  temp variable for EDX register
 
 Local_Size	EQU 00A4h		; Amt of data on stack: 4+last offset
 

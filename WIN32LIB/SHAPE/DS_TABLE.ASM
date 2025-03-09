@@ -80,7 +80,7 @@ USE_SCALING 	EQU	TRUE
 ; Thus, each table is an array of function pointers.
 ;
 ;---------------------------------------------------------------------------
-MACRO USE func, varname
+USE MACRO func, varname
  IFNB <varname>
 	EXTERNDEF	varname:DWORD
  ENDIF

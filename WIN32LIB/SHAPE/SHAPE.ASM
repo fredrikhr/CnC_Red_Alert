@@ -76,13 +76,11 @@ _ShapeBufferSize	dd	0
 ;*=========================================================================*
 EXTERNDEF	C Set_Shape_Buffer:NEAR
 
-Set_Shape_BufferPROC	near C
-	USES	eax
+Set_Shape_Buffer	PROC	near C	USES	eax,
+	buff:DWORD,
+	_size:DWORD
 
-	ARG	buff:DWORD
-	ARG	size:DWORD
-
-	mov	eax,[size]
+	mov	eax,[_size]
 	mov	[_ShapeBufferSize],eax
 
 	mov	eax,[buff]

@@ -42,7 +42,7 @@
 
 EXTERNDEF	C Desired_Facing256	:NEAR
 ;	INCLUDE	"wwlib.i"
-INCLUDE <..\include\gbuffer.inc>
+INCLUDE <gbuffer.inc>
 
 	.CODE	; converted from TASM: CODESEG
 
@@ -68,13 +68,11 @@ INCLUDE <..\include\gbuffer.inc>
 ;*   12/24/1991 JLB : Adapted.                                             *
 ;*=========================================================================*/
 ; LONG cdecl Desired_Facing256(LONG srcx, LONG srcy, LONG dstx, LONG dsty)
-Desired_Facing256	PROC	near C
-	USES	ebx, ecx, edx
-
-	ARG	srcx:DWORD
-	ARG	srcy:DWORD
-	ARG	dstx:DWORD
-	ARG	dsty:DWORD
+Desired_Facing256	PROC	near C	USES	ebx ecx edx,
+	srcx:DWORD,
+	srcy:DWORD,
+	dstx:DWORD,
+	dsty:DWORD
 
 	xor	ebx,ebx			; Facing number.
 

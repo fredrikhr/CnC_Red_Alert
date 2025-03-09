@@ -52,10 +52,8 @@ EXTERNDEF	C Shake_Screen	:NEAR
 ; Bounds Checking: None
 ;
 ;*
-Shake_Screen	PROC	near C
-	USES	ecx, edx
-
-	ARG	shakes:DWORD
+Shake_Screen	PROC	near C	USES	ecx edx,
+	shakes:DWORD
  ret
 
 	mov	ecx,[shakes]

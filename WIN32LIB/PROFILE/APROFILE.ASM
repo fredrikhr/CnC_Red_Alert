@@ -42,9 +42,9 @@
 
 
 		.386P
-		model	flat
+		.model	flat
 		; Converted TASM ideal to MASM
-		jumps
+		;jumps
 
 
 MAX_PROFILE_TIME = 60*1		;1 minute(s)
@@ -90,19 +90,19 @@ EXTERNDEF		EpiAddress:dword
 ;*   11/20/95 4:39PM ST : Created.                                                           *
 ;*===========================================================================================*
 
-proc		__PRO near
+__PRO	proc	near
 
 		jmp	[ProAddress]
 ; safe version of prologue code
-Pro_Start:	push	eax
+Pro_Start::	push	eax
 		mov	eax,[MyStackPtr]
 		push	[ProfileFunctionAddress]
 		pop	[eax*4+MyStack]
 		inc	[MyStackPtr]
 		pop	eax
-		push	[dword ss:esp]
+		push	dword ptr ss:[esp]
 		pop	[ProfileFunctionAddress]
-Pro_End:	ret
+Pro_End::	ret
 
 ; unsafe (but much faster) prologue code
 ;		pop	[ProfileFunctionAddress]
@@ -126,17 +126,17 @@ __PRO		endp
 ;*   11/20/95 4:42PM ST : Created.                                                           *
 ;*===========================================================================================*
 
-proc		__EPI near
+__EPI	proc	near
 
 		jmp	[EpiAddress]
 ; Safe version of epilogue code. Uncomment the push and pop for ultimate safety
-Epi_Start:	dec	[MyStackPtr]
+Epi_Start::	dec	[MyStackPtr]
 ;		push	ebp
 		mov	ebp,[MyStackPtr]
 		mov	ebp,[ebp*4+MyStack]
 		mov	[ProfileFunctionAddress],ebp
 ;		pop	ebp
-Epi_End:	ret
+Epi_End::	ret
 
 ; Unsafe (but much faster) epilogue code. Makes lots of assumptions.
 ;		push	[dword esp+8]
@@ -162,7 +162,7 @@ __EPI		endp
 ;*   11/20/95 4:44PM ST : Created.                                                           *
 ;*===========================================================================================*
 
-Profile_Initproc		near C
+Profile_Init	proc	near C
 
 		mov	eax,offset ___begtext
 		and	eax,0fffffff0h
@@ -174,7 +174,7 @@ Profile_Initproc		near C
 		mov	[EpiAddress],offset Epi_Start
 		ret
 
-Profile_Init		endp
+Profile_Init	endp
 
 
 
@@ -193,13 +193,13 @@ Profile_Init		endp
 ;*   11/20/95 4:44PM ST : Created.                                                           *
 ;*===========================================================================================*
 
-Profile_Endproc		near C
+Profile_End	proc	near C
 
 		mov	[ProAddress],offset Pro_End
 		mov	[EpiAddress],offset Epi_End
 		ret
 
-Profile_End		endp
+Profile_End	endp
 
 
 
@@ -220,7 +220,7 @@ Profile_End		endp
 ;* HISTORY:                                                                                  *
 ;*   11/20/95 4:47PM ST : Created.                                                           *
 ;*===========================================================================================*
-proc		New_Profiler_Callback_ near
+New_Profiler_Callback_	proc	near
 
 		push	eax
 		push	esi
@@ -240,7 +240,7 @@ proc		New_Profiler_Callback_ near
 		pop	eax
 		ret
 
-New_Profiler_Callback_		endp
+New_Profiler_Callback_	endp
 
 
 
@@ -259,7 +259,7 @@ New_Profiler_Callback_		endp
 ;*   11/20/95 4:47PM ST : Created.                                                           *
 ;*===========================================================================================*
 
-proc		Old_Profiler_Callback_ near
+Old_Profiler_Callback_	proc	near
 
 		push	eax
 		push	esi

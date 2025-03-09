@@ -67,7 +67,7 @@ INCLUDE <shape.inc>
 ;*   08/19/1993 SKB : Split drawshp.asm into several modules.              *
 ;*   05/28/1994 BR : Converted to 32-bit                                   *
 ;*=========================================================================*
-Right_Reverse_SkipPROC	NEAR NOLANGUAGE
+Right_Reverse_Skip	PROC	NEAR
 
 	;--------------------------------------------------------------------
 	; Put shape data address in EDI so we can do a scasb on it
@@ -89,7 +89,7 @@ Right_Reverse_SkipPROC	NEAR NOLANGUAGE
 	; If we have a run then get the next byte which is the length.
 	;--------------------------------------------------------------------
 ??on_run:
-	mov	al,[BYTE PTR edi]	; get the count of zeros to run
+	mov	al,BYTE PTR [edi]	; get the count of zeros to run
 	inc	edi			; advance past the count
 	inc	ecx			; the 0 found doesn't count
 	sub	ecx,eax			; subtract the count from remaining

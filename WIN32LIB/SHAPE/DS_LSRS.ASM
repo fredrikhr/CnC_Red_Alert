@@ -75,7 +75,7 @@ INCLUDE <shape.inc>
 ;*   08/19/1993 SKB : Split drawshp.asm into several modules.              *
 ;*   06/02/1994 BR : Converted to 32-bit                                   *
 ;*=========================================================================*
-Left_Scale_Reverse_SkipPROC	NEAR NOLANGUAGE
+Left_Scale_Reverse_Skip	PROC	NEAR
 
 	sub 	[WidthCount],ecx	; we process ECX bytes of real width
 
@@ -105,7 +105,7 @@ Left_Scale_Reverse_SkipPROC	NEAR NOLANGUAGE
 	; If we have a run then get the next byte which is the length.
 	;--------------------------------------------------------------------
 ??on_run:
-	mov	al,[BYTE PTR edi]	; get the count of zeros to run
+	mov	al,BYTE PTR [edi]	; get the count of zeros to run
 	inc	edi			; advance past the count
 	inc	ecx			; the 0 found doesn't count
 	sub	ecx,eax			; subtract the count from remaining
@@ -129,7 +129,7 @@ Left_Scale_Reverse_SkipPROC	NEAR NOLANGUAGE
 	mov	eax,ecx			; get the number of bytes we overran
 	neg	eax			; negate it since overun is negative
 	add	eax,[LeftClipBytes]	; add the number of bytes we leftclip
-	mul 	[ScaleX]		; convert to pixels plus roundoff bits
+	mul	DWORD PTR [ScaleX]	; convert to pixels plus roundoff bits
 	mov	edx,0			; clear EDX
 	mov	dl,al			; DL = x-scaling roundoff bits
 	;
