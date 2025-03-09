@@ -35,15 +35,15 @@
 ;*   GVPC::Fill_Rect -- draws a filled rectangle to a graphics buffer      *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <.\drawbuff.inc>
+INCLUDE <.\gbuffer.inc>
 
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* GVPC::FILL_RECT -- Fills a rectangular region of a graphic view port	   *
@@ -62,7 +62,7 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   06/07/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Buffer_Fill_Rect C near
+Buffer_Fill_Rect	PROC	near C
 	USES	eax,ebx,ecx,edx,esi,edi,ebp
 
 	;*===================================================================
@@ -270,6 +270,6 @@ CODESEG
 ??out:
 ??exit:
 	ret
-	ENDP	Buffer_Fill_Rect
+Buffer_Fill_Rect	ENDP
 
 END

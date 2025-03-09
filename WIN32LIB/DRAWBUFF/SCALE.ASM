@@ -40,21 +40,33 @@
 ;*   Transparent_Remapped_Draw -- jump loc for scaled remap trans pixels   *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
 
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 
 ;***************************************************************************
 ;* VVC::SCALE -- Scales a virtual viewport to another virtual viewport     *
 ;*                                                                         *
 ;* INPUT:                                                                  *
+;	this_object:DWORD,	; pointer to source view port					   *
+;	dest:DWORD,			; pointer to destination view port				   *
+;	src_x:DWORD,		; source x offset into view port				   *
+;	src_y:DWORD,		; source y offset into view port				   *
+;	dst_x:DWORD,		; dest x offset into view port					   *
+;	dst_y:DWORD,		; dest y offset into view port					   *
+;	src_width:DWORD,	; width of source rectangle						   *
+;	src_height:DWORD,	; height of source rectangle					   *
+;	dst_width:DWORD,	; width of dest rectangle						   *
+;	dst_height:DWORD,	; width of dest height							   *
+;	trans:DWORD,		; is this transparent?							   *
+;	remap:DWORD			; pointer to table to remap source				   *
 ;*                                                                         *
 ;* OUTPUT:                                                                 *
 ;*                                                                         *
@@ -63,24 +75,19 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   06/16/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Linear_Scale_To_Linear C NEAR
-	USES	eax,ebx,ecx,edx,esi,edi
-
-	;*===================================================================
-	;* Define the arguements that our function takes.
-	;*===================================================================
-	ARG	this_object:DWORD		; pointer to source view port
-	ARG	dest:DWORD		; pointer to destination view port
-	ARG	src_x:DWORD		; source x offset into view port
-	ARG	src_y:DWORD		; source y offset into view port
-	ARG	dst_x:DWORD		; dest x offset into view port
-	ARG	dst_y:DWORD		; dest y offset into view port
-	ARG	src_width:DWORD		; width of source rectangle
-	ARG	src_height:DWORD	; height of source rectangle
-	ARG	dst_width:DWORD		; width of dest rectangle
-	ARG	dst_height:DWORD	; width of dest height
-	ARG	trans:DWORD		; is this transparent?
-	ARG	remap:DWORD		; pointer to table to remap source
+Linear_Scale_To_Linear	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
+	this_object:DWORD,
+	dest:DWORD,
+	src_x:DWORD,
+	src_y:DWORD,
+	dst_x:DWORD,
+	dst_y:DWORD,
+	src_width:DWORD,
+	src_height:DWORD,
+	dst_width:DWORD,
+	dst_height:DWORD,
+	trans:DWORD,
+	remap:DWORD
 
 	;*===================================================================
 	;* Define local variables to hold the viewport characteristics
@@ -139,9 +146,10 @@ CODESEG
 
 ; Clip Source Rectangle against source Window boundaries.
 	mov  	esi , [ this_object ]	    ; get ptr to src
+	assume	esi : ptr GraphicViewPort
 	xor 	ecx , ecx
 	xor 	edx , edx
-	mov	edi , [ (GraphicViewPort esi) . GVPWidth ]  ; get width into register
+	mov	edi , [ esi ] . GVPWidth   ; get width into register
 	mov	eax , [ src_x0 ]
 	mov	ebx , [ src_x1 ]
 	shld	ecx , eax , 1
@@ -152,7 +160,7 @@ CODESEG
 	shld	ecx , eax , 1
 	shld	edx , ebx , 1
 
-	mov	edi,[ ( GraphicViewPort esi) . GVPHeight ] ; get height into register
+	mov	edi,[ esi ] . GVPHeight  ; get height into register
 	mov	eax , [ src_y0 ]
 	mov	ebx , [ src_y1 ]
 	shld	ecx , eax , 1
@@ -195,7 +203,7 @@ CODESEG
 ??src_bottom_ok:
 	test	bl , 0100b
 	jz	??src_right_ok
-	mov	eax , [ (GraphicViewPort esi) . GVPWidth ]  ; get width into register
+	mov	eax , [ esi ] . GVPWidth   ; get width into register
 	mov	[ src_x1 ] , eax
 	sub	eax , [ src_x ]
 	imul	[ dst_width ]
@@ -206,7 +214,7 @@ CODESEG
 ??src_right_ok:
 	test	bl , 0001b
 	jz	??clip_against_dest
-	mov	eax , [ (GraphicViewPort esi) . GVPHeight ]  ; get width into register
+	mov	eax , [ esi ] . GVPHeight   ; get width into register
 	mov	[ src_y1 ] , eax
 	sub	eax , [ src_y ]
 	imul	[ dst_height ]
@@ -219,7 +227,7 @@ CODESEG
 	mov  	esi , [ dest ]	    ; get ptr to src
 	xor 	ecx , ecx
 	xor 	edx , edx
-	mov	edi , [ (GraphicViewPort esi) . GVPWidth ]  ; get width into register
+	mov	edi , [ esi ] . GVPWidth   ; get width into register
 	mov	eax , [ dst_x0 ]
 	mov	ebx , [ dst_x1 ]
 	shld	ecx , eax , 1
@@ -230,7 +238,7 @@ CODESEG
 	shld	ecx , eax , 1
 	shld	edx , ebx , 1
 
-	mov	edi,[ ( GraphicViewPort esi) . GVPHeight ] ; get height into register
+	mov	edi,[ esi ] . GVPHeight  ; get height into register
 	mov	eax , [ dst_y0 ]
 	mov	ebx , [ dst_y1 ]
 	shld	ecx , eax , 1
@@ -273,7 +281,7 @@ CODESEG
 ??dst_bottom_ok:
 	test	bl , 0100b
 	jz	??dst_right_ok
-	mov	eax , [ (GraphicViewPort esi) . GVPWidth ]  ; get width into register
+	mov	eax , [ esi ] . GVPWidth   ; get width into register
 	mov	[ dst_x1 ] , eax
 	sub	eax , [ dst_x ]
 	imul	[ src_width ]
@@ -285,7 +293,7 @@ CODESEG
 	test	bl , 0001b
 	jz	??do_scaling
 
-	mov	eax , [ (GraphicViewPort esi) . GVPHeight ]  ; get width into register
+	mov	eax , [ esi ] . GVPHeight   ; get width into register
 	mov	[ dst_y1 ] , eax
 	sub	eax , [ dst_y ]
 	imul	[ src_height ]
@@ -297,20 +305,21 @@ CODESEG
 
        cld
        mov	ebx , [ this_object ]
-       mov	esi , [ (GraphicViewPort ebx) . GVPOffset ]
-       mov	eax , [ (GraphicViewPort ebx) . GVPXAdd ]
-       add	eax , [ (GraphicViewPort ebx) . GVPWidth ]
-       add	eax , [ (GraphicViewPort ebx) . GVPPitch ]
+	   assume ebx : ptr GraphicViewPort
+       mov	esi , [ ebx ] . GVPOffset
+       mov	eax , [ ebx ] . GVPXAdd
+       add	eax , [ ebx ] . GVPWidth
+       add	eax , [ ebx ] . GVPPitch
        mov	[ src_win_width ] , eax
        mul	[ src_y0 ]
        add	esi , [ src_x0 ]
        add	esi , eax
 
        mov	ebx , [ dest ]
-       mov	edi , [ (GraphicViewPort ebx) . GVPOffset ]
-       mov	eax , [ (GraphicViewPort ebx) . GVPXAdd ]
-       add	eax , [ (GraphicViewPort ebx) . GVPWidth ]
-       add	eax , [ (GraphicViewPort ebx) . GVPPitch ]
+       mov	edi , [ ebx ] . GVPOffset
+       mov	eax , [ ebx ] . GVPXAdd
+       add	eax , [ ebx ] . GVPWidth
+       add	eax , [ ebx ] . GVPPitch
        mov	[ dst_win_width ] , eax
        mul	[ dst_y0 ]
        add	edi , [ dst_x0 ]
@@ -368,10 +377,10 @@ CODESEG
        jmp	[ entry ]
  ??inner_loop:
        REPT	32
-	       mov	cl , [ esi ]
+	       mov	cl , BYTE PTR [ esi ]
 	       add	ecx , eax
 	       adc	esi , edx
-	       mov	[ edi ] , cl
+	       mov	BYTE PTR [ edi ] , cl
 	       inc	edi
        ENDM
  ??ref_point:
@@ -419,11 +428,11 @@ CODESEG
        jmp	[ entry ]
  ??remapinner_loop:
        REPT	32
-	       mov	bl , [ esi ]
+	       mov	bl , BYTE PTR [ esi ]
 	       add	ecx , [ dx_frac ]
 	       adc	esi , edx
-	       mov	cl , [ eax + ebx ]
-	       mov	[ edi ] , cl
+	       mov	cl , BYTE PTR [ eax + ebx ]
+	       mov	BYTE PTR [ edi ] , cl
 	       inc	edi
        ENDM
  ??remapref_point:
@@ -473,10 +482,10 @@ CODESEG
  ??trans_inner_loop:
        REPT	32
        local	trans_pixel
-	       mov	cl , [ esi ]
+	       mov	cl , BYTE PTR [ esi ]
 	       test	cl , cl
 	       jz	trans_pixel
-	       mov	[ edi ] , cl
+	       mov	BYTE PTR [ edi ] , cl
        trans_pixel:
 	       add	ecx , eax
 	       adc	esi , edx
@@ -528,11 +537,11 @@ CODESEG
  ??trans_remapinner_loop:
        REPT	32
        local	trans_pixel
-	       mov	bl , [ esi ]
+	       mov	bl , BYTE PTR [ esi ]
 	       test	bl , bl
 	       jz	trans_pixel
-	       mov	cl , [ eax + ebx ]
-	       mov	[ edi ] , cl
+	       mov	cl , BYTE PTR [ eax + ebx ]
+	       mov	BYTE PTR [ edi ] , cl
 	  trans_pixel:
 	       add	ecx , [ dx_frac ]
 	       adc	esi , edx
@@ -564,7 +573,7 @@ CODESEG
 
 ??all_done:
 	ret
-endp
+Linear_Scale_To_Linear	endp
 
 
 END

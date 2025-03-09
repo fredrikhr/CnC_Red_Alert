@@ -34,18 +34,18 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
-LOCALS ??
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
+;LOCALS ??
 
-INCLUDE "svgaprim.inc"
-INCLUDE "gbuffer.inc"
+INCLUDE <svgaprim.inc>
+INCLUDE <gbuffer.inc>
 
 
 TRANSP   equ 0
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 
 ;***************************************************************************
@@ -71,7 +71,7 @@ CODESEG
 ;*   05/11/1994 PWG : Created.                                             *
 ;*   08/05/1994 PWG : Fixed clipping problem                               *
 ;*=========================================================================*
-	PROC	Vesa_Blit_To_Linear C near 
+Vesa_Blit_To_Linear	PROC	near C
 	USES	ebx,ecx,edx,esi,edi
 
 	;*===================================================================
@@ -237,7 +237,7 @@ CODESEG
 
 ??do_blit:
 
-       cld	
+       cld
        mov	ebx , [ this ]
        mov	edi , [ (VideoViewPort ebx) . VIVPOffset ]
        mov	eax , [ (VideoViewPort ebx) . VIVPXAdd ]
@@ -274,7 +274,7 @@ CODESEG
        sub	edx , [ dest_y0 ]
        jz	??real_out
 
-; ********************************************************************       
+; ********************************************************************
 ; Forward bitblit only
 
 IF TRANSP
@@ -283,10 +283,10 @@ IF TRANSP
 ENDIF
 
 
-; the inner loop is so efficient that 
+; the inner loop is so efficient that
 ; the optimal consept no longer apply because
 ; the optimal byte have to by a number greather than 9 bytes
-       cmp	eax , 10        
+       cmp	eax , 10
        jl	??forward_loop_bytes
 
 ??forward_loop_dword:
@@ -300,10 +300,10 @@ ENDIF
        cmp	esi , 0b0000h
        jge	??no_trailing
        mov	ecx , 0b0000h
-       sub	ecx , esi 
+       sub	ecx , esi
        sub	ebx , ecx
        rep	movsb
-??no_trailing:  
+??no_trailing:
        add	esi , [ cpu_video_page ]
        xchg	edi , esi
        Call	Vesa_Asm_Set_Win			; set the window
@@ -332,7 +332,7 @@ ENDIF
        rep	movsb
        add	esi , [ scr_ajust_width ]
        add	edi , [ dest_ajust_width ]
-       dec	edx 
+       dec	edx
        jnz	??forward_loop_dword
        ret
 
@@ -347,10 +347,10 @@ ENDIF
        cmp	esi , 0b0000h
        jge	??no_trailing_bytes
        mov	ecx , 0b0000h
-       sub	ecx , esi 
+       sub	ecx , esi
        sub	ebx , ecx
        rep	movsb
-??no_trailing_bytes:  
+??no_trailing_bytes:
        add	esi , [ cpu_video_page ]
        xchg	edi , esi
        Call	Vesa_Asm_Set_Win			; set the window
@@ -369,17 +369,17 @@ IF TRANSP
 ??forward_Blit_trans:
        mov	ecx , eax
        and	ecx , 01fh
-       lea	ecx , [ ecx + ecx * 4 ]	
+       lea	ecx , [ ecx + ecx * 4 ]
        neg	ecx
        shr	eax , 5
        lea	ecx , [ ??transp_reference + ecx * 2 ]
        mov	[ y1_pixel ] , ecx
 
 ??forward_loop_trans:
-       mov	ecx , eax 
+       mov	ecx , eax
        jmp	[ y1_pixel ]
 ??forward_trans_line:
-       REPT	32	
+       REPT	32
        local	transp_pixel
        		mov	bl , [ esi ]
        		test	bl , bl
@@ -390,11 +390,11 @@ IF TRANSP
 	    	inc	edi
 	ENDM
     ??transp_reference:
-       dec	ecx 
+       dec	ecx
        jge	??forward_trans_line
        add	esi , [ scr_ajust_width ]
        add	edi , [ dest_ajust_width ]
-       dec	edx 
+       dec	edx
        jnz	??forward_loop_trans
        ret
 ENDIF
@@ -403,7 +403,7 @@ ENDIF
        ret
 
 
-ENDP	Vesa_Blit_To_Linear
+Vesa_Blit_To_Linear	ENDP
 
 
 END

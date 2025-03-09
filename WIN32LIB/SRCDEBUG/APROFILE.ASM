@@ -41,9 +41,9 @@
 
 
 
-		p386
+		.386P
 		model	flat
-		ideal
+		; Converted TASM ideal to MASM
 		jumps
 
 
@@ -55,25 +55,25 @@ PROFILE_RATE	 = 1000		;1000 samples per sec
 ; Externs
 ;
 ;
-global		C ProfileFunctionAddress:dword
-global		C ProfilePtr:dword
-global		C ProfileList:dword
-global		C Stop_Profiler:near
-global		New_Profiler_Callback_:near
-global		Old_Profiler_Callback_:near
-global		C Profile_Init:near
-global		C Profile_End:near
-global		___begtext:near
-global		BaseAddress:dword
-global		__PRO:near
-global		__EPI:near
-global		MyStack:dword
-global		MyStackPtr:dword
-global		ProAddress:dword
-global		EpiAddress:dword
+EXTERNDEF		C ProfileFunctionAddress:dword
+EXTERNDEF		C ProfilePtr:dword
+EXTERNDEF		C ProfileList:dword
+EXTERNDEF		C Stop_Profiler:near
+EXTERNDEF		New_Profiler_Callback_:near
+EXTERNDEF		Old_Profiler_Callback_:near
+EXTERNDEF		C Profile_Init:near
+EXTERNDEF		C Profile_End:near
+EXTERNDEF		___begtext:near
+EXTERNDEF		BaseAddress:dword
+EXTERNDEF		__PRO:near
+EXTERNDEF		__EPI:near
+EXTERNDEF		MyStack:dword
+EXTERNDEF		MyStackPtr:dword
+EXTERNDEF		ProAddress:dword
+EXTERNDEF		EpiAddress:dword
 
 
-		codeseg
+		.code	; converted from TASM: codeseg
 
 
 ;*********************************************************************************************
@@ -108,7 +108,7 @@ Pro_End:	ret
 ;		pop	[ProfileFunctionAddress]
 ;		jmp	[ProfileFunctionAddress]
 
-endp		__PRO
+__PRO		endp
 
 
 ;*********************************************************************************************
@@ -143,7 +143,7 @@ Epi_End:	ret
 ;		pop	[ProfileFunctionAddress]
 ;		ret
 
-endp		__EPI
+__EPI		endp
 
 
 
@@ -162,7 +162,7 @@ endp		__EPI
 ;*   11/20/95 4:44PM ST : Created.                                                           *
 ;*===========================================================================================*
 
-proc		Profile_Init C near
+Profile_Initproc		near C
 
 		mov	eax,offset ___begtext
 		and	eax,0fffffff0h
@@ -174,7 +174,7 @@ proc		Profile_Init C near
 		mov	[EpiAddress],offset Epi_Start
 		ret
 
-endp		Profile_Init
+Profile_Init		endp
 
 
 
@@ -193,13 +193,13 @@ endp		Profile_Init
 ;*   11/20/95 4:44PM ST : Created.                                                           *
 ;*===========================================================================================*
 
-proc		Profile_End C near
+Profile_Endproc		near C
 
 		mov	[ProAddress],offset Pro_End
 		mov	[EpiAddress],offset Epi_End
 		ret
 
-endp		Profile_End
+Profile_End		endp
 
 
 
@@ -240,7 +240,7 @@ proc		New_Profiler_Callback_ near
 		pop	eax
 		ret
 
-endp		New_Profiler_Callback_
+New_Profiler_Callback_		endp
 
 
 
@@ -279,11 +279,11 @@ proc		Old_Profiler_Callback_ near
 		pop	eax
 		ret	14h
 
-endp		Old_Profiler_Callback_
+Old_Profiler_Callback_		endp
 
 
 
-		dataseg
+		.data	; converted from TASM: dataseg
 		align	4
 
 ProfileFunctionAddress	dd	0		;Ptr to function we are currently in
@@ -292,7 +292,7 @@ MyStackPtr		dd	0		;offset into my stack table
 ProAddress		dd	Pro_Start	;jmp ptr for __PRO procedure
 EpiAddress		dd	Epi_Start	;jmp ptr for __EPI procedure
 
-label MyStack dword			;my stack table
+MyStack label dword			;my stack table
 			dd	16*1024 dup (?)
 
 end

@@ -35,15 +35,15 @@
 ;*   Text_Print -- Assembly text print routine.                            *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
 
-GLOBAL  C ColorXlat:BYTE
-GLOBAL	C Set_Font_Palette_Range:NEAR
+EXTERNDEF  C ColorXlat:BYTE
+EXTERNDEF	C Set_Font_Palette_Range:NEAR
 
-	CODESEG
+	.CODE	; converted from TASM: CODESEG
 
 ;***********************************************************
 ; SET_FONT_PALETTE_RANGE
@@ -55,11 +55,10 @@ GLOBAL	C Set_Font_Palette_Range:NEAR
 ;
 ; Bounds Checking: forces start and end to a range of 0-15
 ;*
-	PROC	Set_Font_Palette_Range C near
-	USES	eax, ebx, ecx,edi,esi
-	ARG	palette:DWORD
-	ARG	start:DWORD
-	ARG	endval:DWORD
+Set_Font_Palette_Range	PROC	near C	USES	eax ebx ecx edi esi,
+	palette:DWORD,
+	start:DWORD,
+	endval:DWORD
 
 	cld
 
@@ -96,7 +95,7 @@ GLOBAL	C Set_Font_Palette_Range:NEAR
 ??exit:
 	ret
 
-	ENDP	Set_Font_Palette_Range
+Set_Font_Palette_Range	ENDP
 
 ;***********************************************************
 

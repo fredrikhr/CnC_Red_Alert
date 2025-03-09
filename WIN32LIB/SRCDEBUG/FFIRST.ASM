@@ -38,17 +38,17 @@
 
 
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-LOCALS ??
+;LOCALS ??
 
-GLOBAL             Find_First         :NEAR
-GLOBAL             Find_Next          :NEAR
-		    
+EXTERNDEF             Find_First         :NEAR
+EXTERNDEF             Find_Next          :NEAR
+
 ;============================================================================
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 
 ;***************************************************************************
@@ -70,75 +70,75 @@ CODESEG
 ;*   04/15/1994  jaw: Created.                                             *
 ;*=========================================================================*
 
-PROC Find_First 	C near 
+Find_FirstPROC near C
      	USES ebx,ecx,edx,esi,edi,es,ds
      	ARG file_name:DWORD,mode:WORD,ffblk:DWORD
-     	   
+
      	mov	edx,[file_name]
      	mov	cx,[mode]
-     		
+
      	mov	eax,4e00h		;first firstg function
-     	
+
      	int	21h
      					;Find it?
      	jnc	??found_it		;=>yes
-     	
+
 	; ax holds the error code
 	;insure high word of eax is clear
 	or	eax,0ffffffffh
 	jmp	??exit
-	
+
 ??found_it:
      	; found something
      	;copy the DTA into the user block
      	mov	eax,2f00h	;get DTA address
      	int	21h
-     	
+
      	mov	ax,es		;switch selectors
      	mov	dx,ds
      	mov	ds,ax
      	mov	es,dx
-     
+
      	mov	esi,ebx
      	mov	edi,[ffblk]
-     	
+
 	add	esi,21		;SKIP RESERVED
 	add	edi,4		;SKIP RESERVED
-		 
+
 	sub	eax,eax
 	mov	al,[esi]	;get attrib byte
 	mov	[es:edi+4],eax
 	inc	esi
-	
+
 	;get time
 	mov	ax,[esi]
 	add	esi,2
 	mov	[es:edi+8],ax
-	
+
 	;get date
 	mov	ax,[esi]
 	add	esi,2
 	mov	[es:edi+10],ax
-	
+
 	;get file size
 	mov	eax,[esi]
 	add	esi,4
 	mov	[es:edi],eax
-	
+
 	add	edi,12
-		    
+
      	mov	ecx,13
-     		    
+
      	rep	movsb		;copy the DTA name
-     	
+
      	mov	ax,es
      	mov	ds,ax
-     	
+
  	xor	eax,eax
-??exit:	
+??exit:
 	ret
 ;====================
-ENDP Find_First	
+Find_First ENDP
 
 
 
@@ -156,74 +156,74 @@ ENDP Find_First
 ;* HISTORY:                                                                *
 ;*   04/15/1994  jaw: Created.                                             *
 ;*=========================================================================*
-     
-PROC Find_Next C near
+
+Find_NextPROC near C
 	USES ebx,ecx,edx,esi,edi,ds,es
-	
+
      	ARG ffblk:DWORD
-     	    
+
 	mov	eax,04f00h		;Find Next function
-	
+
 	int 21h
 	       				;Find anything?
      	jnc	??found_it		;=>no
-     	
+
 	; ax holds the error code
 	;insure high word of eax is clear
 	or	eax,0ffffffffh
 	jmp	??exit
-	
+
 ??found_it:
      	; found something
      	;copy the DTA into the user block
      	mov	eax,2f00h		;get DTA address
      	int	21h
-     	
+
      	mov	ax,es			;switch selectors
      	mov	dx,ds
      	mov	ds,ax
      	mov	es,dx
-     
+
      	mov	esi,ebx
      	mov	edi,[ffblk]
-     	
+
 	add	esi,21			;SKIP RESERVED
 	add	edi,4			;SKIP RESERVED
-		 
+
 	sub	eax,eax
 	mov	al,[esi]		;get attrib byte
 	mov	[es:edi+4],eax
 	inc	esi
-	
+
 	;get time
 	mov	ax,[esi]
 	add	esi,2
 	mov	[es:edi+8],ax
-	
+
 	;get date
 	mov	ax,[esi]
 	add	esi,2
 	mov	[es:edi+10],ax
-	
+
 	;get file size
 	mov	eax,[esi]
 	add	esi,4
 	mov	[es:edi],eax
-	
+
 	add	edi,12
-		    
+
      	mov	ecx,13
-     		    
+
      	rep	movsb		;copy the DTA name
-     	
+
      	mov	ax,es
      	mov	ds,ax
-     	
+
 	xor	eax,eax
-??exit:	
+??exit:
 	ret
-	
-ENDP Find_Next
+
+Find_Next ENDP
 
 
 END

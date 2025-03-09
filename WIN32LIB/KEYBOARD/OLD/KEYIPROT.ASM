@@ -48,19 +48,20 @@
 ;---------------------------------------------------------------------------
 ; Set the assembly directives
 ;---------------------------------------------------------------------------
-IDEAL				; the product runs in ideal mode
-P386N				; use 386 real mode instructions
-MODEL TINY			; code must be tiny so it fits
-LOCALS ??			; ?? is the symbol for a local
-WARN				; generate all warnings we can
-JUMPS				; optimize jumps if possible
+; Converted TASM IDEAL to MASM				; the product runs in ideal mode
+.386				; use 386 real mode instructions
+;.MODEL TINY		; code must be tiny so it fits
+;LOCALS ??			; ?? is the symbol for a local
+;WARN				; generate all warnings we can
+;JUMPS				; optimize jumps if possible
 
 ;---------------------------------------------------------------------------
 ; Include all of the keyboard specific defines
 ;---------------------------------------------------------------------------
-INCLUDE "keyboard.inc"
+INCLUDE <keyboard.inc>
 
-CODESEG
+;.CODE	; converted from TASM: CODESEG
+_TEXT SEGMENT USE16 'CODE'
 
 
 SoundOn		DW	1	; toggled by alt S
@@ -172,7 +173,7 @@ IsExtKey		DB	0
 ExtIndex		DW	0
 
 OldRMI			DD	0	; The origianl RM interrupt seg:off.
-OldPMIOffset		DD	0	; The origianl PM interrupt offset		
+OldPMIOffset		DD	0	; The origianl PM interrupt offset
 OldPMISelector		DD	0	; The original PM interrupt segment.
 
 CodeOffset		DW	RM_Keystroke_Interrupt	; Offset of the code in the RM stuff.
@@ -191,10 +192,9 @@ CallRMIntAddr		DD	0	; PM address of CallRealIntOffset for speed.
 ;* HISTORY:                                                                *
 ;*   07/11/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	KeyNum_Translate:FAR
-	PROC	KeyNum_Translate C FAR 
-	USES	cx,di,es,ds
-	ARG	keycode:WORD
+	EXTERNDEF C	KeyNum_Translate:FAR
+KeyNum_Translate	PROC	FAR C	USES	cx di es ds,
+	keycode:WORD
 
 	mov	ax,cs				; since we are in tiny model
 	mov	ds,ax				; set cs = ds
@@ -213,10 +213,10 @@ CallRMIntAddr		DD	0	; PM address of CallRealIntOffset for speed.
 	mov	di,OFFSET ExtRemapEnd
 	dec	di
 	sub	di,cx
-	mov	al,[es:di]
+	mov	al,es:[di]
 ??fini:
 	ret
-	ENDP	KeyNum_Translate
+KeyNum_Translate	ENDP
 
 ;***************************************************************************
 ;* STUFF_KEY_WORD -- Stuffs a word of data into keyboard buffer            *
@@ -230,10 +230,9 @@ CallRMIntAddr		DD	0	; PM address of CallRealIntOffset for speed.
 ;* HISTORY:                                                                *
 ;*   07/11/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C Stuff_Key_WORD:FAR
-	PROC	Stuff_Key_WORD C FAR 
-	USES	si,bx,ds
-	ARG	code:WORD
+	EXTERNDEF	C Stuff_Key_WORD:FAR
+Stuff_Key_WORD	PROC	FAR C	USES	si bx ds,
+	code:WORD
 
 	mov	ax,cs				; since we are in tiny model
 	mov	ds,ax				; set cs = ds
@@ -255,7 +254,7 @@ CallRMIntAddr		DD	0	; PM address of CallRealIntOffset for speed.
 	mov	ax,1
 	ret
 
-	ENDP	Stuff_Key_WORD
+Stuff_Key_WORD	ENDP
 
 ;***************************************************************************
 ;* STUFF_KEY_NUM -- Stuffs a key num code into the circular buffer         *
@@ -269,12 +268,11 @@ CallRMIntAddr		DD	0	; PM address of CallRealIntOffset for speed.
 ;* HISTORY:                                                                *
 ;*   07/11/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C Stuff_Key_Num:FAR
-	PROC	Stuff_Key_Num C FAR 
-	USES	ax,bx,cx,dx,di,si,ds
-	ARG	keycode:WORD
+	EXTERNDEF	C Stuff_Key_Num:FAR
+Stuff_Key_Num	PROC	FAR C	USES	ax bx cx dx di si ds,
+	keycode:WORD
 	LOCAL	tail:WORD		; Original keybuffer tail (safety copy).
-	LOCAL	size:WORD		; Size of write.
+	LOCAL	_size:WORD		; Size of write.
 
 	pushf
 	cli				; disable interrupts
@@ -510,7 +508,7 @@ CallRMIntAddr		DD	0	; PM address of CallRealIntOffset for speed.
 	add	sp,2
 	or	ax,ax
 	jne	??jmpnoroom
-	add	[size],2
+	add	[_size],2
 
 	; Record mouse coordinate Y.
 	push	[LocalMouseY]
@@ -518,8 +516,8 @@ CallRMIntAddr		DD	0	; PM address of CallRealIntOffset for speed.
 	add	sp,2
 	or	ax,ax
 	jne	??jmpnoroom
-	add	[size],2
-	
+	add	[_size],2
+
 ??ok:
 	; If PASSBREAKS is not active and this is a keyboard
 	; break AND it is not a mouse event, then don't put
@@ -580,7 +578,7 @@ CallRMIntAddr		DD	0	; PM address of CallRealIntOffset for speed.
 	popf
 	ret
 
-	ENDP	Stuff_Key_Num
+Stuff_Key_Num	ENDP
 ;***********************************************************
 
 
@@ -601,9 +599,9 @@ CallRMIntAddr		DD	0	; PM address of CallRealIntOffset for speed.
 ;* HISTORY:                                                                *
 ;*   07/13/1994 PWG : Created.                                             *
 ;*=========================================================================*
-label RM_Keystroke_Interrupt
-	GLOBAL	C Keystroke_Interrupt:FAR
-	PROC	Keystroke_Interrupt C FAR 
+RM_Keystroke_Interrupt label FAR PTR
+	EXTERNDEF	C Keystroke_Interrupt:FAR
+Keystroke_Interrupt	PROC	FAR C
 
 IF 0
 	push	ax
@@ -627,7 +625,7 @@ ELSE
 	mov	dx,[KeyFlags]
 	;*** The following fix allows proper caps and num lock tracking on Tandy
 	; 10-6-89 LJC, DRD
-					
+
 	and	[KeyLock],NOT (NUMLOCK OR CAPSLOCK); assume caps and num inactive
 	mov	ax,040H			; BIOS segment
 	mov	es,ax			; put in es
@@ -716,10 +714,13 @@ ELSE
 	mov	di,OFFSET ExtCodes	; get offset of extended codes table
 	mov	cx,(ExtNums-ExtCodes)	; get number of entrys in ext table
 	repne	scasb			; look for a match
-	jcxz	??absorbcode		; Not recognized, so throw it away.
+	jcxz	??absorbcodeljmp; Not recognized, so throw it away.
 	mov	al,[(ExtNums - ExtCodes) - 1 + di] ; get the match
 	mov	[IsExtKey],FALSE	; it is not an extended key
 	jmp 	short ??notext
+
+??absorbcodeljmp:
+	jmp		??absorbcode
 
 ??normal:
 	cmp	al,07Ah
@@ -903,7 +904,7 @@ ELSE
 	pushf
 ;	push	di
 ;	push	es
-	
+
 	mov	ax,0B000h
 	mov	es,ax
 	inc	[BYTE PTR es:0]
@@ -950,10 +951,10 @@ ELSE
 	pop	cx
 	pop	bx
 	pop	ax
-	iret	
+	iret
 ENDIF
 
-	ENDP	Keystroke_Interrupt
+Keystroke_Interrupt	ENDP
 
 ;***************************************************************************
 ;* BREAK_INTERRUPT -- Handles the break key interrupt                      *
@@ -967,12 +968,12 @@ ENDIF
 ;* HISTORY:                                                                *
 ;*   07/13/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C Break_Interrupt:FAR
-	PROC	Break_Interrupt C FAR
+	EXTERNDEF	C Break_Interrupt:FAR
+Break_Interrupt	PROC	FAR C
 
-	iret	
+	iret
 
-	ENDP	Break_Interrupt
+Break_Interrupt	ENDP
 
 ;**************************************************************************
 ;* CALL_INTERRUPT_CHAIN -- Function PM calls to call the RM interrupt chain*
@@ -996,7 +997,7 @@ IF 0
 
 	mov	ax,0B000h		; ES:DI = Mono RAM address.
 	mov	es,ax
-		
+
 	mov	al,'A'
 	mov	ah,2
 	and	di,63
@@ -1017,7 +1018,10 @@ ENDIF
 	call	Keystroke_Interrupt ;[OldRMI]
 	retf
 
-STACK	   ; Don't really need this
+_TEXT ENDS
+
+.MODEL TINY
+.STACK	   ; Don't really need this
 
 ;***********************************************************
 END

@@ -37,16 +37,16 @@
 
 
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
 
 EXTRN		   exit			: near
-GLOBAL             FixSelector          :NEAR
+EXTERNDEF             FixSelector          :NEAR
 
 ;============================================================================
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* FIXSELECTOR -- Fix the Priviledge level of a selector                   *
@@ -63,15 +63,15 @@ CODESEG
 ;*   03/28/1994  jaw  Created.                                             *
 ;*=========================================================================*
 
-PROC FixSelector 	C near 
+FixSelectorPROC near C
 
 	USES ecx,edx
-	      
+
 	ARG	sel:WORD
-		
+
 ;  Copy the Table Bit and IOPL from the Current CS
 
-; Something is wrong the program should not be here unthe any circunstance	
+; Something is wrong the program should not be here unthe any circunstance
 ;	movzx	ecx,[sel]
 ;	xor	eax,eax
 ;	mov	ax,cs
@@ -79,10 +79,10 @@ PROC FixSelector 	C near
 ;	or	ax,cx
 push 0
 call exit
-	
+
 	ret
 ;====================
-ENDP FixSelector	
+FixSelector ENDP
 
 
 

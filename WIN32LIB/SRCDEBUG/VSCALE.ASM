@@ -35,15 +35,15 @@
 ;*   Vesa_Scale_To_Vesa -- Scales a vesa viewport to a vesa viewport       *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-INCLUDE "mcgaprim.inc"
-INCLUDE "gbuffer.inc"
+INCLUDE <mcgaprim.inc>
+INCLUDE <gbuffer.inc>
 
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 
 ;***************************************************************************
@@ -60,9 +60,9 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   01/16/1995 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Vesa_Scale_To_Vesa C near
+Vesa_Scale_To_Vesa	PROC	near C
 	ret
-	ENDP	Vesa_Scale_To_Vesa
+Vesa_Scale_To_Vesa	ENDP
 
 
 END

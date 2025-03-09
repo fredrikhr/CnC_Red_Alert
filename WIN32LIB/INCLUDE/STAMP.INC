@@ -21,7 +21,7 @@
 
 ifdef NO_WAY_THIS_WILL_BE_DEFINED_HAHAHAHA
 
-	STRUC	IControl_Type
+IControl_Type	STRUC
 Width		DW	?	; Width in pixels (per icon).
 Height		DW	?	; Height in pixels (per icon).
 Count		DW	?	; Number of icons in this set.
@@ -37,7 +37,7 @@ Map		DD	?	; Icon map offset.
 else
 
 
-	STRUC	IControl_Type
+IControl_Type	STRUC
 
 Width		DW	?	; Width in pixels (per icon).
 Height		DW	?	; Height in pixels (per icon).

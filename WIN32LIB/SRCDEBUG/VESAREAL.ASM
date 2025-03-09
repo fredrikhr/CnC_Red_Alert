@@ -33,18 +33,18 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
+; Converted TASM IDEAL to MASM
 MODEL TINY
 P386N
 
 
 
-LOCALS ??
+;LOCALS ??
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 ;///////////////////////////////////// Code ////////////////////////////////////////
 
-label Vesa_Funcion_Call
+Vesa_Funcion_Call label
 start:
  	call	[dword ptr cs: 40h - 4]
 	iret

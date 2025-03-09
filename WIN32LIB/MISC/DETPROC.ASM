@@ -37,30 +37,29 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-GLOBAL 	      	C Processor          :NEAR
+EXTERNDEF 	      	C Processor          :NEAR
 
 
 PROC_80386	equ	0
 PROC_80486	equ	1
 PROC_80586	equ	2
 
-DATASEG
+.DATA	; converted from TASM: DATASEG
 cpu_id_586	dw	0
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
-PROC	Processor C near
-	USES ebx
+Processor PROC	near C	USES ebx
 	LOCAL	ptype:WORD
 
 	pushfd
 
 ; At least a 386 -- check for 486.
-	mov	[WORD PTR ptype],PROC_80386	; 80386
+	mov	WORD PTR [ptype],PROC_80386	; 80386
 	pushfd
 	pop	eax
 	mov	ebx,eax
@@ -110,6 +109,6 @@ PROC	Processor C near
 	mov	ax,[ptype]
 	ret
 
-ENDP	Processor
+Processor	ENDP
 
 END

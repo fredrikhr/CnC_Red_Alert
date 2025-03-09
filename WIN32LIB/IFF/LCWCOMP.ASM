@@ -36,13 +36,13 @@
 ;*                                                                         *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-GLOBAL    LCW_Compress          :NEAR
+EXTERNDEF C  LCW_Compress          :NEAR
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 ; ----------------------------------------------------------------
 ;
@@ -61,12 +61,10 @@ CODESEG
 ; returns the size of the compressed data in bytes
 ;
 ;*
-PROC	LCW_Compress C near 
-	USES ebx,ecx,edx,edi,esi
-	
-	ARG	source:DWORD   
-	ARG	dest:DWORD
-	ARG	datasize:DWORD
+LCW_Compress	PROC	near C	USES ebx ecx edx edi esi,
+	source:DWORD,
+	dest:DWORD,
+	datasize:DWORD
 
 	LOCAL inlen:DWORD
 	LOCAL a1stdest:DWORD
@@ -82,7 +80,7 @@ PROC	LCW_Compress C near
  	mov	edi,[dest]
  	mov	esi,[source]
  	mov	edx,[datasize]		; get length of data to compress
-	
+
 ;	mov	ax,ds
 ;	mov	es,ax
 
@@ -118,9 +116,9 @@ PROC	LCW_Compress C near
 	mov	al,[esi]	; get the current byte of data
 	cmp	al,[esi+64]
 	jne	short ??notrunlength
-	
-	mov	ebx,edi		 
-	
+
+	mov	ebx,edi
+
 	mov	edi,esi
 	mov	ecx,[end_of_data]
 	sub	ecx,edi
@@ -130,11 +128,11 @@ PROC	LCW_Compress C near
 	sub	ecx,esi
 	cmp	ecx,65
 	jb	short ??notlongenough
-	
-	mov	[DWORD PTR inlen],0	; clear the in-length flag
+
+	mov	DWORD PTR [inlen],0	; clear the in-length flag
 	mov	esi,edi
 	mov	edi,[ndest]	; get the offset of our compressed data
-	
+
 	mov	ah,al
 	mov	al,0FEh
 	stosb
@@ -142,7 +140,7 @@ PROC	LCW_Compress C near
 	stosw
 	mov	al,ch
 	stosb
-	
+
 	mov	[ndest],edi	; save offset of compressed data
 	mov	edi,ebx
 	jmp	??searchloop
@@ -154,7 +152,7 @@ PROC	LCW_Compress C near
 	mov	ecx,esi		; get the address of the last byte +1
 	sub	ecx,edi		; get the total number of bytes left to comp
 	jz	short ??searchdone
-	
+
 	repne	scasb		; look for a match
 	jne	short ??searchdone	; if we don't find one we're done
 
@@ -169,14 +167,14 @@ PROC	LCW_Compress C near
 	dec	edi		; back up one for compare
 	mov	ecx,[end_of_data]		; get the end of data
 	sub	ecx,esi		; sub current source for max len
-	
+
 	repe	cmpsb		; see how many bytes match
 
 ; start of change MH 9-24-91
 	jne	short ??notend	; if found mismatch then di - bx = match count
 
 	inc	edi		; else cx = 0 and di + 1 - bx = match count
-	
+
 ??notend:
 ; end of change MH 9-24-91
 
@@ -186,27 +184,27 @@ PROC	LCW_Compress C near
 	mov	edi,ebx		; restore dest
 	cmp	eax,[count]	; see if its better than before
 	jb	??searchloop	; if not keep looking
-	
+
 	mov	[count],eax	; if so keep the count
 	dec	ebx		; back it up for the actual match offset
 	mov	[matchoff],ebx ; save the offset for later
 	jmp	??searchloop	; loop until we searched it all
-	
+
 ??searchdone:
-	
+
 	mov	ecx,[count]	; get the count of the longest run
 	mov	edi,[ndest]	; get the offset of our compressed data
 	cmp	ecx,2		; see if its not enough run to matter
 	jbe	short ??lenin		; if its 0,1, or 2 its too small
-	
+
 	cmp	ecx,10		; if not, see if it would fit in a short
 	ja	short ??medrun	; if not, see if its a medium run
-	
+
 	mov	eax,esi		; if its short get the current address
 	sub	eax,[matchoff] ; sub the offset of the match
 	cmp	eax,0FFFh	; if its less than 12 bits its a short
 	ja	short ??medrun	; if its not, its a medium
-	
+
 ??shortrun:
 	sub	ebx,ebx
 	mov	bl,cl		; get the length (3-10)
@@ -219,7 +217,7 @@ PROC	LCW_Compress C near
 ??medrun:
 	cmp	ecx,64		; see if its a short run
 	ja	short ??longrun	; if not, oh well at least its long
-	
+
 	sub	cl,3		; back down 3 to keep it in 6 bits
 	or	cl,0C0h		; the highest bits are always on
 	mov	al,cl		; put it in al for the stosb
@@ -227,30 +225,30 @@ PROC	LCW_Compress C near
 	jmp	short ??medrunnxt ; do the run fixup code
 
 ??lenin:
-	cmp	[DWORD PTR inlen],0	; is it doing a length?
+	cmp	DWORD PTR [inlen],0	; is it doing a length?
 	jnz	short ??len	; if so, skip code
-	
+
 ??lenin1:
 	mov	[lenoff],edi	; save the length code offset
 	mov	al,80h		; set the length to 0
 	stosb			; save it
-	
+
 ??len:
 	mov	ebx,[lenoff]	; get the offset of the length code
-	cmp	[BYTE PTR ebx],0BFh	; see if its maxed out
+	cmp	BYTE PTR [ebx],0BFh	; see if its maxed out
 	je	??lenin1	; if so put out a new len code
-	
+
 ??stolen:
-	inc	[BYTE PTR ebx] ; inc the count code
+	inc	BYTE PTR [ebx] ; inc the count code
 	lodsb			; get the byte
 	stosb			; store it
-	mov	[DWORD PTR inlen],1	; we are now in a length so save it
+	mov	DWORD PTR [inlen],1	; we are now in a length so save it
 	jmp	short ??nxt	; do the next code
-	
+
 ??longrun:
 	mov	al,0ffh		; its a long so set a code of FF
 	stosb			; store it
-	
+
 	mov	eax,[count]	; send out the count
 	stosw			; store it
 ??medrunnxt:
@@ -260,16 +258,16 @@ PROC	LCW_Compress C near
 	stosw			; store it
 ; this code common to all runs
 	add	esi,[count]	; add in the length of the run to the source
-	mov	[DWORD PTR inlen],0	; set the in leght flag to false
-	
-;=======================================================================	
+	mov	DWORD PTR [inlen],0	; set the in leght flag to false
+
+;=======================================================================
 
 ??nxt:
 	cmp	esi,[end_of_data]		; see if we did the whole pic
 	jae	short ??out		; if so, cool! were done
-	
+
 	jmp	??loop
-	
+
 ??out:
 	mov	ax,080h		; remember to send an end of data code
 	stosb			; store it
@@ -279,7 +277,7 @@ PROC	LCW_Compress C near
 
 	ret
 
-ENDP	LCW_Compress
+LCW_Compress	ENDP
 
 
 END

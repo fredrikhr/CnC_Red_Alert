@@ -35,17 +35,17 @@
 ;*   Left_Skip -- Skips bytes in a data stream				   *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 ;********************* Model & Processor Directives ************************
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
 
 ;******************************** Includes *********************************
-INCLUDE "shape.inc"
+INCLUDE <shape.inc>
 
 
 ;********************************* Code ************************************
-	CODESEG
+	.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* Left_Skip -- Skips bytes in a data stream				   *
@@ -70,7 +70,7 @@ INCLUDE "shape.inc"
 ;*   08/19/1993 SKB : Split drawshp.asm into several modules.              *
 ;*   06/02/1994 BR : Converted to 32-bit                                   *
 ;*=========================================================================*
-PROC	Left_Skip NOLANGUAGE NEAR
+Left_SkipPROC	NEAR NOLANGUAGE
 
 	sub 	[WidthCount],ecx	; we process ECX bytes of real width
 
@@ -91,7 +91,7 @@ PROC	Left_Skip NOLANGUAGE NEAR
 	jecxz	??out			; if we're done then get outta here
 
 	;--------------------------------------------------------------------
-	; If we have a run then get the next byte which is the length.  
+	; If we have a run then get the next byte which is the length.
 	;--------------------------------------------------------------------
 ??on_run:
 	mov	al,[BYTE PTR edi]	; get the count of zeros to run
@@ -110,7 +110,7 @@ PROC	Left_Skip NOLANGUAGE NEAR
 	mov	edx,0			; no scaling, so clear EDX
 	ret				; return back to the real function
 
-	ENDP	Left_Skip
+Left_Skip	ENDP
 
 	END
 

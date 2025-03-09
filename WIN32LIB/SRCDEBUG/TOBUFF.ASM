@@ -34,20 +34,20 @@
 ;*   VVC::TOBUFFER -- Copies a virtual viewport to a linear buffer         *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
-LOCALS ??
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
+;LOCALS ??
 
 
 TRANSP equ 0
 
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <.\drawbuff.inc>
+INCLUDE <.\gbuffer.inc>
 
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 
 ;***************************************************************************
@@ -71,7 +71,7 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   06/15/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Buffer_To_Buffer C near
+Buffer_To_Buffer	PROC	near C
 	USES	ebx,ecx,edx,esi,edi
 
 	;*===================================================================
@@ -287,6 +287,6 @@ ENDIF
 ??real_out:
        ret
 
-ENDP	Buffer_To_Buffer
+Buffer_To_Buffer	ENDP
 
 END

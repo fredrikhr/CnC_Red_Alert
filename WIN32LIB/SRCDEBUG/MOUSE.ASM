@@ -49,19 +49,19 @@
 ;*   Conditional_Show_Mouse -- shows mouse if it was conditionally hidden  *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL				; the product runs in ideal mode
-P386				; use 386 real mode instructions
-MODEL USE32 FLAT
-LOCALS ??			; ?? is the symbol for a local
+; Converted TASM IDEAL to MASM				; the product runs in ideal mode
+.386P				; use 386 real mode instructions
+.MODEL FLAT
+;LOCALS ??			; ?? is the symbol for a local
 ;WARN				; generate all warnings we can
 ;JUMPS				; optimize jumps if possible
 
 ;---------------------------------------------------------------------------
 ; Include all of the keyboard specific defines
 ;---------------------------------------------------------------------------
-INCLUDE "keystruc.inc"
-INCLUDE "shape.inc"
-include "drawbuff.inc"
+INCLUDE <keystruc.inc>
+INCLUDE <shape.inc>
+include <drawbuff.inc>
 
 DOS_SYS_CALL		EQU	21h		; to do TNT DOS-XNDR system calls.
 RESTORE_VISIBLE_PAGE	EQU	0
@@ -72,24 +72,24 @@ CONDHIDDEN		EQU	04000H		; bit for testing conditional hidden
 ; Define any data which needs to be global...
 ;---------------------------------------------------------------------------
 
-GLOBAL C	RealModePtr:DWORD
-GLOBAL C	MInstalled:DWORD
-GLOBAL C	MouseBuffer:DWORD
-GLOBAL C	LCW_Uncompress:NEAR
+EXTERNDEF C	RealModePtr:DWORD
+EXTERNDEF C	MInstalled:DWORD
+EXTERNDEF C	MouseBuffer:DWORD
+EXTERNDEF C	LCW_Uncompress:NEAR
 
-GLOBAL C	Get_Shape_Uncomp_Size     :NEAR
-GLOBAL C	Get_Shape_Width      	  :NEAR
-GLOBAL C	Get_Shape_Original_Height :NEAR
-GLOBAL C  Size_Of_Region		  :NEAR
-GLOBAL C	_ShapeBuffer		  :DWORD
+EXTERNDEF C	Get_Shape_Uncomp_Size     :NEAR
+EXTERNDEF C	Get_Shape_Width      	  :NEAR
+EXTERNDEF C	Get_Shape_Original_Height :NEAR
+EXTERNDEF C  Size_Of_Region		  :NEAR
+EXTERNDEF C	_ShapeBuffer		  :DWORD
 
-GLOBAL C  XRes	: dword
-GLOBAL C  YRes	: dword
+EXTERNDEF C  XRes	: dword
+EXTERNDEF C  YRes	: dword
 
 
-GLOBAL C	VesaFunc : dword
-GLOBAL C	Vesa_XRes : near
-GLOBAL C	Vesa_YRes : near
+EXTERNDEF C	VesaFunc : dword
+EXTERNDEF C	Vesa_XRes : near
+EXTERNDEF C	Vesa_YRes : near
 
 
 
@@ -98,7 +98,7 @@ GLOBAL C	Vesa_YRes : near
 DPMI_INTR	EQU	31h
 
 
-STRUC DPMI_REGS
+DPMI_REGS STRUC
        _edi  dd ?
        _esi  dd ?
        _ebp  dd ?
@@ -126,7 +126,7 @@ ENDS
 ;---------------------------------------------------------------------------
 ; Now lets handle any data in the data segment
 ;---------------------------------------------------------------------------
-	DATASEG
+	.DATA	; converted from TASM: DATASEG
 
 RealInt		DPMI_REGS <>	; structure to call a real mode int
 MInstalled	DD	0		; is the mouse installed?
@@ -145,7 +145,7 @@ Mouse_Shadow_Buffer	dd	VGA_Mouse_Shadow_Buffer
 ;---------------------------------------------------------------------------
 ; Time to write some code
 ;---------------------------------------------------------------------------
-	CODESEG
+	.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* INSTALL_MOUSE -- Initializes mouse driver and verifies mouse connected  *
@@ -170,8 +170,8 @@ Mouse_Shadow_Buffer	dd	VGA_Mouse_Shadow_Buffer
 ;* HISTORY:                                                                *
 ;*   08/26/1994 PWG : Created.                                             *
 ;*=========================================================================*
-GLOBAL C	Install_Mouse:NEAR
-PROC	Install_Mouse C NEAR
+EXTERNDEF C	Install_Mouse:NEAR
+Install_MousePROC	NEAR C
 	USES	eax,ebx,ecx,edx,esi,edi
 
 	ARG	mouse_max_width:DWORD
@@ -353,7 +353,7 @@ ifdef NOT_FOR_WIN95
 ??exit:
 endif ; NOT_FOR_WIN95
 	ret
-	ENDP	Install_Mouse
+Install_Mouse	ENDP
 
 ;***************************************************************************
 ;* ResET_MOUSE -- Reset mouse to a new graphif mode			   *
@@ -368,8 +368,8 @@ endif ; NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   08/26/1994 JRJ : Created.                                             *
 ;*=========================================================================*
-GLOBAL C	Reset_Mouse:NEAR
-PROC	Reset_Mouse C NEAR
+EXTERNDEF C	Reset_Mouse:NEAR
+Reset_MousePROC	NEAR C
 	USES	eax,ebx,ecx,edx,esi,edi
 
 ifdef NOT_FOR_WIN95
@@ -580,7 +580,7 @@ ENDIF
 endif ;NOT_FOR_WIN95
 
 	ret
-	ENDP	Reset_Mouse
+Reset_Mouse	ENDP
 
 
 
@@ -600,8 +600,8 @@ endif ;NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   08/29/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL C	Remove_Mouse:NEAR
-	PROC	Remove_Mouse C NEAR
+	EXTERNDEF C	Remove_Mouse:NEAR
+Remove_Mouse	PROC	NEAR C
 	USES	eax,ebx,ecx,edx,esi,edi
 
 ifdef NOT_FOR_WIN95
@@ -651,12 +651,12 @@ ifdef NOT_FOR_WIN95
 ??exit:
 endif ;NOT_FOR_WIN95
 	ret
-	ENDP	Remove_Mouse
+Remove_Mouse	ENDP
 
 
 ;***************************************************************************
 
-GLOBAL C	Clear_RM_regs :NEAR
+EXTERNDEF C	Clear_RM_regs :NEAR
 PROC	Clear_RM_regs  NEAR
 ifdef NOT_FOR_WIN95
 	push	eax
@@ -673,7 +673,7 @@ ifdef NOT_FOR_WIN95
 	pop	eax
 endif; NOT_FOR_WIN95
 	ret
-ENDP	Clear_RM_regs
+Clear_RM_regs	ENDP
 
 
 ;***************************************************************************
@@ -690,8 +690,8 @@ ENDP	Clear_RM_regs
 ;* HISTORY:                                                                *
 ;*   08/29/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL C	Get_Mouse_X:NEAR
-	PROC	Get_Mouse_X C NEAR
+	EXTERNDEF C	Get_Mouse_X:NEAR
+Get_Mouse_X	PROC	NEAR C
 	USES	esi
 ifdef NOT_FOR_WIN95
 	mov	esi,[RealModePtr]
@@ -699,7 +699,7 @@ ifdef NOT_FOR_WIN95
 endif;NOT_FOR_WIN95
 	ret
 
-	ENDP	Get_Mouse_X
+Get_Mouse_X	ENDP
 
 ;***************************************************************************
 ;* GET_MOUSE_STATE -- Returns the current mouse state			   *
@@ -715,8 +715,8 @@ endif;NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   08/29/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL C	Get_Mouse_State:NEAR
-	PROC	Get_Mouse_State C NEAR
+	EXTERNDEF C	Get_Mouse_State:NEAR
+Get_Mouse_State	PROC	NEAR C
 	USES	esi
 ifdef NOT_FOR_WIN95
 	mov	esi,[RealModePtr]
@@ -724,7 +724,7 @@ ifdef NOT_FOR_WIN95
 endif;ifdef NOT_FOR_WIN95
 	ret
 
-	ENDP	Get_Mouse_State
+Get_Mouse_State	ENDP
 
 ;***************************************************************************
 ;* GET_MOUSE_X -- Returns the mouses x pixel position                      *
@@ -740,8 +740,8 @@ endif;ifdef NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   08/29/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL C	Get_Mouse_Disabled:NEAR
-	PROC	Get_Mouse_Disabled C NEAR
+	EXTERNDEF C	Get_Mouse_Disabled:NEAR
+Get_Mouse_Disabled	PROC	NEAR C
 	USES	esi
 ifdef NOT_FOR_WIN95
 	mov	esi,[RealModePtr]
@@ -749,7 +749,7 @@ ifdef NOT_FOR_WIN95
 endif; NOT_FOR_WIN95
 	ret
 
-	ENDP	Get_Mouse_Disabled
+Get_Mouse_Disabled	ENDP
 
 ;***************************************************************************
 ;* GET_MOUSE_Y -- Returns the mouse's y pixel position                     *
@@ -765,8 +765,8 @@ endif; NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   08/29/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL C	Get_Mouse_Y:NEAR
-	PROC	Get_Mouse_Y C NEAR
+	EXTERNDEF C	Get_Mouse_Y:NEAR
+Get_Mouse_Y	PROC	NEAR C
 	USES	esi
 ifdef NOT_FOR_WIN95
 	mov	esi,[RealModePtr]
@@ -774,7 +774,7 @@ ifdef NOT_FOR_WIN95
 endif; NOT_FOR_WIN95
 	ret
 
-	ENDP	Get_Mouse_Y
+Get_Mouse_Y	ENDP
 
 ;***************************************************************************
 ;* GET_MOUSE_BUTTON -- Gets the values of the mouse button                 *
@@ -792,8 +792,8 @@ endif; NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   09/19/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL C	Get_Mouse_Button:NEAR
-	PROC	Get_Mouse_Button C NEAR
+	EXTERNDEF C	Get_Mouse_Button:NEAR
+Get_Mouse_Button	PROC	NEAR C
 	USES	eax,esi
 ifdef NOT_FOR_WIN95
 	mov	esi,[RealModePtr]
@@ -802,7 +802,7 @@ ifdef NOT_FOR_WIN95
 endif; NOT_FOR_WIN95
 	ret
 
-	ENDP	Get_Mouse_Button
+Get_Mouse_Button	ENDP
 
 ;***************************************************************************
 ;* SET_MOUSE_CURSOR -- Sets the shape to be used as the mouse.             *
@@ -825,8 +825,8 @@ endif; NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   02/13/1992 JLB : Created.                                             *
 ;*=========================================================================*
-	GLOBAL C	Set_Mouse_Cursor:NEAR
-	PROC	Set_Mouse_Cursor C NEAR
+	EXTERNDEF C	Set_Mouse_Cursor:NEAR
+Set_Mouse_Cursor	PROC	NEAR C
 	USES	ebx,ecx,edx,esi,edi
 
 	ARG	xhotspot:DWORD				; the x hot spot of the mouse
@@ -1038,7 +1038,7 @@ ifdef NOT_FOR_WIN95
 endif; NOT_FOR_WIN95
 	ret				; and return back to the world
 
-	ENDP	Set_Mouse_Cursor
+Set_Mouse_Cursor	ENDP
 
 
 ;***************************************************************************
@@ -1053,8 +1053,8 @@ endif; NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   09/19/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C Low_Hide_Mouse:NEAR
-	PROC	Low_Hide_Mouse C NEAR
+	EXTERNDEF	C Low_Hide_Mouse:NEAR
+Low_Hide_Mouse	PROC	NEAR C
 	USES	eax,ebx,esi
 ifdef NOT_FOR_WIN95
 	mov	ebx,[RealModePtr]			; get 32 bit offset of dos data
@@ -1085,7 +1085,7 @@ ifdef NOT_FOR_WIN95
 ??end:
 endif; NOT_FOR_WIN95
 	ret
-	ENDP	Low_Hide_Mouse
+Low_Hide_Mouse	ENDP
 
 ;***************************************************************************
 ;* LOW_SHOW_MOUSE -- Low level routine which shows the mouse		   *
@@ -1099,8 +1099,8 @@ endif; NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   09/19/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C Low_Show_Mouse:NEAR
-	PROC	Low_Show_Mouse C NEAR
+	EXTERNDEF	C Low_Show_Mouse:NEAR
+Low_Show_Mouse	PROC	NEAR C
 	USES	eax,ebx,ecx,edx,edi,esi
 	LOCAL	mousex:DWORD
 	LOCAL	mousey:DWORD
@@ -1159,7 +1159,7 @@ ifdef NOT_FOR_WIN95
 ??exit:
 endif; NOT_FOR_WIN95
 	ret
-	ENDP	Low_Show_Mouse
+Low_Show_Mouse	ENDP
 
 ;***************************************************************************
 ;* HIDE_MOUSE -- Hides mouse cursor on screen if it was show               *
@@ -1173,8 +1173,8 @@ endif; NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   11/03/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL C	Hide_Mouse:NEAR
-	PROC	Hide_Mouse C NEAR
+	EXTERNDEF C	Hide_Mouse:NEAR
+Hide_Mouse	PROC	NEAR C
 	USES	eax,esi
 ifdef NOT_FOR_WIN95
 	mov	esi,[RealModePtr]			; get the real mode offset
@@ -1188,7 +1188,7 @@ ifdef NOT_FOR_WIN95
 endif; NOT_FOR_WIN95
 	ret
 
-	ENDP	Hide_Mouse
+Hide_Mouse	ENDP
 
 ;----------------------------------------------------------------------------
 
@@ -1205,8 +1205,8 @@ endif; NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   11/03/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL C	Show_Mouse:NEAR
-	PROC	Show_Mouse C NEAR
+	EXTERNDEF C	Show_Mouse:NEAR
+Show_Mouse	PROC	NEAR C
 	USES	eax,esi
 ifdef NOT_FOR_WIN95
 	mov	esi,[RealModePtr]			; get the real mode offset
@@ -1219,7 +1219,7 @@ ifdef NOT_FOR_WIN95
 	dec	[(KeyboardType esi).MouseUpdate]	; were done drawing mouse
 endif;ifdef NOT_FOR_WIN95
 	ret
-	ENDP	Show_Mouse
+Show_Mouse	ENDP
 
 ;***************************************************************************
 ;* CONDITIONAL_HIDE_MOUSE -- Hides mouse if its with given region          *
@@ -1239,8 +1239,8 @@ endif;ifdef NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   11/03/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL C	Conditional_Hide_Mouse:NEAR
-	PROC	Conditional_Hide_Mouse C NEAR
+	EXTERNDEF C	Conditional_Hide_Mouse:NEAR
+Conditional_Hide_Mouse	PROC	NEAR C
 	USES	eax,ebx,ecx,edx,esi,edi
 
 	ARG	sx_pixel:DWORD				; left x pixel pos
@@ -1376,7 +1376,7 @@ ifdef NOT_FOR_WIN95
 endif; NOT_FOR_WIN95
 	ret
 
-	ENDP	Conditional_Hide_Mouse
+Conditional_Hide_Mouse	ENDP
 
 ;***************************************************************************
 ;* CONDITIONAL_SHOW_MOUSE -- shows mouse if it was conditionally hidden    *
@@ -1390,8 +1390,8 @@ endif; NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   11/03/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL C	Conditional_Show_Mouse:NEAR
-	PROC	Conditional_Show_Mouse C NEAR
+	EXTERNDEF C	Conditional_Show_Mouse:NEAR
+Conditional_Show_Mouse	PROC	NEAR C
 	USES	eax,esi
 ifdef NOT_FOR_WIN95
 	mov	esi,[RealModePtr]    ; get the real mode offset
@@ -1431,7 +1431,7 @@ ifdef NOT_FOR_WIN95
 	dec	[(KeyboardType esi).MouseUpdate]
 endif;ifdef NOT_FOR_WIN95
 	ret
-	ENDP	Conditional_Show_Mouse
+Conditional_Show_Mouse	ENDP
 
 
 
@@ -1452,8 +1452,8 @@ endif;ifdef NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   10/27/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C VGA_Mouse_Shadow_Buffer:NEAR
-	PROC	VGA_Mouse_Shadow_Buffer C NEAR
+	EXTERNDEF	C VGA_Mouse_Shadow_Buffer:NEAR
+VGA_Mouse_Shadow_Buffer	PROC	NEAR C
 	USES	eax,ebx,ecx,edx,edi,esi
 	ARG	store:DWORD
 
@@ -1624,7 +1624,7 @@ ifdef NOT_FOR_WIN95
 ??out:
 endif;ifdef NOT_FOR_WIN95
 	ret
-	ENDP	VGA_Mouse_Shadow_Buffer
+VGA_Mouse_Shadow_Buffer	ENDP
 
 ;***************************************************************************
 ;* DRAW_MOUSE -- Handles drawing the mouse cursor			   *
@@ -1638,8 +1638,8 @@ endif;ifdef NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   10/27/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL C	VGA_Draw_Mouse:NEAR
-	PROC	VGA_Draw_Mouse C NEAR
+	EXTERNDEF C	VGA_Draw_Mouse:NEAR
+VGA_Draw_Mouse	PROC	NEAR C
 	USES	eax,ebx,ecx,edx,edi,esi
 	ARG	mousex:DWORD
 	ARG	mousey:DWORD
@@ -1798,7 +1798,7 @@ ifdef NOT_FOR_WIN95
 endif; NOT_FOR_WIN95
 	ret
 
-	ENDP	VGA_Draw_Mouse
+VGA_Draw_Mouse	ENDP
 
 
 ;***************************************************************************
@@ -1818,8 +1818,8 @@ endif; NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   10/27/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C VESA_Mouse_Shadow_Buffer:NEAR
-	PROC	VESA_Mouse_Shadow_Buffer C NEAR
+	EXTERNDEF	C VESA_Mouse_Shadow_Buffer:NEAR
+VESA_Mouse_Shadow_Buffer	PROC	NEAR C
 	USES	eax,ebx,ecx,edx,edi,esi
 	ARG	store:DWORD
 
@@ -2039,7 +2039,7 @@ ifdef NOT_FOR_WIN95
 
 endif; NOT_FOR_WIN95
 	ret
-	ENDP	VESA_Mouse_Shadow_Buffer
+VESA_Mouse_Shadow_Buffer	ENDP
 
 ;***************************************************************************
 ;* DRAW_MOUSE -- Handles drawing the mouse cursor			   *
@@ -2053,8 +2053,8 @@ endif; NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   10/27/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL C	VESA_Draw_Mouse:NEAR
-	PROC	VESA_Draw_Mouse C NEAR
+	EXTERNDEF C	VESA_Draw_Mouse:NEAR
+VESA_Draw_Mouse	PROC	NEAR C
 	USES	eax,ebx,ecx,edx,edi,esi
 	ARG	mousex:DWORD
 	ARG	mousey:DWORD
@@ -2239,7 +2239,7 @@ ifdef NOT_FOR_WIN95
 endif; NOT_FOR_WIN95
 	ret
 
-	ENDP	VESA_Draw_Mouse
+VESA_Draw_Mouse	ENDP
 
 
 ;----------------------------------------------------------------------------

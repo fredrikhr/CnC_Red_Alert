@@ -37,15 +37,15 @@
 ;*   __DRAW_LINE -- Assembly routine to draw a line                        *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <.\drawbuff.inc>
+INCLUDE <.\gbuffer.inc>
 
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 
 
@@ -65,7 +65,7 @@ CODESEG
 ;*   06/16/1994 PWG : Created.                                             *
 ;*   08/30/1994 IML : Fixed clipping bug.				   *
 ;*=========================================================================*
-	PROC	Buffer_Draw_Line C NEAR
+Buffer_Draw_Line	PROC	NEAR C
 	USES	eax,ebx,ecx,edx,esi,edi
 
 	;*==================================================================
@@ -458,7 +458,7 @@ CODESEG
 
 ??out:
 	ret
-	ENDP	Buffer_Draw_Line
+Buffer_Draw_Line	ENDP
 
 
 END

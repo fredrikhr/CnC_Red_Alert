@@ -33,13 +33,13 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
-LOCALS ??
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
+;LOCALS ??
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE "gbuffer.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
 
 
 ; typedef struct {
@@ -49,56 +49,53 @@ INCLUDE "gbuffer.inc"
 ; Note for efficiency reasons x1 must be >= x0 and y1 >= y0
 ; int get_clip ( CLIP_WIN * window , CLIP_WIN * sorce_rect ) ;
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
-	PROC	get_clip C near
-	USES	eax , ebx
-
-	;*===================================================================
-	;* define the arguements that our function takes.
-	;*===================================================================
-	ARG	win	    : dword
-	ARG     rect	    : dword
+get_clip	PROC	near C	USES	eax ebx,
+	win		: dword,
+	rect	: dword
 
 
-	mov	edi , [ rect ]
+	mov		edi , [ rect ]
+	assume 	edi : PTR RECTANGLE
 	mov  	esi , [ win ]
+	assume	esi	: PTR RECTANGLE
 	xor 	eax , eax
 	xor 	edx , edx
 
-	mov	ecx , [ (RECTANGLE edi) . x0 ]
-	mov	ebx , [ (RECTANGLE edi) . x1 ]
-	sub	ecx , [ (RECTANGLE esi) . x0 ]
-	sub	ebx , [ (RECTANGLE esi) . x0 ]
+	mov	ecx , [ edi ] . x0
+	mov	ebx , [ edi ] . x1
+	sub	ecx , [ esi ] . x0
+	sub	ebx , [ esi ] . x0
 	shld	eax , ecx , 1
 	shld	edx , ebx , 1
 
-;	mov	ebx , [ (RECTANGLE esi) . x1 ]
+;	mov	ebx , [ esi ] . x1
 ;	inc	ebx
 ;	mov	[ rect ] , ebx
-	mov	ecx , [ (RECTANGLE edi) . x0 ]
-	mov	ebx , [ (RECTANGLE edi) . x1 ]
-	sub	ecx , [ (RECTANGLE esi) . x1 ]
-	sub	ebx , [ (RECTANGLE esi) . x1 ]
+	mov	ecx , [ edi ] . x0
+	mov	ebx , [ edi ] . x1
+	sub	ecx , [ esi ] . x1
+	sub	ebx , [ esi ] . x1
 	dec	ecx
 	dec	ebx
 	shld	eax , ecx , 1
 	shld	edx , ebx , 1
 
-	mov	ecx , [ (RECTANGLE edi) . y0 ]
-	mov	ebx , [ (RECTANGLE edi) . y1 ]
-	sub	ecx , [ (RECTANGLE esi) . y0 ]
-	sub	ebx , [ (RECTANGLE esi) . y0 ]
+	mov	ecx , [ edi ] . y0
+	mov	ebx , [ edi ] . y1
+	sub	ecx , [ esi ] . y0
+	sub	ebx , [ esi ] . y0
 	shld	eax , ecx , 1
 	shld	edx , ebx , 1
 
-;	mov	ebx , [ (RECTANGLE esi) . y1 ]
+;	mov	ebx , [ esi ] . y1
 ;	inc	ebx
 ;	mov	[ rect ] , ebx
-	mov	ecx , [ (RECTANGLE edi) . y0 ]
-	mov	ebx , [ (RECTANGLE edi) . y1 ]
-	sub	ecx , [ (RECTANGLE esi) . y1 ]
-	sub	ebx , [ (RECTANGLE esi) . y1 ]
+	mov	ecx , [ edi ] . y0
+	mov	ebx , [ edi ] . y1
+	sub	ecx , [ esi ] . y1
+	sub	ebx , [ esi ] . y1
 	dec	ecx
 	dec	ebx
 	shld	eax , ecx , 1
@@ -108,7 +105,7 @@ CODESEG
 	xor	dl , 5
 	mov	ah , dl
 	ret
-       ENDP	get_clip
+get_clip	ENDP
 
 
 

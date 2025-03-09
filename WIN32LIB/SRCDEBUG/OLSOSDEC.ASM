@@ -41,17 +41,17 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
+	; Converted TASM IDEAL to MASM
+	.386P
+	.MODEL	FLAT
+	;LOCALS	??
 
 
 DPMI_INTR		equ	31h
 IF_LOCKED_PM_CODE	equ	1h		; Locked PM code for DPMI.
 IF_LOCKED_PM_DATA	equ	2h		; Locked PM code for DPMI.
 
-	STRUC	sCompInfo
+sCompInfo	STRUC
 lpSource		DD	?	;Compressed data pointer
 lpDest			DD	?	;Uncompressed data pointer
 dwCompSize		DD	?	;Compressed size
@@ -75,15 +75,15 @@ wIndex2		DW	?	;Index into step table
 
 wBitSize		DW	?	;Bit size for decompression
 wChannels		DW	?    	;number of channels
-	ENDS	sCompInfo
+sCompInfo	ENDS
 
-	DATASEG
+	.DATA	; converted from TASM: DATASEG
 
 
 InitFlags	DD	0		; Flags to indicate what has been initialized.
 
 
-LABEL	LockedDataStart	BYTE
+LockedDataStart	LABEL	BYTE
 
 ;* Index table for stepping into step table
 
@@ -130,12 +130,12 @@ wCODECStepTab	DW	7,  	8,  	9,   	10,   	11,  	12,   	13,14
 ;dwCODECTempStep		DD	0 ; tempory storage for step value
 ;wCODECMask			DW	0 ; Current mask
 
-LABEL	LockedDataEnd	BYTE
+LockedDataEnd	LABEL	BYTE
 
 
-	CODESEG
+	.CODE	; converted from TASM: CODESEG
 
-LABEL	LockedCodeStart	BYTE
+LockedCodeStart	LABEL	BYTE
 
 ;****************************************************************************
 ;*
@@ -158,8 +158,8 @@ LABEL	LockedCodeStart	BYTE
 ;*
 ;****************************************************************************
 
-	GLOBAL	C sosCODECInitStream:NEAR
-	PROC	sosCODECInitStream C NEAR
+	EXTERNDEF	C sosCODECInitStream:NEAR
+sosCODECInitStream	PROC	NEAR C
 
 	ARG	sSOSInfo:NEAR PTR
 
@@ -174,7 +174,7 @@ LABEL	LockedCodeStart	BYTE
 	mov	[(sCompInfo eax).dwSampleIndex2],0 	;start at head of index
 	ret
 
-	ENDP	sosCODECInitStream
+sosCODECInitStream	ENDP
 
 
 
@@ -201,8 +201,8 @@ LABEL	LockedCodeStart	BYTE
 ;*
 ;****************************************************************************
 
-	GLOBAL	C General_sosCODECDecompressData:NEAR
-	PROC	General_sosCODECDecompressData C NEAR
+	EXTERNDEF	C General_sosCODECDecompressData:NEAR
+General_sosCODECDecompressData	PROC	NEAR C
 
 	ARG	sSOSInfo:NEAR PTR
 	ARG	wBytes:DWORD
@@ -648,9 +648,9 @@ LABEL	LockedCodeStart	BYTE
 	pop	esi
 	ret
 
-	ENDP	General_sosCODECDecompressData
+General_sosCODECDecompressData	ENDP
 
-LABEL	LockedCodeEnd	BYTE
+LockedCodeEnd	LABEL	BYTE
 
 ;***************************************************************************
 ;* sosCODEC_LOCK -- locks the JLB audio decompression code		   *
@@ -664,8 +664,8 @@ LABEL	LockedCodeEnd	BYTE
 ;* HISTORY:								   *
 ;*   06/26/1995 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C sosCODEC_Lock:NEAR
-	PROC	sosCODEC_Lock C NEAR USES ebx ecx edx esi edi
+	EXTERNDEF	C sosCODEC_Lock:NEAR
+sosCODEC_Lock	PROC	NEAR C USES ebx ecx edx esi edi
 
 	;
 	; Lock the code that is used by the sos decompression method.
@@ -699,7 +699,7 @@ LABEL	LockedCodeEnd	BYTE
 	xor	eax,eax
 ??exit:
 	ret
-	ENDP	sosCODEC_Lock
+sosCODEC_Lock	ENDP
 
 ;***************************************************************************
 ;* DECOMPRESS_FRAME_UNLOCK -- Unlocks the JLB audio compression code       *
@@ -713,8 +713,8 @@ LABEL	LockedCodeEnd	BYTE
 ;* HISTORY:								   *
 ;*   06/26/1995 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C sosCODEC_Unlock:NEAR
-	PROC	sosCODEC_Unlock C NEAR USES ebx ecx edx esi edi
+	EXTERNDEF	C sosCODEC_Unlock:NEAR
+sosCODEC_Unlock	PROC	NEAR C USES ebx ecx edx esi edi
 
 	test	[InitFlags],IF_LOCKED_PM_CODE
 	jz	??code_not_locked
@@ -749,7 +749,7 @@ LABEL	LockedCodeEnd	BYTE
 	xor	eax,eax
 ??exit:
 	ret
-	ENDP	sosCODEC_Unlock
+sosCODEC_Unlock	ENDP
 
 
 	END

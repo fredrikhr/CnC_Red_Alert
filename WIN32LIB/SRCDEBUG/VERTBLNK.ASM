@@ -39,19 +39,19 @@
 ;*                                                                         *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-LOCALS ??
+;LOCALS ??
 
-GLOBAL             Get_Vert_Blank       : NEAR
-GLOBAL             Wait_Vert_Blank      : NEAR
-GLOBAL		   get_vga_state	: NEAR
-GLOBAL		   set_vga_mode		: NEAR
+EXTERNDEF             Get_Vert_Blank       : NEAR
+EXTERNDEF             Wait_Vert_Blank      : NEAR
+EXTERNDEF		   get_vga_state	: NEAR
+EXTERNDEF		   set_vga_mode		: NEAR
 
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 ; ----------------------------------------------------------------
 ;
@@ -67,21 +67,21 @@ CODESEG
 
 ;----------------------------------------------------------------------------
 
-PROC	Get_Vert_Blank C near
+Get_Vert_BlankPROC	near C
 	USES edx
-		
+
 	mov	dx,03DAH	; CRTC status register
 	in	al,dx
 	and	al,008H		; look at bit 3 vertical sync
 	xor	ah,ah		; zero ah
 	ret
 
-ENDP	Get_Vert_Blank
+Get_Vert_Blank	ENDP
 
 ;----------------------------------------------------------------------------
 
 ;----------------------------------------------------------------------------
-PROC	Wait_Vert_Blank C near
+Wait_Vert_BlankPROC	near C
 	USES eax,ebx,edx
 	ARG	blank:DWORD
 
@@ -106,31 +106,31 @@ PROC	Wait_Vert_Blank C near
 
 	ret
 
-ENDP	Wait_Vert_Blank
+Wait_Vert_Blank	ENDP
 
 ;----------------------------------------------------------------------------
 
 ; WORD get_vga_state (VOID) ;
 
-PROC	get_vga_state C near
+get_vga_statePROC	near C
 	USES  ebx
 	mov   eax,0f00h
 	int   10h
 	and   eax, 0ffh
 	ret
-ENDP	get_vga_state
+get_vga_state	ENDP
 
 ;----------------------------------------------------------------------------
 
 ; VOID set_vga_mode (WORD) ;
 
-PROC   set_vga_mode C near
+set_vga_modePROC   near C
 	ARG   mode:dword
 	mov   eax , [mode]
-	and   eax , 0ffh	
+	and   eax , 0ffh
 	int   10h
 	ret
-ENDP   set_vga_mode
+set_vga_mode   ENDP
 
 
 

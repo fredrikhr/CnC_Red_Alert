@@ -34,13 +34,13 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-GLOBAL	C Shake_Screen	:NEAR
+EXTERNDEF	C Shake_Screen	:NEAR
 
-	CODESEG
+	.CODE	; converted from TASM: CODESEG
 
 ;***********************************************************
 ; SHAKE_SCREEN
@@ -52,7 +52,7 @@ GLOBAL	C Shake_Screen	:NEAR
 ; Bounds Checking: None
 ;
 ;*
-	PROC	Shake_Screen C near
+Shake_Screen	PROC	near C
 	USES	ecx, edx
 
 	ARG	shakes:DWORD
@@ -151,7 +151,7 @@ GLOBAL	C Shake_Screen	:NEAR
 
 	ret
 
-	ENDP	Shake_Screen
+Shake_Screen	ENDP
 
 ;***********************************************************
 

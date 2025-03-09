@@ -55,17 +55,17 @@
 ;---------------------------------------------------------------------------
 ; Set the assembly directives
 ;---------------------------------------------------------------------------
-IDEAL				; the product runs in ideal mode
-P386N				; use 386 real mode instructions
-MODEL TINY			; code must be tiny so it fits
-LOCALS ??			; ?? is the symbol for a local
-WARN				; generate all warnings we can
-JUMPS				; optimize jumps if possible
+; Converted TASM IDEAL to MASM				; the product runs in ideal mode
+.386				; use 386 real mode instructions
+;.MODEL TINY			; code must be tiny so it fits
+;LOCALS ??			; ?? is the symbol for a local
+;WARN				; generate all warnings we can
+;JUMPS				; optimize jumps if possible
 
 ;---------------------------------------------------------------------------
 ; Include all of the keyboard specific defines
 ;---------------------------------------------------------------------------
-INCLUDE "keyboard.inc"
+INCLUDE <keyboard.inc>
 
 CONDHIDE		EQU	08000H		; bit for testing conditional region
 CONDHIDDEN		EQU	04000H		; bit for testing conditional hidden
@@ -73,10 +73,10 @@ RESTORE_VISIBLE_PAGE	EQU	0
 STORE_VISIBLE_PAGE	EQU	1
 
 
-GLOBAL	set_vesa_page 	:near
-GLOBAL	set_vesa_window :near
-GLOBAL	get_vesa_window :near
-GLOBAL	next_vesa_page	:near
+EXTERNDEF C	set_vesa_page 	:near
+EXTERNDEF C	set_vesa_window :near
+EXTERNDEF C	get_vesa_window :near
+EXTERNDEF C	next_vesa_page	:near
 
 ECHOON	equ 0
 ;---------------------------------------------------------------------------
@@ -85,7 +85,8 @@ ECHOON	equ 0
 ;   proper changes to KEYSTRUC.INC.  If you do not know what you are doing,
 ;   find someone who does!!!
 ;---------------------------------------------------------------------------
-CODESEG
+;.CODE	; converted from TASM: CODESEG
+_TEXT	SEGMENT USE16 'CODE'
 
 ;---------------------------------------------------------------------------
 ; Begin definition of Keyboard specific variables
@@ -197,7 +198,7 @@ XYAdjust	DB	-ADJUST, -ADJUST	; 91 -> upleft
 	ExtIndex		DW	0
 
 	KeyOldRMI		DD	0			; The origianl RM interrupt seg:off.
-	KeyOldPMIOffset		DD	0			; The origianl PM interrupt offset		
+	KeyOldPMIOffset		DD	0			; The origianl PM interrupt offset
 	KeyOldPMISelector	DD	0			; The original PM interrupt segment.
 
 	KeyCodeOffset		DW	RM_Keystroke_Interrupt	; Offset of the code in the RM stuff.
@@ -206,7 +207,7 @@ XYAdjust	DB	-ADJUST, -ADJUST	; 91 -> upleft
 	PMIssuedKeyInt		DD	0
 
 	BrkOldRMI		DD	0			; The origianl RM interrupt seg:off.
-	BrkOldPMIOffset		DD	0			; The origianl PM interrupt offset		
+	BrkOldPMIOffset		DD	0			; The origianl PM interrupt offset
 	BrkOldPMISelector	DD	0			; The original PM interrupt segment.
 
 	BrkCodeOffset		DW	RM_Break_Interrupt	; Offset of the code in the RM stuff.
@@ -215,7 +216,7 @@ XYAdjust	DB	-ADJUST, -ADJUST	; 91 -> upleft
 	PMIssuedBrkInt		DD	0
 	KeyIntDisabled		DD	0
 
-	DbgOldPMIOffset		DD	0	; The origianl PM interrupt offset		
+	DbgOldPMIOffset		DD	0	; The origianl PM interrupt offset
 	DbgOldPMISelector	DD	0	; The original PM interrupt segment.
 
 ;---------------------------------------------------------------------------
@@ -224,13 +225,13 @@ XYAdjust	DB	-ADJUST, -ADJUST	; 91 -> upleft
 Button			DB	0	; current value of the mouse button
 MDisabled		DB	0	; Is the mouse driver disabled
 MInput			DB	1	; Defaults to mouse input allowed.
-Adjust			DW	0	; flag to adjust coordinates if necessary
+_Adjust			DW	0	; flag to adjust coordinates if necessary
 MouseStepX		DW	0	; step values if the mouse moves at
 MouseStepY		DW	0	;   more than one pixel at a time
 MouseOffsetX		DW	0	; Fractional step values used if a mouse
 MouseOffsetY		DW	0	;   moves at less than one pixel at a time
 MState			DW	0,0	; Tracks if mouse is hidden (TRUE) or not (FALSE)
-MouseXOld     		DW	0	; Holds last MouseX and MouseY to determine if 
+MouseXOld     		DW	0	; Holds last MouseX and MouseY to determine if
 MouseYOld     		DW	0	;   mouse needs to be redrawn
 MCState			DW	0	; Tracks if mouse conditional hidden (TRUE) or not
 MouseCXLeft		DW	0,0	; Conditional hide mouse left x position
@@ -262,10 +263,10 @@ VGAMouseShadow		dw	VGA_Mouse_Shadow_Buffer
 VESAMouseDraw		dw	VESA_Draw_Mouse
 VESAMouseShadow		dw	VESA_Mouse_Shadow_Buffer
 
-VesaPtr			dd	0	
+VesaPtr			dd	0
 banktable		dd      8 dup ( 0 )
 Adjust_XPos		dw 	0 , 0
-Adjust_YPos		dw 	0 , 0 
+Adjust_YPos		dw 	0 , 0
 
 
 
@@ -284,10 +285,9 @@ current_page		dw	0
 ;* HISTORY:                                                                *
 ;*   07/11/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	KeyNum_Translate:FAR
-	PROC	KeyNum_Translate C FAR 
-	USES	cx,di,es,ds
-	ARG	keycode:WORD
+	EXTERNDEF C	KeyNum_Translate:FAR
+KeyNum_Translate	PROC	FAR C	USES	cx di es ds,
+	keycode:WORD
 
 	mov	ax,cs				; since we are in tiny model
 	mov	ds,ax				; set cs = ds
@@ -306,10 +306,10 @@ current_page		dw	0
 	mov	di,OFFSET ExtRemapEnd
 	dec	di
 	sub	di,cx
-	mov	al,[es:di]
+	mov	al,es:[di]
 ??fini:
 	ret
-	ENDP	KeyNum_Translate
+KeyNum_Translate	ENDP
 
 ;***************************************************************************
 ;* STUFF_KEY_WORD -- Stuffs a word of data into keyboard buffer            *
@@ -323,10 +323,9 @@ current_page		dw	0
 ;* HISTORY:                                                                *
 ;*   07/11/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C Stuff_Key_WORD:FAR
-	PROC	Stuff_Key_WORD C FAR 
-	USES	si,bx,ds
-	ARG	code:WORD
+	EXTERNDEF	C Stuff_Key_WORD:FAR
+Stuff_Key_WORD	PROC	FAR C	USES	si bx ds,
+	code:WORD
 
 	mov	ax,cs				; since we are in tiny model
 	mov	ds,ax				; set cs = ds
@@ -348,7 +347,7 @@ current_page		dw	0
 	mov	ax,1
 	ret
 
-	ENDP	Stuff_Key_WORD
+Stuff_Key_WORD	ENDP
 
 ;***************************************************************************
 ;* STUFF_KEY_NUM -- Stuffs a key num code into the circular buffer         *
@@ -362,12 +361,11 @@ current_page		dw	0
 ;* HISTORY:                                                                *
 ;*   07/11/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C Stuff_Key_Num:FAR
-	PROC	Stuff_Key_Num C FAR 
-	USES	bx,cx,dx,di,si,ds
-	ARG	keycode:WORD
+	EXTERNDEF	C Stuff_Key_Num:FAR
+Stuff_Key_Num	PROC	FAR C	USES	bx cx dx di si ds,
+	keycode:WORD
 	LOCAL	tail:WORD		; Original keybuffer tail (safety copy).
-	LOCAL	size:WORD		; Size of write.
+	LOCAL	_size:WORD		; Size of write.
 
 	pushf
 	cli				; disable interrupts
@@ -573,9 +571,9 @@ current_page		dw	0
 
 ??no_pad_move:
 	; Fetch working pointers to the keyboard ends.
-	mov	si,[WORD KeyBufferTail]
+	mov	si,WORD PTR [KeyBufferTail]
 	mov	[tail],si		; Safety record.
-	mov	di,[WORD PTR KeyBufferHead]
+	mov	di,WORD PTR [KeyBufferHead]
 
 	; Record the base keycode (if there is room).
 	push	ax
@@ -603,7 +601,7 @@ current_page		dw	0
 	add	sp,2
 	or	ax,ax
 	jne	??jmpnoroom
-	add	[size],2
+	add	[_size],2
 
 	; Record mouse coordinate Y.
 	push	[LocalMouseY]
@@ -611,8 +609,8 @@ current_page		dw	0
 	add	sp,2
 	or	ax,ax
 	jne	??jmpnoroom
-	add	[size],2
-	
+	add	[_size],2
+
 ??ok:
 	; If PASSBREAKS is not active and this is a keyboard
 	; break AND it is not a mouse event, then don't put
@@ -673,7 +671,7 @@ current_page		dw	0
 	popf
 	ret
 
-	ENDP	Stuff_Key_Num
+Stuff_Key_Num	ENDP
 ;***********************************************************
 
 
@@ -694,9 +692,9 @@ current_page		dw	0
 ;* HISTORY:                                                                *
 ;*   07/13/1994 PWG : Created.                                             *
 ;*=========================================================================*
-label RM_Keystroke_Interrupt
-	GLOBAL	C Keystroke_Interrupt:FAR
-	PROC	Keystroke_Interrupt C FAR 
+RM_Keystroke_Interrupt label FAR PTR
+	EXTERNDEF	C Keystroke_Interrupt:FAR
+Keystroke_Interrupt	PROC	FAR C
 
 IF 0
 	push	ax
@@ -721,14 +719,14 @@ ELSE
 
 
 	cmp	[WORD PTR PMIssuedKeyInt],0; Check to see if PM made Int call.
-	mov	[WORD PTR PMIssuedKeyInt],0; Make it false.		
+	mov	[WORD PTR PMIssuedKeyInt],0; Make it false.
 	jne	??passcode	; if so, just call Int Chain.
 
 
 	mov	dx,[WORD PTR KeyFlags]
 	;*** The following fix allows proper caps and num lock tracking on Tandy
 	; 10-6-89 LJC, DRD
-					
+
 	and	[KeyLock],NOT (NUMLOCK OR CAPSLOCK); assume caps and num inactive
 	mov	ax,040H			; BIOS segment
 	mov	es,ax			; put in es
@@ -818,10 +816,13 @@ ELSE
 	mov	di,OFFSET ExtCodes	; get offset of extended codes table
 	mov	cx,(ExtNums-ExtCodes)	; get number of entrys in ext table
 	repne	scasb			; look for a match
-	jcxz	??absorbcode		; Not recognized, so throw it away.
+	jcxz	??absorbcodeljmp; Not recognized, so throw it away.
 	mov	al,[(ExtNums - ExtCodes) - 1 + di] ; get the match
 	mov	[IsExtKey],FALSE	; it is not an extended key
 	jmp 	short ??notext
+
+??absorbcodeljmp:
+	jmp		??absorbcode
 
 ??normal:
 	cmp	al,07Ah
@@ -935,7 +936,7 @@ IF DEBUG
 ??justpass:
 	jmp	??passcode
 
-??not_currently_disabled:	
+??not_currently_disabled:
 	cmp	ax,125
 	jne	??not_toggle
 	mov	[KeyIntDisabled],1
@@ -1061,10 +1062,10 @@ ENDIF
 	pop	cx
 	pop	bx
 	pop	ax
-	iret	
+	iret
 ENDIF
 
-	ENDP	Keystroke_Interrupt
+Keystroke_Interrupt	ENDP
 
 ;***************************************************************************
 ;* Break interrupt routines begin here!
@@ -1082,9 +1083,9 @@ ENDIF
 ;* HISTORY:                                                                *
 ;*   07/13/1994 PWG : Created.                                             *
 ;*=========================================================================*
-label RM_Break_Interrupt
-	GLOBAL	C Break_Interrupt:FAR
-	PROC	Break_Interrupt C FAR
+RM_Break_Interrupt label FAR PTR
+	EXTERNDEF	C Break_Interrupt:FAR
+Break_Interrupt	PROC	FAR C
 
 
 	pushf
@@ -1094,16 +1095,16 @@ label RM_Break_Interrupt
 	mov	ax,0B000h		; ES:DI = Mono RAM address.
 	mov	es,ax
 	inc	[BYTE PTR es:0]
-		
+
 
 	pop	es
 	pop	ax
 	popf
 
 
-	iret	
+	iret
 
-	ENDP	Break_Interrupt
+Break_Interrupt	ENDP
 
 ;**************************************************************************
 ;* CALL_INTERRUPT_CHAIN -- Function PM calls to call the RM interrupt chain*
@@ -1124,7 +1125,7 @@ Call_Interrupt_Chain:
 ;----------------------------------------------------------------------------
 ; LOW_HIDE_MOUSE:
 ;
-; This function hides the mouse cursor on the screen if it was shown.  It 
+; This function hides the mouse cursor on the screen if it was shown.  It
 ; will not hide the mouse if it is already hidden.
 ;
 ; PROTOTYPE:
@@ -1135,9 +1136,8 @@ Call_Interrupt_Chain:
 ;
 ;----------------------------------------------------------------------------
 
- 	GLOBAL	C Low_Hide_Mouse:FAR
-	PROC	Low_Hide_Mouse C FAR 
-	USES	ax,bx,cx,dx,ds
+ 	EXTERNDEF	C Low_Hide_Mouse:FAR
+Low_Hide_Mouse	PROC	FAR C	USES	ax bx cx dx ds
 
 	mov	ax,cs				; since we are in tiny model
 	mov	ds,ax				; set cs = ds
@@ -1164,7 +1164,7 @@ Call_Interrupt_Chain:
 ??end:
 	ret
 
-	ENDP	Low_Hide_Mouse
+Low_Hide_Mouse	ENDP
 
 ;----------------------------------------------------------------------------
 
@@ -1180,11 +1180,10 @@ Call_Interrupt_Chain:
 ; NOTE: does not check if mouse is currently being updated.
 ;----------------------------------------------------------------------------
 
- 	GLOBAL	C Low_Show_Mouse:FAR
-	PROC	Low_Show_Mouse C FAR 
-	USES 	ax,bx,cx,dx,si,di,ds,es
-	LOCAL	mousex:WORD		; Draw X position.
-	LOCAL	mousey:WORD		; Draw Y position.
+ 	EXTERNDEF	C Low_Show_Mouse:FAR
+Low_Show_Mouse	PROC	FAR C	USES 	ax bx cx dx si di ds es
+	LOCAL	_mousex:WORD		; Draw X position.
+	LOCAL	_mousey:WORD		; Draw Y position.
 
 	mov	ax,cs				; since we are in tiny model
 	mov	ds,ax				; set cs = ds
@@ -1206,7 +1205,7 @@ Call_Interrupt_Chain:
 
 	mov	ax,[MouseX]
 ;	sub	ax,[MouseXHot]
-	mov	[mousex],ax		; Draw X pixel.
+	mov	[_mousex],ax		; Draw X pixel.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 IF 0
 ;	jns	short ??xnotneg
@@ -1218,7 +1217,7 @@ ENDIF
 
 	mov	bx,[MouseY]
 ;	sub	bx,[MouseYHot]
-	mov	[mousey],bx		; Draw Y pixel.
+	mov	[_mousey],bx		; Draw Y pixel.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 IF 0
@@ -1244,22 +1243,21 @@ ENDIF
 	add	sp,2
 
 ;------	Draw the mouse shape to the seenpage.
-	push	[mousey]
-	push	[mousex]
+	push	[_mousey]
+	push	[_mousex]
 	push	cs
 	call	[ DrawMousePtr ]
 	add	sp,4
 ??exit:
 	ret
 
-	ENDP	Low_Show_Mouse
+Low_Show_Mouse	ENDP
 
 ;----------------------------------------------------------------------------
 ;----------------------------------------------------------------------------
-	GLOBAL	C Mouse_KeyNum:FAR
-	PROC	Mouse_KeyNum C FAR 
-	USES	bx
-	ARG	state:WORD		; Current mouse state.
+	EXTERNDEF	C Mouse_KeyNum:FAR
+Mouse_KeyNum	PROC	FAR C	USES	bx,
+	state:WORD		; Current mouse state.
 	LOCAL	keynum:WORD		; Determined keynum.
 
 	mov	ax,cs				; since we are in tiny model
@@ -1296,7 +1294,7 @@ ENDIF
 	mov	ax,[keynum]
 	ret
 
-	ENDP	Mouse_KeyNum
+Mouse_KeyNum	ENDP
 
 ;----------------------------------------------------------------------------
 
@@ -1331,9 +1329,8 @@ ENDIF
 ; PROTOTYPE:
 ;	This routine is called from an interrupt.
 ;----------------------------------------------------------------------------
-label RM_Mouse_Interrupt
-	PROC	Mouse_Int C FAR 
-	USES	ax,bx,cx,dx,ds,si,es,di
+RM_Mouse_Interrupt label FAR PTR
+Mouse_Int	PROC	FAR C	USES	ax bx cx dx ds si es di
 	LOCAL	cond:WORD		; Local copy of mouse event.
 	LOCAL	state:WORD		; Local copy of button state.
 
@@ -1369,7 +1366,7 @@ label RM_Mouse_Interrupt
 
 ;------	In EEGA mode mouse X coordinates as 0..639.  Make adjustment
 ;	to keep within 0..319 range.
-	cmp	[Adjust],1		; if the x coordinate is returned
+	cmp	[_Adjust],1		; if the x coordinate is returned
 	jne	short ??noadjust	; incorrectly then
 	shr	cx,1			; adjust x coord from 640 pixel screen
 ??noadjust:
@@ -1418,8 +1415,8 @@ label RM_Mouse_Interrupt
 	test	[KeyFlags],KEYMOUSE
 	jne	short ??nostuffit
 
-	call	Mouse_KeyNum C,[state]	; Convert mouse state to key number code.
-	call	Stuff_Key_Num C,ax	; Record mouse keynumber code.
+	invoke	Mouse_KeyNum,[state]	; Convert mouse state to key number code.
+	invoke	Stuff_Key_Num,ax	; Record mouse keynumber code.
 ??nostuffit:
 
 
@@ -1492,7 +1489,7 @@ christopher:
 ;	before we update its position.
 	call	Low_Hide_Mouse
 
-;------	Conditional region check goes here.  If the mouse falls within the 
+;------	Conditional region check goes here.  If the mouse falls within the
 ;	conditional region, it gets marked as hidden and no other processing
 ;	occurs.
 	test	[MCState],CONDHIDE
@@ -1523,7 +1520,7 @@ christopher:
 
 ??exit:
 	ret
-	ENDP	Mouse_Int
+Mouse_Int	ENDP
 
 
 
@@ -1543,10 +1540,9 @@ christopher:
 ;* HISTORY:                                                                *
 ;*   10/27/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C VGA_Mouse_Shadow_Buffer:FAR
-	PROC	VGA_Mouse_Shadow_Buffer C FAR 
-	USES	ax,bx,cx,dx,di,si,ds,es
-	ARG	store:WORD
+	EXTERNDEF	C VGA_Mouse_Shadow_Buffer:FAR
+VGA_Mouse_Shadow_Buffer	PROC	FAR C	USES	ax bx cx dx di si ds es,
+	store:WORD
 
 	local	x0 : word
 	local	y0 : word
@@ -1573,13 +1569,13 @@ christopher:
 	mov	bx,[MouseBuffY]
 	sub	ax , [ MouseXHot ]
 	sub	bx , [ MouseYHot ]
-	mov	[ x0 ] , ax  
-	mov	[ y0 ] , bx  
+	mov	[ x0 ] , ax
+	mov	[ y0 ] , bx
 
 	add	ax , [MouseBuffW]
 	add	bx , [MouseBuffH]
-	mov	[ x1 ] , ax  
-	mov	[ y1 ] , bx  
+	mov	[ x1 ] , ax
+	mov	[ y1 ] , bx
 
 	mov	[ buffx0 ] , 0
 	mov 	ax , [ word ptr MouseBuffer ]
@@ -1592,40 +1588,40 @@ christopher:
 	xor 	ax , ax
 	xor 	dx , dx
 
-	mov	cx , [ x0 ]  
-	mov	bx , [ x1 ]  
+	mov	cx , [ x0 ]
+	mov	bx , [ x1 ]
 	add	cx , cx
-	adc	ax , ax 
+	adc	ax , ax
 	add	bx , bx
-	adc	dx , dx 
+	adc	dx , dx
 
-	mov	cx , [ x0 ]  
-	mov	bx , [ x1 ]  
+	mov	cx , [ x0 ]
+	mov	bx , [ x1 ]
 	sub	cx , [ MouseRight ]
 	sub	bx , [ MouseRight ]
 	dec	cx
 	dec	bx
 	add	cx , cx
-	adc	ax , ax 
-	add	bx , bx 
+	adc	ax , ax
+	add	bx , bx
 	adc	dx , dx
 
-	mov	cx , [ y0 ]  
-	mov	bx , [ y1 ]  
+	mov	cx , [ y0 ]
+	mov	bx , [ y1 ]
 	add	cx , cx
-	adc	ax , ax 
-	add	bx , bx 
+	adc	ax , ax
+	add	bx , bx
 	adc	dx , dx
 
-	mov	cx , [ y0 ]  
-	mov	bx , [ y1 ]  
+	mov	cx , [ y0 ]
+	mov	bx , [ y1 ]
 	sub	cx , [MouseBottom]
 	sub	bx , [MouseBottom]
 	dec	cx
 	dec	bx
 	add	cx , cx
-	adc	ax , ax 
-	add	bx , bx 
+	adc	ax , ax
+	add	bx , bx
 	adc	dx , dx
 
 	xor	al , 5
@@ -1675,7 +1671,7 @@ christopher:
 	mov	es,ax
 
 	mov	ax , [ y0 ]
-	mul	[ MouseRight ] 
+	mul	[ MouseRight ]
 	mov	dx , [MouseRight]
 	mov	di , ax
 	add	di , [ x0 ]
@@ -1700,7 +1696,7 @@ christopher:
 	jle	??out
 
 	sub	dx , ax
-	sub	bx , ax	
+	sub	bx , ax
 
 	push	bp
 	cmp	[store],RESTORE_VISIBLE_PAGE		; are we restoring page?
@@ -1719,13 +1715,13 @@ christopher:
 	pop	bp
 
 IF  ECHOON
-mov ax , 0b000h 
+mov ax , 0b000h
 mov di , 12 * 80 + 10
 mov es, ax
 mov al , 'V'
-mov [es:di],al	
+mov [es:di],al
 mov al,2
-mov [es:di+1],al	
+mov [es:di+1],al
 ENDIF
 
 	ret
@@ -1751,25 +1747,24 @@ ENDIF
 ??out:
 
 IF  ECHOON
-mov ax , 0b000h 
+mov ax , 0b000h
 mov di , 12 * 80 + 12
 mov es, ax
 mov al , 'G'
-mov [es:di],al	
+mov [es:di],al
 mov al,2
-mov [es:di+1],al	
+mov [es:di+1],al
 ENDIF
 	ret
 
-	ENDP	VGA_Mouse_Shadow_Buffer
+VGA_Mouse_Shadow_Buffer	ENDP
 
 ;***************************************************************************
 
-	GLOBAL	C VGA_Draw_Mouse:FAR
-	PROC	VGA_Draw_Mouse C FAR
-	USES	ax,bx,cx,dx,di,si,ds,es
-	ARG	mousex:WORD
-	ARG	mousey:WORD
+	EXTERNDEF	C VGA_Draw_Mouse:FAR
+VGA_Draw_Mouse	PROC	FAR C	USES	ax bx cx dx di si ds es,
+	_mousex:WORD,
+	_mousey:WORD
 
 	local	x0 : word
 	local	y0 : word
@@ -1787,16 +1782,16 @@ ENDIF
 	;*===================================================================
 	;* Pre-initialize the left, right and topclip values to zero.
 	;*===================================================================
-	mov	ax, [ mousex ]
-	mov	bx , [ mousey ]
+	mov	ax, [ _mousex ]
+	mov	bx , [ _mousey ]
 	sub	ax , [ MouseXHot ]
 	sub	bx , [ MouseYHot ]
-	mov	[ x0 ] , ax  
-	mov	[ y0 ] , bx  
+	mov	[ x0 ] , ax
+	mov	[ y0 ] , bx
 	add	ax, [ MouseWidth ]
 	add	bx, [ MouseHeight ]
-	mov	[ x1 ] , ax  
-	mov	[ y1 ] , bx  
+	mov	[ x1 ] , ax
+	mov	[ y1 ] , bx
 
 	mov	[ buffx0 ] , 0
 	les	ax , [ MouseCursor ]
@@ -1809,40 +1804,40 @@ ENDIF
 	xor 	ax , ax
 	xor 	dx , dx
 
-	mov	cx , [ x0 ]  
-	mov	bx , [ x1 ]  
+	mov	cx , [ x0 ]
+	mov	bx , [ x1 ]
 	add	cx , cx
-	adc	ax , ax 
+	adc	ax , ax
 	add	bx , bx
-	adc	dx , dx 
+	adc	dx , dx
 
-	mov	cx , [ x0 ]  
-	mov	bx , [ x1 ]  
+	mov	cx , [ x0 ]
+	mov	bx , [ x1 ]
 	sub	cx , [ MouseRight ]
 	sub	bx , [ MouseRight ]
 	dec	cx
 	dec	bx
 	add	cx , cx
-	adc	ax , ax 
-	add	bx , bx 
+	adc	ax , ax
+	add	bx , bx
 	adc	dx , dx
 
-	mov	cx , [ y0 ]  
-	mov	bx , [ y1 ]  
+	mov	cx , [ y0 ]
+	mov	bx , [ y1 ]
 	add	cx , cx
-	adc	ax , ax 
-	add	bx , bx 
+	adc	ax , ax
+	add	bx , bx
 	adc	dx , dx
 
-	mov	cx , [ y0 ]  
-	mov	bx , [ y1 ]  
+	mov	cx , [ y0 ]
+	mov	bx , [ y1 ]
 	sub	cx , [MouseBottom]
 	sub	bx , [MouseBottom]
 	dec	cx
 	dec	bx
 	add	cx , cx
-	adc	ax , ax 
-	add	bx , bx 
+	adc	ax , ax
+	add	bx , bx
 	adc	dx , dx
 
 	xor	al , 5
@@ -1886,7 +1881,7 @@ ENDIF
 ??acepted:
 
 	mov	ax , [ y0 ]
-	mul	[ MouseRight ] 
+	mul	[ MouseRight ]
 	mov	dx , [MouseRight]
 	mov	di , ax
 	add	di , [ x0 ]
@@ -1911,7 +1906,7 @@ ENDIF
 	jle	??out
 
 	sub	dx , ax
-	sub	bx , ax	
+	sub	bx , ax
 
 	;*===================================================================
 	;* Handle restoring the buffer to the visible page
@@ -1919,7 +1914,7 @@ ENDIF
 ??top_loop:
 	mov	ah,al
 ??inner_loop:
-	mov	ch , [es:si]
+	mov	ch , es:[si]
 	inc	esi
 	or	ch,ch
 	jz	??inc_edi
@@ -1935,16 +1930,16 @@ ENDIF
 ??out:
 
 IF  ECHOON
-mov ax , 0b000h 
+mov ax , 0b000h
 mov di , 12 * 80 + 14
 mov es, ax
 mov al , 'A'
-mov [es:di],al	
+mov [es:di],al
 mov al,2
-mov [es:di+1],al	
+mov [es:di+1],al
 ENDIF
 	ret
-ENDP	VGA_Draw_Mouse
+VGA_Draw_Mouse	ENDP
 
 
 ;***************************************************************************
@@ -1962,10 +1957,9 @@ ENDP	VGA_Draw_Mouse
 ;* HISTORY:                                                                *
 ;*   10/27/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C VESA_Mouse_Shadow_Buffer:FAR
-	PROC	VESA_Mouse_Shadow_Buffer C FAR 
-	USES	ax,bx,cx,dx,di,si,ds,es
-	ARG	store:WORD
+	EXTERNDEF	C VESA_Mouse_Shadow_Buffer:FAR
+VESA_Mouse_Shadow_Buffer	PROC	FAR C	USES	ax bx cx dx di si ds es,
+	store:WORD
 
 	local	x0 : word
 	local	y0 : word
@@ -1973,6 +1967,7 @@ ENDP	VGA_Draw_Mouse
 	local	y1 : word
 	local	buffx0 : word
 	local	buffy0 : word
+	local	app_vesa_window : word
 
 	;*=========================================================================*
 	;* Since we are in tiny model point ds to cs
@@ -1996,12 +1991,12 @@ ENDP	VGA_Draw_Mouse
 	sub	ax , [ MouseXHot ]
 	sub	bx , [ MouseYHot ]
 
-	mov	[ x0 ] , ax  
-	mov	[ y0 ] , bx  
+	mov	[ x0 ] , ax
+	mov	[ y0 ] , bx
 	add	ax , [MouseBuffW]
 	add	bx , [MouseBuffH]
-	mov	[ x1 ] , ax  
-	mov	[ y1 ] , bx  
+	mov	[ x1 ] , ax
+	mov	[ y1 ] , bx
 
 	mov	[ buffx0 ] , 0
 	mov 	ax , [ word ptr MouseBuffer ]
@@ -2014,40 +2009,40 @@ ENDP	VGA_Draw_Mouse
 	xor 	ax , ax
 	xor 	dx , dx
 
-	mov	cx , [ x0 ]  
-	mov	bx , [ x1 ]  
+	mov	cx , [ x0 ]
+	mov	bx , [ x1 ]
 	add	cx , cx
-	adc	ax , ax 
+	adc	ax , ax
 	add	bx , bx
-	adc	dx , dx 
+	adc	dx , dx
 
-	mov	cx , [ x0 ]  
-	mov	bx , [ x1 ]  
+	mov	cx , [ x0 ]
+	mov	bx , [ x1 ]
 	sub	cx , [ MouseRight ]
 	sub	bx , [ MouseRight ]
 	dec	cx
 	dec	bx
 	add	cx , cx
-	adc	ax , ax 
-	add	bx , bx 
+	adc	ax , ax
+	add	bx , bx
 	adc	dx , dx
 
-	mov	cx , [ y0 ]  
-	mov	bx , [ y1 ]  
+	mov	cx , [ y0 ]
+	mov	bx , [ y1 ]
 	add	cx , cx
-	adc	ax , ax 
-	add	bx , bx 
+	adc	ax , ax
+	add	bx , bx
 	adc	dx , dx
 
-	mov	cx , [ y0 ]  
-	mov	bx , [ y1 ]  
+	mov	cx , [ y0 ]
+	mov	bx , [ y1 ]
 	sub	cx , [MouseBottom]
 	sub	bx , [MouseBottom]
 	dec	cx
 	dec	bx
 	add	cx , cx
-	adc	ax , ax 
-	add	bx , bx 
+	adc	ax , ax
+	add	bx , bx
 	adc	dx , dx
 
 	xor	al , 5
@@ -2096,7 +2091,7 @@ ENDP	VGA_Draw_Mouse
 	mov	es,ax
 
 	mov	ax , [ y0 ]
-	mul	[ MouseRight ] 
+	mul	[ MouseRight ]
 
 	add	ax , [ x0 ]
 	adc	dx , 0
@@ -2107,7 +2102,7 @@ ENDP	VGA_Draw_Mouse
 	;*===================================================================
 	;* Adjust the source for the top clip.
 	;*===================================================================
-	
+
 
 	mov	bx , [ MouseWidth ]	; turn this into an offset
 	lds	si , [ MouseBuffer ]
@@ -2127,7 +2122,7 @@ ENDP	VGA_Draw_Mouse
 	jle	??out
 
 	sub	dx , ax
-	sub	bx , ax	
+	sub	bx , ax
 
 	cmp	[store],RESTORE_VISIBLE_PAGE		; are we restoring page?
 	jne	??store_entry				; if not the go to store
@@ -2138,7 +2133,7 @@ ENDP	VGA_Draw_Mouse
 	mov	ah,al
 ??res_inner_loop:
 	mov	ch , [si]
-	mov	[es:di],ch
+	mov	es:[di],ch
 	inc	si
 	inc	di
 	jnz	??res_same_page
@@ -2155,13 +2150,13 @@ ENDP	VGA_Draw_Mouse
 	jnz	??restore_loop
 
 IF  ECHOON
-mov ax , 0b000h 
+mov ax , 0b000h
 mov di , 10 * 80 + 10
 mov es,ax
 mov al ,'v'
-mov [es:di],al	
+mov [es:di],al
 mov al,2
-mov [es:di+1],al	
+mov [es:di+1],al
 ENDIF
 	jmp	??out
 
@@ -2171,7 +2166,7 @@ ENDIF
 ??store_entry:
 	mov	ah,al
 ??store_inner_loop:
-	mov	ch , [es:di]
+	mov	ch , es:[di]
 	mov	[si],ch
 	inc	si
 	inc	di
@@ -2190,30 +2185,29 @@ ENDIF
 ??out:
 
 IF  ECHOON
-mov ax , 0b000h 
+mov ax , 0b000h
 mov di , 10 * 80 + 14
 mov es,ax
 mov al ,'e'
-mov [es:di],al	
+mov [es:di],al
 mov al,2
-mov [es:di+1],al	
+mov [es:di+1],al
 ENDIF
 
-	mov	dx , [ app_vesa_window ] 
+	mov	dx , [ app_vesa_window ]
 	call	set_vesa_window
 	ret
 
-	ENDP	VESA_Mouse_Shadow_Buffer
+VESA_Mouse_Shadow_Buffer	ENDP
 
 
 
 ;***************************************************************************
 
-	GLOBAL	C VESA_Draw_Mouse:FAR
-	PROC	VESA_Draw_Mouse C FAR
-	USES	ax,bx,cx,dx,di,si,ds,es
-	ARG	mousex:WORD
-	ARG	mousey:WORD
+	EXTERNDEF	C VESA_Draw_Mouse:FAR
+VESA_Draw_Mouse	PROC	FAR C	USES	ax bx cx dx di si ds es,
+	_mousex:WORD,
+	_mousey:WORD
 
 	local	x0 : word
 	local	y0 : word
@@ -2223,7 +2217,7 @@ ENDIF
 	local	buffy0 : word
 	local	app_vesa_window : word
 
-   
+
 	;*=========================================================================*
 	;* Since we are in tiny model point ds to cs
 	;*=========================================================================*
@@ -2237,17 +2231,17 @@ ENDIF
 	;*===================================================================
 	;* Pre-initialize the left, right and topclip values to zero.
 	;*===================================================================
-	mov	ax, [ mousex ]
-	mov	bx , [ mousey ]
+	mov	ax, [ _mousex ]
+	mov	bx , [ _mousey ]
 	sub	ax , [ MouseXHot ]
 	sub	bx , [ MouseYHot ]
 
-	mov	[ x0 ] , ax  
-	mov	[ y0 ] , bx  
+	mov	[ x0 ] , ax
+	mov	[ y0 ] , bx
 	add	ax, [ MouseWidth ]
 	add	bx, [ MouseHeight ]
-	mov	[ x1 ] , ax  
-	mov	[ y1 ] , bx  
+	mov	[ x1 ] , ax
+	mov	[ y1 ] , bx
 
 	mov	[ buffx0 ] , 0
 	les	ax , [ MouseCursor ]
@@ -2260,40 +2254,40 @@ ENDIF
 	xor 	ax , ax
 	xor 	dx , dx
 
-	mov	cx , [ x0 ]  
-	mov	bx , [ x1 ]  
+	mov	cx , [ x0 ]
+	mov	bx , [ x1 ]
 	add	cx , cx
-	adc	ax , ax 
+	adc	ax , ax
 	add	bx , bx
-	adc	dx , dx 
+	adc	dx , dx
 
-	mov	cx , [ x0 ]  
-	mov	bx , [ x1 ]  
+	mov	cx , [ x0 ]
+	mov	bx , [ x1 ]
 	sub	cx , [ MouseRight ]
 	sub	bx , [ MouseRight ]
 	dec	cx
 	dec	bx
 	add	cx , cx
-	adc	ax , ax 
-	add	bx , bx 
+	adc	ax , ax
+	add	bx , bx
 	adc	dx , dx
 
-	mov	cx , [ y0 ]  
-	mov	bx , [ y1 ]  
+	mov	cx , [ y0 ]
+	mov	bx , [ y1 ]
 	add	cx , cx
-	adc	ax , ax 
-	add	bx , bx 
+	adc	ax , ax
+	add	bx , bx
 	adc	dx , dx
 
-	mov	cx , [ y0 ]  
-	mov	bx , [ y1 ]  
+	mov	cx , [ y0 ]
+	mov	bx , [ y1 ]
 	sub	cx , [MouseBottom]
 	sub	bx , [MouseBottom]
 	dec	cx
 	dec	bx
 	add	cx , cx
-	adc	ax , ax 
-	add	bx , bx 
+	adc	ax , ax
+	add	bx , bx
 	adc	dx , dx
 
 	xor	al , 5
@@ -2337,7 +2331,7 @@ ENDIF
 ??acepted:
 
 	mov	ax , [ y0 ]
-	mul	[ MouseRight ] 
+	mul	[ MouseRight ]
 
 	add	ax , [ x0 ]
 	adc	dx , 0
@@ -2366,7 +2360,7 @@ ENDIF
 	jle	??out
 
 	sub	dx , ax
-	sub	bx , ax	
+	sub	bx , ax
 
 	;*===================================================================
 	;* Handle restoring the buffer to the visible page
@@ -2374,7 +2368,7 @@ ENDIF
 ??top_loop:
 	mov	ah,al
 ??inner_loop:
-	mov	ch , [es:si]
+	mov	ch , es:[si]
 	inc	si
 	or	ch,ch
 	jz	??inc_edi
@@ -2396,55 +2390,52 @@ ENDIF
 ??out:
 
 IF  ECHOON
-mov ax , 0b000h 
+mov ax , 0b000h
 mov di , 10 * 80 + 14
 mov es, ax
 mov al , 's'
-mov [es:di],al	
+mov [es:di],al
 mov al,2
-mov [es:di+1],al	
+mov [es:di+1],al
 mov di , 10 * 80 + 16
 mov al , 'a'
-mov [es:di],al	
+mov [es:di],al
 mov al,2
-mov [es:di+1],al	
+mov [es:di+1],al
 ENDIF
-	mov	dx , [ app_vesa_window ] 
+	mov	dx , [ app_vesa_window ]
 	call	set_vesa_window
 	ret
 
 
-ENDP	VESA_Draw_Mouse
+VESA_Draw_Mouse	ENDP
 
 
 
 ;************************************************************************
 
-PROC	get_vesa_window C near
-uses	ax,bx
+get_vesa_window	PROC	near C	uses	ax bx
 	mov	ax , 04f05h
 	mov	bh , 1
 	mov	bl , 0
 	call	[ dword ptr cs: VesaPtr ]
 	ret
-ENDP	
+get_vesa_window	ENDP
 
 ;************************************************************************
 
-PROC	set_vesa_window C near
-uses	ax,bx,dx
+set_vesa_window	PROC	near C	uses	ax bx dx
 	mov	ax , 04f05h
 	mov	bh , 0
 	mov	bl , 0
-	call	[ dword ptr cs: VesaPtr ]  	
+	call	[ dword ptr cs: VesaPtr ]
 	ret
-ENDP	
+set_vesa_window	ENDP
 
 
 ;***************************************************************************
 
-PROC	set_vesa_page C near
-USES	ax,bx,dx
+set_vesa_page	PROC	near C	USES	ax bx dx
 
 	mov	bx , dx
 	shl	bx , 2
@@ -2455,10 +2446,9 @@ USES	ax,bx,dx
 	mov	bl , 0
 	call	[ dword ptr cs: VesaPtr ]
 	ret
-ENDP	set_vesa_page
+set_vesa_page	ENDP
 
-PROC	next_vesa_page C near
-USES	ax,bx,dx
+next_vesa_page	PROC	near C	USES	ax bx dx
 	mov	bx , [ cs: current_page ]
 	add	bx , 4
 	mov	[ cs:current_page ] , bx
@@ -2468,9 +2458,9 @@ USES	ax,bx,dx
 	mov	bl , 0
 	call	[ dword ptr cs: VesaPtr ]
 	ret
-ENDP	next_vesa_page
+next_vesa_page	ENDP
 
-
+_TEXT	ENDS
 
 ;***********************************************************
 END

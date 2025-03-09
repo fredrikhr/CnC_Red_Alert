@@ -38,11 +38,11 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-LOCALS ??
+;LOCALS ??
 
 ;INCLUDE "tntdos.inc"
 
@@ -90,7 +90,7 @@ _DOS_BX	equ	[WORD PTR es:ebx+2]		;
 _DOS_AX	equ	[WORD PTR es:ebx]		;
 
 
-; 
+;
 ; Error codes put into Hard_Error_Code
 ;
 DISK_WRITE_PROTECTED	equ	00h
@@ -110,18 +110,18 @@ GENERAL_ERROR		equ	0Ch
 ;//////////////////////////////////////////////////////////////////////////////////////
 ;/////////////////////////////////// Prototypes ///////////////////////////////////////
 
-GLOBAL	 Install_Hard_Error_Handler :NEAR
-GLOBAL	 Remove_Hard_Error_Handler  :NEAR
+EXTERNDEF	 Install_Hard_Error_Handler :NEAR
+EXTERNDEF	 Remove_Hard_Error_Handler  :NEAR
 
 ;//////////////////////////////////////////////////////////////////////////////////////
 ;///////////////////////////////// Global/Local Data //////////////////////////////////
 
-DATASEG
+.DATA	; converted from TASM: DATASEG
 
-LABEL	LockedDataStart	BYTE	
+LockedDataStart	LABEL	BYTE
 Hard_Error_Occured	DB	0	; Hard disk error or other error.
-Hard_Error_Code		DB	0	; Error Code.	
-LABEL	LockedDataEnd	BYTE
+Hard_Error_Code		DB	0	; Error Code.
+LockedDataEnd	LABEL	BYTE
 
 
 OldRMI		DD	?	; original real mode critical err vector
@@ -140,7 +140,7 @@ IF_FUNCTIONAL		equ	8		; crit error is in and functional.
 ;//////////////////////////////////////////////////////////////////////////////////////
 ;///////////////////////////////////// Code //////////////////////////////////////////
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* INSTALL_HARD_ERROR_HANDLER -- Setup for handling critical errors.         *
@@ -156,11 +156,11 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   07/26/1994 SKB : Created.                                             *
 ;*=========================================================================*
-	PROC Install_Hard_Error_Handler C near
+Install_Hard_Error_Handler	PROC near C
 	USES eax,ebx,ecx,ds,es
 	ret
 
-	ENDP Install_Hard_Error_Handler
+Install_Hard_Error_Handler ENDP
 
 
 ;***************************************************************************
@@ -178,7 +178,7 @@ CODESEG
 ;*   07/26/1994 SKB : Created.                                             *
 ;*=========================================================================*
 
-	PROC 	Remove_Hard_Error_Handler C near
+Remove_Hard_Error_Handler	PROC 	near C
 	USES 	ebx,ecx,edx,ds,es
 ;
 ; Restore the original interrupt vectors and exit
@@ -186,7 +186,7 @@ CODESEG
 
 	ret
 
-	ENDP Remove_Hard_Error_Handler
+Remove_Hard_Error_Handler ENDP
 
 
 ;***************************************************************************
@@ -204,13 +204,13 @@ CODESEG
 ;*   07/26/1994 SKB : Created.                                             *
 ;*=========================================================================*
 
-LABEL 	LockedCodeStart	BYTE
+LockedCodeStart 	LABEL	BYTE
 
 	PROC Critical_Error_Handler NEAR
 
-	ENDP Critical_Error_Handler
+Critical_Error_Handler ENDP
 
-LABEL 	LockedCodeEnd		BYTE
+LockedCodeEnd 	LABEL		BYTE
 
 END
 

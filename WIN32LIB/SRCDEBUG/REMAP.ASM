@@ -35,17 +35,17 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <.\drawbuff.inc>
+INCLUDE <.\gbuffer.inc>
 
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
-	PROC	Buffer_Remap C NEAR
+Buffer_Remap	PROC	NEAR C
 	USES	eax,ebx,ecx,edx,esi,edi
 
 	;*===================================================================
@@ -170,6 +170,6 @@ CODESEG
 ??real_out:
 	ret
 
-	ENDP	Buffer_Remap
+Buffer_Remap	ENDP
 
 	END

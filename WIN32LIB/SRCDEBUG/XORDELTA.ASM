@@ -36,14 +36,14 @@
 ;*   XOR_Delta_Buffer -- Xor's the data in a XOR Delta format to a page.   *
 ; * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
 
 
 
-LOCALS ??
+;LOCALS ??
 
 ; These are used to call Apply_XOR_Delta_To_Page_Or_Viewport() to setup flags parameter.  If
 ; These change, make sure and change their values in wsa.cpp.
@@ -63,12 +63,12 @@ TO_PAGE		equ	2
 ;	PROC	C Copy_Delta_Buffer
 ;
 
-GLOBAL 	C Apply_XOR_Delta:NEAR
-GLOBAL 	C Apply_XOR_Delta_To_Page_Or_Viewport:NEAR
+EXTERNDEF 	C Apply_XOR_Delta:NEAR
+EXTERNDEF 	C Apply_XOR_Delta_To_Page_Or_Viewport:NEAR
 
 
 
-	CODESEG
+	.CODE	; converted from TASM: CODESEG
 
 
 
@@ -86,7 +86,7 @@ GLOBAL 	C Apply_XOR_Delta_To_Page_Or_Viewport:NEAR
 ;* HISTORY:                                                                *
 ;*   05/23/1994 SKB : Created.                                             *
 ;*=========================================================================*
-PROC	Apply_XOR_Delta C near
+Apply_XOR_DeltaPROC	near C
 	USES 	ebx,ecx,edx,edi,esi
 	ARG	target:DWORD 		; pointers.
 	ARG	delta:DWORD		; pointers.
@@ -188,7 +188,7 @@ PROC	Apply_XOR_Delta C near
 
 	ret
 
-	ENDP	Apply_XOR_Delta
+Apply_XOR_Delta	ENDP
 
 
 ;----------------------------------------------------------------------------
@@ -218,7 +218,7 @@ PROC	Apply_XOR_Delta C near
 ;*=========================================================================*
 
 ;PUBLIC Apply_XOR_Delta_To_Page_Or_Viewport(UWORD page_seg, BYTE *delta_ptr, WORD width, WORD flags, WORD descriptor)
-PROC	Apply_XOR_Delta_To_Page_Or_Viewport C near
+Apply_XOR_Delta_To_Page_Or_ViewportPROC	near C
 	USES 	ebx,ecx,edx,edi,esi
 	ARG	target:DWORD		; pointer to the destination buffer.
 	ARG	delta:DWORD		; pointer to the delta buffer.
@@ -256,7 +256,7 @@ PROC	Apply_XOR_Delta_To_Page_Or_Viewport C near
 
 	ret
 
-	ENDP	Apply_XOR_Delta_To_Page_Or_Viewport
+Apply_XOR_Delta_To_Page_Or_Viewport	ENDP
 ;----------------------------------------------------------------------------
 
 
@@ -279,7 +279,7 @@ PROC	Apply_XOR_Delta_To_Page_Or_Viewport C near
 ;*   03/09/1992  SB : Created.                                             *
 ;*=========================================================================*
 
-PROC	XOR_Delta_Buffer C near
+XOR_Delta_BufferPROC	near C
 	ARG	nextrow:DWORD
 
 ??top_loop:
@@ -402,7 +402,7 @@ PROC	XOR_Delta_Buffer C near
 	ret
 
 
-	ENDP	XOR_Delta_Buffer
+XOR_Delta_Buffer	ENDP
 
 ;----------------------------------------------------------------------------
 
@@ -424,7 +424,7 @@ PROC	XOR_Delta_Buffer C near
 ;* HISTORY:                                                                *
 ;*   03/09/1992  SB : Created.                                             *
 ;*=========================================================================*
-PROC	Copy_Delta_Buffer C near
+Copy_Delta_BufferPROC	near C
 	ARG	nextrow:DWORD
 
 ??top_loop:
@@ -548,7 +548,7 @@ PROC	Copy_Delta_Buffer C near
 
 	ret
 
-	ENDP	Copy_Delta_Buffer
+Copy_Delta_Buffer	ENDP
 
 ;----------------------------------------------------------------------------
 

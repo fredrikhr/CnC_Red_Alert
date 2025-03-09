@@ -33,31 +33,26 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
-LOCALS ??
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
+;LOCALS ??
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
-	PROC	Linear_Blit_To_Linear C near
-	USES	ebx,ecx,edx,esi,edi
-
-	;*===================================================================
-	;* define the arguements that our function takes.
-	;*===================================================================
-	ARG    	this_object :DWORD		; this is a member function
-	ARG	dest        :DWORD		; what are we blitting to
-	ARG	x_pixel     :DWORD		; x pixel position in source
-	ARG	y_pixel     :DWORD		; y pixel position in source
-	ARG	dest_x0     :dword
-	ARG	dest_y0     :dword
-	ARG	pixel_width :DWORD		; width of rectangle to blit
-	ARG	pixel_height:DWORD		; height of rectangle to blit
-	ARG	trans       :DWORD			; do we deal with transparents?
+Linear_Blit_To_Linear	PROC	near C	USES	ebx ecx edx esi edi,
+	this_object :DWORD,		; this is a member function
+	dest        :DWORD,		; what are we blitting to
+	x_pixel     :DWORD,		; x pixel position in source
+	y_pixel     :DWORD,		; y pixel position in source
+	dest_x0     :dword,
+	dest_y0     :dword,
+	pixel_width :DWORD,		; width of rectangle to blit
+	pixel_height:DWORD,		; height of rectangle to blit
+	trans       :DWORD		; do we deal with transparents?
 
 	;*===================================================================
 	; Define some locals so that we can handle things quickly
@@ -87,11 +82,12 @@ CODESEG
 
 ; Clip Source Rectangle against source Window boundaries.
 	mov  	esi,[this_object]    ; get ptr to src
+	assume	esi:PTR GraphicViewPort
 	xor 	ecx,ecx		    ; Set sutherland code to zero
 	xor 	edx,edx		    ; Set sutherland code to zero
 
    ; compute the difference in the X axis and get the bit signs into ecx , edx
-	mov	edi,[(GraphicViewPort esi).GVPWidth]  ; get width into register
+	mov	edi,[esi].GVPWidth  ; get width into register
 	mov	ebx,[x_pixel]	    ; Get first end point x_pixel into register
 	mov	eax,[x_pixel]	    ; Get second end point x_pixel into register
 	add	ebx,[pixel_width]   ; second point x1_pixel = x + width
@@ -106,7 +102,7 @@ CODESEG
 
    ; the following code is just a repeticion of the above code
    ; in the Y axis.
-	mov	edi,[(GraphicViewPort esi).GVPHeight] ; get height into register
+	mov	edi,[esi].GVPHeight ; get height into register
 	mov	ebx,[y_pixel]
 	mov	eax,[y_pixel]
 	add	ebx,[pixel_height]
@@ -143,12 +139,12 @@ CODESEG
 ??scr_bottom_ok:
 	test	dl,0100b	       ; if bit 3 in code1 is set then
 	jz	??scr_right_ok	       ; x1_pixel is greater than the width
-	mov	eax,[(GraphicViewPort esi).GVPWidth] ; get width into register
+	mov	eax,[esi].GVPWidth ; get width into register
 	mov	[ x1_pixel ],eax       ; set x1_pixel to width.
 ??scr_right_ok:
 	test	dl,0001b	       ; if bit 0 in code1 is set then
 	jz	??clip_against_dest    ; y1_pixel is greater than the width
-	mov	eax,[(GraphicViewPort esi).GVPHeight]  ; get height into register
+	mov	eax,[esi].GVPHeight  ; get height into register
 	mov	[ y1_pixel ],eax       ; set y1_pixel to height.
 
 ; Clip Source Rectangle against destination Window boundaries.
@@ -172,7 +168,7 @@ CODESEG
 	mov  	esi,[dest]	    ; get ptr to src
 	xor 	ecx,ecx
 	xor 	edx,edx
-	mov	edi,[(GraphicViewPort esi).GVPWidth]  ; get width into register
+	mov	edi,[esi].GVPWidth  ; get width into register
 	mov	eax,[dest_x0]
 	mov	ebx,[dest_x1]
 	shld	ecx,eax,1
@@ -183,7 +179,7 @@ CODESEG
 	shld	ecx,eax,1
 	shld	edx,ebx,1
 
-	mov	edi,[( GraphicViewPort esi) . GVPHeight ] ; get height into register
+	mov	edi,[esi] . GVPHeight  ; get height into register
 	mov	eax,[dest_y0]
 	mov	ebx,[dest_y1]
 	shld	ecx,eax,1
@@ -219,7 +215,7 @@ CODESEG
 ??dest_bottom_ok:
 	test	dl,0100b
 	jz	??dest_right_ok
-	mov	ebx,[ (GraphicViewPort esi) . GVPWidth ]  ; get width into register
+	mov	ebx,[ esi] . GVPWidth   ; get width into register
 	mov	eax,[ dest_x1 ]
 	mov	[ dest_x1 ],ebx
 	sub	eax,ebx
@@ -228,7 +224,7 @@ CODESEG
 ??dest_right_ok:
 	test	dl,0001b
 	jz	??do_blit
-	mov	ebx,[ (GraphicViewPort esi) . GVPHeight ]  ; get width into register
+	mov	ebx,[ esi] . GVPHeight   ; get width into register
 	mov	eax,[ dest_y1 ]
 	mov	[ dest_y1 ],ebx
 	sub	eax,ebx
@@ -239,10 +235,11 @@ CODESEG
 ??do_blit:
        cld
        mov	ebx,[this_object]
-       mov	esi,[(GraphicViewPort ebx).GVPOffset]
-       mov	eax,[(GraphicViewPort ebx).GVPXAdd]
-       add	eax,[(GraphicViewPort ebx).GVPWidth]
-       add	eax,[(GraphicViewPort ebx).GVPPitch]
+	   assume ebx:PTR GraphicViewPort
+       mov	esi,[ebx].GVPOffset
+       mov	eax,[ebx].GVPXAdd
+       add	eax,[ebx].GVPWidth
+       add	eax,[ebx].GVPPitch
        mov	ecx,eax
        mul	[y_pixel]
        add	esi,[x_pixel]
@@ -254,10 +251,11 @@ CODESEG
        mov	[scr_ajust_width ],ecx
 
        mov	ebx,[dest]
-       mov	edi,[(GraphicViewPort ebx).GVPOffset]
-       mov	eax,[(GraphicViewPort ebx).GVPXAdd]
-       add	eax,[(GraphicViewPort ebx).GVPWidth]
-       add	eax,[(GraphicViewPort ebx).GVPPitch]
+	   assume ebx:PTR GraphicViewPort
+       mov	edi,[ebx].GVPOffset
+       mov	eax,[ebx].GVPXAdd
+       add	eax,[ebx].GVPWidth
+       add	eax,[ebx].GVPPitch
        mov	ecx,eax
        mul	[ dest_y0 ]
        add	edi,[ dest_x0 ]
@@ -334,10 +332,10 @@ CODESEG
 ??forward_trans_line:
        REPT	32
        local	transp_pixel
-       		mov	bl,[ esi ]
+       		mov	bl,BYTE PTR [ esi ]
        		test	bl,bl
        		jz	transp_pixel
-       		mov	[ edi ],bl
+       		mov	BYTE PTR [ edi ],bl
     	    transp_pixel:
        		inc	esi
 	    	inc	edi
@@ -433,10 +431,10 @@ CODESEG
 ??backward_trans_line:
        REPT	32
        local	transp_pixel
-       		mov	bl,[ esi ]
+       		mov	bl,BYTE PTR [ esi ]
        		test	bl,bl
        		jz	transp_pixel
-       		mov	[ edi ],bl
+       		mov	BYTE PTR [ edi ],bl
     	    transp_pixel:
        		dec	esi
 	    	dec	edi
@@ -455,7 +453,7 @@ CODESEG
 
 ??real_out:
        ret
-       ENDP	Linear_Blit_To_Linear
+Linear_Blit_To_Linear	ENDP
 
 
 

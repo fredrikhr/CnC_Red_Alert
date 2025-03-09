@@ -49,10 +49,10 @@
 ;
 ; ----------------------------------------------------------------
 
-IDEAL				; the product runs in ideal mode
-P386				; use 386 real mode instructions
-MODEL USE32 FLAT
-LOCALS ??			; ?? is the symbol for a local
+; Converted TASM IDEAL to MASM				; the product runs in ideal mode
+.386P				; use 386 real mode instructions
+.MODEL FLAT
+;LOCALS ??			; ?? is the symbol for a local
 ;WARN				; generate all warnings we can
 JUMPS				; optimize jumps if possible
 
@@ -73,53 +73,53 @@ INTCHIP0	EQU	020H	; 8259 interrupt chip controller 0
 ;---------------------------------------------------------------------------
 ; Include all of the keyboard specific defines
 ;---------------------------------------------------------------------------
-	INCLUDE "keyboard.inc"
-	INCLUDE "keystruc.inc"
-	INCLUDE "drawbuff.inc"
+	INCLUDE <keyboard.inc>
+	INCLUDE <keystruc.inc>
+	INCLUDE <drawbuff.inc>
 
-	GLOBAL C	 RealModePtr:DWORD
+	EXTERNDEF C	 RealModePtr:DWORD
 
-	GLOBAL C	 Install_Keyboard_Interrupt:NEAR
-	GLOBAL C	 Get_RM_Keyboard_Address:Near
-	GLOBAL C	 Get_RM_Keyboard_Size:Near
-	GLOBAL C	 Remove_Keyboard_Interrupt:NEAR
-	GLOBAL C	 Check_Key_Num:NEAR
-	GLOBAL C	 Get_Key_Num:NEAR
-	GLOBAL C	 KN_To_KA:NEAR
-	GLOBAL C	 KeyNum_Translate:NEAR
-	GLOBAL C	 Check_Key:NEAR
-	GLOBAL C	 Get_Key:NEAR
-	GLOBAL C	 Keyboard_Attributes_On:NEAR
-	GLOBAL C	 Clear_KeyBuffer:NEAR
-	GLOBAL C	 Key_Down:NEAR
-	GLOBAL C	 Keyboard_Attributes_Off:NEAR
-	GLOBAL C	 Check_Key_Bits:NEAR
-	GLOBAL C	 Get_Key_Bits:NEAR
-	GLOBAL C	 Key_Satisfied:NEAR
-	GLOBAL C	 Stuff_Key_WORD:NEAR
-	GLOBAL C	 Stuff_Key_Num:NEAR
-	GLOBAL C	 MouseQX:DWORD
-	GLOBAL C	 MouseQY:DWORD
+	EXTERNDEF C	 Install_Keyboard_Interrupt:NEAR
+	EXTERNDEF C	 Get_RM_Keyboard_Address:Near
+	EXTERNDEF C	 Get_RM_Keyboard_Size:Near
+	EXTERNDEF C	 Remove_Keyboard_Interrupt:NEAR
+	EXTERNDEF C	 Check_Key_Num:NEAR
+	EXTERNDEF C	 Get_Key_Num:NEAR
+	EXTERNDEF C	 KN_To_KA:NEAR
+	EXTERNDEF C	 KeyNum_Translate:NEAR
+	EXTERNDEF C	 Check_Key:NEAR
+	EXTERNDEF C	 Get_Key:NEAR
+	EXTERNDEF C	 Keyboard_Attributes_On:NEAR
+	EXTERNDEF C	 Clear_KeyBuffer:NEAR
+	EXTERNDEF C	 Key_Down:NEAR
+	EXTERNDEF C	 Keyboard_Attributes_Off:NEAR
+	EXTERNDEF C	 Check_Key_Bits:NEAR
+	EXTERNDEF C	 Get_Key_Bits:NEAR
+	EXTERNDEF C	 Key_Satisfied:NEAR
+	EXTERNDEF C	 Stuff_Key_WORD:NEAR
+	EXTERNDEF C	 Stuff_Key_Num:NEAR
+	EXTERNDEF C	 MouseQX:DWORD
+	EXTERNDEF C	 MouseQY:DWORD
 ;DBG
-	GLOBAL C   Keyboard_Interrupt:NEAR
+	EXTERNDEF C   Keyboard_Interrupt:NEAR
 
 
-	DATASEG
+	.DATA	; converted from TASM: DATASEG
 ; For the current time we will just include the real mode stuff
 ; into the protected mode code and then copy it down.  The C side of
 ; this will handle this method or reading it off of disk in the real
 ; method.
 
-LABEL 	RealBinStart	BYTE
-include "keyireal.ibn"
-LABEL	RealBinEnd	BYTE
+RealBinStart 	LABEL	BYTE
+include <keyireal.ibn>
+RealBinEnd	LABEL	BYTE
 
-LABEL	LockedDataStart	BYTE
+LockedDataStart	LABEL	BYTE
 RMVector	DD	0
 RealModeSel	DD	0
 RealModePtr	DD	0		; Pointer to real mode memory.
 RealModeSize	DD	0		; Pointer to real mode memory.
-LABEL	LockedDataEnd	BYTE
+LockedDataEnd	LABEL	BYTE
 
 
 
@@ -149,7 +149,7 @@ InitFlags	DW	0
 MouseQX		DD	0
 MouseQY		DD	0
 
-	CODESEG
+	.CODE	; converted from TASM: CODESEG
 ;***************************************************************************
 ;* GET_RM_TIMER_ADDRESS -- Return address of real mode code for copy.      *
 ;*                                                                         *
@@ -162,7 +162,7 @@ MouseQY		DD	0
 ;* HISTORY:                                                                *
 ;*   07/06/1994 SKB : Created.                                             *
 ;*=========================================================================*
-	PROC	Get_RM_Keyboard_Address C Near
+Get_RM_Keyboard_Address	PROC	Near C
 ifdef NOT_FOR_WIN95
 
 	mov	eax, OFFSET RealBinStart
@@ -183,7 +183,7 @@ endif;ifdef NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   07/06/1994 SKB : Created.                                             *
 ;*=========================================================================*
-	PROC	Get_RM_Keyboard_Size C Near
+Get_RM_Keyboard_Size	PROC	Near C
 
 ret
 	mov	eax, OFFSET RealBinEnd - OFFSET RealBinStart
@@ -203,7 +203,7 @@ ret
 ;* HISTORY:                                                                *
 ;*   07/11/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Install_Keyboard_Interrupt C NEAR
+Install_Keyboard_Interrupt	PROC	NEAR C
 	USES	eax,ebx,ecx,edx,esi,edi
 	ARG	rm_ptr:DWORD
 	ARG	rm_size:DWORD
@@ -520,7 +520,7 @@ ENDIF
 ??exit:
 endif ;NOT_FOR_WIN95
 	ret
-	ENDP	Install_Keyboard_Interrupt
+Install_Keyboard_Interrupt	ENDP
 
 ;***************************************************************************
 ;* REMOVE_INTERRUPT -- Removes keyboard interrupt and restores chain	   *
@@ -534,7 +534,7 @@ endif ;NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   07/13/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Remove_Keyboard_Interrupt C NEAR
+Remove_Keyboard_Interrupt	PROC	NEAR C
 	USES	ebx,ecx,edx
 
 ifdef NOT_FOR_WIN95
@@ -697,7 +697,7 @@ ENDIF
        	xor	eax,eax			; signal an error.
 endif; NOT_FOR_WIN95
 	ret
-	ENDP	Remove_Keyboard_Interrupt
+Remove_Keyboard_Interrupt	ENDP
 
 
 ;***************************************************************************
@@ -712,7 +712,7 @@ endif; NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   07/14/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Check_Key_Num C NEAR
+Check_Key_Num	PROC	NEAR C
 	USES	ebx,esi
 ifdef NOT_FOR_WIN95
 	pushf					; save off the flags
@@ -733,7 +733,7 @@ ifdef NOT_FOR_WIN95
 endif; NOT_FOR_WIN95
 	ret
 
-	ENDP	Check_Key_Num
+Check_Key_Num	ENDP
 
 ;***************************************************************************
 ;* GET_KEY_NUM -- Returns the next key num in ax                           *
@@ -748,7 +748,7 @@ endif; NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   07/14/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Get_Key_Num C NEAR
+Get_Key_Num	PROC	NEAR C
 	USES	esi,edi
 
 ifdef NOT_FOR_WIN95
@@ -767,7 +767,7 @@ ifdef NOT_FOR_WIN95
 endif; NOT_FOR_WIN95
 	ret
 
-	ENDP	Get_Key_Num
+Get_Key_Num	ENDP
 
 ;***************************************************************************
 ;* KN_TO_KA -- Translates a key num to an ASCII key                        *
@@ -782,7 +782,7 @@ endif; NOT_FOR_WIN95
 ;*   07/15/1994 PWG : Created.                                             *
 ;*=========================================================================*
 
-	PROC	KN_To_KA C NEAR
+KN_To_KA	PROC	NEAR C
 	ARG	keynum:DWORD
 
 ifdef NOT_FOR_WIN95
@@ -792,7 +792,7 @@ ifdef NOT_FOR_WIN95
 endif; NOT_FOR_WIN95
 	ret
 
-	ENDP	KN_To_KA
+KN_To_KA	ENDP
 
 
 ;***************************************************************************
@@ -807,7 +807,7 @@ endif; NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   07/14/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Low_Get_Key C NEAR
+Low_Get_Key	PROC	NEAR C
 	USES	ebx,esi,edi
 
 ifdef NOT_FOR_WIN95
@@ -874,7 +874,7 @@ ifdef NOT_FOR_WIN95
 endif; NOT_FOR_WIN95
 	ret
 
-	ENDP	Low_Get_Key
+Low_Get_Key	ENDP
 
 ;***************************************************************************
 ;* CONVERT_NUM_TO_ASCII -- Assembly routine converts keynum to ASCII key   *
@@ -894,7 +894,7 @@ endif; NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   07/15/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Convert_Num_To_ASCII C NEAR
+Convert_Num_To_ASCII	PROC	NEAR C
 	USES	ebx,ecx,esi,edi
 
 ifdef NOT_FOR_WIN95
@@ -1042,7 +1042,7 @@ ifdef NOT_FOR_WIN95
 ??exit:
 endif; NOT_FOR_WIN95
 	ret
-	ENDP	Convert_Num_To_ASCII
+Convert_Num_To_ASCII	ENDP
 
 ;***************************************************************************
 ;* CHECK_KEY -- checks for ASCII keys sitting in the keybuffer             *
@@ -1056,7 +1056,7 @@ endif; NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   07/15/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Check_Key C NEAR
+Check_Key	PROC	NEAR C
 	USES	ebx,edi,esi
 
 ifdef NOT_FOR_WIN95
@@ -1118,7 +1118,7 @@ ifdef NOT_FOR_WIN95
 	popf
 endif; NOT_FOR_WIN95
 	ret
-	ENDP	Check_Key
+Check_Key	ENDP
 
 
 ;***************************************************************************
@@ -1134,7 +1134,7 @@ endif; NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   07/15/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Get_Key C NEAR
+Get_Key	PROC	NEAR C
 	USES 	ebx,ecx,edi
 
 ifdef NOT_FOR_WIN95
@@ -1182,7 +1182,7 @@ ifdef NOT_FOR_WIN95
 endif; NOT_FOR_WIN95
 	ret
 
-	ENDP	Get_Key
+Get_Key	ENDP
 
 ;***************************************************************************
 ;* KEYBOARD_ATTRIBUTES_ON -- Sets the specified keyflags on                *
@@ -1196,7 +1196,7 @@ endif; NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   07/19/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Keyboard_Attributes_On C NEAR
+Keyboard_Attributes_On	PROC	NEAR C
 	USES	esi,edi
 	ARG	bits:DWORD
 
@@ -1221,7 +1221,7 @@ ifdef NOT_FOR_WIN95
 	mov	eax,[(KeyboardType PTR esi).KeyFlags]
 endif; NOT_FOR_WIN95
 	ret
-	ENDP	Keyboard_Attributes_On
+Keyboard_Attributes_On	ENDP
 
 ;***************************************************************************
 ;* KEYBOARD_ATTRIBUTES_OFF -- Sets the specified keyflags off              *
@@ -1235,7 +1235,7 @@ endif; NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   07/19/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Keyboard_Attributes_Off C NEAR
+Keyboard_Attributes_Off	PROC	NEAR C
 	USES	esi
 	ARG	bits:DWORD
 
@@ -1250,7 +1250,7 @@ ifdef NOT_FOR_WIN95
 endif; NOT_FOR_WIN95
 	ret
 
-	ENDP	Keyboard_Attributes_Off
+Keyboard_Attributes_Off	ENDP
 ;***************************************************************************
 ;* CLEAR_KEYBUFFER -- Clears keystrokes out of the key buffer              *
 ;*                                                                         *
@@ -1263,7 +1263,7 @@ endif; NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   07/19/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Clear_KeyBuffer C NEAR
+Clear_KeyBuffer	PROC	NEAR C
 	USES	eax,esi
 ifdef NOT_FOR_WIN95
 
@@ -1276,7 +1276,7 @@ ifdef NOT_FOR_WIN95
 endif; NOT_FOR_WIN95
 	ret
 
-	ENDP	Clear_KeyBuffer
+Clear_KeyBuffer	ENDP
 
 ;***************************************************************************
 ;* KEY_DOWN -- tests the status of a keyboard key                          *
@@ -1290,7 +1290,7 @@ endif; NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   07/19/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Key_Down C NEAR
+Key_Down	PROC	NEAR C
 	USES	ebx,ecx,edi,esi
 	ARG	key:DWORD
 
@@ -1312,7 +1312,7 @@ ifdef NOT_FOR_WIN95
 endif; NOT_FOR_WIN95
 	ret
 
-	ENDP	Key_Down
+Key_Down	ENDP
 
 ;***************************************************************************
 ;* CHECK_KEY_BITS -- checks ascii key in key buff with shift,ctrl,alt bits *
@@ -1326,7 +1326,7 @@ endif; NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   07/20/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Check_Key_Bits C NEAR
+Check_Key_Bits	PROC	NEAR C
 	USES	ebx,ecx,edi,esi
 
 ifdef NOT_FOR_WIN95
@@ -1393,7 +1393,7 @@ ifdef NOT_FOR_WIN95
 endif; NOT_FOR_WIN95
 	ret
 
-	ENDP	Check_Key_Bits
+Check_Key_Bits	ENDP
 ;***************************************************************************
 ;* GET_KEY_BITS -- Gets ascii key in key buff with shift,ctrl,alt bits     *
 ;*                                                                         *
@@ -1406,7 +1406,7 @@ endif; NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   07/20/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Get_Key_Bits C NEAR
+Get_Key_Bits	PROC	NEAR C
 	USES	ebx,ecx,edi
 
 ifdef NOT_FOR_WIN95
@@ -1457,7 +1457,7 @@ ifdef NOT_FOR_WIN95
 	ret
 
 endif; NOT_FOR_WIN95
-	ENDP	Get_Key_Bits
+Get_Key_Bits	ENDP
 
 ;***************************************************************************
 ;* KEY_SATISFIED -- checks to see if the given key is satisfied            *
@@ -1471,7 +1471,7 @@ endif; NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   07/20/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Key_Satisfied C NEAR
+Key_Satisfied	PROC	NEAR C
 	USES	ebx,ecx,esi,edi
 	ARG	key:DWORD
 
@@ -1539,7 +1539,7 @@ ifdef NOT_FOR_WIN95
 endif ;NOT_FOR_WIN95
 	ret
 
-	ENDP	Key_Satisfied
+Key_Satisfied	ENDP
 
 
 ;***************************************************************************
@@ -1550,7 +1550,7 @@ endif ;NOT_FOR_WIN95
 
 
 
-LABEL 	LockedCodeStart	BYTE
+LockedCodeStart 	LABEL	BYTE
 ifdef cuts
 ;***************************************************************************
 ;* KEYNUM_TRANSLATE -- Performs a lowlevel xlate to a keycode              *
@@ -1564,7 +1564,7 @@ ifdef cuts
 ;* HISTORY:                                                                *
 ;*   07/15/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	KeyNum_Translate C NEAR
+KeyNum_Translate	PROC	NEAR C
 	USES 	ebx,ecx,esi,edi
 	ARG	keycode:DWORD
 
@@ -1596,7 +1596,7 @@ ifdef NOT_FOR_WIN95
 endif ;NOT_FOR_WIN95
 	ret
 
-	ENDP	KeyNum_Translate
+KeyNum_Translate	ENDP
 endif
 	ifdef cuts
 ;***************************************************************************
@@ -1611,7 +1611,7 @@ endif
 ;* HISTORY:                                                                *
 ;*   07/11/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Stuff_Key_WORD C NEAR
+Stuff_Key_WORD	PROC	NEAR C
 	USES	ebx,esi,edi
 	ARG	code:WORD
 
@@ -1636,7 +1636,7 @@ ifdef NOT_FOR_WIN95
 endif ;NOT_FOR_WIN95
 	ret
 
-	ENDP	Stuff_Key_WORD
+Stuff_Key_WORD	ENDP
 endif
 ifdef cuts
 ;***************************************************************************
@@ -1651,7 +1651,7 @@ ifdef cuts
 ;* HISTORY:                                                                *
 ;*   07/11/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Stuff_Key_Num C NEAR
+Stuff_Key_Num	PROC	NEAR C
 	USES	ebx,ecx,edx,edi,esi
 	ARG	keycode:DWORD
 	LOCAL	tail:DWORD		; Original keybuffer tail (safety copy).
@@ -1972,7 +1972,7 @@ ifdef NOT_FOR_WIN95
 endif; NOT_FOR_WIN95
 	ret
 
-	ENDP	Stuff_Key_Num
+Stuff_Key_Num	ENDP
 endif
 
 ;***************************************************************************
@@ -1987,10 +1987,10 @@ endif
 ;* HISTORY:                                                                *
 ;*   07/28/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Break_Interrupt C NEAR
+Break_Interrupt	PROC	NEAR C
 
 	iret
-	ENDP	Break_Interrupt
+Break_Interrupt	ENDP
 
 IF DEBUG
 ;***************************************************************************
@@ -2005,7 +2005,7 @@ IF DEBUG
 ;* HISTORY:                                                                *
 ;*   07/28/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Debug_Interrupt C NEAR
+Debug_Interrupt	PROC	NEAR C
 
 	;*==================================================================
 	;* Setup fake Interrupt entry sequence so that we can execute our
@@ -2064,7 +2064,7 @@ ifdef NOT_FOR_WIN95
 endif; NOT_FOR_WIN95
 	iretd
 
-	ENDP	Debug_Interrupt
+Debug_Interrupt	ENDP
 ENDIF
 
 
@@ -2087,7 +2087,7 @@ IF PROT_INT_ENABLE
 ;* HISTORY:                                                                *
 ;*   07/13/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Keyboard_Interrupt C NEAR
+Keyboard_Interrupt	PROC	NEAR C
 
 	; This routine will do what it needs to,
 	; then it will decide if the old vector should be called.
@@ -2468,7 +2468,7 @@ ENDIF
 endif;ifdef NOT_FOR_WIN95
 	iret
 
-	ENDP	Keyboard_Interrupt
+Keyboard_Interrupt	ENDP
 
 ELSE
 ;***************************************************************************
@@ -2485,8 +2485,8 @@ ELSE
 ;*=========================================================================*
 
 
-DATASEG
-STRUC	RealModeCallStruc
+.DATA	; converted from TASM: DATASEG
+RealModeCallStruc	STRUC
 	_EDI  DD	0
 	_ESI  DD	0
 	_EBP  DD	0
@@ -2511,7 +2511,7 @@ ENDS
 
 RMDS RealModeCallStruc  <>
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 PROC	Keyboard_Interrupt	Near
 
@@ -2560,7 +2560,7 @@ endif;ifdef NOT_FOR_WIN95
 
 ENDIF
 
-LABEL 	LockedCodeEnd		BYTE
+LockedCodeEnd 	LABEL		BYTE
 
 ;***************************************************************************
 ;* End of File.								   *

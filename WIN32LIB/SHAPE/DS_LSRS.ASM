@@ -35,17 +35,17 @@
 ;*   Left_Scale_Reverse_Skip -- Skips past a scaled row of pixels          *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 ;********************* Model & Processor Directives ************************
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
 
 ;******************************** Includes *********************************
-INCLUDE "shape.inc"
+INCLUDE <shape.inc>
 
 
 ;********************************* Code ************************************
-	CODESEG
+	.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* Left_Scale_Reverse_Skip -- Skips past a scaled row of pixels            *
@@ -75,7 +75,7 @@ INCLUDE "shape.inc"
 ;*   08/19/1993 SKB : Split drawshp.asm into several modules.              *
 ;*   06/02/1994 BR : Converted to 32-bit                                   *
 ;*=========================================================================*
-PROC	Left_Scale_Reverse_Skip NOLANGUAGE NEAR
+Left_Scale_Reverse_SkipPROC	NEAR NOLANGUAGE
 
 	sub 	[WidthCount],ecx	; we process ECX bytes of real width
 
@@ -102,7 +102,7 @@ PROC	Left_Scale_Reverse_Skip NOLANGUAGE NEAR
 	jmp	short ??out 		; we're done, get outta here
 
 	;--------------------------------------------------------------------
-	; If we have a run then get the next byte which is the length.  
+	; If we have a run then get the next byte which is the length.
 	;--------------------------------------------------------------------
 ??on_run:
 	mov	al,[BYTE PTR edi]	; get the count of zeros to run
@@ -151,7 +151,7 @@ PROC	Left_Scale_Reverse_Skip NOLANGUAGE NEAR
 	xchg	esi,edi			; xchange ESI and EDI
 	ret				; return back to the real function
 
-	ENDP	Left_Scale_Reverse_Skip
+Left_Scale_Reverse_Skip	ENDP
 
 	END
 

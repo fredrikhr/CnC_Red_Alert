@@ -34,20 +34,20 @@
 ;*   VVC::TOBUFFER -- Copies a virtual viewport to a linear buffer         *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
-LOCALS ??
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
+;LOCALS ??
 
 
 TRANSP equ 0
 
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
 
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 
 ;***************************************************************************
@@ -71,19 +71,14 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   06/15/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Buffer_To_Buffer C near
-	USES	ebx,ecx,edx,esi,edi
-
-	;*===================================================================
-	;* define the arguements that our function takes.
-	;*===================================================================
-	ARG	this_object:DWORD		; this is a class member function
-	ARG	x_pixel:DWORD		; Page X pixel coordinate.
-	ARG	y_pixel:DWORD		; Page Y pixel coordinate.
-	ARG	pixel_width:DWORD	; Width of region in pixels.
-	ARG	pixel_height:DWORD	; Height of region in pixels.
-	ARG	dest:DWORD		; the buffer to copy to
-	ARG	buffer_size:DWORD	; the size of the buffer
+Buffer_To_Buffer	PROC	near C	USES	ebx ecx edx esi edi,
+	this_object:DWORD,	; this is a class member function
+	x_pixel:DWORD,		; Page X pixel coordinate.
+	y_pixel:DWORD,		; Page Y pixel coordinate.
+	pixel_width:DWORD,	; Width of region in pixels.
+	pixel_height:DWORD,	; Height of region in pixels.
+	dest:DWORD,			; the buffer to copy to
+	buffer_size:DWORD	; the size of the buffer
 
 	;*===================================================================
 	; Define some locals so that we can handle things quickly
@@ -102,9 +97,10 @@ CODESEG
 	mov	[ dest_y1 ] , 0
 
 	mov  	esi , [ this_object ]	    ; get ptr to dest
+	assume	esi	: ptr GraphicViewPort
 	xor 	ecx , ecx
 	xor 	edx , edx
-	mov	edi , [ (GraphicViewPort esi) . GVPWidth ]  ; get width into register
+	mov	edi , [ esi ] . GVPWidth   ; get width into register
 	mov	ebx , [ x_pixel ]
 	mov	eax , [ x_pixel ]
 	add	ebx , [ pixel_width ]
@@ -117,7 +113,7 @@ CODESEG
 	shld	ecx , eax , 1
 	shld	edx , ebx , 1
 
-	mov	edi,[ ( GraphicViewPort esi) . GVPHeight ] ; get height into register
+	mov	edi,[ esi ] . GVPHeight  ; get height into register
 	mov	ebx , [ y_pixel ]
 	mov	eax , [ y_pixel ]
 	add	ebx , [ pixel_height ]
@@ -156,22 +152,22 @@ CODESEG
 ??scr_bottom_ok:
 	test	dl , 0100b
 	jz	??scr_right_ok
-	mov	eax , [ (GraphicViewPort esi) . GVPWidth ]  ; get width into register
+	mov	eax , [ esi ] . GVPWidth   ; get width into register
 	mov	[ x1_pixel ] , eax
 ??scr_right_ok:
 	test	dl , 0001b
 	jz	??do_blit
-	mov	eax , [ (GraphicViewPort esi) . GVPHeight ]  ; get width into register
+	mov	eax , [ esi ] . GVPHeight   ; get width into register
 	mov	[ y1_pixel ] , eax
 
 ??do_blit:
 
        cld
 
-       mov	eax , [ (GraphicViewPort esi) . GVPXAdd ]
-       add	eax , [ (GraphicViewPort esi) . GVPWidth ]
-       add	eax , [ (GraphicViewPort esi) . GVPPitch ]
-       mov	esi , [ (GraphicViewPort esi) . GVPOffset ]
+       mov	eax , [ esi ] . GVPXAdd
+       add	eax , [ esi ] . GVPWidth
+       add	eax , [ esi ] . GVPPitch
+       mov	esi , [ esi ] . GVPOffset
 
        mov	ecx , eax
        mul	[ y_pixel ]
@@ -287,6 +283,6 @@ ENDIF
 ??real_out:
        ret
 
-ENDP	Buffer_To_Buffer
+Buffer_To_Buffer	ENDP
 
 END

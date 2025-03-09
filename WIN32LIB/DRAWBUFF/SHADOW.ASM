@@ -36,21 +36,21 @@
 ;*                                                                         *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
-INCLUDE ".\keystruc.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
+INCLUDE <keystruc.inc>
 
-GLOBAL	C Shadow_Blit	: NEAR
+EXTERNDEF	C Shadow_Blit	: NEAR
 
-GLOBAL	C RealModePtr : DWORD
-GLOBAL	C Hide_Mouse  : NEAR
-GLOBAL	C Show_Mouse  : NEAR
+EXTERNDEF	C RealModePtr : DWORD
+EXTERNDEF	C Hide_Mouse  : NEAR
+EXTERNDEF	C Show_Mouse  : NEAR
 
-	CODESEG
+	.CODE	; converted from TASM: CODESEG
 
 ; void Shadow_Blit(int xpix, int ypix, int width, int height, GVPC src, VBC dst, void *shadowbuff);
 ; Warning: Shadow_Blit appears to be relatively stupid, in that while it is
@@ -60,16 +60,14 @@ GLOBAL	C Show_Mouse  : NEAR
 ;	   will use the dword loop.  However, if you blit a region that is
 ;	   201 pixels wide, the dumb thing will use the byte loop for the
 ;	   entire blit.
-	PROC    Shadow_Blit C near
-	USES	eax,ebx,ecx,edx,esi,edi
-
-	ARG	x:DWORD
-	ARG	y:DWORD
-	ARG	region_width:DWORD
-	ARG	region_height:DWORD
-	ARG     srcpage:DWORD
-	ARG     dstpage:DWORD
-	ARG     shadow:DWORD
+Shadow_Blit	PROC    near C	USES	eax ebx ecx edx esi edi,
+	x:DWORD,
+	y:DWORD,
+	region_width:DWORD,
+	region_height:DWORD,
+	srcpage:DWORD,
+	dstpage:DWORD,
+	shadow:DWORD
 
 	LOCAL	modulo:DWORD		; Row modulo
 	LOCAL	hidemouse:DWORD		; Was the mouse hidden?
@@ -81,7 +79,8 @@ GLOBAL	C Show_Mouse  : NEAR
 
 ; Fetch the segment of the seenpage.
 	mov	ebx,[dstpage]
-	mov	ebx,[(GraphicViewPort ebx).GVPOffset]
+	assume ebx:PTR GraphicViewPort
+	mov	ebx,[ebx].GVPOffset
 
 	; Determine if the mouse needs to be hidden at all.  If this happens to be
 	; a shadow blit to non visible page (who knows why!?) then don't bother to
@@ -90,17 +89,19 @@ GLOBAL	C Show_Mouse  : NEAR
 ;	setne	[BYTE PTR hidemouse]	; Flag that mouse need not be hidden.
 ;	jne	short ??itsok
 	mov	esi,[RealModePtr]
-	cmp	[(KeyboardType esi).MState],0
+	assume esi:PTR KeyboardType
+	cmp	[esi].MState,0
 	je	short ??itsok
 	mov	[hidemouse],1
-	call	Hide_Mouse C		; Hides mouse again (just to be sure).
+	call	Hide_Mouse		; Hides mouse again (just to be sure).
 ??itsok:
 	mov	edi,[srcpage]
-	mov	esi,[(GraphicViewPort edi).GVPOffset]
+	assume edi:PTR GraphicViewPort
+	mov	esi,[edi].GVPOffset
 
-	mov	eax,[(GraphicViewPort edi).GVPWidth]
-	add	eax,[(GraphicViewPort edi).GVPXAdd]
-	add	eax,[(GraphicViewPort edi).GVPPitch]
+	mov	eax,[edi].GVPWidth
+	add	eax,[edi].GVPXAdd
+	add	eax,[edi].GVPPitch
 	push	eax			; save width+xadd for later calc
 	mov	edx,[y]
 	mul	edx
@@ -114,6 +115,7 @@ GLOBAL	C Show_Mouse  : NEAR
 	mov     ecx,[region_height]		; get the height of the window in cx
 
 	mov	edx,[RealModePtr]
+	assume edx:PTR KeyboardType
 
 	; Calculate the row add module.
 	pop	eax			; restore width+xadd
@@ -141,20 +143,20 @@ GLOBAL	C Show_Mouse  : NEAR
 	; If this row would interfere with the mouse image, then hide it.
 	cmp	[hidemouse],0
 	jnz	short ??dok
-	mov	eax,[(KeyboardType edx).MouseY]
-	sub	eax,[(KeyboardType edx).MouseYHot]
+	mov	eax,[edx].MouseY
+	sub	eax,[edx].MouseYHot
 	cmp	eax,[y]
 	jg	short ??dok
-	add	eax,[(KeyboardType edx).MouseHeight]
+	add	eax,[edx].MouseHeight
 	cmp	eax,[y]
 	jb	short ??dok
 	mov	[hidemouse],1		; Manual hide of the mouse.
-	call	Hide_Mouse C
+	call	Hide_Mouse
 ??dok:
 
-	mov     eax,[esi-4]
-	mov     [ebx+esi-4],eax		; Update destination page.
-	mov     [edi-4],eax		; Update shadow buffer.
+	mov     eax,DWORD PTR [esi-4]
+	mov     DWORD PTR [ebx+esi-4],eax		; Update destination page.
+	mov     DWORD PTR [edi-4],eax		; Update shadow buffer.
 	or	ecx,ecx
 	jne     short ??lcontinue
 
@@ -172,20 +174,20 @@ GLOBAL	C Show_Mouse  : NEAR
 	; If this row would interfere with the mouse image, then hide it.
 	cmp	[hidemouse],0
 	jnz	short ??bok
-	mov	eax,[(KeyboardType edx).MouseY]
-	sub	eax,[(KeyboardType edx).MouseYHot]
+	mov	eax,[edx].MouseY
+	sub	eax,[edx].MouseYHot
 	cmp	eax,[y]
 	jg	short ??bok
-	add	eax,[(KeyboardType edx).MouseHeight]
+	add	eax,[edx].MouseHeight
 	cmp	eax,[y]
 	jl	short ??bok
 	mov	[hidemouse],1		; Manual hide of the mouse.
-	call	Hide_Mouse C
+	call	Hide_Mouse
 ??bok:
 
-	mov     al,[esi-1]
-	mov     [ebx+esi-1],al		; Update destination page.
-	mov     [edi-1],al		; Update shadow buffer.
+	mov     al,BYTE PTR [esi-1]
+	mov     BYTE PTR [ebx+esi-1],al	; Update destination page.
+	mov     BYTE PTR [edi-1],al		; Update shadow buffer.
 
 	or	ecx,ecx
 	jne     short ??continue
@@ -201,10 +203,10 @@ GLOBAL	C Show_Mouse  : NEAR
 	; Re show the mouse if it was hidden by this routine.
 	cmp	[hidemouse],0
 	je	short ??reallyfini
-	call	Show_Mouse C
+	call	Show_Mouse
 ??reallyfini:
 	ret
 
-	ENDP    Shadow_Blit
+Shadow_Blit    ENDP
 
 	END

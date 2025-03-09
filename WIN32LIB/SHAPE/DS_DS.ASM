@@ -34,17 +34,17 @@
 ;* Functions:                                                              *
 ;*   Draw_Scale -- Draws a scaled row of pixels to the viewport            *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
 
 ;******************************** Includes *********************************
-INCLUDE "shape.inc"
+INCLUDE <shape.inc>
 
 
 ;********************************* Code ************************************
-	CODESEG
+	.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* Draw_Scale -- Draws a scaled row of pixels to the viewport              *
@@ -70,7 +70,7 @@ INCLUDE "shape.inc"
 ;*   08/09/1994 IML : Optimized for 32-bit.				   *
 ;*   09/06/1994 IML : Integrated p_* and ds_* routines.			   *
 ;*=========================================================================*
-PROC	Draw_Scale NOLANGUAGE NEAR
+Draw_ScalePROC	NEAR NOLANGUAGE
 
 	mov	eax,0				; init to 0
 	test	[Flags],SHAPE_EFFECTS
@@ -81,12 +81,12 @@ PROC	Draw_Scale NOLANGUAGE NEAR
 	;--------------------------------------------------------------------
 	; Extra fast draw loop for shapes with no flags set.
 	;--------------------------------------------------------------------
-	
+
 	;--------------------------------------------------------------------
 	; Load a new byte:
 	; - read the byte into AL
 	; - if it's a run, deal with it
-	; - otherwise, 
+	; - otherwise,
 	;	- decrement [WidthCount]
 	;	- update EDX with [ScaleX]
 	;	- see if it's drawable (upon proc entry, it won't be)
@@ -158,7 +158,7 @@ PROC	Draw_Scale NOLANGUAGE NEAR
 	; Load a new byte:
 	; - read the byte into AL
 	; - if it's a run, deal with it
-	; - otherwise, 
+	; - otherwise,
 	;	- decrement [WidthCount]
 	;	- update EDX with [ScaleX]
 	;	- see if it's drawable (upon proc entry, it won't be)
@@ -190,7 +190,7 @@ PROC	Draw_Scale NOLANGUAGE NEAR
 	mov	edx,[Flags]
 
 ??test_priority:
-	test	edx,SHAPE_PRIORITY		
+	test	edx,SHAPE_PRIORITY
 	jnz	short ??priority
 
 ??test_predator:
@@ -214,7 +214,7 @@ PROC	Draw_Scale NOLANGUAGE NEAR
 	jnz	??fading
 
 
-??test_transparency:	
+??test_transparency:
 	test	edx,SHAPE_FADING		; if fading is enabled test for
 	jz	short ??no_fading_draw_loop	;   transparency
 	or	eax,eax
@@ -222,7 +222,7 @@ PROC	Draw_Scale NOLANGUAGE NEAR
 
 ??no_fading_draw_loop:
 	mov	[edi],al			; store color value to viewport
-	
+
 ??is_transparent:
 	mov	eax,[StashReg]			; restore eax
 	mov	edx,[StashEDX]			; restore edx
@@ -232,9 +232,9 @@ PROC	Draw_Scale NOLANGUAGE NEAR
 	jnz	??general_draw_continue
 	jmp	??out				; get the heck outta here
 
-??priority:	
+??priority:
 	mov	ebx,[MaskAdjust]		; get mask page	offset
-	mov	bl,[BYTE PTR ebx + edi]		; get mask value  
+	mov	bl,[BYTE PTR ebx + edi]		; get mask value
 
 	and	bl,CLEAR_UNUSED_BITS		; clear unused bits
 
@@ -247,7 +247,7 @@ PROC	Draw_Scale NOLANGUAGE NEAR
 
 ??predator:
 	mov	ebx,[PartialCount]
-	add	ebx,[PartialPred]	
+	add	ebx,[PartialPred]
 	or	bh,bh
 	jnz	short ??draw_pred		; is this a predator pixel?
 	mov	[PartialCount],ebx
@@ -273,7 +273,7 @@ PROC	Draw_Scale NOLANGUAGE NEAR
 	mov	al,[edi]			; get the destination color and
 	mov	ebx,[ShadowingTable]		;  index into the shadow table
 	mov	al,[BYTE PTR ebx + eax]
-	jmp	??test_transparency			
+	jmp	??test_transparency
 
 ??fading:
 	mov	[StashECX],ecx			; preserve ecx for later
@@ -334,7 +334,7 @@ PROC	Draw_Scale NOLANGUAGE NEAR
 ??out:
 	ret					; lets get out of here
 
-	ENDP	Draw_Scale
+Draw_Scale	ENDP
 
 	END
 

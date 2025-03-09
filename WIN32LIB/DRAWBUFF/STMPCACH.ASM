@@ -34,10 +34,10 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
-JUMPS
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
+;JUMPS
 
 MAX_CACHED_ICONS=300
 ICON_WIDTH	=24
@@ -45,37 +45,38 @@ ICON_HEIGHT	=24
 MAX_ICON_SETS	=100
 
 
-global		C IconPointers:dword
-global		C Init_Stamps:near
-global		C IconCacheLookup:word
-global		LastIconset:dword
-global		MapPtr:dword
-global		IconCount:dword
-global		IconSize:dword
-global		StampPtr:dword
-global		IconEntry:dword
-global		IconData:dword
+EXTERNDEF		C IconPointers:dword
+EXTERNDEF		C Init_Stamps:near
+EXTERNDEF		C IconCacheLookup:word
+EXTERNDEF		LastIconset:dword
+EXTERNDEF		MapPtr:dword
+EXTERNDEF		IconCount:dword
+EXTERNDEF		IconSize:dword
+EXTERNDEF		StampPtr:dword
+EXTERNDEF		IconEntry:dword
+EXTERNDEF		IconData:dword
 
-global		Clear_Icon_Pointers_:near
-global		Cache_Copy_Icon_:near
-global		Is_Icon_Cached_:near
-global		Get_Icon_Index_:near
-global		Get_Free_Index_:near
-global		Cache_New_Icon_:near
-global		Is_Stamp_Registered_:near
-global		Get_Free_Cache_Slot_:near
+EXTERNDEF		Clear_Icon_Pointers_:near
+EXTERNDEF		Cache_Copy_Icon_:near
+EXTERNDEF		Is_Icon_Cached_:near
+EXTERNDEF		Get_Icon_Index_:near
+EXTERNDEF		Get_Free_Index_:near
+EXTERNDEF		Cache_New_Icon_:near
+EXTERNDEF		Is_Stamp_Registered_:near
+EXTERNDEF		Get_Free_Cache_Slot_:near
 
+Init_Stamps		PROTO NEAR C, icondata:PTR
 
-		struc	IconSetType
+IconSetType	struc
 
 		IconSetPtr	dd	?
 		IconListOffset	dd	?
 
-		ends
+IconSetType	ends
 
-global		C IconSetList:IconSetType
+EXTERNDEF		C IconSetList:IconSetType
 
-		codeseg
+		.code	; converted from TASM: codeseg
 
 
 
@@ -97,7 +98,7 @@ global		C IconSetList:IconSetType
 ;*   11/8/95 3:16PM ST: Created                                                                 *
 ;*==============================================================================================*
 
-proc		Cache_Copy_Icon_ near
+Cache_Copy_Icon_	proc	near
 		pushad
 
 		mov	esi,eax
@@ -115,7 +116,7 @@ proc		Cache_Copy_Icon_ near
 		popad
 		ret
 
-endp		Cache_Copy_Icon_
+Cache_Copy_Icon_		endp
 
 
 
@@ -136,9 +137,10 @@ endp		Cache_Copy_Icon_
 ;*   11/8/95 2:16PM ST: Created                                                                 *
 ;*==============================================================================================*
 
-proc		Is_Icon_Cached_ near
+Is_Icon_Cached_	proc		near
 
 		mov	[IconData],eax		;save the icon data ptr for later
+		assume eax:PTR IconSetType
 		push	edx
 		test	eax,eax
 		je	??out
@@ -146,7 +148,7 @@ proc		Is_Icon_Cached_ near
 ; Initialize the stamp data if necessary.
 		cmp	[LastIconset],eax
 		je	short ??noreset
-		call	Init_Stamps C,eax
+		invoke	Init_Stamps,eax
 
 ; Determine if the icon number requested is actually in the set.
 ; Perform the logical icon to actual icon number remap if necessary.
@@ -172,12 +174,12 @@ proc		Is_Icon_Cached_ near
 		ret
 
 ; Stamp is registered - if its cached already then just return the index
-??got_entry:	mov	eax,[(IconSetType eax).IconListOffset]
-		cmp	[word eax+edx*2+IconCacheLookup],-1
+??got_entry:	mov	eax,[eax].IconListOffset
+		cmp	word ptr [eax+edx*2+IconCacheLookup],-1
 		jz	??not_cached
 
 ; it is cached and [eax+edx] is the index
-		movzx	eax,[word eax+edx*2+IconCacheLookup]
+		movzx	eax,word ptr[eax+edx*2+IconCacheLookup]
 		pop	edx
 		ret
 
@@ -221,7 +223,7 @@ proc		Is_Icon_Cached_ near
 		ret
 
 
-endp		Is_Icon_Cached_
+Is_Icon_Cached_		endp
 
 
 
@@ -243,7 +245,7 @@ endp		Is_Icon_Cached_
 ;*   11/10/95 10:00AM ST: Created                                                               *
 ;*==============================================================================================*
 
-proc		Is_Stamp_Registered_
+Is_Stamp_Registered_	proc
 
 		push	edi
 		push	ecx
@@ -265,7 +267,7 @@ proc		Is_Stamp_Registered_
 		pop	edi
 		ret
 
-endp		Is_Stamp_Registered_
+Is_Stamp_Registered_		endp
 
 
 
@@ -273,7 +275,7 @@ endp		Is_Stamp_Registered_
 
 
 
-		dataseg
+		.data	; converted from TASM: dataseg
 
 
 IconEntry	dd	0	;Temporary pointer to icon index entry in table

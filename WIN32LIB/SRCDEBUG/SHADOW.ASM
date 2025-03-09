@@ -36,21 +36,21 @@
 ;*                                                                         *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
-INCLUDE ".\keystruc.inc"
+INCLUDE <.\drawbuff.inc>
+INCLUDE <.\gbuffer.inc>
+INCLUDE <.\keystruc.inc>
 
-GLOBAL	C Shadow_Blit	: NEAR
+EXTERNDEF	C Shadow_Blit	: NEAR
 
-GLOBAL	C RealModePtr : DWORD
-GLOBAL	C Hide_Mouse  : NEAR
-GLOBAL	C Show_Mouse  : NEAR
+EXTERNDEF	C RealModePtr : DWORD
+EXTERNDEF	C Hide_Mouse  : NEAR
+EXTERNDEF	C Show_Mouse  : NEAR
 
-	CODESEG
+	.CODE	; converted from TASM: CODESEG
 
 ; void Shadow_Blit(int xpix, int ypix, int width, int height, GVPC src, VBC dst, void *shadowbuff);
 ; Warning: Shadow_Blit appears to be relatively stupid, in that while it is
@@ -60,7 +60,7 @@ GLOBAL	C Show_Mouse  : NEAR
 ;	   will use the dword loop.  However, if you blit a region that is
 ;	   201 pixels wide, the dumb thing will use the byte loop for the
 ;	   entire blit.
-	PROC    Shadow_Blit C near
+Shadow_Blit	PROC    near C
 	USES	eax,ebx,ecx,edx,esi,edi
 
 	ARG	x:DWORD
@@ -205,6 +205,6 @@ GLOBAL	C Show_Mouse  : NEAR
 ??reallyfini:
 	ret
 
-	ENDP    Shadow_Blit
+Shadow_Blit    ENDP
 
 	END

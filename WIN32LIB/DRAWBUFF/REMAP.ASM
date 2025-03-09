@@ -35,28 +35,23 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
 
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
-	PROC	Buffer_Remap C NEAR
-	USES	eax,ebx,ecx,edx,esi,edi
-
-	;*===================================================================
-	;* Define the arguements that our function takes.
-	;*===================================================================
-	ARG	this_object:DWORD
-	ARG	x0_pixel:DWORD
-	ARG	y0_pixel:DWORD
-	ARG	region_width:DWORD
-	ARG	region_height:DWORD
-	ARG	remap	:DWORD
+Buffer_Remap	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
+	this_object:DWORD,
+	x0_pixel:DWORD,
+	y0_pixel:DWORD,
+	region_width:DWORD,
+	region_height:DWORD,
+	remap	:DWORD
 
 	;*===================================================================
 	; Define some locals so that we can handle things quickly
@@ -72,9 +67,10 @@ CODESEG
 
 ; Clip Source Rectangle against source Window boundaries.
 	mov  	esi , [ this_object ]	    ; get ptr to src
+	assume	esi : ptr GraphicViewPort
 	xor 	ecx , ecx
 	xor 	edx , edx
-	mov	edi , [ (GraphicViewPort esi) . GVPWidth ]  ; get width into register
+	mov	edi , [ esi ] . GVPWidth   ; get width into register
 	mov	ebx , [ x0_pixel ]
 	mov	eax , [ x0_pixel ]
 	add	ebx , [ region_width ]
@@ -87,7 +83,7 @@ CODESEG
 	shld	ecx , eax , 1
 	shld	edx , ebx , 1
 
-	mov	edi,[ ( GraphicViewPort esi) . GVPHeight ] ; get height into register
+	mov	edi,[ esi ] . GVPHeight  ; get height into register
 	mov	ebx , [ y0_pixel ]
 	mov	eax , [ y0_pixel ]
 	add	ebx , [ region_height ]
@@ -120,22 +116,22 @@ CODESEG
 ??scr_bottom_ok:
 	test	dl , 0100b
 	jz	??scr_right_ok
-	mov	eax , [ (GraphicViewPort esi) . GVPWidth ]  ; get width into register
+	mov	eax , [ esi ] . GVPWidth   ; get width into register
 	mov	[ x1_pixel ] , eax
 ??scr_right_ok:
 	test	dl , 0001b
 	jz	??do_remap
-	mov	eax , [ (GraphicViewPort esi) . GVPHeight ]  ; get width into register
+	mov	eax , [ esi ] . GVPHeight   ; get width into register
 	mov	[ y1_pixel ] , eax
 
 
 ??do_remap:
        cld
-       mov	edi , [ (GraphicViewPort esi) . GVPOffset ]
-       mov	eax , [ (GraphicViewPort esi) . GVPXAdd ]
+       mov	edi , [ esi ] . GVPOffset
+       mov	eax , [ esi ] . GVPXAdd
        mov	ebx , [ x1_pixel ]
-       add	eax , [ (GraphicViewPort esi) . GVPWidth ]
-       add	eax , [ (GraphicViewPort esi) . GVPPitch ]
+       add	eax , [ esi ] . GVPWidth
+       add	eax , [ esi ] . GVPPitch
        mov	esi , eax
        mul	[ y0_pixel ]
        add	edi , [ x0_pixel ]
@@ -170,6 +166,6 @@ CODESEG
 ??real_out:
 	ret
 
-	ENDP	Buffer_Remap
+Buffer_Remap	ENDP
 
 	END

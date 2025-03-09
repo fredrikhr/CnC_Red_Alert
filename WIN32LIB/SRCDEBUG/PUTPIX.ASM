@@ -35,15 +35,15 @@
 ;*   VVPC::Put_Pixel -- Puts a pixel on a virtual viewport                 *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <.\drawbuff.inc>
+INCLUDE <.\gbuffer.inc>
 
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* VVPC::PUT_PIXEL -- Puts a pixel on a virtual viewport                   *
@@ -62,7 +62,7 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   06/08/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Buffer_Put_Pixel C near
+Buffer_Put_Pixel	PROC	near C
 	USES	eax,ebx,ecx,edx,edi
 
 	ARG    	this_object:DWORD				; this is a member function
@@ -105,6 +105,6 @@ CODESEG
 	mov	[edi],al				; write it to the screen
 ??exit:
 	ret
-	ENDP	Buffer_Put_Pixel
+Buffer_Put_Pixel	ENDP
 
 END

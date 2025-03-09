@@ -36,15 +36,15 @@
 ;*   Decompress_Frame_Unlock -- Unlocks the JLB audio compression code     *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
-	CODESEG
+	; Converted TASM IDEAL to MASM
+	.386P
+	.MODEL	FLAT
+	;LOCALS	??
+	.CODE	; converted from TASM: CODESEG
 
 DPMI_INTR		equ	31h
 
-LABEL 	LockedCodeStart	BYTE
+LockedCodeStart 	LABEL	BYTE
 
 CODE_2BIT	EQU	0
 CODE_4BIT	EQU	1
@@ -72,8 +72,8 @@ _4bitdecode	DB	-9,-8,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,8
 ;*   03/14/1995 PWG : Created.                                             *
 ;*=========================================================================*
 
-	GLOBAL	C Decompress_Frame:NEAR
-	PROC	Decompress_Frame C NEAR USES ebx ecx edx esi edi
+	EXTERNDEF	C Decompress_Frame:NEAR
+Decompress_Frame	PROC	NEAR C USES ebx ecx edx esi edi
 
 	ARG	source:DWORD
 	ARG	dest:DWORD
@@ -363,9 +363,9 @@ _4bitdecode	DB	-9,-8,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,8
 	mov	eax,[incount]
 	ret
 
-	ENDP	Decompress_Frame
+Decompress_Frame	ENDP
 
-LABEL 	LockedCodeEnd	BYTE
+LockedCodeEnd 	LABEL	BYTE
 
 
 

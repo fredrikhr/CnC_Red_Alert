@@ -16,14 +16,14 @@
 ;	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ;
 
-IDEAL
-P386
-MODEL USE32 FLAT
-jumps
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
+;jumps
 
-	codeseg
+	.code	; converted from TASM: codeseg
 
-	masm
+	;masm
 ;
 ; Change a DAC colour register directly
 ;
@@ -58,13 +58,13 @@ set_dac_col proc near
 		ret
 set_dac_col endp
 
-	ideal
+	; Converted TASM ideal to MASM
 
 
-global	Set_Palette_Register_:near
+EXTERNDEF	Set_Palette_Register_:near
 
 
-proc Set_Palette_Register_ near
+Set_Palette_Register_	proc near
 
 		pushad
 		and	cl,63
@@ -75,6 +75,6 @@ proc Set_Palette_Register_ near
 		popad
 		ret
 
-endp Set_Palette_Register_
+Set_Palette_Register_ endp
 
 end

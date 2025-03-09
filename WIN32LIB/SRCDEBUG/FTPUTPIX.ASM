@@ -35,15 +35,15 @@
 ;*   VVPC::Buffer_Get_Pixel -- get the colour of a pixel at given coords   *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <.\drawbuff.inc>
+INCLUDE <.\gbuffer.inc>
 
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* VVPC::GET_PIXEL -- Gets a pixel from the current view port		   *
@@ -59,7 +59,7 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   06/07/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Buffer_Get_Pixel C near
+Buffer_Get_Pixel	PROC	near C
 	USES	ebx,ecx,edx,edi
 
 	ARG    	this_object:DWORD				; this is a member function
@@ -101,6 +101,6 @@ CODESEG
 	mov	al,[edi]				; read in the pixel
 ??exit:
 	ret
-	ENDP	Buffer_Get_Pixel
+Buffer_Get_Pixel	ENDP
 
 END

@@ -36,13 +36,13 @@
 ;*                                                                         *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-GLOBAL            C LCW_Uncompress          :NEAR
+EXTERNDEF            C LCW_Uncompress          :NEAR
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 ; ----------------------------------------------------------------
 ;
@@ -54,13 +54,10 @@ CODESEG
 
 
 
-PROC	LCW_Uncompress C near
-
-	USES ebx,ecx,edx,edi,esi
-
-	ARG	source:DWORD
-	ARG	dest:DWORD
-	ARG	length:DWORD
+LCW_Uncompress	PROC	near C	USES ebx ecx edx edi esi,
+	source:DWORD,
+	dest:DWORD,
+	_length:DWORD
 ;LOCALS
 	LOCAL a1stdest:DWORD
 	LOCAL maxlen:DWORD
@@ -71,7 +68,7 @@ PROC	LCW_Uncompress C near
 
 	mov	edi,[dest]
 	mov	esi,[source]
-	mov	edx,[length]
+	mov	edx,[_length]
 
 ;
 ;
@@ -283,7 +280,7 @@ PROC	LCW_Uncompress C near
 
 	ret
 
-ENDP	LCW_Uncompress
+LCW_Uncompress	ENDP
 
 ;***********************************************************
 

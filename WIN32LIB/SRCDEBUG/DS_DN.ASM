@@ -34,17 +34,17 @@
 ;* Functions:                                                              *
 ;*   Draw_Normal -- Draws a normal row of pixels to the viewport           *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
 
 ;******************************** Includes *********************************
-INCLUDE "shape.inc"
+INCLUDE <shape.inc>
 
 
 ;********************************* Code ************************************
-	CODESEG
+	.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* Draw_Normal -- Draws a normal row of pixels to the viewport             *
@@ -70,14 +70,14 @@ INCLUDE "shape.inc"
 ;*   08/09/1994 IML : Optimized for 32-bit.                                *
 ;*   09/06/1994 IML : Integrated p_* and ds_* routines.			   *
 ;*=========================================================================*
-PROC	Draw_Normal NOLANGUAGE NEAR
+Draw_NormalPROC	NEAR NOLANGUAGE
 
 	mov	[StashEDX],edx			; save edx
 	mov	edx,[Flags]
 	mov	eax,0				; init to zero
 	sub	[WidthCount],ecx		; decrement bytes remaining by pixels
 						;   to draw
-						
+
 	;--------------------------------------------------------------------
 	; Drawing Loop:
 	; - Get a data byte
@@ -129,7 +129,7 @@ PROC	Draw_Normal NOLANGUAGE NEAR
 	or	eax,eax
 	jz	short ??is_transparent
 
-??no_fading_draw_loop:	
+??no_fading_draw_loop:
 	mov	[edi],al			; store color value to viewport
 
 ??is_transparent:
@@ -142,9 +142,9 @@ PROC	Draw_Normal NOLANGUAGE NEAR
 	inc	esi
 	or	eax,eax				; is the byte a transparent run?
 	jz	??general_is_run		;   if yes then handle the run
-	
+
 ??test_priority:
-	test	edx,SHAPE_PRIORITY		
+	test	edx,SHAPE_PRIORITY
 	jnz	short ??priority
 
 ??test_predator:
@@ -182,9 +182,9 @@ PROC	Draw_Normal NOLANGUAGE NEAR
 	jnz	??fading
 	jmp	short ??general_draw_loop
 
-??priority:	
+??priority:
 	mov	ebx,[MaskAdjust]		; get mask page	offset
-	mov	bl,[BYTE PTR ebx + edi]		; get mask value  
+	mov	bl,[BYTE PTR ebx + edi]		; get mask value
 
 	and	bl,CLEAR_UNUSED_BITS		; clear unused bits
 
@@ -197,7 +197,7 @@ PROC	Draw_Normal NOLANGUAGE NEAR
 
 ??predator:
 	mov	ebx,[PartialCount]
-	add	ebx,[PartialPred]	
+	add	ebx,[PartialPred]
 	or	bh,bh
 	jnz	short ??draw_pred		; is this a predator pixel?
 	mov	[PartialCount],ebx
@@ -223,7 +223,7 @@ PROC	Draw_Normal NOLANGUAGE NEAR
 	mov	al,[edi]			; get the destination color and
 	mov	ebx,[ShadowingTable]		;  index into the shadow table
 	mov	al,[BYTE PTR ebx + eax]
-	jmp	??general_draw_loop			
+	jmp	??general_draw_loop
 
 ??fading:
 	mov	[StashECX],ecx			; preserve ecx for later
@@ -236,7 +236,7 @@ PROC	Draw_Normal NOLANGUAGE NEAR
 	jnz	short ??fade_loop
 
 	mov	ecx,[StashECX]			; restore ecx for main draw loop
-	jmp	??general_draw_loop			
+	jmp	??general_draw_loop
 
 ??general_is_run:
 	mov	al,[esi]
@@ -245,12 +245,12 @@ PROC	Draw_Normal NOLANGUAGE NEAR
 	sub	ecx,eax				; chop down the width to do
 	jg	??general_draw_continue		; while more to do, loop back up
 
-??out:	
+??out:
 	add	[WidthCount],ecx		; adjust for source ending in a run
 	mov	edx,[StashEDX]
-	ret	
+	ret
 
-	ENDP	Draw_Normal
+Draw_Normal	ENDP
 
 	END
 

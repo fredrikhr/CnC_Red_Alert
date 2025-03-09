@@ -35,20 +35,20 @@
 ;*   Buffer_Print -- Assembly Buffer text print routine                    *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <.\drawbuff.inc>
+INCLUDE <.\gbuffer.inc>
 
 ;*=========================================================================*
 ;* Extern the font pointer which is defined by the font class		   *
 ;*=========================================================================*
-GLOBAL	C FontPtr:DWORD
-GLOBAL	C FontXSpacing:DWORD
-GLOBAL	C FontYSpacing:DWORD
-GLOBAL	C ColorXlat:BYTE
+EXTERNDEF	C FontPtr:DWORD
+EXTERNDEF	C FontXSpacing:DWORD
+EXTERNDEF	C FontYSpacing:DWORD
+EXTERNDEF	C ColorXlat:BYTE
 
 ;*=========================================================================*
 ;* Define the necessary equates for structures and bounds checking	   *
@@ -73,11 +73,11 @@ FONTINFOMAXHEIGHT	EQU	4
 FONTINFOMAXWIDTH	EQU	5
 
 
-LOCALS ??
+;LOCALS ??
 ;*=========================================================================*
 ;* Define the color xlate table in the data segment			   *
 ;*=========================================================================*
-	DATASEG
+	.DATA	; converted from TASM: DATASEG
 
 ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 		DB	008H,009H,00AH,00BH,00CH,00DH,00EH,00FH
@@ -126,7 +126,7 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 
 		DB	00FH
 
-	CODESEG
+	.CODE	; converted from TASM: CODESEG
 
 
 ;***************************************************************************
@@ -145,7 +145,7 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 ;* HISTORY:                                                                *
 ;*   01/17/1995 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Buffer_Print C near
+Buffer_Print	PROC	near C
 	USES	ebx,ecx,edx,esi,edi
 
 	ARG	this_object:DWORD
@@ -475,7 +475,7 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 	mov	eax,[startdraw]			; return this so calling routine
 	ret					; can figure out where to draw next.
 
-	ENDP	Buffer_Print
+Buffer_Print	ENDP
 
 ;***************************************************************************
 ;* GET_FONT_PALETTE_PTR -- Returns a pointer to the 256 byte font palette  *
@@ -490,11 +490,11 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 ;*   08/18/1995 PWG : Created.                                             *
 ;*=========================================================================*
 
-	GLOBAL C	Get_Font_Palette_Ptr:NEAR
-	PROC	Get_Font_Palette_Ptr C near
+	EXTERNDEF C	Get_Font_Palette_Ptr:NEAR
+Get_Font_Palette_Ptr	PROC	near C
 	mov	eax, OFFSET ColorXlat
 	ret
-	ENDP	Get_Font_Palette_Ptr
+Get_Font_Palette_Ptr	ENDP
 
 
 END

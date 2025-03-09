@@ -36,26 +36,26 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
 
-GLOBAL      GetDefaultSelectors :NEAR
+EXTERNDEF      GetDefaultSelectors :NEAR
 
-GLOBAL 	    DataSelector	:WORD
-GLOBAL 	    ScreenSelector	:WORD
-GLOBAL 	    GraphicsSelector	:WORD
-GLOBAL 	    PspSelector		:WORD
-GLOBAL 	    EnvSelector		:WORD
-GLOBAL 	    DosMemSelector	:WORD
-GLOBAL 	    Fp1167Selector	:WORD
-GLOBAL 	    FpWeitekSelector	:WORD
-GLOBAL 	    FpCyrixSelector	:WORD
-GLOBAL 	    CodeSelector	:WORD
+EXTERNDEF 	    DataSelector	:WORD
+EXTERNDEF 	    ScreenSelector	:WORD
+EXTERNDEF 	    GraphicsSelector	:WORD
+EXTERNDEF 	    PspSelector		:WORD
+EXTERNDEF 	    EnvSelector		:WORD
+EXTERNDEF 	    DosMemSelector	:WORD
+EXTERNDEF 	    Fp1167Selector	:WORD
+EXTERNDEF 	    FpWeitekSelector	:WORD
+EXTERNDEF 	    FpCyrixSelector	:WORD
+EXTERNDEF 	    CodeSelector	:WORD
 
 
-DATASEG
+.DATA	; converted from TASM: DATASEG
 
 ; It is very important that this section remain untouch
 ; is not really needed by Rational System but is here to
@@ -74,9 +74,9 @@ FpCyrixSelector		dw	0
 
 CodeSelector		dw	0
 
-		    
+
 ;============================================================================
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;*  GetDefaultSelectors -- Setup the defaults selector values to have the  *
@@ -94,7 +94,7 @@ CODESEG
 ;*   03/28/1994  jaw: Created.                                             *
 ;*=========================================================================*
 
-PROC GetDefaultSelectors 	C near 
+GetDefaultSelectorsPROC near C
 	USES eax,esi,ecx
 
 	lea	edi,[DataSelector]
@@ -105,11 +105,11 @@ PROC GetDefaultSelectors 	C near
 	rep	stosw
 	mov	ax,cs
 	mov	[word ptr CodeSelector] , ax
-     
-	ret	   
+
+	ret
 ;====================
-ENDP GetDefaultSelectors	
-     
+GetDefaultSelectors ENDP
+
 
 END
 

@@ -34,21 +34,21 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
-LOCALS ??
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
+;LOCALS ??
 
-INCLUDE "svgaprim.inc"
-INCLUDE "gbuffer.inc"
+INCLUDE <svgaprim.inc>
+INCLUDE <gbuffer.inc>
 
-TRANSP	equ  0 
+TRANSP	equ  0
 
 POOLSIZE equ	8000
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
-	PROC	Vesa_Blit_To_Vesa C near 
+Vesa_Blit_To_Vesa	PROC	near C
 	USES	ebx,ecx,edx,esi,edi
 
 	;*===================================================================
@@ -219,7 +219,7 @@ CODESEG
 
 ??do_blit:
 
-       cld	
+       cld
        mov	ebx , [ this ]
        mov	esi , [ (VideoViewPort ebx) . VIVPOffset ]
        mov	eax , [ (VideoViewPort ebx) . VIVPXAdd ]
@@ -258,7 +258,7 @@ CODESEG
        mov	[ mem_page ] , 0
        mov	[ vesa_page ] , 0
 
-       mov	[ total_lines ] , edx	
+       mov	[ total_lines ] , edx
        mov	eax , POOLSIZE
        xor	edx , edx
        idiv	[ dword ptr esp ]
@@ -316,14 +316,14 @@ CODESEG
 
 
 
-; ********************************************************************       
+; ********************************************************************
 ; Move Vesa video page to memory buffer
 
 ??vesa_to_memory:
 
        xchg	edi , esi
        add	edi , [ mem_page ]
-       call	Vesa_Asm_Set_Win  
+       call	Vesa_Asm_Set_Win
        xchg	edi , esi
 
 IF  TRANSP
@@ -332,10 +332,10 @@ IF  TRANSP
 ENDIF
 
 
-; the inner loop is so efficient that 
+; the inner loop is so efficient that
 ; the optimal consept no longer apply because
 ; the optimal byte have to by a number greather than 9 bytes
-       cmp	eax , 10        
+       cmp	eax , 10
        jl	??tomem_forward_loop_bytes
 
 ??tomem_forward_loop_dword:
@@ -350,10 +350,10 @@ ENDIF
        cmp	esi , 0b0000h
        jge	??tomem_no_trailing
        mov	ecx , 0b0000h
-       sub	ecx , esi 
+       sub	ecx , esi
        sub	ebx , ecx
        rep	movsb
-??tomem_no_trailing:  
+??tomem_no_trailing:
        add	esi , [ cpu_video_page ]
        xchg	edi , esi
        Call	Vesa_Asm_Set_Win			; set the window
@@ -364,8 +364,8 @@ ENDIF
        add	esi , [ scr_ajust_width ]
        dec	edx					; decrement the height
        jnz	??tomem_forward_loop_dword
-       mov	edx , [ cpu_video_page ] 
-       mov	[ mem_page ] , edx 			
+       mov	edx , [ cpu_video_page ]
+       mov	[ mem_page ] , edx
        retn
 
 ??tomem_in_range:
@@ -382,10 +382,10 @@ ENDIF
        and	ecx , 3
        rep	movsb
        add	esi , [ scr_ajust_width ]
-       dec	edx 
+       dec	edx
        jnz	??tomem_forward_loop_dword
-       mov	edx , [ cpu_video_page ] 
-       mov	[ mem_page ] , edx 			
+       mov	edx , [ cpu_video_page ]
+       mov	[ mem_page ] , edx
        retn
 
 ??tomem_forward_loop_bytes:
@@ -399,10 +399,10 @@ ENDIF
        cmp	esi , 0b0000h
        jge	??tomem_no_trailing_bytes
        mov	ecx , 0b0000h
-       sub	ecx , esi 
+       sub	ecx , esi
        sub	ebx , ecx
        rep	movsb
-??tomem_no_trailing_bytes:  
+??tomem_no_trailing_bytes:
        add	esi , [ cpu_video_page ]
        xchg	edi , esi
        Call	Vesa_Asm_Set_Win			; set the window
@@ -413,25 +413,25 @@ ENDIF
        add	esi , [ scr_ajust_width ]
        dec	edx					; decrement the height
        jnz	??tomem_forward_loop_bytes
-       mov	edx , [ cpu_video_page ] 
-       mov	[ mem_page ] , edx 			
+       mov	edx , [ cpu_video_page ]
+       mov	[ mem_page ] , edx
        retn
 
 IF  TRANSP
 ??tomem_forward_Blit_trans:
        mov	ecx , eax
        and	ecx , 01fh
-       lea	ecx , [ ecx + ecx * 4 ]	
+       lea	ecx , [ ecx + ecx * 4 ]
        neg	ecx
        shr	eax , 5
        lea	ecx , [ ??tomem_transp_reference + ecx * 2 ]
        mov	[ y1_pixel ] , ecx
 
 ??tomem_forward_loop_trans:
-       mov	ecx , eax 
+       mov	ecx , eax
        jmp	[ y1_pixel ]
 ??tomem_forward_trans_line:
-       REPT	32	
+       REPT	32
        local	transp_pixel
        		mov	bl , [ esi ]
        		inc	esi
@@ -442,13 +442,13 @@ IF  TRANSP
        		inc	edi
 	ENDM
     ??tomem_transp_reference:
-       dec	ecx 
+       dec	ecx
        jge	??tomem_forward_trans_line
        add	esi , [ scr_ajust_width ]
-       dec	edx 
+       dec	edx
        jnz	??tomem_forward_loop_trans
-       mov	edx , [ cpu_video_page ] 
-       mov	[ mem_page ] , edx 			
+       mov	edx , [ cpu_video_page ]
+       mov	[ mem_page ] , edx
        retn
 ENDIF
 
@@ -461,7 +461,7 @@ ENDIF
 
 ??memory_to_vesa:
        add	edi , [ vesa_page ]
-       Call	Vesa_Asm_Set_Win  
+       Call	Vesa_Asm_Set_Win
 
 IF TRANSP
        test	[ trans ] , 1
@@ -469,10 +469,10 @@ IF TRANSP
 ENDIF
 
 
-; the inner loop is so efficient that 
+; the inner loop is so efficient that
 ; the optimal consept no longer apply because
 ; the optimal byte have to by a number greather than 9 bytes
-       cmp	eax , 10        
+       cmp	eax , 10
        jl	??tovesa_forward_loop_bytes
 
 ??tovesa_forward_loop_dword:
@@ -487,10 +487,10 @@ ENDIF
        mov	ebx , eax
        jge	??tovesa_no_trailing
        mov	ecx , 0b0000h
-       sub	ecx , edi 
+       sub	ecx , edi
        sub	ebx , ecx
        rep	movsb
-??tovesa_no_trailing:  
+??tovesa_no_trailing:
        add	edi , [ cpu_video_page ]
        Call	Vesa_Asm_Set_Win			; set the window
 
@@ -499,8 +499,8 @@ ENDIF
        add	edi , [ dest_ajust_width ]
        dec	edx					; decrement the height
        jnz	??tovesa_forward_loop_dword
-       mov	edx , [ cpu_video_page ] 
-       mov	[ vesa_page ] , edx 
+       mov	edx , [ cpu_video_page ]
+       mov	[ vesa_page ] , edx
        retn
 
 ??tovesa_in_range:
@@ -518,10 +518,10 @@ ENDIF
        and	ecx , 3
        rep	movsb
        add	edi , [ dest_ajust_width ]
-       dec	edx 
+       dec	edx
        jnz	??tovesa_forward_loop_dword
-       mov	edx , [ cpu_video_page ] 
-       mov	[ vesa_page ] , edx 
+       mov	edx , [ cpu_video_page ]
+       mov	[ vesa_page ] , edx
        retn
 
 ??tovesa_forward_loop_bytes:
@@ -535,10 +535,10 @@ ENDIF
        cmp	edi , 0b0000h
        jge	??tovesa_no_trailing_bytes
        mov	ecx , 0b0000h
-       sub	ecx , edi 
+       sub	ecx , edi
        sub	ebx , ecx
        rep	movsb
-??tovesa_no_trailing_bytes:  
+??tovesa_no_trailing_bytes:
        add	edi , [ cpu_video_page ]
        Call	Vesa_Asm_Set_Win			; set the window
 ??tovesa_in_range_bytes:
@@ -547,8 +547,8 @@ ENDIF
        add	edi , [ dest_ajust_width ]
        dec	edx					; decrement the height
        jnz	??tovesa_forward_loop_bytes
-       mov	edx , [ cpu_video_page ] 
-       mov	[ vesa_page ] , edx 
+       mov	edx , [ cpu_video_page ]
+       mov	[ vesa_page ] , edx
        retn
 
 IF  TRANSP
@@ -558,17 +558,17 @@ IF  TRANSP
 
        mov	ecx , eax
        and	ecx , 01fh
-       lea	ecx , [ ecx + ecx * 4 ]	
+       lea	ecx , [ ecx + ecx * 4 ]
        neg	ecx
        shr	eax , 5
        lea	ecx , [ ??tovesa_transp_reference + ecx * 2 ]
        mov	[ y1_pixel ] , ecx
 
 ??tovesa_forward_loop_trans:
-       mov	ecx , eax 
+       mov	ecx , eax
        jmp	[ y1_pixel ]
 ??tovesa_forward_trans_line:
-       REPT	32	
+       REPT	32
        local	transp_pixel
        		mov	bl , [ esi ]
        		test	bl , bl
@@ -579,18 +579,18 @@ IF  TRANSP
 	    	inc	edi
 	ENDM
     ??tovesa_transp_reference:
-       dec	ecx 
+       dec	ecx
        jge	??tovesa_forward_trans_line
        add	edi , [ dest_ajust_width ]
-       dec	edx 
+       dec	edx
        jnz	??tovesa_forward_loop_trans
-       mov	edx , [ cpu_video_page ] 
-       mov	[ vesa_page ] , edx 
+       mov	edx , [ cpu_video_page ]
+       mov	[ vesa_page ] , edx
        retn
 ENDIF
 
 
-ENDP	Vesa_Blit_To_Vesa
+Vesa_Blit_To_Vesa	ENDP
 
 
 

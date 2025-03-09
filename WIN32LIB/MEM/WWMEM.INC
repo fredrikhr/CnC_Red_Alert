@@ -39,5 +39,5 @@ MEM_NORMAL EQU 0000h		; Default memory (normal).
 MEM_NEW	   EQU 0001h		; Called by the operator new and was overloaded.
 MEM_CLEAR  EQU 0002h 		;
 
-GLOBAL		@Alloc$qul14MemoryFlagType:PROC
-GLOBAL		@Free$qpv:PROC
+EXTERNDEF		@Alloc$qul14MemoryFlagType:PROC
+EXTERNDEF		@Free$qpv:PROC

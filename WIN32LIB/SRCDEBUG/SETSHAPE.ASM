@@ -34,15 +34,15 @@
 ;* Functions:                                                              *
 ;*   Set_Shape_Buffer -- Sets the shape buffer to the given pointer        *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
 
 ;******************************** Includes *********************************
-INCLUDE "shape.inc"
+INCLUDE <shape.inc>
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* SET_SHAPE_BUFFER -- Sets the shape buffer to the given pointer          *
@@ -61,9 +61,9 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   10/26/1994 PWG : Created.                                             *
 ;*=========================================================================*
-GLOBAL	Set_Shape_Buffer:NEAR
+EXTERNDEF	Set_Shape_Buffer:NEAR
 
-PROC	Set_Shape_Buffer C near 
+Set_Shape_BufferPROC	near C
 	USES	eax
 
 	ARG	buff:DWORD
@@ -76,6 +76,6 @@ PROC	Set_Shape_Buffer C near
 	mov	[_ShapeBuffer],eax
 	ret
 
-	ENDP	Set_Shape_Buffer
+Set_Shape_Buffer	ENDP
 END
 

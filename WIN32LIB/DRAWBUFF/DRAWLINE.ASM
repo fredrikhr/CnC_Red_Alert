@@ -37,15 +37,15 @@
 ;*   __DRAW_LINE -- Assembly routine to draw a line                        *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
 
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 
 
@@ -65,18 +65,13 @@ CODESEG
 ;*   06/16/1994 PWG : Created.                                             *
 ;*   08/30/1994 IML : Fixed clipping bug.				   *
 ;*=========================================================================*
-	PROC	Buffer_Draw_Line C NEAR
-	USES	eax,ebx,ecx,edx,esi,edi
-
-	;*==================================================================
-	;* Define the arguements that the function takes.
-	;*==================================================================
-	ARG	this_object:DWORD	; associated graphic view port
-	ARG	x1_pixel:DWORD		; the start x pixel position
-	ARG	y1_pixel:DWORD		; the start y pixel position
-	ARG	x2_pixel:DWORD		; the dest x pixel position
-	ARG	y2_pixel:DWORD		; the dest y pixel position
-	ARG	color:DWORD		; the color we are drawing
+Buffer_Draw_Line	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
+	this_object:DWORD,	; associated graphic view port
+	x1_pixel:DWORD,		; the start x pixel position
+	y1_pixel:DWORD,		; the start y pixel position
+	x2_pixel:DWORD,		; the dest x pixel position
+	y2_pixel:DWORD,		; the dest y pixel position
+	color:DWORD			; the color we are drawing
 
 	;*==================================================================
 	;* Define the local variables that we will use on the stack
@@ -93,15 +88,16 @@ CODESEG
 	;* Take care of find the clip minimum and maximums
 	;*==================================================================
 	mov	ebx,[this_object]
+	assume ebx:PTR GraphicViewPort
 	xor	eax,eax
 	mov	[clip_min_x],eax
 	mov	[clip_min_y],eax
-	mov	eax,[(GraphicViewPort ebx).GVPWidth]
+	mov	eax,[ebx].GVPWidth
 	mov	[clip_max_x],eax
-	add	eax,[(GraphicViewPort ebx).GVPXAdd]
-	add	eax,[(GraphicViewPort ebx).GVPPitch]
+	add	eax,[ebx].GVPXAdd
+	add	eax,[ebx].GVPPitch
 	mov	[bpr],eax
-	mov	eax,[(GraphicViewPort ebx).GVPHeight]
+	mov	eax,[ebx].GVPHeight
 	mov	[clip_max_y],eax
 
 	;*==================================================================
@@ -306,8 +302,10 @@ CODESEG
 	mul	ebx
 	mov	ebx,eax
 	mov	eax,[this_object]
-	add	ebx,[(GraphicViewPort eax).GVPOffset]
+	assume eax:PTR GraphicViewPort
+	add	ebx,[eax].GVPOffset
 	pop	eax
+	assume eax:NOTHING
 	pop	edx
 
 	mov	esi,1			; assume a right mover
@@ -343,7 +341,7 @@ CODESEG
 	mov	eax,[color]
 
 ??v_midloop:
-	mov	[ebx],al
+	mov	BYTE PTR [ebx],al
 	dec	ecx
 	jl	??out
 	add	ebx,[bpr]
@@ -369,7 +367,7 @@ CODESEG
 	mov	eax,[color]
 
 ??h_midloop:
-	mov	[ebx],al
+	mov	BYTE PTR [ebx],al
 	dec	ecx				; dec counter
 	jl	??out				; end of line
 	add	ebx,esi
@@ -397,20 +395,22 @@ CODESEG
 	mul	ebx
 	mov	ebx,eax
 	mov	eax,[this_object]
-	add	ebx,[(GraphicViewPort eax).GVPOffset]
+	assume eax:PTR GraphicViewPort
+	add	ebx,[eax].GVPOffset
 	pop	eax
+	assume eax:NOTHING
 	pop	edx
 	add	ebx,eax
 	mov	edi,ebx
 	cmp	ecx,15
 	jg	??big_line
-	mov	al,[byte color]
+	mov	al,byte ptr [color]
 	rep	stosb			; write as many words as possible
 	jmp	short ??out		; get outt
 
 
 ??big_line:
-	mov	al,[byte color]
+	mov	al,byte ptr [color]
 	mov	ah,al
 	mov     ebx,eax
 	shl	eax,16
@@ -451,14 +451,14 @@ CODESEG
 	mov	eax,[color]
 
 ??vl_loop:
-	mov	[ebx],al		; store bit
+	mov	BYTE PTR [ebx],al		; store bit
 	add	ebx,[bpr]
 	dec	ecx
 	jnz	??vl_loop
 
 ??out:
 	ret
-	ENDP	Buffer_Draw_Line
+Buffer_Draw_Line	ENDP
 
 
 END

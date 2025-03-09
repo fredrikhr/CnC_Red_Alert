@@ -36,16 +36,16 @@
 ;*   VIVPC::Put_Pixel -- Puts a pixel on a virtual viewport                *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
-LOCALS ??
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
+;LOCALS ??
 
-INCLUDE "svgaprim.inc"
-INCLUDE "gbuffer.inc"
+INCLUDE <svgaprim.inc>
+INCLUDE <gbuffer.inc>
 
 
-	CODESEG
+	.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* VIVPC::PUT_PIXEL -- Puts a pixel on a video viewport                    *
@@ -64,7 +64,7 @@ INCLUDE "gbuffer.inc"
 ;* HISTORY:                                                                *
 ;*   06/08/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Vesa_Put_Pixel C near 
+Vesa_Put_Pixel	PROC	near C
 	USES	eax,ebx,ecx,edx,edi,esi
 
 	ARG    	this:DWORD				; this is a member function
@@ -111,5 +111,5 @@ INCLUDE "gbuffer.inc"
 	mov	[edi],al				; write it to the screen
 ??exit:
 	ret
-	ENDP	Vesa_Put_Pixel
+Vesa_Put_Pixel	ENDP
 END

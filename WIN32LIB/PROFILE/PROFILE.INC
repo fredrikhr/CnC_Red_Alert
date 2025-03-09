@@ -22,7 +22,7 @@
 
 macro	prologue
 Ifdef USE_PROFILER
-		global	__PRO:near
+		EXTERNDEF	__PRO:near
 
 		call		__PRO
 endif ;USE_PROFILER
@@ -32,7 +32,7 @@ endm
 
 macro epilogue
 ifdef USE_PROFILER
-		global	__EPI:near
+		EXTERNDEF	__EPI:near
 
 		push		ebp
 		call		__EPI

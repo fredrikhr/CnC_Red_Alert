@@ -35,17 +35,17 @@
 ;*   Buffer_To_Page -- Copies a linear buffer to a virtual viewport	   *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
 TRANSP	equ  0
 
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <.\drawbuff.inc>
+INCLUDE <.\gbuffer.inc>
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* VVC::TOPAGE -- Copies a linear buffer to a virtual viewport		   *
@@ -68,7 +68,7 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   06/15/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Buffer_To_Page C near
+Buffer_To_Page	PROC	near C
 	USES	eax,ebx,ecx,edx,esi,edi
 
 	;*===================================================================
@@ -290,5 +290,5 @@ ENDIF
        ret
 
 
-	ENDP	Buffer_To_Page
+Buffer_To_Page	ENDP
 END

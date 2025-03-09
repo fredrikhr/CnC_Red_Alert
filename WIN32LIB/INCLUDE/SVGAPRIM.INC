@@ -33,45 +33,45 @@
 ;*-------------------------------------------------------------------------*
 
 ; Externs from VIDEO.CPP module of the VIDEO library
-GLOBAL BankTable			:DWORD
-GLOBAL VesaFunc			:DWORD
-GLOBAL XRes					:DWORD
-GLOBAL YRes					:DWORD
-GLOBAL CurrentMode		:DWORD
-global cpu_video_page	:dword
-global cpu_page_limit   :dword
+EXTERNDEF BankTable			:DWORD
+EXTERNDEF VesaFunc			:DWORD
+EXTERNDEF XRes					:DWORD
+EXTERNDEF YRes					:DWORD
+EXTERNDEF CurrentMode		:DWORD
+EXTERNDEF cpu_video_page	:dword
+EXTERNDEF cpu_page_limit   :dword
 
 
 ; Externs from VESA.ASM module of the SVGAPRIM library
-GLOBAL Vesa_Asm_Set_Win		:NEAR
-GLOBAL Vesa_Asm_Next_Win		:NEAR
+EXTERNDEF Vesa_Asm_Set_Win		:NEAR
+EXTERNDEF Vesa_Asm_Next_Win		:NEAR
 
 ; Externs from VGETPIX.ASM module of the SVGA/MCGAPRIM library
-GLOBAL Vesa_Get_Pixel          	:NEAR
+EXTERNDEF Vesa_Get_Pixel          	:NEAR
 
 ; Externs from VPUTTPIX.ASM module of the SVGA/MCGAPRIM library
-GLOBAL Vesa_Put_Pixel 		:NEAR
+EXTERNDEF Vesa_Put_Pixel 		:NEAR
 
 
 ; Externs from VCLEAR.ASM module of the MCGA/SVGAPRIM library
-GLOBAL Vesa_Clear			:NEAR
+EXTERNDEF Vesa_Clear			:NEAR
 
 ; Externs from VBITBLIT.ASM module of the MCGA/SVGAPRIM library
-GLOBAL Linear_Blit_To_Vesa		:NEAR
-GLOBAL Vesa_Blit_To_Linear		:NEAR
-GLOBAL Vesa_Blit_To_Vesa		:NEAR
+EXTERNDEF Linear_Blit_To_Vesa		:NEAR
+EXTERNDEF Vesa_Blit_To_Linear		:NEAR
+EXTERNDEF Vesa_Blit_To_Vesa		:NEAR
 
 ; Externs from VTOBUFF.ASM module of the SVGA/MCGAPRIM library
-GLOBAL Vesa_To_Buffer		:NEAR
+EXTERNDEF Vesa_To_Buffer		:NEAR
 
 ; Externs from VTOPAGE.ASM module of the SVGA/MCGAPRIM library
-GLOBAL Vesa_Buffer_To_Page		:NEAR
+EXTERNDEF Vesa_Buffer_To_Page		:NEAR
 
 ; Externs from VSCALE.ASM module of the SVGA/MCGAPRIM library
-GLOBAL Linear_Scale_To_Vesa 		:NEAR
-GLOBAL Vesa_Scale_To_Linear		:NEAR
-GLOBAL Vesa_Scale_To_Vesa 		:NEAR
+EXTERNDEF Linear_Scale_To_Vesa 		:NEAR
+EXTERNDEF Vesa_Scale_To_Linear		:NEAR
+EXTERNDEF Vesa_Scale_To_Vesa 		:NEAR
 
 
 ; Externs from VSCALE.ASM module of the SVGA/MCGAPRIM library
-GLOBAL Vesa_Print	 		:NEAR
+EXTERNDEF Vesa_Print	 		:NEAR

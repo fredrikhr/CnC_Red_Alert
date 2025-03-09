@@ -32,23 +32,23 @@
 ;*-------------------------------------------------------------------------*
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
-IDEAL
-P386
-MODEL USE32 FLAT
-LOCALS ??
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
+;LOCALS ??
 
-INCLUDE "drawbuff.inc"
-INCLUDE "gbuffer.inc"
-INCLUDE "shape.inc"
-INCLUDE ".\mouse.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
+INCLUDE <shape.inc>
+INCLUDE <.\mouse.inc>
 
-GLOBAL	C LCW_Uncompress:NEAR
-GLOBAL	C Get_Shape_Uncomp_Size     :NEAR
-GLOBAL	C Get_Shape_Width      	  :NEAR
-GLOBAL	C Get_Shape_Original_Height :NEAR
-GLOBAL	_ShapeBuffer		  :DWORD
+EXTERNDEF	C LCW_Uncompress:NEAR
+EXTERNDEF	C Get_Shape_Uncomp_Size     :NEAR
+EXTERNDEF	C Get_Shape_Width      	  :NEAR
+EXTERNDEF	C Get_Shape_Original_Height :NEAR
+EXTERNDEF	_ShapeBuffer		  :DWORD
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 
 ;***************************************************************************
@@ -76,8 +76,8 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   10/27/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C Mouse_Shadow_Buffer:NEAR
-	PROC	Mouse_Shadow_Buffer C NEAR
+	EXTERNDEF	C Mouse_Shadow_Buffer:NEAR
+Mouse_Shadow_Buffer	PROC	NEAR C
 	USES	eax,ebx,ecx,edx,edi,esi
 
 	ARG	this:		DWORD
@@ -262,7 +262,7 @@ CODESEG
 	pop	ebp
 ??out:
 	ret
-	ENDP	Mouse_Shadow_Buffer
+Mouse_Shadow_Buffer	ENDP
 
 ;***************************************************************************
 ;* DRAW_MOUSE -- Handles drawing the mouse cursor			   *
@@ -285,8 +285,8 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   10/27/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C Draw_Mouse:NEAR
-	PROC	Draw_Mouse C NEAR
+	EXTERNDEF	C Draw_Mouse:NEAR
+Draw_Mouse	PROC	NEAR C
 	USES	eax,ebx,ecx,edx,edi,esi
 
 	ARG	this:DWORD
@@ -451,7 +451,7 @@ CODESEG
 ??out:
 	ret
 
-	ENDP	Draw_Mouse
+Draw_Mouse	ENDP
 ;***************************************************************************
 ;* SET_MOUSE_CURSOR -- Sets the shape to be used as the mouse.             *
 ;*                                                                         *
@@ -473,8 +473,8 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   02/13/1992 JLB : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C ASM_Set_Mouse_Cursor:NEAR
-	PROC	ASM_Set_Mouse_Cursor C NEAR
+	EXTERNDEF	C ASM_Set_Mouse_Cursor:NEAR
+ASM_Set_Mouse_Cursor	PROC	NEAR C
 	USES	ebx,ecx,edx,esi,edi
 
 	ARG	this:DWORD				; pointer to mouse cursor struct
@@ -657,6 +657,6 @@ CODESEG
 	pop	[(MouseType esi).PrevCursor]
 	ret				; and return back to the world
 
-	ENDP	ASM_Set_Mouse_Cursor
+ASM_Set_Mouse_Cursor	ENDP
 
 END

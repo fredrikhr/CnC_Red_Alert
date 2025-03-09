@@ -35,18 +35,18 @@
 ;*   VESA_Print -- Assembly VESA text print routine                        *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-INCLUDE "svgaprim.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <svgaprim.inc>
+INCLUDE <.\gbuffer.inc>
 
 ;*=========================================================================*
 ;* Extern the font pointer which is defined by the font class		   *
 ;*=========================================================================*
-	GLOBAL	FontPtr:DWORD
-	GLOBAL	ColorXlat:BYTE
+	EXTERNDEF	FontPtr:DWORD
+	EXTERNDEF	ColorXlat:BYTE
 
 ;*=========================================================================*
 ;* Define the necessary equates for structures and bounds checking	   *
@@ -71,12 +71,12 @@ FONTINFOMAXHEIGHT	EQU	4
 FONTINFOMAXWIDTH	EQU	5
 
 
-LOCALS ??
+;LOCALS ??
 ;*=========================================================================*
 ;* Define the color xlate table in the data segment			   *
 ;*=========================================================================*
 
-	CODESEG
+	.CODE	; converted from TASM: CODESEG
 
 
 ;***************************************************************************
@@ -95,16 +95,16 @@ LOCALS ??
 ;* HISTORY:                                                                *
 ;*   01/17/1995 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Vesa_Print C near
+Vesa_Print	PROC	near C
 	USES	ebx,ecx,edx,esi,edi
 
 	ARG	this:DWORD
-	ARG	string:DWORD	 
+	ARG	string:DWORD
 	ARG	x_pixel:DWORD
 	ARG	y_pixel:DWORD
 	ARG	fcolor:DWORD
 	ARG	bcolor:DWORD
-		
+
 	LOCAL	infoblock:DWORD		; pointer to info block
 	LOCAL	offsetblock:DWORD	; pointer to offset block  (UWORD *)
 	LOCAL	widthblock:DWORD	; pointer to width block   (BYTE  *)
@@ -116,7 +116,7 @@ LOCALS ??
 	LOCAL	nextdraw:DWORD		; bufferwidth - width of cur character.
 	LOCAL	startdraw:DWORD		; where next character will start being drawn.
 
-	LOCAL	char:DWORD		; current character value.	
+	LOCAL	char:DWORD		; current character value.
 
 	LOCAL	maxheight:BYTE		; max height of characters in font.
 	LOCAL	bottomblank:BYTE	; amount of empty space below current character.
@@ -140,7 +140,7 @@ LOCALS ??
 
 	mul	[y_pixel]				; multiply rowsize * y_pixel start.
 	mov	edi,[(GraphicViewPort ebx).GVPOffset]	; get start of the viewport
-	add	edi,eax					; add y position to start of vp 
+	add	edi,eax					; add y position to start of vp
 	mov	[curline],edi				; save 0,y address for line feed stuff.
 	add	edi,[x_pixel]				; add to get starting column in starting row.
 
@@ -164,8 +164,8 @@ LOCALS ??
 	movzx	ecx,[WORD PTR esi+FONTWIDTHBLOCK] 	; get offset to width block
 	movzx	edx,[WORD PTR esi+FONTHEIGHTBLOCK]	; get offset to height block
 
-	add	eax,esi				; add offset of FontPtr to offset block  
-	add	ebx,esi				; add offset of FontPtr to info block 
+	add	eax,esi				; add offset of FontPtr to offset block
+	add	ebx,esi				; add offset of FontPtr to info block
 	add	ecx,esi				; add offset of FontPtr to width block
 	add	edx,esi				; add offset of FontPtr to height block
 
@@ -202,18 +202,18 @@ LOCALS ??
 	; something with it.
 ??next_char:
 	; while (*string++)
-	xor	eax,eax				; zero out since we will just load al.	
-	mov	esi,[string]			; get address on next character.	
+	xor	eax,eax				; zero out since we will just load al.
+	mov	esi,[string]			; get address on next character.
 	lodsb					; load the character into al.
 	test	eax,0FFH			; test to see if character is a NULL
 	jz	??done				; character is NULL, get outa here.
 	mov	edi,[startdraw]			; Load the starting address.
 
-	mov	[string],esi			; save index into string. (incremented by lodsb)	
+	mov	[string],esi			; save index into string. (incremented by lodsb)
 
 	cmp	eax,10				; is the character a line feed?
 	je	??line_feed			; if so, go to special case.
-	
+
 	cmp	eax,13				; is the character a line feed?
 	je	??line_feed			; if so, go to special case.
 
@@ -242,7 +242,7 @@ LOCALS ??
 	; get offset of data for character into esi.
 	shl	ebx,1				; mult by 2 to later use as a WORD index.
 	mov	esi,[offsetblock]		; get pointer to begining of offset block.
-	add	esi,ebx				; index into offset block.	
+	add	esi,ebx				; index into offset block.
 	movzx	esi,[WORD PTR esi]		; get true offset into data block from FontPtr.
 	add	esi,[FontPtr]			; Now add FontPtr address to get true address.
 
@@ -277,7 +277,7 @@ LOCALS ??
 	mov	ecx,edx				; save width since edx will be destroyed by mul.
 	mul	[bufferwidth]			; multiply that by the width of the buffer.
 	mov	edx,ecx				; restore the width
-	add	edi,eax				; update the pointer.	
+	add	edi,eax				; update the pointer.
 	cmp	edi,0b0000h			; have we gone over win edge
 	jl	??draw_char			; if not keep writing to window
         add	edi , [ cpu_video_page ]
@@ -313,7 +313,7 @@ LOCALS ??
 ??draw_char:
 	movzx	ecx,[charheight]		; get the height of character to count down rows.
 	test	ecx,ecx				; is there any data? (blank would not have any)
-	jz	??next_char			; if no data, go on to next character.	
+	jz	??next_char			; if no data, go on to next character.
 
 
 ??while_data:
@@ -408,7 +408,7 @@ LOCALS ??
 ; JRJ 05/01/95 This is the problem However made this change introduced
 ; a error in the code, this function is not supposed to handle
 ; Text wrapping
-??force_line_feed:	
+??force_line_feed:
 	; decrement pointer *string so that it will be back at same character
 	; when it goes through the loop.
 	dec	[dword ptr string]		  ; overflow by one charater
@@ -423,8 +423,8 @@ LOCALS ??
 	jg	??done			; if so, we are outa here.
 
 	mov	eax,[bufferwidth]      		; get bytes to next line.
-	mov	edi,[curline]			; get start of current line.	
-	mul	ecx				; mult max height * next line.	
+	mov	edi,[curline]			; get start of current line.
+	mul	ecx				; mult max height * next line.
 
 	add	edi,eax				; add adjustment to current line.
 	add	[y_pixel],ecx			; increment to our next y position.
@@ -435,10 +435,10 @@ LOCALS ??
 
 	jmp	??next_char
 ??done:
-	mov	eax,[string]			; return the number of charaters 
+	mov	eax,[string]			; return the number of charaters
 	sub	eax,[ptr_string]		; printed
-	ret					
-		
-	ENDP	Vesa_Print
+	ret
+
+Vesa_Print	ENDP
 
 END

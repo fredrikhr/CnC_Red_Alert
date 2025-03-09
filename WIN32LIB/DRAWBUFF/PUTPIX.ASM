@@ -35,15 +35,15 @@
 ;*   VVPC::Put_Pixel -- Puts a pixel on a virtual viewport                 *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
 
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* VVPC::PUT_PIXEL -- Puts a pixel on a virtual viewport                   *
@@ -62,22 +62,21 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   06/08/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Buffer_Put_Pixel C near
-	USES	eax,ebx,ecx,edx,edi
-
-	ARG    	this_object:DWORD				; this is a member function
-	ARG	x_pixel:DWORD				; x position of pixel to set
-	ARG	y_pixel:DWORD				; y position of pixel to set
-	ARG    	color:BYTE				; what color should we clear to
+Buffer_Put_Pixel	PROC	near C	USES	eax ebx ecx edx edi,
+	this_object:DWORD,		; this is a member function
+	x_pixel:DWORD,			; x position of pixel to set
+	y_pixel:DWORD,			; y position of pixel to set
+	color:BYTE				; what color should we clear to
 
 	;*===================================================================
 	; Get the viewport information and put bytes per row in ecx
 	;*===================================================================
 	mov	ebx,[this_object]				; get a pointer to viewport
+	assume ebx:PTR GraphicViewPort
 	xor	eax,eax
-	mov	edi,[(GraphicViewPort ebx).GVPOffset]	; get the correct offset
-	mov	ecx,[(GraphicViewPort ebx).GVPHeight]	; edx = height of viewport
-	mov	edx,[(GraphicViewPort ebx).GVPWidth]	; ecx = width of viewport
+	mov	edi,[ebx].GVPOffset	; get the correct offset
+	mov	ecx,[ebx].GVPHeight	; edx = height of viewport
+	mov	edx,[ebx].GVPWidth	; ecx = width of viewport
 
 	;*===================================================================
 	; Verify that the X pixel offset if legal
@@ -93,8 +92,8 @@ CODESEG
 	mov	eax,[y_pixel]				; get the y position
 	cmp	eax,ecx					;  is it out of bounds
 	jae	??exit					; if so then get out
-	add	edx,[(GraphicViewPort ebx).GVPXAdd]	; otherwise find bytes per row
-	add	edx,[(GraphicViewPort ebx).GVPPitch]	; add in direct draw pitch
+	add	edx,[ebx].GVPXAdd	; otherwise find bytes per row
+	add	edx,[ebx].GVPPitch	; add in direct draw pitch
 	mul	edx					; offset = bytes per row * y
 	add	edi,eax					; add it into the offset
 
@@ -105,6 +104,6 @@ CODESEG
 	mov	[edi],al				; write it to the screen
 ??exit:
 	ret
-	ENDP	Buffer_Put_Pixel
+Buffer_Put_Pixel	ENDP
 
 END

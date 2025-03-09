@@ -34,20 +34,18 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-GLOBAL	C Calculate_CRC	:NEAR
+EXTERNDEF	C Calculate_CRC	:NEAR
 
-	CODESEG
+	.CODE	; converted from TASM: CODESEG
 
 ; LONG Calculate_CRC(VOID *buffer, LONG length);
-	PROC	Calculate_CRC C near
-	USES 	esi
-
-	ARG	buffer:DWORD
-	ARG	length:DWORD
+Calculate_CRC	PROC	near C	USES 	esi,
+	buffer:DWORD,
+	_length:DWORD
 
 	LOCAL	crc:DWORD
 
@@ -61,7 +59,7 @@ GLOBAL	C Calculate_CRC	:NEAR
 	xor	ebx,ebx
 
 	; Fetch the length of the data block to CRC.
-	mov	ecx,[length]
+	mov	ecx,[_length]
 	jecxz	short ??fini
 
 	; Prepare the length counters.
@@ -109,6 +107,6 @@ GLOBAL	C Calculate_CRC	:NEAR
 	mov	eax,[crc]
 	ret
 
-	ENDP	Calculate_CRC
+Calculate_CRC	ENDP
 
 	END

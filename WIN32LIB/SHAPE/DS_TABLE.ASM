@@ -31,18 +31,18 @@
 ;*                  Last Update : September 6, 1994   [IML]                *
 ;*                                                                         *
 ;* This module sets up a table of procedure addresses for combinations of  *
-;* NORMAL, HORZ_REV and SCALING	flags.					   *	
+;* NORMAL, HORZ_REV and SCALING	flags.					   *
 ;*-------------------------------------------------------------------------*
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 ;********************** Model & Processor Directives ************************
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
 
 ;******************************** Includes *********************************
-INCLUDE "shape.inc"
+INCLUDE <shape.inc>
 
 
 ;******************************** Equates **********************************
@@ -82,7 +82,7 @@ USE_SCALING 	EQU	TRUE
 ;---------------------------------------------------------------------------
 MACRO USE func, varname
  IFNB <varname>
-	GLOBAL	varname:DWORD
+	EXTERNDEF	varname:DWORD
  ENDIF
  IF WANT
   varname 	DD	func
@@ -102,7 +102,7 @@ ENDM
 ;	DrawTable
 ;---------------------------------------------------------------------------
 
-	DATASEG
+	.DATA	; converted from TASM: DATASEG
 
 ;---------------------------------------------------------------------------
 

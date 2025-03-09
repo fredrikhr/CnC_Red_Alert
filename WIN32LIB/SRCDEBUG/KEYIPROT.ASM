@@ -48,19 +48,19 @@
 ;---------------------------------------------------------------------------
 ; Set the assembly directives
 ;---------------------------------------------------------------------------
-IDEAL				; the product runs in ideal mode
+; Converted TASM IDEAL to MASM				; the product runs in ideal mode
 P386N				; use 386 real mode instructions
 MODEL TINY			; code must be tiny so it fits
-LOCALS ??			; ?? is the symbol for a local
+;LOCALS ??			; ?? is the symbol for a local
 WARN				; generate all warnings we can
 JUMPS				; optimize jumps if possible
 
 ;---------------------------------------------------------------------------
 ; Include all of the keyboard specific defines
 ;---------------------------------------------------------------------------
-INCLUDE "keyboard.inc"
+INCLUDE <keyboard.inc>
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 
 SoundOn		DW	1	; toggled by alt S
@@ -191,8 +191,8 @@ CallRMIntAddr		DD	0	; PM address of CallRealIntOffset for speed.
 ;* HISTORY:                                                                *
 ;*   07/11/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL C	KeyNum_Translate:FAR
-	PROC	KeyNum_Translate C FAR
+	EXTERNDEF C	KeyNum_Translate:FAR
+KeyNum_Translate	PROC	FAR C
 	USES	cx,di,es,ds
 	ARG	keycode:WORD
 ifdef NOT_FOR_WIN95
@@ -217,7 +217,7 @@ ifdef NOT_FOR_WIN95
 ??fini:
 endif ;NOT_FOR_WIN95
 	ret
-	ENDP	KeyNum_Translate
+KeyNum_Translate	ENDP
 
 ;***************************************************************************
 ;* STUFF_KEY_WORD -- Stuffs a word of data into keyboard buffer            *
@@ -231,8 +231,8 @@ endif ;NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   07/11/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C Stuff_Key_WORD:FAR
-	PROC	Stuff_Key_WORD C FAR
+	EXTERNDEF	C Stuff_Key_WORD:FAR
+Stuff_Key_WORD	PROC	FAR C
 	USES	si,bx,ds
 	ARG	code:WORD
 
@@ -258,7 +258,7 @@ ifdef NOT_FOR_WIN95
 endif ; NOT_FOR_WIN95
 	ret
 
-	ENDP	Stuff_Key_WORD
+Stuff_Key_WORD	ENDP
 
 ;***************************************************************************
 ;* STUFF_KEY_NUM -- Stuffs a key num code into the circular buffer         *
@@ -272,8 +272,8 @@ endif ; NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   07/11/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C Stuff_Key_Num:FAR
-	PROC	Stuff_Key_Num C FAR
+	EXTERNDEF	C Stuff_Key_Num:FAR
+Stuff_Key_Num	PROC	FAR C
 	USES	ax,bx,cx,dx,di,si,ds
 	ARG	keycode:WORD
 	LOCAL	tail:WORD		; Original keybuffer tail (safety copy).
@@ -585,7 +585,7 @@ ifdef NOT_FOR_WIN95
 endif; NOT_FOR_WIN95
 	ret
 
-	ENDP	Stuff_Key_Num
+Stuff_Key_Num	ENDP
 ;***********************************************************
 
 
@@ -606,9 +606,9 @@ endif; NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   07/13/1994 PWG : Created.                                             *
 ;*=========================================================================*
-label RM_Keystroke_Interrupt
-	GLOBAL	C Keystroke_Interrupt:FAR
-	PROC	Keystroke_Interrupt C FAR
+RM_Keystroke_Interrupt label
+	EXTERNDEF	C Keystroke_Interrupt:FAR
+Keystroke_Interrupt	PROC	FAR C
 
 ifdef NOT_FOR_WIN95
 IF 0
@@ -960,7 +960,7 @@ ELSE
 ENDIF
 endif ;NOT_FOR_WIN95
 
-	ENDP	Keystroke_Interrupt
+Keystroke_Interrupt	ENDP
 
 ;***************************************************************************
 ;* BREAK_INTERRUPT -- Handles the break key interrupt                      *
@@ -974,12 +974,12 @@ endif ;NOT_FOR_WIN95
 ;* HISTORY:                                                                *
 ;*   07/13/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C Break_Interrupt:FAR
-	PROC	Break_Interrupt C FAR
+	EXTERNDEF	C Break_Interrupt:FAR
+Break_Interrupt	PROC	FAR C
 
 	iret
 
-	ENDP	Break_Interrupt
+Break_Interrupt	ENDP
 
 ;**************************************************************************
 ;* CALL_INTERRUPT_CHAIN -- Function PM calls to call the RM interrupt chain*

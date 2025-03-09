@@ -46,16 +46,16 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
+	; Converted TASM IDEAL to MASM
+	.386P
+	.MODEL	FLAT
+	;LOCALS	??
 
 DPMI_INTR		equ	31h
 IF_LOCKED_PM_CODE	equ	1h		; Locked PM code for DPMI.
 IF_LOCKED_PM_DATA	equ	2h		; Locked PM code for DPMI.
 
-STRUC	sCompInfo
+sCompInfo	STRUC
 lpSource		DD	?	;Compressed data pointer
 lpDest			DD	?	;Uncompressed data pointer
 dwCompSize		DD	?	;Compressed size
@@ -79,28 +79,28 @@ wIndex2			DW	?	;Index into step table
 
 wBitSize		DW	?	;Bit size for decompression
 wChannels		DW	?    	;number of channels
-ENDS	sCompInfo
+sCompInfo	ENDS
 
 
-	DATASEG
+	.DATA	; converted from TASM: DATASEG
 
 
 InitFlags	DD	0		; Flags to indicate what has been initialized.
 
 
-LABEL	LockedDataStart	BYTE
+LockedDataStart	LABEL	BYTE
 
 ;* Index table for stepping into step table
 
-INCLUDE		"difftb.inc"
-INCLUDE		"indextb.inc"
-INCLUDE		"nybbtb.inc"
+INCLUDE		<difftb.inc>
+INCLUDE		<indextb.inc>
+INCLUDE		<nybbtb.inc>
 
-LABEL	LockedDataEnd	BYTE
+LockedDataEnd	LABEL	BYTE
 
-	CODESEG
+	.CODE	; converted from TASM: CODESEG
 
-LABEL	LockedCodeStart	BYTE
+LockedCodeStart	LABEL	BYTE
 
 ;****************************************************************************
 ;*
@@ -123,8 +123,8 @@ LABEL	LockedCodeStart	BYTE
 ;*
 ;****************************************************************************
 
-	GLOBAL	sosCODECInitStream:NEAR
-	PROC	sosCODECInitStream C NEAR
+	EXTERNDEF	sosCODECInitStream:NEAR
+sosCODECInitStream	PROC	NEAR C
 
 	ARG	sSOSInfo:NEAR PTR
 
@@ -135,7 +135,7 @@ LABEL	LockedCodeStart	BYTE
 	mov	[(sCompInfo eax).dwPredicted2],0 	; no predicted value
 	ret
 
-	ENDP	sosCODECInitStream
+sosCODECInitStream	ENDP
 
 
 
@@ -166,8 +166,8 @@ LABEL	LockedCodeStart	BYTE
 ;*     486 and Pentium processors.  Changing, inserting, or moving any
 ;*     instructions will most likely slow down the code, in some cases by
 ;*     as much as 20%.  It can burst-decompress 16384 samples in about
-;*     1940æs on a Pentium 90Mhz, and about 3960æs on a 486 66Mhz.
-;*     Instruction reordering could bring this down to below 1870æs on
+;*     1940ï¿½s on a Pentium 90Mhz, and about 3960ï¿½s on a 486 66Mhz.
+;*     Instruction reordering could bring this down to below 1870ï¿½s on
 ;*     the Pentium, but this would cause a great degradation in 486
 ;*     performance.  Since slow 486's are the reason this code was
 ;*     written to be fast, it has been optimized for the Pentium only where
@@ -175,8 +175,8 @@ LABEL	LockedCodeStart	BYTE
 ;*     ANY of this code, because it is very carefully balanced...
 ;****************************************************************************
 
-	GLOBAL	C sosCODECDecompressData:NEAR
-	PROC	sosCODECDecompressData C NEAR
+	EXTERNDEF	C sosCODECDecompressData:NEAR
+sosCODECDecompressData	PROC	NEAR C
 
 	ARG	sSOSInfo:NEAR PTR
 	ARG	wBytes:DWORD
@@ -617,9 +617,9 @@ dwMono16AlignJmpTable	DD	??fixAlign16Mono0
 			DD	??fixAlign16Mono2
 			DD	??fixAlign16Mono3
 
-	ENDP	sosCODECDecompressData
+sosCODECDecompressData	ENDP
 
-LABEL	LockedCodeEnd	BYTE
+LockedCodeEnd	LABEL	BYTE
 
 ;***************************************************************************
 ;* sosCODEC_LOCK -- locks the JLB audio decompression code		   *
@@ -633,8 +633,8 @@ LABEL	LockedCodeEnd	BYTE
 ;* HISTORY:								   *
 ;*   06/26/1995 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	sosCODEC_Lock:NEAR
-	PROC	sosCODEC_Lock C NEAR USES ebx ecx edx esi edi
+	EXTERNDEF	sosCODEC_Lock:NEAR
+sosCODEC_Lock	PROC	NEAR C USES ebx ecx edx esi edi
 
 	;
 	; Lock the code that is used by the sos decompression method.
@@ -668,7 +668,7 @@ LABEL	LockedCodeEnd	BYTE
 	xor	eax,eax
 ??exit:
 	ret
-	ENDP	sosCODEC_Lock
+sosCODEC_Lock	ENDP
 
 ;***************************************************************************
 ;* DECOMPRESS_FRAME_UNLOCK -- Unlocks the JLB audio compression code       *
@@ -682,8 +682,8 @@ LABEL	LockedCodeEnd	BYTE
 ;* HISTORY:								   *
 ;*   06/26/1995 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	sosCODEC_Unlock:NEAR
-	PROC	sosCODEC_Unlock C NEAR USES ebx ecx edx esi edi
+	EXTERNDEF	sosCODEC_Unlock:NEAR
+sosCODEC_Unlock	PROC	NEAR C USES ebx ecx edx esi edi
 
 	test	[InitFlags],IF_LOCKED_PM_CODE
 	jz	??code_not_locked
@@ -718,7 +718,7 @@ LABEL	LockedCodeEnd	BYTE
 	xor	eax,eax
 ??exit:
 	ret
-	ENDP	sosCODEC_Unlock
+sosCODEC_Unlock	ENDP
 
 	END
 

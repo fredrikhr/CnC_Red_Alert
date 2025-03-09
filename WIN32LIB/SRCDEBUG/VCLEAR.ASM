@@ -35,17 +35,17 @@
 ;*   VVPC::Clear -- Clears a virtual viewport instance                     *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
-LOCALS  ??
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
+;LOCALS  ??
 
-INCLUDE "svgaprim.inc"
-INCLUDE "gbuffer.inc"
+INCLUDE <svgaprim.inc>
+INCLUDE <gbuffer.inc>
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
-PROC	Vesa_Clear C near 
+Vesa_ClearPROC	near C
 	USES	eax,ebx,ecx,edx,esi,edi
 
 	ARG    	this:DWORD				; this is a member function
@@ -68,7 +68,7 @@ PROC	Vesa_Clear C near
 	mov	ah,al					; extend across WORD
 	mov	ecx,eax					; extend across DWORD in
 	shl	eax,16					; several steps
-	mov	ax,cx		
+	mov	ax,cx
 
 	Call	Vesa_Asm_Set_Win			; set the window
 
@@ -79,7 +79,7 @@ PROC	Vesa_Clear C near
 ??row_by_row_aligned:
 	cmp	esi , OPTIMAL_BYTE_COPY			; is it worth aligning them?
 	jl	??row_by_row				;   if not then skip
-	
+
 	;*===================================================================
 	; Now that we have the alignment offset copy each row
 	;*===================================================================
@@ -97,10 +97,10 @@ PROC	Vesa_Clear C near
        cmp	edi , 0b0000h
        jge	??no_trailing
        mov	ecx , 0b0000h
-       sub	ecx , edi 
+       sub	ecx , edi
        sub	ebx , ecx
        rep	stosb
-??no_trailing:  
+??no_trailing:
        add	edi , [ cpu_video_page ]
        Call	Vesa_Asm_Set_Win			; set the window
 
@@ -140,7 +140,7 @@ PROC	Vesa_Clear C near
        lea	ebx , [ edi + esi ]
        add	ebx , [ cpu_video_page ]
        cmp	ebx , [ cpu_page_limit ]
-       mov	ebx , esi 
+       mov	ebx , esi
        jl	??in_range_bytes
 
        xor	ecx , ecx
@@ -148,13 +148,13 @@ PROC	Vesa_Clear C near
        cmp	edi , 0b0000h
        jge 	??no_trailing_bytes
        mov	ecx , 0b0000h
-       sub	ecx , edi 
+       sub	ecx , edi
        sub	ebx , ecx
        rep	stosb
-??no_trailing_bytes:  
+??no_trailing_bytes:
        add	edi , [ cpu_video_page ]
        Call	Vesa_Asm_Set_Win			; set the window
-				
+
 ??in_range_bytes:
 
        mov	ecx , ebx
@@ -165,7 +165,7 @@ PROC	Vesa_Clear C near
        pop	eax
        ret
 
-ENDP	Vesa_Clear
+Vesa_Clear	ENDP
 
 
 END

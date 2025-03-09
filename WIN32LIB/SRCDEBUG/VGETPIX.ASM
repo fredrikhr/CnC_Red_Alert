@@ -29,23 +29,23 @@
 ;*                   Start Date : June 7, 1994				   *
 ;*                                                                         *
 ;*                  Last Update : June 7, 1994   [PWG]                     *
-;*                                                                         *	     
+;*                                                                         *
 ;*-------------------------------------------------------------------------*
 ;* Functions:                                                              *
 ;*   GVPC::Get_Pixel -- Gets a pixel from the current graphic view port	   *
 ;*   VVPC::Get_Pixel -- Gets a pixel from the current view port		   *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
-LOCALS ??
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
+;LOCALS ??
 
-INCLUDE "svgaprim.inc"
-INCLUDE "gbuffer.inc"
+INCLUDE <svgaprim.inc>
+INCLUDE <gbuffer.inc>
 
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 
 ;***************************************************************************
@@ -62,7 +62,7 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   06/07/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Vesa_Get_Pixel C near 
+Vesa_Get_Pixel	PROC	near C
 	USES	ebx,ecx,edx,edi
 
 	ARG    	this:DWORD				; this is a member function
@@ -73,7 +73,7 @@ CODESEG
 	; Get the viewport information and put bytes per row in ecx
 	;*===================================================================
 	mov	ebx,[this]				; get a pointer to viewport
-	xor	eax,eax					
+	xor	eax,eax
 	mov	edi,[(VideoViewPort ebx).VIVPOffset]	; get the correct offset
 	mov	ecx,[(VideoViewPort ebx).VIVPHeight]	; edx = height of viewport
 	mov	edx,[(VideoViewPort ebx).VIVPWidth]	; ecx = width of viewport
@@ -88,7 +88,7 @@ CODESEG
 
 	;*===================================================================
 	; Verify that the Y pixel offset if legal
-	;*===================================================================	
+	;*===================================================================
 	mov	eax,[y_pixel]				; get the y position
 	cmp	eax,ecx					;  is it out of bounds
 	jae	??exit					; if so then get out
@@ -111,6 +111,6 @@ CODESEG
 	mov	al,[edi]				; read in the pixel
 ??exit:
 	ret
-	ENDP	Vesa_Get_Pixel
+Vesa_Get_Pixel	ENDP
 
 END

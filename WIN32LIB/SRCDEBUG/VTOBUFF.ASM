@@ -35,19 +35,19 @@
 ;*   VVC::TOBUFFER -- Copies a virtual viewport to a linear buffer         *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
-LOCALS ??
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
+;LOCALS ??
 
 
 TRANSP equ 0
 
-INCLUDE "svgaprim.inc"
-INCLUDE "gbuffer.inc"
+INCLUDE <svgaprim.inc>
+INCLUDE <gbuffer.inc>
 
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 
 ;***************************************************************************
@@ -71,7 +71,7 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   06/15/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Vesa_To_Buffer C near 
+Vesa_To_Buffer	PROC	near C
 	USES	ebx,ecx,edx,esi,edi
 
 	;*===================================================================
@@ -136,10 +136,10 @@ CODESEG
 	jnz	??real_out
 	or	al , dl
 	jz	??do_blit
-			    
+
 	test	cl , 1000b
 	jz	??scr_left_ok
-	mov	eax , [ x_pixel ] 
+	mov	eax , [ x_pixel ]
 	neg	eax
 	mov	[ x_pixel ] , 0
 	mov	[ dest_x1 ] , eax
@@ -147,7 +147,7 @@ CODESEG
 ??scr_left_ok:
 	test	cl , 0010b
 	jz	??scr_bottom_ok
- 	mov	eax , [ y_pixel ] 
+ 	mov	eax , [ y_pixel ]
 	neg	eax
 	mov	[ y_pixel ] , 0
 	mov	[ dest_y1 ] , eax
@@ -165,7 +165,7 @@ CODESEG
 
 ??do_blit:
 
-       cld	
+       cld
 
        mov	eax , [ (VideoViewPort esi) . VIVPXAdd ]
        add	eax , [ (VideoViewPort esi) . VIVPWidth ]
@@ -204,10 +204,10 @@ CODESEG
        mov	ebx , [ pixel_width ]
        imul	ebx , edx
        cmp	ebx , [ size ]
-       jg	??real_out		
+       jg	??real_out
 
 
-; ********************************************************************       
+; ********************************************************************
 ; Forward bitblit only
 
 IF  TRANSP
@@ -216,10 +216,10 @@ IF  TRANSP
 ENDIF
 
 
-; the inner loop is so efficient that 
+; the inner loop is so efficient that
 ; the optimal consept no longer apply because
 ; the optimal byte have to by a number greather than 9 bytes
-       cmp	eax , 10        
+       cmp	eax , 10
        jl	??forward_loop_bytes
 
 ??forward_loop_dword:
@@ -234,10 +234,10 @@ ENDIF
        mov	ebx , eax
        jge	??no_trailing
        mov	ecx , 0b0000h
-       sub	ecx , esi 
+       sub	ecx , esi
        sub	ebx , ecx
        rep	movsb
-??no_trailing:  
+??no_trailing:
        add	esi , [ cpu_video_page ]
        xchg	edi , esi
        Call	Vesa_Asm_Set_Win			; set the window
@@ -266,7 +266,7 @@ ENDIF
        rep	movsb
        add	esi , [ scr_ajust_width ]
        add	edi , [ dest_ajust_width ]
-       dec	edx 
+       dec	edx
        jnz	??forward_loop_dword
        ret
 
@@ -281,10 +281,10 @@ ENDIF
        cmp	esi , 0b0000h
        jge	??no_trailing_bytes
        mov	ecx , 0b0000h
-       sub	ecx , esi 
+       sub	ecx , esi
        sub	ebx , ecx
        rep	movsb
-??no_trailing_bytes:  
+??no_trailing_bytes:
        add	esi , [ cpu_video_page ]
        xchg	edi , esi
        Call	Vesa_Asm_Set_Win			; set the window
@@ -306,17 +306,17 @@ IF  TRANSP
 ??forward_Blit_trans:
        mov	ecx , eax
        and	ecx , 01fh
-       lea	ecx , [ ecx + ecx * 4 ]	
+       lea	ecx , [ ecx + ecx * 4 ]
        neg	ecx
        shr	eax , 5
        lea	ecx , [ ??transp_reference + ecx * 2 ]
        mov	[ y1_pixel ] , ecx
 
 ??forward_loop_trans:
-       mov	ecx , eax 
+       mov	ecx , eax
        jmp	[ y1_pixel ]
 ??forward_trans_line:
-       REPT	32	
+       REPT	32
        local	transp_pixel
        		mov	bl , [ esi ]
        		test	bl , bl
@@ -327,11 +327,11 @@ IF  TRANSP
 	    	inc	edi
 	ENDM
     ??transp_reference:
-       dec	ecx 
+       dec	ecx
        jge	??forward_trans_line
        add	esi , [ scr_ajust_width ]
        add	edi , [ dest_ajust_width ]
-       dec	edx 
+       dec	edx
        jnz	??forward_loop_trans
        ret
 ENDIF
@@ -339,6 +339,6 @@ ENDIF
 ??real_out:
        ret
 
-ENDP	Vesa_To_Buffer
+Vesa_To_Buffer	ENDP
 END
 

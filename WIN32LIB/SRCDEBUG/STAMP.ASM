@@ -34,23 +34,23 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <.\drawbuff.inc>
+INCLUDE <.\gbuffer.inc>
 
-INCLUDE	"stamp.inc"
+INCLUDE	<stamp.inc>
 
-global		C Init_Stamps:near
-global		LastIconset:dword
-global		MapPtr:dword
-global		IconCount:dword
-global		IconSize:dword
-global		StampPtr:dword
+EXTERNDEF		C Init_Stamps:near
+EXTERNDEF		LastIconset:dword
+EXTERNDEF		MapPtr:dword
+EXTERNDEF		IconCount:dword
+EXTERNDEF		IconSize:dword
+EXTERNDEF		StampPtr:dword
 
-	DATASEG
+	.DATA	; converted from TASM: DATASEG
 
 
 LastIconset	DD	0	; Pointer to last iconset initialized.
@@ -66,11 +66,11 @@ IconCount	DD	0	; Number of icons in the set.
 
 	EVEN
 
-	CODESEG
+	.CODE	; converted from TASM: CODESEG
 
 
-GLOBAL C	Buffer_Draw_Stamp:near
-GLOBAL C	Buffer_Draw_Stamp_Clip:near
+EXTERNDEF C	Buffer_Draw_Stamp:near
+EXTERNDEF C	Buffer_Draw_Stamp_Clip:near
 
 ; 256 color icon system.
 
@@ -83,7 +83,7 @@ GLOBAL C	Buffer_Draw_Stamp_Clip:near
 ; Bounds Checking: NONE
 ;
 ;*
-	PROC	Init_Stamps C near USES eax ebx edx edi
+Init_Stamps	PROC	near C USES eax ebx edx edi
 	ARG	icondata:DWORD
 
 	; Verify legality of parameter.
@@ -131,7 +131,7 @@ GLOBAL C	Buffer_Draw_Stamp_Clip:near
 ??fini:
 	ret
 
-	ENDP	Init_Stamps
+Init_Stamps	ENDP
 
 
 ;***********************************************************
@@ -149,7 +149,7 @@ GLOBAL C	Buffer_Draw_Stamp_Clip:near
 ; remap valid colors to be invisible (for special effect reasons).
 ; This routine is fastest when no remap table is passed in.
 ;*
-	PROC	Buffer_Draw_Stamp C near
+Buffer_Draw_Stamp	PROC	near C
 
 	ARG	this_object:DWORD		; this is a member function
 	ARG	icondata:DWORD		; Pointer to icondata.
@@ -320,7 +320,7 @@ GLOBAL C	Buffer_Draw_Stamp_Clip:near
 	popad
 	ret
 
-	ENDP	Buffer_Draw_Stamp
+Buffer_Draw_Stamp	ENDP
 
 
 
@@ -337,7 +337,7 @@ GLOBAL C	Buffer_Draw_Stamp_Clip:near
 ; remap valid colors to be invisible (for special effect reasons).
 ; This routine is fastest when no remap table is passed in.
 ;*
-	PROC	Buffer_Draw_Stamp_Clip C near
+Buffer_Draw_Stamp_Clip	PROC	near C
 
 	ARG	this_object:DWORD	; this is a member function
 	ARG	icondata:DWORD		; Pointer to icondata.
@@ -595,6 +595,6 @@ GLOBAL C	Buffer_Draw_Stamp_Clip:near
 	popad
 	ret
 
-	ENDP	Buffer_Draw_Stamp_Clip
+Buffer_Draw_Stamp_Clip	ENDP
 
 	END

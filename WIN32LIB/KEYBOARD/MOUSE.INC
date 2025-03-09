@@ -16,24 +16,24 @@
 ;	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ;
 
-;*********************************************************************************************** 
-;*                                                                                             * 
-;*                 Project Name : Westwood 32 bit Library                                      * 
-;*                                                                                             * 
-;*                    File Name : MOUSE.INC                                                    * 
-;*                                                                                             * 
-;*                   Programmer : Philip W. Gorrow                                             * 
-;*                                                                                             * 
-;*                   Start Date : 12/12/95                                                     * 
-;*                                                                                             * 
-;*                  Last Update : December 12, 1995 [PWG]                                      * 
-;*                                                                                             * 
-;*---------------------------------------------------------------------------------------------* 
-;* Functions:                                                                                  * 
+;***********************************************************************************************
+;*                                                                                             *
+;*                 Project Name : Westwood 32 bit Library                                      *
+;*                                                                                             *
+;*                    File Name : MOUSE.INC                                                    *
+;*                                                                                             *
+;*                   Programmer : Philip W. Gorrow                                             *
+;*                                                                                             *
+;*                   Start Date : 12/12/95                                                     *
+;*                                                                                             *
+;*                  Last Update : December 12, 1995 [PWG]                                      *
+;*                                                                                             *
+;*---------------------------------------------------------------------------------------------*
+;* Functions:                                                                                  *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 
-STRUC MouseType
+MouseType STRUC
 MouseCursor		DD		?			; pointer to the mouse cursor in memory
 MouseXHot		DD		?			; X hot spot of the current mouse cursor
 MouseYHot		DD		?			; Y hot spot of the current mouse cursor
@@ -64,4 +64,4 @@ EraseBuffY		DD		?
 EraseBuffHotX	DD		?
 EraseBuffHotY	DD		?
 EraseFlags		DD		?
-ENDS
+MouseType ENDS

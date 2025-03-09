@@ -36,10 +36,10 @@
 ;
 ; ----------------------------------------------------------------
 
-IDEAL				; the product runs in ideal mode
-P386				; use 386 real mode instructions
-MODEL USE32 FLAT
-LOCALS ??			; ?? is the symbol for a local
+; Converted TASM IDEAL to MASM				; the product runs in ideal mode
+.386P				; use 386 real mode instructions
+.MODEL FLAT
+;LOCALS ??			; ?? is the symbol for a local
 WARN				; generate all warnings we can
 JUMPS				; optimize jumps if possible
 
@@ -50,18 +50,18 @@ DPMI_INTR	 EQU	31h
 PAGE_FAULT	 equ	0eh
 RESET_VIDEO_MODE  equ	-1
 
-GLOBAL C	 Install_Page_Fault_Handle : NEAR
-GLOBAL C	 Set_Video_Mode		   : NEAR
-GLOBAL C	 Remove_Mouse		   : NEAR
-GLOBAL C	 Remove_Keyboard_Interrupt : NEAR
-GLOBAL C	 Remove_Timer_Interrupt	   : NEAR
+EXTERNDEF C	 Install_Page_Fault_Handle : NEAR
+EXTERNDEF C	 Set_Video_Mode		   : NEAR
+EXTERNDEF C	 Remove_Mouse		   : NEAR
+EXTERNDEF C	 Remove_Keyboard_Interrupt : NEAR
+EXTERNDEF C	 Remove_Timer_Interrupt	   : NEAR
 
-DATASEG
+.DATA	; converted from TASM: DATASEG
 	Old_Page_Fault_handle DF ?
 	Page_Fault_SS 	DD	?
 	Page_Fault_ESP	DD	?
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 ;***************************************************************************
 ;* INSTALL_PAGE_FAULT_HANDLE -- Installs new page fault handle             *
 ;*	This function will install a new page fault handle 		   *
@@ -78,7 +78,7 @@ CODESEG
 ;*                                                                         *
 ;* HISTORY:  04/25/96 Created                                              *
 ;*=========================================================================*
-	PROC	Install_Page_Fault_Handle C NEAR
+Install_Page_Fault_Handle	PROC	NEAR C
 	USES	eax,ebx,ecx,edx,esi,edi
 
 	mov	eax,0202h 	; get address of exception handle
@@ -99,7 +99,7 @@ CODESEG
 
   ??exit:
 	ret
-	ENDP	Install_Page_Fault_Handle
+Install_Page_Fault_Handle	ENDP
 
 
 ;***************************************************************************
@@ -143,7 +143,7 @@ PROC	Page_Fault_Handle far
 	pop	eax
 	jmp	[fword Old_Page_Fault_handle]
 
-	ENDP	Page_Fault_Handle
+Page_Fault_Handle	ENDP
 
 
 ;***************************************************************************

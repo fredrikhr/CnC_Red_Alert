@@ -40,15 +40,15 @@
 ;*   Transparent_Remapped_Draw -- jump loc for scaled remap trans pixels   *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <.\drawbuff.inc>
+INCLUDE <.\gbuffer.inc>
 
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 
 ;***************************************************************************
@@ -63,7 +63,7 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   06/16/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Linear_Scale_To_Linear C NEAR
+Linear_Scale_To_Linear	PROC	NEAR C
 	USES	eax,ebx,ecx,edx,esi,edi
 
 	;*===================================================================

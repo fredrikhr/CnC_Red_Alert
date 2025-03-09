@@ -34,9 +34,9 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 JUMPS
 
 MAX_CACHED_ICONS=300
@@ -45,37 +45,37 @@ ICON_HEIGHT	=24
 MAX_ICON_SETS	=100
 
 
-global		C IconPointers:dword
-global		C Init_Stamps:near
-global		C IconCacheLookup:word
-global		LastIconset:dword
-global		MapPtr:dword
-global		IconCount:dword
-global		IconSize:dword
-global		StampPtr:dword
-global		IconEntry:dword
-global		IconData:dword
+EXTERNDEF		C IconPointers:dword
+EXTERNDEF		C Init_Stamps:near
+EXTERNDEF		C IconCacheLookup:word
+EXTERNDEF		LastIconset:dword
+EXTERNDEF		MapPtr:dword
+EXTERNDEF		IconCount:dword
+EXTERNDEF		IconSize:dword
+EXTERNDEF		StampPtr:dword
+EXTERNDEF		IconEntry:dword
+EXTERNDEF		IconData:dword
 
-global		Clear_Icon_Pointers_:near
-global		Cache_Copy_Icon_:near
-global		Is_Icon_Cached_:near
-global		Get_Icon_Index_:near
-global		Get_Free_Index_:near
-global		Cache_New_Icon_:near
-global		Is_Stamp_Registered_:near
-global		Get_Free_Cache_Slot_:near
+EXTERNDEF		Clear_Icon_Pointers_:near
+EXTERNDEF		Cache_Copy_Icon_:near
+EXTERNDEF		Is_Icon_Cached_:near
+EXTERNDEF		Get_Icon_Index_:near
+EXTERNDEF		Get_Free_Index_:near
+EXTERNDEF		Cache_New_Icon_:near
+EXTERNDEF		Is_Stamp_Registered_:near
+EXTERNDEF		Get_Free_Cache_Slot_:near
 
 
-		struc	IconSetType
+IconSetType	struc
 
 		IconSetPtr	dd	?
 		IconListOffset	dd	?
 
 		ends
 
-global		C IconSetList:IconSetType
+EXTERNDEF		C IconSetList:IconSetType
 
-		codeseg
+		.code	; converted from TASM: codeseg
 
 
 
@@ -115,7 +115,7 @@ proc		Cache_Copy_Icon_ near
 		popad
 		ret
 
-endp		Cache_Copy_Icon_
+Cache_Copy_Icon_		endp
 
 
 
@@ -221,7 +221,7 @@ proc		Is_Icon_Cached_ near
 		ret
 
 
-endp		Is_Icon_Cached_
+Is_Icon_Cached_		endp
 
 
 
@@ -265,7 +265,7 @@ proc		Is_Stamp_Registered_
 		pop	edi
 		ret
 
-endp		Is_Stamp_Registered_
+Is_Stamp_Registered_		endp
 
 
 
@@ -273,7 +273,7 @@ endp		Is_Stamp_Registered_
 
 
 
-		dataseg
+		.data	; converted from TASM: dataseg
 
 
 IconEntry	dd	0	;Temporary pointer to icon index entry in table

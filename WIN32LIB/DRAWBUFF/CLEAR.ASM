@@ -35,14 +35,14 @@
 ;*   GVPC::Clear -- Clears a virtual viewport instance                     *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* VVPC::CLEAR -- Clears a virtual viewport instance                       *
@@ -58,20 +58,19 @@ CODESEG
 ;*   06/07/1994 PWG : Created.                                             *
 ;*   08/23/1994 SKB : Clear the direction flag to always go forward.       *
 ;*=========================================================================*
-	PROC	Buffer_Clear C near
-	USES	eax,ebx,ecx,edx,esi,edi
-
-	ARG    	this_object:DWORD			; this is a member function
-	ARG    	color:BYTE				; what color should we clear to
+Buffer_Clear	PROC	near C	USES	eax ebx ecx edx esi edi,
+	this_object:DWORD,		; this is a member function
+	color:BYTE				; what color should we clear to
 
 	cld 		 				; always go forward
 
 	mov	ebx,[this_object]			; get a pointer to viewport
-	mov	edi,[(GraphicViewPort ebx).GVPOffset]	; get the correct offset
-	mov	edx,[(GraphicViewPort ebx).GVPHeight]	; ecx = height of viewport
-	mov	esi,[(GraphicViewPort ebx).GVPWidth]	; edx = width of viewport
-	push	[dword (GraphicViewPort ebx).GVPPitch]	; extra pitch of direct draw surface
-	mov	ebx,[(GraphicViewPort ebx).GVPXAdd]	; esi = add for each line
+	assume ebx:PTR GraphicViewPort
+	mov	edi,[ebx].GVPOffset	; get the correct offset
+	mov	edx,[ebx].GVPHeight	; ecx = height of viewport
+	mov	esi,[ebx].GVPWidth	; edx = width of viewport
+	push	[ebx].GVPPitch	; extra pitch of direct draw surface
+	mov	ebx,[ebx].GVPXAdd	; esi = add for each line
 	add	ebx,[esp]				; Yes, I know its nasty but
 	add	esp,4					;      it works!
 
@@ -126,5 +125,5 @@ CODESEG
 	jnz	??byte_by_byte				; if any left then next line
 ??exit:
 	ret
-	ENDP	Buffer_Clear
+Buffer_Clear	ENDP
 END

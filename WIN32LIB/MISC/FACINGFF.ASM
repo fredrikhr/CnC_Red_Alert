@@ -36,15 +36,15 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-GLOBAL	C Desired_Facing256	:NEAR
+EXTERNDEF	C Desired_Facing256	:NEAR
 ;	INCLUDE	"wwlib.i"
-INCLUDE "..\include\gbuffer.inc"
+INCLUDE <..\include\gbuffer.inc>
 
-	CODESEG
+	.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* Desired_Facing256 -- Desired facing algorithm 0..255 resolution.        *
@@ -68,7 +68,7 @@ INCLUDE "..\include\gbuffer.inc"
 ;*   12/24/1991 JLB : Adapted.                                             *
 ;*=========================================================================*/
 ; LONG cdecl Desired_Facing256(LONG srcx, LONG srcy, LONG dstx, LONG dsty)
-	PROC	Desired_Facing256 C near
+Desired_Facing256	PROC	near C
 	USES	ebx, ecx, edx
 
 	ARG	srcx:DWORD
@@ -158,7 +158,7 @@ INCLUDE "..\include\gbuffer.inc"
 	and	eax,0FFH
 	ret
 
-	ENDP	Desired_Facing256
+Desired_Facing256	ENDP
 
 
 

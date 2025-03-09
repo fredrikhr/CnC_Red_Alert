@@ -36,9 +36,9 @@
 ;*   Bump_Color -- adjusts specified color in specified palette            *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 ;********************** Model & Processor Directives ************************
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
 
 ;include "keyboard.inc"
@@ -46,16 +46,16 @@ FALSE = 0
 TRUE  = 1
 
 ;****************************** Declarations ********************************
-GLOBAL 		C Set_Palette_Range:NEAR
-GLOBAL 		C Bump_Color:NEAR
-GLOBAL  	C CurrentPalette:BYTE:768
-GLOBAL		C PaletteTable:byte:1024
+EXTERNDEF 		C Set_Palette_Range:NEAR
+EXTERNDEF 		C Bump_Color:NEAR
+EXTERNDEF  	C CurrentPalette:BYTE:768
+EXTERNDEF		C PaletteTable:byte:1024
 
 
 ;********************************** Data ************************************
-LOCALS ??
+;LOCALS ??
 
-	DATASEG
+	.DATA	; converted from TASM: DATASEG
 
 CurrentPalette	DB	768 DUP(255)	; copy of current values of DAC regs
 PaletteTable	DB	1024 DUP(0)
@@ -66,7 +66,7 @@ ENDIF
 
 
 ;********************************** Code ************************************
-	CODESEG
+	.CODE	; converted from TASM: CODESEG
 
 
 
@@ -87,11 +87,11 @@ IF 1
 ;*   03/07/1995 PWG : Created.                                             *
 ;*=========================================================================*
 
-	PROC	Set_Palette_Range C NEAR
+Set_Palette_Range	PROC	NEAR C
 	ARG	palette:DWORD
 
-	GLOBAL	Set_DD_Palette_:near
-	GLOBAL	Wait_Vert_Blank_:near
+	EXTERNDEF	Set_DD_Palette_:near
+	EXTERNDEF	Wait_Vert_Blank_:near
 
 	pushad
 	mov	esi,[palette]
@@ -212,7 +212,7 @@ ifdef NOT_FOR_WIN95
 	ret
 endif	;NOT_FOR_WIN95
 
-	ENDP	Set_Palette_Range
+Set_Palette_Range	ENDP
 ELSE
 ;***************************************************************************
 ;* Set_Palette_Range -- Sets changed values in the palette.                *
@@ -230,7 +230,7 @@ ELSE
 ;*   04/27/1994 BR : Converted to 32-bit                                   *
 ;*=========================================================================*
 ; VOID cdecl Set_Palette_Range(VOID *palette);
-	PROC Set_Palette_Range	C NEAR
+Set_Palette_Range	PROC NEAR C
 	USES eax,ebx,ecx,edx,edi,esi
 	ARG	palette:DWORD
 	LOCAL	remain:DWORD	; 32-bit: converted to LONG
@@ -343,7 +343,7 @@ ELSE
 ??exit:
 	ret
 
-	ENDP	Set_Palette_Range
+Set_Palette_Range	ENDP
 ENDIF
 
 
@@ -364,7 +364,7 @@ ENDIF
 ;*   04/27/1994 BR : Converted to 32-bit.                                  *
 ;*=========================================================================*
 ; BOOL cdecl Bump_Color(VOID *palette, WORD changable, WORD target);
-PROC Bump_Color C NEAR
+Bump_ColorPROC NEAR C
 	USES ebx,ecx,edi,esi
 	ARG	pal:DWORD, color:WORD, desired:WORD
 	LOCAL	changed:WORD		; Has palette changed?
@@ -402,7 +402,7 @@ PROC Bump_Color C NEAR
 	mov	ax,[changed]
 	ret
 
-	ENDP	Bump_Color
+Bump_Color	ENDP
 
 	END
 

@@ -35,15 +35,15 @@
 ;*   Vesa_Scale_To_Linear -- Scales a Vesa viewport to a graphic viewport  *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-INCLUDE "mcgaprim.inc"
-INCLUDE "gbuffer.inc"
+INCLUDE <mcgaprim.inc>
+INCLUDE <gbuffer.inc>
 
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 ;***************************************************************************
 ;* VESA_SCALE_TO_LINEAR -- Scales a Vesa viewport to a graphic viewport    *
 ;*                                                                         *
@@ -58,8 +58,8 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   01/16/1995 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Vesa_Scale_To_Linear C near
+Vesa_Scale_To_Linear	PROC	near C
 	ret
-	ENDP	Vesa_Scale_To_Linear
+Vesa_Scale_To_Linear	ENDP
 
 END

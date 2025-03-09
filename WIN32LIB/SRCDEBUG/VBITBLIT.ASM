@@ -37,19 +37,19 @@
 ;*   Vesa_Blit_To_Vesa -- Copies a section of vesa screen to vesa screen   *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-INCLUDE "mcgaprim.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <mcgaprim.inc>
+INCLUDE <.\gbuffer.inc>
 
 
-GLOBAL	Linear_Blit_To_Vesa		:NEAR
-GLOBAL	Vesa_Blit_To_Linear		:NEAR
-GLOBAL	Vesa_Blit_To_Vesa		:NEAR
+EXTERNDEF	Linear_Blit_To_Vesa		:NEAR
+EXTERNDEF	Vesa_Blit_To_Linear		:NEAR
+EXTERNDEF	Vesa_Blit_To_Vesa		:NEAR
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* LINEAR_BLIT_TO_VESA -- copies graphic buffer to vesa screen             *
@@ -65,9 +65,9 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   01/16/1995 PWG : Created.                                             *
 ;*=========================================================================*
-      	PROC	Linear_Blit_To_Vesa C near 
+Linear_Blit_To_Vesa      	PROC	near C
 	ret
-	ENDP	Linear_Blit_To_Vesa
+Linear_Blit_To_Vesa	ENDP
 
 ;***************************************************************************
 ;* VESA_BLIT_TO_LINEAR -- Copies vesa screen to graphic buffer             *
@@ -85,9 +85,9 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   01/16/1995 PWG : Created.                                             *
 ;*=========================================================================*
-      	PROC	Vesa_Blit_To_Linear C near 
+Vesa_Blit_To_Linear      	PROC	near C
 	ret
-	ENDP	Vesa_Blit_To_Linear
+Vesa_Blit_To_Linear	ENDP
 
 ;***************************************************************************
 ;* VESA_BLIT_TO_VESA -- Copies a section of vesa screen to vesa screen     *
@@ -103,9 +103,9 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   01/16/1995 PWG : Created.                                             *
 ;*=========================================================================*
-      	PROC	Vesa_Blit_To_Vesa C near 
+Vesa_Blit_To_Vesa      	PROC	near C
 	ret
-	ENDP	Vesa_Blit_To_Vesa
-END	
+Vesa_Blit_To_Vesa	ENDP
+END
 
 

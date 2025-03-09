@@ -39,14 +39,14 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-GLOBAL	 C Clip_Rect	:NEAR
-GLOBAL	 C Confine_Rect	:NEAR
+EXTERNDEF	 C Clip_Rect	:NEAR
+EXTERNDEF	 C Confine_Rect	:NEAR
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* Clip_Rect -- clip a given rectangle against a given window		   *
@@ -66,7 +66,7 @@ CODESEG
 ;*=========================================================================*
 ; int Clip_Rect (int* x, int* y, int* dw, int* dh, int width, int height);          			   *
 
-	PROC	Clip_Rect C near
+Clip_Rect	PROC	near C
 	uses	ebx,ecx,edx,esi,edi
 	arg	x:dword
 	arg	y:dword
@@ -187,7 +187,7 @@ CODESEG
 	mov	eax,1  	; signal the calling program that the rectangle was modify
 ??clip_out:
 	ret
-	ENDP	Clip_Rect
+Clip_Rect	ENDP
 
 
 ;***************************************************************************
@@ -208,7 +208,7 @@ CODESEG
 ;*=========================================================================*
 ; int Confine_Rect (int* x, int* y, int dw, int dh, int width, int height);          			   *
 
-	PROC	Confine_Rect C near
+Confine_Rect	PROC	near C
 	uses	ebx, esi,edi
 	arg	x:dword
 	arg	y:dword
@@ -264,6 +264,6 @@ CODESEG
 ??confi_out:
 	ret
 
-	ENDP	Confine_Rect
+Confine_Rect	ENDP
 
  	END

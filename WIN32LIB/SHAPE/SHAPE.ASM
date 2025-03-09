@@ -36,26 +36,26 @@
 ;*   Not_Supported -- Replacement function for Draw_Shape routines not used*
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 ;********************* Model & Processor Directives ************************
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-INCLUDE "shape.inc"
+INCLUDE <shape.inc>
 
-global	C ShapeBuffer		:dword
-global	C ShapeBufferSize	:dword
-global	C _ShapeBuffer		:dword
-global	C _ShapeBufferSize	:dword
-global	C Set_Shape_Buffer	:near
+EXTERNDEF	C ShapeBuffer		:dword
+EXTERNDEF	C ShapeBufferSize	:dword
+EXTERNDEF	C _ShapeBuffer		:dword
+EXTERNDEF	C _ShapeBufferSize	:dword
+EXTERNDEF	C Set_Shape_Buffer	:near
 
-DATASEG
-label	ShapeBuffer	dword
+.DATA	; converted from TASM: DATASEG
+ShapeBuffer	label	dword
 _ShapeBuffer		dd	0
 
-label	ShapeBufferSize	dword
+ShapeBufferSize	label	dword
 _ShapeBufferSize	dd	0
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* SET_SHAPE_BUFFER -- Sets the shape buffer to the given pointer          *
@@ -74,9 +74,9 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   10/26/1994 PWG : Created.                                             *
 ;*=========================================================================*
-GLOBAL	C Set_Shape_Buffer:NEAR
+EXTERNDEF	C Set_Shape_Buffer:NEAR
 
-PROC	Set_Shape_Buffer C near
+Set_Shape_BufferPROC	near C
 	USES	eax
 
 	ARG	buff:DWORD
@@ -89,6 +89,6 @@ PROC	Set_Shape_Buffer C near
 	mov	[_ShapeBuffer],eax
 	ret
 
-	ENDP	Set_Shape_Buffer
+Set_Shape_Buffer	ENDP
 END
 

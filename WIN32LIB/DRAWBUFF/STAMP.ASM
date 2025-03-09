@@ -34,23 +34,23 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
 
-INCLUDE	"stamp.inc"
+INCLUDE	<stamp.inc>
 
-global		C Init_Stamps:near
-global		LastIconset:dword
-global		MapPtr:dword
-global		IconCount:dword
-global		IconSize:dword
-global		StampPtr:dword
+EXTERNDEF		C Init_Stamps:near
+EXTERNDEF		LastIconset:dword
+EXTERNDEF		MapPtr:dword
+EXTERNDEF		IconCount:dword
+EXTERNDEF		IconSize:dword
+EXTERNDEF		StampPtr:dword
 
-	DATASEG
+	.DATA	; converted from TASM: DATASEG
 
 
 LastIconset	DD	0	; Pointer to last iconset initialized.
@@ -66,11 +66,11 @@ IconCount	DD	0	; Number of icons in the set.
 
 	EVEN
 
-	CODESEG
+	.CODE	; converted from TASM: CODESEG
 
 
-GLOBAL C	Buffer_Draw_Stamp:near
-GLOBAL C	Buffer_Draw_Stamp_Clip:near
+EXTERNDEF C	Buffer_Draw_Stamp:near
+EXTERNDEF C	Buffer_Draw_Stamp_Clip:near
 
 ; 256 color icon system.
 
@@ -83,8 +83,8 @@ GLOBAL C	Buffer_Draw_Stamp_Clip:near
 ; Bounds Checking: NONE
 ;
 ;*
-	PROC	Init_Stamps C near USES eax ebx edx edi
-	ARG	icondata:DWORD
+Init_Stamps	PROC	near C USES eax ebx edx edi,
+	icondata:DWORD
 
 	; Verify legality of parameter.
 	cmp	[icondata],0
@@ -92,20 +92,21 @@ GLOBAL C	Buffer_Draw_Stamp_Clip:near
 
 	; Don't initialize if already initialized to this set (speed reasons).
 	mov	edi,[icondata]
+	assume edi:PTR IControl_Type
 	cmp	[LastIconset],edi
 	je	short ??fini
 	mov	[LastIconset],edi
 
 	; Record number of icons in set.
-	movzx	eax,[(IControl_Type edi).Count]
+	movzx	eax,[edi].Count
 	mov	[IconCount],eax
 
 	; Record width of icon.
-	movzx	eax,[(IControl_Type edi).Width]
+	movzx	eax,[edi]._Width
 	mov	[IconWidth],eax
 
 	; Record height of icon.
-	movzx	ebx,[(IControl_Type edi).Height]
+	movzx	ebx,[edi].Height
 	mov	[IconHeight],ebx
 
 	; Record size of icon (in bytes).
@@ -113,25 +114,25 @@ GLOBAL C	Buffer_Draw_Stamp_Clip:near
 	mov	[IconSize],eax
 
 	; Record hard pointer to icon map data.
-	mov	eax,[(IControl_Type edi).Map]
+	mov	eax,[edi].Map
 	add	eax,edi
 	mov	[MapPtr],eax
 
 ??nomap:
 	; Record hard pointer to icon data.
 	mov	eax,edi
-	add	eax,[(IControl_Type edi).Icons]
+	add	eax,[edi].Icons
 	mov	[StampPtr],eax
 
 	; Record the transparent table.
 	mov	eax,edi
-	add	eax,[(IControl_Type edi).TransFlag]
+	add	eax,[edi].TransFlag
 	mov	[IsTrans],eax
 
 ??fini:
 	ret
 
-	ENDP	Init_Stamps
+Init_Stamps	ENDP
 
 
 ;***********************************************************
@@ -149,14 +150,13 @@ GLOBAL C	Buffer_Draw_Stamp_Clip:near
 ; remap valid colors to be invisible (for special effect reasons).
 ; This routine is fastest when no remap table is passed in.
 ;*
-	PROC	Buffer_Draw_Stamp C near
-
-	ARG	this_object:DWORD		; this is a member function
-	ARG	icondata:DWORD		; Pointer to icondata.
-	ARG	icon:DWORD		; Icon number to draw.
-	ARG	x_pixel:DWORD		; X coordinate of icon.
-	ARG	y_pixel:DWORD		; Y coordinate of icon.
-	ARG	remap:DWORD 		; Remap table.
+Buffer_Draw_Stamp	PROC	near C,
+	this_object:DWORD,		; this is a member function
+	icondata:DWORD,			; Pointer to icondata.
+	icon:DWORD,				; Icon number to draw.
+	x_pixel:DWORD,			; X coordinate of icon.
+	y_pixel:DWORD,			; Y coordinate of icon.
+	remap:DWORD 			; Remap table.
 
 	LOCAL	modulo:DWORD		; Modulo to get to next row.
 	LOCAL	iwidth:DWORD		; Icon width (here for speedy access).
@@ -170,7 +170,7 @@ GLOBAL C	Buffer_Draw_Stamp_Clip:near
 	mov	eax,[icondata]
 	cmp	[LastIconset],eax
 	je	short ??noreset
-	call	Init_Stamps C,eax
+	invoke	Init_Stamps,eax
 ??noreset:
 
 	; Determine if the icon number requested is actually in the set.
@@ -179,7 +179,7 @@ GLOBAL C	Buffer_Draw_Stamp_Clip:near
 	cmp	[MapPtr],0
 	je	short ??notmap
 	mov	edi,[MapPtr]
-	mov	bl,[edi+ebx]
+	mov	bl,BYTE PTR [edi+ebx]
 ??notmap:
 	cmp	ebx,[IconCount]
 	jae	??out
@@ -192,10 +192,11 @@ GLOBAL C	Buffer_Draw_Stamp_Clip:near
 
 	; Get pointer to position to render icon. EDI = ptr to destination page.
 	mov	ebx,[this_object]
-	mov	edi,[(GraphicViewPort ebx).GVPOffset]
-	mov	eax,[(GraphicViewPort ebx).GVPWidth]
-	add	eax,[(GraphicViewPort ebx).GVPXAdd]
-	add	eax,[(GraphicViewPort ebx).GVPPitch]
+	assume ebx:PTR GraphicViewPort
+	mov	edi,[ebx].GVPOffset
+	mov	eax,[ebx].GVPWidth
+	add	eax,[ebx].GVPXAdd
+	add	eax,[ebx].GVPPitch
 	push	eax			; save viewport full width for lower
 	mul	[y_pixel]
 	add	edi,eax
@@ -243,7 +244,7 @@ GLOBAL C	Buffer_Draw_Stamp_Clip:near
  xlatb
 	or	al,al
 	jz	short ??xskip1		; Transparency skip check.
-	mov	[edi],al
+	mov	BYTE PTR [edi],al
 ??xskip1:
 	inc	edi
 	loop	??xcolumnloop
@@ -259,7 +260,7 @@ GLOBAL C	Buffer_Draw_Stamp_Clip:near
 ??istranscheck:
 	mov	ebx,[IsTrans]
 	add	ebx,[icon]
-	cmp	[BYTE PTR ebx],0
+	cmp	BYTE PTR [ebx],0
 	jne	short ??rowloop
 
 	;************************************************************
@@ -306,7 +307,7 @@ GLOBAL C	Buffer_Draw_Stamp_Clip:near
 	lodsb
 	or	al,al
 	jz	short ??skip1		; Transparency check.
-	mov	[edi],al
+	mov	BYTE PTR [edi],al
 ??skip1:
 	inc	edi
 	loop	??columnloop
@@ -320,7 +321,7 @@ GLOBAL C	Buffer_Draw_Stamp_Clip:near
 	popad
 	ret
 
-	ENDP	Buffer_Draw_Stamp
+Buffer_Draw_Stamp	ENDP
 
 
 
@@ -337,18 +338,17 @@ GLOBAL C	Buffer_Draw_Stamp_Clip:near
 ; remap valid colors to be invisible (for special effect reasons).
 ; This routine is fastest when no remap table is passed in.
 ;*
-	PROC	Buffer_Draw_Stamp_Clip C near
-
-	ARG	this_object:DWORD	; this is a member function
-	ARG	icondata:DWORD		; Pointer to icondata.
-	ARG	icon:DWORD		; Icon number to draw.
-	ARG	x_pixel:DWORD		; X coordinate of icon.
-	ARG	y_pixel:DWORD		; Y coordinate of icon.
-	ARG	remap:DWORD 		; Remap table.
-	ARG	min_x:DWORD		; Clipping rectangle boundary
-	ARG	min_y:DWORD		; Clipping rectangle boundary
-	ARG	max_x:DWORD		; Clipping rectangle boundary
-	ARG	max_y:DWORD		; Clipping rectangle boundary
+Buffer_Draw_Stamp_Clip	PROC	near C,
+	this_object:DWORD,	; this is a member function
+	icondata:DWORD,		; Pointer to icondata.
+	icon:DWORD,			; Icon number to draw.
+	x_pixel:DWORD,		; X coordinate of icon.
+	y_pixel:DWORD,		; Y coordinate of icon.
+	remap:DWORD, 		; Remap table.
+	min_x:DWORD,		; Clipping rectangle boundary
+	min_y:DWORD,		; Clipping rectangle boundary
+	max_x:DWORD,		; Clipping rectangle boundary
+	max_y:DWORD			; Clipping rectangle boundary
 
 	LOCAL	modulo:DWORD		; Modulo to get to next row.
 	LOCAL	iwidth:DWORD		; Icon width (here for speedy access).
@@ -363,7 +363,7 @@ GLOBAL C	Buffer_Draw_Stamp_Clip:near
 	mov	eax,[icondata]
 	cmp	[LastIconset],eax
 	je	short ??noreset2
-	call	Init_Stamps C,eax
+	invoke	Init_Stamps,eax
 ??noreset2:
 
 	; Determine if the icon number requested is actually in the set.
@@ -372,7 +372,7 @@ GLOBAL C	Buffer_Draw_Stamp_Clip:near
 	cmp	[MapPtr],0
 	je	short ??notmap2
 	mov	edi,[MapPtr]
-	mov	bl,[edi+ebx]
+	mov	bl,BYTE PTR [edi+ebx]
 ??notmap2:
 	cmp	ebx,[IconCount]
 	jae	??out2
@@ -473,10 +473,11 @@ GLOBAL C	Buffer_Draw_Stamp_Clip:near
 
 	; Get pointer to position to render icon. EDI = ptr to destination page.
 	mov	ebx,[this_object]
-	mov	edi,[(GraphicViewPort ebx).GVPOffset]
-	mov	eax,[(GraphicViewPort ebx).GVPWidth]
-	add	eax,[(GraphicViewPort ebx).GVPXAdd]
-	add	eax,[(GraphicViewPort ebx).GVPPitch]
+	assume ebx:PTR GraphicViewPort
+	mov	edi,[ebx].GVPOffset
+	mov	eax,[ebx].GVPWidth
+	add	eax,[ebx].GVPXAdd
+	add	eax,[ebx].GVPPitch
 	push	eax			; save viewport full width for lower
 	mul	[y_pixel]
 	add	edi,eax
@@ -509,7 +510,7 @@ GLOBAL C	Buffer_Draw_Stamp_Clip:near
 	xlatb
 	or	al,al
 	jz	short ??xskip1c		; Transparency skip check.
-	mov	[edi],al
+	mov	BYTE PTR [edi],al
 ??xskip1c:
 	inc	edi
 	loop	??xcolumnloopc
@@ -526,7 +527,7 @@ GLOBAL C	Buffer_Draw_Stamp_Clip:near
 ??istranscheck2:
 	mov	ebx,[IsTrans]
 	add	ebx,[icon]
-	cmp	[BYTE PTR ebx],0
+	cmp	BYTE PTR [ebx],0
 	jne	short ??rowloopc
 
 	;************************************************************
@@ -580,7 +581,7 @@ GLOBAL C	Buffer_Draw_Stamp_Clip:near
 	lodsb
 	or	al,al
 	jz	short ??skip1c		; Transparency check.
-	mov	[edi],al
+	mov	BYTE PTR [edi],al
 ??skip1c:
 	inc	edi
 	loop	??columnloopc
@@ -595,6 +596,6 @@ GLOBAL C	Buffer_Draw_Stamp_Clip:near
 	popad
 	ret
 
-	ENDP	Buffer_Draw_Stamp_Clip
+Buffer_Draw_Stamp_Clip	ENDP
 
 	END

@@ -36,24 +36,24 @@
 ;*   Not_Supported -- Replacement function for Draw_Shape routines not used*
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 ;********************* Model & Processor Directives ************************
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
 
 ; this struct is here to remove the hardwire way of programing
-; implemented in the funtion Draw_Shape in ian image of 
+; implemented in the funtion Draw_Shape in ian image of
 
-STRUC	VVPC_IMAGE
-   		Off  	dd  ?  
-		Width  	dd  ?  
-		Height  dd  ?  
-  		Page    dd  ?  
+VVPC_IMAGE	STRUC
+   		Off  	dd  ?
+		Width  	dd  ?
+		Height  dd  ?
+  		Page    dd  ?
 ENDS
 
 
 
-STRUC GVPC_IMAGE 
+GVPC_IMAGE STRUC
 		 vvpc		VVPC_IMAGE	<>
 		 Xpos		dd	   	?
 		 Ypos		dd	   	?
@@ -62,21 +62,21 @@ ENDS
 
 
 ;******************************** Includes *********************************
-INCLUDE "shape.inc"
+INCLUDE <shape.inc>
 
 
 ;****************************** Declarations ********************************
-GLOBAL	 Draw_Shape:NEAR
-GLOBAL	 LCW_Uncompress:NEAR
-GLOBAL	_ShapeBuffer:DWORD
-GLOBAL	_ShapeBufferSize:DWORD
+EXTERNDEF	 Draw_Shape:NEAR
+EXTERNDEF	 LCW_Uncompress:NEAR
+EXTERNDEF	_ShapeBuffer:DWORD
+EXTERNDEF	_ShapeBufferSize:DWORD
 
-GLOBAL	MaskPage	       : dword
-GLOBAL	BackGroundPage	       : dword
+EXTERNDEF	MaskPage	       : dword
+EXTERNDEF	BackGroundPage	       : dword
 
 
 ;********************************* Data ************************************
-	DATASEG
+	.DATA	; converted from TASM: DATASEG
 ;---------------------------------------------------------------------------
 ; Shape buffer & its size, set by Set_Shape_Buffer()
 ;---------------------------------------------------------------------------
@@ -90,7 +90,7 @@ MaskPage		DD	0
 BackGroundPage		DD	0
 
 ;---------------------------------------------------------------------------
-; Predator effect variables 
+; Predator effect variables
 ;---------------------------------------------------------------------------
 PredCount	DD	0
 PredTable	DB	1, 3, 2, 5, 4, 3, 2, 1
@@ -103,7 +103,7 @@ PartialCount	DD	0
 ;---------------------------------------------------------------------------
 Flags		DD	?	; globally accessible copy of flags
 
-viewport_ptr	DD	?	; pointer to upper-left corner of viewport 
+viewport_ptr	DD	?	; pointer to upper-left corner of viewport
 viewport_width	DD	?	; viewport width
 viewport_height DD	?	; viewport height
 viewport_yadd	DD	?	; viewport y add
@@ -112,7 +112,7 @@ viewport_y	DD	?	; viewport y-coord
 buff_ptr	DD	?	; pointer to buffer containing viewport
 
 ;********************************* Code ************************************
-	CODESEG
+	.CODE	; converted from TASM: CODESEG
 
 
 ;***************************************************************************
@@ -282,11 +282,11 @@ buff_ptr	DD	?	; pointer to buffer containing viewport
 ;*   04/13/1992 PWG : Created.                                             *
 ;*   08/19/1993 SKB : Split drawshp.asm into several modules.              *
 ;*   05/26/1994 BR  : Converted to 32-bit, restructured quite a bit.	   *
-;*   08/09/1994 IML : Added C++ style interface. Various optimizations.	   *	
+;*   08/09/1994 IML : Added C++ style interface. Various optimizations.	   *
 ;*   09/06/1994 IML : Ammendments for integration of p_* and ds_* routines.*
-;*   09/14/1994 IML : Now handles LCW compression.			   *		
+;*   09/14/1994 IML : Now handles LCW compression.			   *
 ;*=========================================================================*
-PROC	Draw_Shape C NEAR 	
+Draw_ShapePROC	NEAR C
 	USES eax,ebx,ecx,edx,edi,esi
 
 	;--------------------------------------------------------------------
@@ -300,8 +300,8 @@ PROC	Draw_Shape C NEAR
 
 IF FALSE
 	;--------------------------------------------------------------------
-	; Define the local stack variables that Draw_Shape needs. These 
-	; parameters are defined in shape.inc.  They're included here 
+	; Define the local stack variables that Draw_Shape needs. These
+	; parameters are defined in shape.inc.  They're included here
 	; just for reference.
 	;--------------------------------------------------------------------
 	;
@@ -391,9 +391,9 @@ ENDIF
 	mov	esi, [(type GVPC_IMAGE  ptr edi). vvpc . Off ] ; extract viewport pointer
 	mov	[viewport_ptr],esi
 	mov	ebx,[(type GVPC_IMAGE ptr edi) . vvpc . Width ]	; extract viewport width
-	mov	[viewport_width],ebx			
+	mov	[viewport_width],ebx
 	mov	eax,[(type GVPC_IMAGE ptr edi) . vvpc . Height ]	; extract viewport height
-	mov	[viewport_height],eax				
+	mov	[viewport_height],eax
 	mov	ecx,[(type GVPC_IMAGE ptr edi) . vvpc . Page ]	; calculate y add value
 	add	ecx,ebx
 	mov	[viewport_yadd],ecx
@@ -411,8 +411,8 @@ ENDIF
 	; If this shape is a compact shape, set that bit in the flags arg
 	;--------------------------------------------------------------------
 	mov	edi,[shape_ptr]			; check for compact shape flag
-	test	[BYTE PTR edi],MAKESHAPE_COMPACT	 
-							
+	test	[BYTE PTR edi],MAKESHAPE_COMPACT
+
 	jz	??do_args			; if not process flags as is
 	or	[flags],SHAPE_COMPACT		; mark it as a compact shape
 
@@ -442,7 +442,7 @@ ENDIF
 	;--------------------------------------------------------------------
 ??color:
 	test	[flags],SHAPE_COLOR 		; does it have a color table
-	jz	??fading 			; if not skip to fading 
+	jz	??fading 			; if not skip to fading
 	or	[flags],SHAPE_COMPACT		; mark it as a compact shape
 						;  (for remapping purposes only)
 	mov	eax,[flags + edi]
@@ -485,10 +485,10 @@ ENDIF
 	;--------------------------------------------------------------------
 ??init_predator:
 	test	[flags],SHAPE_PREDATOR		; is predator effect on
-	jz	??partial			; if not skip to partial 
+	jz	??partial			; if not skip to partial
 	inc	[PredCount]			; the pred table is byte aligned
 	and	[PredCount],PRED_MASK		; keep entries within bounds
-	mov	eax,[PredCount]		 
+	mov	eax,[PredCount]
 	mov	al,[BYTE PTR PredTable + eax]
 	mov	[PredValue],eax			; put the pred value cs
 	mov	[PartialCount],0		; clear the partial count
@@ -526,9 +526,9 @@ ENDIF
 ??scale:
 	test	[flags],SHAPE_SCALING		; are we scaling this shape.
 	jz	??shadow			; if not then skip scale y value
-	mov	eax,[flags + edi]	
+	mov	eax,[flags + edi]
 	mov	[ScaleX],eax
-	mov	eax,[flags + edi + 4]	
+	mov	eax,[flags + edi + 4]
 	mov	[ScaleY],eax
 	add	edi,8				; next argument
 
@@ -539,11 +539,11 @@ ENDIF
 	test	[flags],SHAPE_SHADOW		; are we ghosting this shape
 	jz	short ??get_header		; if not then skip
 	mov	eax,[flags + edi]
-	mov	[ShadowingTable],eax		; save address of shadow table 
+	mov	[ShadowingTable],eax		; save address of shadow table
 	add	edi,4				; next argument
 
 
-??get_header:	
+??get_header:
 	;====================================================================
 	; Get Shape header values
 	;====================================================================
@@ -611,7 +611,7 @@ ENDIF
 	; Set up the drawing procedure addresses
 	;====================================================================
 	;--------------------------------------------------------------------
-	; This code uses HORZ_REV, VERT_REV, & SCALING flags as an 
+	; This code uses HORZ_REV, VERT_REV, & SCALING flags as an
 	; offset into the LSkipTable, RSkipTable, and DrawTable.  These
 	; flags combined have values from 00h-07h, so each table must have
 	; at least 8 entries.
@@ -630,7 +630,7 @@ ENDIF
 
 ??compute_scalevals:
 	;====================================================================
-	; Now compute scaled width & height.  If the shape scales down to 0 
+	; Now compute scaled width & height.  If the shape scales down to 0
 	; either horizontally or vertically, exit.
 	;====================================================================
 	test	[flags],SHAPE_SCALING	; skip if no scaling
@@ -691,7 +691,7 @@ ENDIF
 	mov	[draw_y],eax		; store it back into draw_y
 
 	;====================================================================
-	; Allow for SHAPE_VIEWPORT_REL by adjusting draw_x & draw_y by the 
+	; Allow for SHAPE_VIEWPORT_REL by adjusting draw_x & draw_y by the
 	; viewport's coordinates
 	;====================================================================
 ??handle_vp_rel:
@@ -707,7 +707,7 @@ ENDIF
 	; coordinates, we can compute the clipped areas of the shape:
 	;   LeftClipPixels =	viewport_x - draw_x
 	;	- if negative, set to 0
-	;   RightClipPixels =	(draw_x + ScaledWidth) - 
+	;   RightClipPixels =	(draw_x + ScaledWidth) -
 	;				(viewport_x + viewport_width)
 	;	- if negative, set to 0
 	;
@@ -785,7 +785,7 @@ ENDIF
 	mov	[PixelHeight],eax	; store drawn pixel height
 
 	;====================================================================
-	; So, we're actually going to draw something; if (ShapeType & 
+	; So, we're actually going to draw something; if (ShapeType &
 	; MAKESHAPE_NOCOMP == 0) decompress the shape data into _ShapeBuffer:
 	; LCW_Uncompress(ShapeData, _ShapeBuffer, UncompDataLen);
 	;	shape.DataLength
@@ -818,14 +818,14 @@ ENDIF
 	;--------------------------------------------------------------------
 ??copy_flags:
 	mov	eax,[flags]
-	mov	[Flags],eax		
+	mov	[Flags],eax
 
 	;====================================================================
 	; Now compute the actual buffer offset where drawing (not skipping)
 	; will begin
 	;====================================================================
 	;--------------------------------------------------------------------
-	; First, compute the x & y offsets of the shape's clipped upper-left 
+	; First, compute the x & y offsets of the shape's clipped upper-left
 	; corner,  relative to the viewport's upper-left corner:
 	; x-offset = draw_x + LeftClipPixels - viewport_x
 	; y-offset = draw_y + TopClipPixels - viewport_y
@@ -922,9 +922,9 @@ ENDIF
 	mov	[YTotal],0		; initialize accumulated scale
 
 	;====================================================================
-	; Clip the top-clipped lines. The object here is to set ESI to the 
-	; first drawable line in the _ShapeBuffer, and YTotal to: 
-	;   high byte = # times to draw that line, 
+	; Clip the top-clipped lines. The object here is to set ESI to the
+	; first drawable line in the _ShapeBuffer, and YTotal to:
+	;   high byte = # times to draw that line,
 	;   low byte = roundoff bits
 	;
 	; - Initialize values (ESI, HeightCount, YTotal)
@@ -989,19 +989,19 @@ ENDIF
 
 	;====================================================================
 	; The drawing loop (at long last!):
-	; - Accumulate YTotal; if high byte is 0, skip this row of bytes & 
+	; - Accumulate YTotal; if high byte is 0, skip this row of bytes &
 	;   loop again
 	; - Skip left-clipped pixels:
 	;   - If we've skipped all the bytes on the line, just go to the
 	;     next line
 	; - Draw middle pixels:
-	;   - Add the shape's pixel width to ECX (which could be negative 
+	;   - Add the shape's pixel width to ECX (which could be negative
 	;     if we left-skipped into the drawable area)
 	;   - If ECX is still 0, there are no pixels to draw
 	;   - Otherwise, leave ECX as is & draw the pixels
 	; - Skip right-clipped pixels:
 	;   - Add # right-clipped pixels to ECX (which could be negative if
-	;     the draw routine  uncompressed 0's into the right-clipped 
+	;     the draw routine  uncompressed 0's into the right-clipped
 	;     region)
 	;   - if ECX > 0, skip the remaining bytes
 	; - Go to the next line:
@@ -1037,7 +1037,7 @@ ENDIF
 	; Skip left-clipped pixels:
 	; - initialize [WidthCount] to total shape width in bytes
 	; - set ECX to # >bytes< to clip
-	; When LSkipRout returns: 
+	; When LSkipRout returns:
 	;	- ECX will contain # >pixels< overrun
 	;	- EDX will contain the XTotal init value
 	;	- [WidthCount] will be decremented by total bytes skipped
@@ -1097,7 +1097,7 @@ ENDIF
 ??exit:
 	ret
 
-	ENDP	Draw_Shape
+Draw_Shape	ENDP
 
 
 ;***************************************************************************
@@ -1115,11 +1115,11 @@ ENDIF
 ;* HISTORY:                                                                *
 ;*   08/24/1993 SKB : Created.                                             *
 ;*=========================================================================*
-PROC	Not_Supported NOLANGUAGE NEAR
+Not_SupportedPROC	NEAR NOLANGUAGE
 
 	ret
 
-	ENDP Not_Supported 
+Not_Supported ENDP
 
 	END
 

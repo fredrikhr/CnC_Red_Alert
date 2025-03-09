@@ -35,15 +35,15 @@
 ;*   VVPC::Buffer_Get_Pixel -- get the colour of a pixel at given coords   *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
 
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* VVPC::GET_PIXEL -- Gets a pixel from the current view port		   *
@@ -59,21 +59,20 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   06/07/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Buffer_Get_Pixel C near
-	USES	ebx,ecx,edx,edi
-
-	ARG    	this_object:DWORD				; this is a member function
-	ARG	x_pixel:DWORD				; x position of pixel to set
-	ARG	y_pixel:DWORD				; y position of pixel to set
+Buffer_Get_Pixel	PROC	near C	USES	ebx ecx edx edi,
+	this_object:DWORD,			; this is a member function
+	x_pixel:DWORD,				; x position of pixel to set
+	y_pixel:DWORD				; y position of pixel to set
 
 	;*===================================================================
 	; Get the viewport information and put bytes per row in ecx
 	;*===================================================================
 	mov	ebx,[this_object]				; get a pointer to viewport
+	assume ebx:PTR GraphicViewPort
 	xor	eax,eax
-	mov	edi,[(GraphicViewPort ebx).GVPOffset]	; get the correct offset
-	mov	ecx,[(GraphicViewPort ebx).GVPHeight]	; edx = height of viewport
-	mov	edx,[(GraphicViewPort ebx).GVPWidth]	; ecx = width of viewport
+	mov	edi,[ebx].GVPOffset	; get the correct offset
+	mov	ecx,[ebx].GVPHeight	; edx = height of viewport
+	mov	edx,[ebx].GVPWidth	; ecx = width of viewport
 
 	;*===================================================================
 	; Verify that the X pixel offset if legal
@@ -89,8 +88,8 @@ CODESEG
 	mov	eax,[y_pixel]				; get the y position
 	cmp	eax,ecx					;  is it out of bounds
 	jae	??exit					; if so then get out
-	add	edx,[(GraphicViewPort ebx).GVPXAdd]	; otherwise find bytes per row
-	add	edx,[(GraphicViewPort ebx).GVPPitch]	; otherwise find bytes per row
+	add	edx,[ebx].GVPXAdd	; otherwise find bytes per row
+	add	edx,[ebx].GVPPitch	; otherwise find bytes per row
 	mul	edx					; offset = bytes per row * y
 	add	edi,eax					; add it into the offset
 
@@ -101,6 +100,6 @@ CODESEG
 	mov	al,[edi]				; read in the pixel
 ??exit:
 	ret
-	ENDP	Buffer_Get_Pixel
+Buffer_Get_Pixel	ENDP
 
 END

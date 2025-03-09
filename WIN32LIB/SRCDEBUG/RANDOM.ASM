@@ -35,19 +35,19 @@
 ;*                                                                         *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-Global C Random		:NEAR
-Global C Get_Random_Mask	:NEAR
-Global C RandNumb		:DWORD
+EXTERNDEF C Random		:NEAR
+EXTERNDEF C Get_Random_Mask	:NEAR
+EXTERNDEF C RandNumb		:DWORD
 
-	DATASEG
+	.DATA	; converted from TASM: DATASEG
 
 RandNumb	DD	12349876H
 
-	CODESEG
+	.CODE	; converted from TASM: CODESEG
 
 ; ----------------------------------------------------------------
 ;
@@ -65,7 +65,7 @@ RandNumb	DD	12349876H
 ;
 ;*
 
-	PROC	Random C near
+Random	PROC	near C
 	USES	esi
 
 	lea	esi, [RandNumb]		; get offset in segment of RandNumb
@@ -84,7 +84,7 @@ RandNumb	DD	12349876H
 
 	ret
 
-	ENDP	Random
+Random	ENDP
 
 
 ;-----------------------------------------------------------------
@@ -95,7 +95,7 @@ RandNumb	DD	12349876H
 ;
 ;*
 
-	PROC	Get_Random_Mask C near
+Get_Random_Mask	PROC	near C
 	USES	ecx
 	ARG	maxval:DWORD
 
@@ -112,7 +112,7 @@ RandNumb	DD	12349876H
 	dec	eax			; dec it to create the mask.
 ??invalid:
 	ret
-	ENDP	Get_Random_Mask
+Get_Random_Mask	ENDP
 ;----------------------------------------------------------------------------
 
 	END

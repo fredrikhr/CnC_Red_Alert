@@ -35,15 +35,15 @@
 ;*   GVPC::Fill_Rect -- draws a filled rectangle to a graphics buffer      *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
 
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* GVPC::FILL_RECT -- Fills a rectangular region of a graphic view port	   *
@@ -62,18 +62,13 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   06/07/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Buffer_Fill_Rect C near
-	USES	eax,ebx,ecx,edx,esi,edi,ebp
-
-	;*===================================================================
-	;* define the arguements that our function takes.
-	;*===================================================================
-	ARG    	this_object:DWORD			; this is a member function
-	ARG	x1_pixel:WORD
-	ARG	y1_pixel:WORD
-	ARG	x2_pixel:WORD
-	ARG	y2_pixel:WORD
-	ARG    	color:BYTE			; what color should we clear to
+Buffer_Fill_Rect	PROC	near C	USES	eax ebx ecx edx esi edi ebp,
+	this_object:DWORD,			; this is a member function
+	x1_pixel:WORD,
+	y1_pixel:WORD,
+	x2_pixel:WORD,
+	y2_pixel:WORD,
+	color:BYTE			; what color should we clear to
 	;*===================================================================
 	; Define some locals so that we can handle things quickly
 	;*===================================================================
@@ -86,10 +81,11 @@ CODESEG
 	;* save off the viewport characteristics on the stack
 	;*===================================================================
 	mov	ebx,[this_object]				; get a pointer to viewport
-	mov	eax,[(GraphicViewPort ebx).GVPWidth]	; get width from viewport
-	mov	ecx,[(GraphicViewPort ebx).GVPHeight]	; get height from viewport
-	mov	edx,[(GraphicViewPort ebx).GVPXAdd]	; get xadd from viewport
-	add	edx,[(GraphicViewPort ebx).GVPPitch]	; extra pitch of direct draw surface
+	assume ebx:PTR GraphicViewPort
+	mov	eax,[ebx].GVPWidth	; get width from viewport
+	mov	ecx,[ebx].GVPHeight	; get height from viewport
+	mov	edx,[ebx].GVPXAdd	; get xadd from viewport
+	add	edx,[ebx].GVPPitch	; extra pitch of direct draw surface
 	mov	[VPwidth],eax				; store the width of locally
 	mov	[VPheight],ecx
 	mov	[VPxadd],edx
@@ -193,7 +189,8 @@ CODESEG
 	mul	[VPbpr]			; multiply by bytes per row
 	add	edi,eax			; add the result into the x position
 	mov	ebx,[this_object]
-	add	edi,[(GraphicViewPort ebx).GVPOffset]
+	assume ebx:PTR GraphicViewPort
+	add	edi,[ebx].GVPOffset
 
 	mov	edx,esi			; restore edx back to real value
 	mov	eax,ecx			; store total width in ecx
@@ -270,6 +267,6 @@ CODESEG
 ??out:
 ??exit:
 	ret
-	ENDP	Buffer_Fill_Rect
+Buffer_Fill_Rect	ENDP
 
 END

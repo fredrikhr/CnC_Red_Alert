@@ -36,15 +36,15 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
 
-GLOBAL	 C Desired_Facing8	:NEAR
+EXTERNDEF	 C Desired_Facing8	:NEAR
 ;	INCLUDE	"wwlib.i"
 
-	DATASEG
+	.DATA	; converted from TASM: DATASEG
 
 ; 8 direction desired facing lookup table.  Build the index according
 ; to the following bits:
@@ -55,7 +55,7 @@ GLOBAL	 C Desired_Facing8	:NEAR
 ; bit 0 = Is the facing closer to a major axis?
 NewFacing8	DB	1,2,1,0,7,6,7,0,3,2,3,4,5,6,5,4
 
-	CODESEG
+	.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* DESIRED_FACING8 -- Determines facing to reach a position.               *
@@ -82,7 +82,7 @@ NewFacing8	DB	1,2,1,0,7,6,7,0,3,2,3,4,5,6,5,4
 ;*=========================================================================*
 ; long Desired_Facing8(long x1, long y1, long x2, long y2);
 
-	PROC	Desired_Facing8 C near
+Desired_Facing8	PROC	near C
 	USES	ebx, ecx, edx
 
 	ARG	x1:DWORD
@@ -134,7 +134,7 @@ NewFacing8	DB	1,2,1,0,7,6,7,0,3,2,3,4,5,6,5,4
 
 	ret
 
-	ENDP	Desired_Facing8
+Desired_Facing8	ENDP
 
 
 	END

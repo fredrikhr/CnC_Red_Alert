@@ -32,23 +32,23 @@
 ;*-------------------------------------------------------------------------*
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
-IDEAL
-P386
-MODEL USE32 FLAT
-LOCALS ??
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
+;LOCALS ??
 
-INCLUDE "drawbuff.inc"
-INCLUDE "gbuffer.inc"
-INCLUDE "shape.inc"
-INCLUDE ".\mouse.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
+INCLUDE <shape.inc>
+INCLUDE <mouse.inc>
 
-GLOBAL	C LCW_Uncompress:NEAR
-GLOBAL	C Get_Shape_Uncomp_Size     :NEAR
-GLOBAL	C Get_Shape_Width      	  :NEAR
-GLOBAL	C Get_Shape_Original_Height :NEAR
-GLOBAL	_ShapeBuffer		  :DWORD
+EXTERNDEF	C LCW_Uncompress:NEAR
+EXTERNDEF	C Get_Shape_Uncomp_Size     :NEAR
+EXTERNDEF	C Get_Shape_Width      	  :NEAR
+EXTERNDEF	C Get_Shape_Original_Height :NEAR
+EXTERNDEF	_ShapeBuffer		  :DWORD
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* MOUSE_SHADOW_BUFFER -- Handles storing and restoring the mouse buffer   *
@@ -75,18 +75,16 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   10/27/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C Mouse_Shadow_Buffer:NEAR
-	PROC	Mouse_Shadow_Buffer C NEAR 
-	USES	eax,ebx,ecx,edx,edi,esi
-
-	ARG	this:		DWORD
-	ARG	src_dst_obj:	DWORD
-	ARG	buffer:DWORD
-	ARG	x:		DWORD
-	ARG	y:		DWORD
-	ARG	hotx:		DWORD
-	ARG	hoty:		DWORD
-	ARG	store:		DWORD
+	EXTERNDEF	C Mouse_Shadow_Buffer:NEAR
+Mouse_Shadow_Buffer	PROC	NEAR C	USES	eax ebx ecx edx edi esi,
+	this_object:	DWORD,
+	src_dst_obj:	DWORD,
+	buffer:			DWORD,
+	x:				DWORD,
+	y:				DWORD,
+	hotx:			DWORD,
+	hoty:			DWORD,
+	store:			DWORD
 
 	local	x0: 		dword
 	local	y0: 		dword
@@ -104,20 +102,22 @@ CODESEG
 	;*===================================================================
 	;* Copy of X, Y, Width and Height into local registers
 	;*===================================================================
-	mov	esi, [this]			; get offset to mouse data
+	mov	esi, [this_object]		; get offset to mouse data
+	assume esi:PTR MouseType
 	mov	edi, [src_dst_obj]		; get offset to mouse data
+	assume edi:PTR GraphicViewPort
 
 	mov	eax, [x]
 	mov	ebx, [y]
 	sub	eax, [hotx]
 	sub	ebx, [hoty]
 
-	mov	[x0], eax  
-	mov	[y0], ebx  
-	add	eax, [(MouseType esi).CursorWidth]
-	add	ebx, [(MouseType esi).CursorHeight]
-	mov	[x1], eax  
-	mov	[y1], ebx  
+	mov	[x0], eax
+	mov	[y0], ebx
+	add	eax, [esi].CursorWidth
+	add	ebx, [esi].CursorHeight
+	mov	[x1], eax
+	mov	[y1], ebx
 
 	mov	[buffx0], 0
 	mov	eax, [buffer]
@@ -130,29 +130,29 @@ CODESEG
 	xor 	eax, eax
 	xor 	edx, edx
 
-	mov	ecx, [x0]  
-	mov	ebx, [x1]  
+	mov	ecx, [x0]
+	mov	ebx, [x1]
 	shld	eax, ecx, 1
 	shld	edx, ebx, 1
 
-	mov	ecx, [x0]  
-	mov	ebx, [x1]  
-	sub	ecx, [(GraphicViewPort edi).GVPWidth]
-	sub	ebx, [(GraphicViewPort edi).GVPWidth]
+	mov	ecx, [x0]
+	mov	ebx, [x1]
+	sub	ecx, [edi].GVPWidth
+	sub	ebx, [edi].GVPWidth
 	dec	ecx
 	dec	ebx
 	shld	eax, ecx, 1
 	shld	edx, ebx, 1
 
-	mov	ecx, [y0]  
-	mov	ebx, [y1]  
+	mov	ecx, [y0]
+	mov	ebx, [y1]
 	shld	eax, ecx, 1
 	shld	edx, ebx, 1
 
-	mov	ecx, [y0]  
-	mov	ebx, [y1]  
-	sub	ecx, [(GraphicViewPort edi).GVPHeight]
-	sub	ebx, [(GraphicViewPort edi).GVPHeight]
+	mov	ecx, [y0]
+	mov	ebx, [y1]
+	sub	ecx, [edi].GVPHeight
+	sub	ebx, [edi].GVPHeight
 	dec	ecx
 	dec	ebx
 	shld	eax, ecx, 1
@@ -178,19 +178,19 @@ CODESEG
 	jz	??scr_bottom_ok
 	mov	ebx, [y0]
 	neg	ebx
-	imul	ebx, [(MouseType esi).CursorWidth]
+	imul	ebx, [esi].CursorWidth
 	add	[buffy0], ebx
 	mov	[y0], 0
 
 ??scr_bottom_ok:
 	test	dl, 0100b
 	jz	??scr_right_ok
-	mov	eax, [(GraphicViewPort edi).GVPWidth]  ; get width into register
+	mov	eax, [edi].GVPWidth  ; get width into register
 	mov	[x1], eax
 ??scr_right_ok:
 	test	dl, 0001b
 	jz	??not_clip
-	mov	eax, [(GraphicViewPort edi).GVPHeight]  ; get width into register
+	mov	eax, [edi].GVPHeight  ; get width into register
 	mov	[y1], eax
 
 ??not_clip:
@@ -198,18 +198,18 @@ CODESEG
 	;* Get the offset into the screen.
 	;*===================================================================
 	mov	eax, [y0]
-	mov	edx, [(GraphicViewPort edi).GVPWidth]
-	add	edx, [(GraphicViewPort edi).GVPXAdd]
-	add	edx, [(GraphicViewPort edi).GVPPitch]
+	mov	edx, [edi].GVPWidth
+	add	edx, [edi].GVPXAdd
+	add	edx, [edi].GVPPitch
 	imul	eax, edx
 	add	eax, [x0]
-	mov	edi, [(GraphicViewPort edi).GVPOffset]
+	mov	edi, [edi].GVPOffset
 	add	edi, eax
 
 	;*===================================================================
 	;* Adjust the source for the top clip.
 	;*===================================================================
-	mov	ebx, [(MouseType esi).CursorWidth]	; turn this into an offset
+	mov	ebx, [esi].CursorWidth	; turn this into an offset
 	mov	esi, [buffy0]			; edx points to source
 	add	esi, [buffx0]					; plus clipped lines
 
@@ -225,7 +225,7 @@ CODESEG
 	jle	??out
 
 	sub	edx, eax
-	sub	ebx, eax	
+	sub	ebx, eax
 	push	ebp
 	cmp	[store], 1					; are we storing page?
 	je		??store_entry				; if so go to store
@@ -259,7 +259,7 @@ CODESEG
 	pop	ebp
 ??out:
 	ret
-	ENDP	Mouse_Shadow_Buffer
+Mouse_Shadow_Buffer	ENDP
 
 ;***************************************************************************
 ;* DRAW_MOUSE -- Handles drawing the mouse cursor			   *
@@ -282,14 +282,12 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   10/27/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C Draw_Mouse:NEAR
-	PROC	Draw_Mouse C NEAR 
-	USES	eax,ebx,ecx,edx,edi,esi
-
-	ARG	this:DWORD
-	ARG	dest:DWORD
-	ARG	mousex:DWORD
-	ARG	mousey:DWORD
+	EXTERNDEF	C Draw_Mouse:NEAR
+Draw_Mouse	PROC	NEAR C	USES	eax ebx ecx edx edi esi,
+	this_object:DWORD,
+	dest:DWORD,
+	mousex:DWORD,
+	mousey:DWORD
 
 	local	x0:dword
 	local	y0:dword
@@ -299,26 +297,28 @@ CODESEG
 	local	buffy0:dword
 
 
-	mov	esi, [this]    	; get 32 bit offset to mouse data
+	mov	esi, [this_object]    	; get 32 bit offset to mouse data
+	assume esi:PTR MouseType
 	mov	edi, [dest]	; get 32 bit offset to dest buffer
+	assume edi:PTR GraphicViewPort
 
 	;*===================================================================
 	;* Copy of X, Y, Width and Height into local registers
 	;*===================================================================
 	mov	eax, [mousex]
 	mov	ebx, [mousey]
-	sub	eax, [(MouseType esi).MouseXHot]
-	sub	ebx, [(MouseType esi).MouseYHot]
+	sub	eax, [esi].MouseXHot
+	sub	ebx, [esi].MouseYHot
 
-	mov	[x0], eax  
-	mov	[y0], ebx  
-	add	eax,[(MouseType esi).CursorWidth]
-	add	ebx,[(MouseType esi).CursorHeight]
-	mov	[x1], eax  
-	mov	[y1], ebx  
+	mov	[x0], eax
+	mov	[y0], ebx
+	add	eax,[esi].CursorWidth
+	add	ebx,[esi].CursorHeight
+	mov	[x1], eax
+	mov	[y1], ebx
 
 	mov	[buffx0], 0
-	mov	eax, [(MouseType esi).MouseCursor]
+	mov	eax, [esi].MouseCursor
 	mov	[buffy0], eax
 
 
@@ -328,29 +328,29 @@ CODESEG
 	xor 	eax, eax
 	xor 	edx, edx
 
-	mov	ecx, [x0]  
-	mov	ebx, [x1]  
+	mov	ecx, [x0]
+	mov	ebx, [x1]
 	shld	eax, ecx, 1
 	shld	edx, ebx, 1
 
-	mov	ecx, [x0]  
-	mov	ebx, [x1]  
-	sub	ecx, [(GraphicViewPort edi).GVPWidth]
-	sub	ebx, [(GraphicViewPort edi).GVPWidth]
+	mov	ecx, [x0]
+	mov	ebx, [x1]
+	sub	ecx, [edi].GVPWidth
+	sub	ebx, [edi].GVPWidth
 	dec	ecx
 	dec	ebx
 	shld	eax, ecx, 1
 	shld	edx, ebx, 1
 
-	mov	ecx, [y0]  
-	mov	ebx, [y1]  
+	mov	ecx, [y0]
+	mov	ebx, [y1]
 	shld	eax, ecx, 1
 	shld	edx, ebx, 1
 
-	mov	ecx, [y0]  
-	mov	ebx, [y1]  
-	sub	ecx, [(GraphicViewPort edi).GVPHeight]
-	sub	ebx, [(GraphicViewPort edi).GVPHeight]
+	mov	ecx, [y0]
+	mov	ebx, [y1]
+	sub	ecx, [edi].GVPHeight
+	sub	ebx, [edi].GVPHeight
 	dec	ecx
 	dec	ebx
 	shld	eax, ecx, 1
@@ -376,19 +376,19 @@ CODESEG
 	jz	??scr_bottom_ok
 	mov	ebx, [y0]
 	neg	ebx
-	imul	ebx, [(MouseType esi).CursorWidth]
+	imul	ebx, [esi].CursorWidth
 	add	[buffy0], ebx
 	mov	[y0], 0
 
 ??scr_bottom_ok:
 	test	dl, 0100b
 	jz	??scr_right_ok
-	mov	eax, [(GraphicViewPort edi).GVPWidth]  ; get width into register
+	mov	eax, [edi].GVPWidth  ; get width into register
 	mov	[x1] , eax
 ??scr_right_ok:
 	test	dl, 0001b
 	jz	??not_clip
-	mov	eax, [(GraphicViewPort edi).GVPHeight]  ; get width into register
+	mov	eax, [edi].GVPHeight  ; get width into register
 	mov	[y1] , eax
 
 ??not_clip:
@@ -397,18 +397,18 @@ CODESEG
 	;* Get the offset into the screen.
 	;*===================================================================
 	mov	eax, [y0]
-	mov	edx, [(GraphicViewPort edi).GVPWidth]
-	add	edx, [(GraphicViewPort edi).GVPXAdd]
-	add	edx, [(GraphicViewPort edi).GVPPitch]
+	mov	edx, [edi].GVPWidth
+	add	edx, [edi].GVPXAdd
+	add	edx, [edi].GVPPitch
 	imul	eax, edx
 	add	eax, [x0]
-	mov	edi, [(GraphicViewPort edi).GVPOffset]
+	mov	edi, [edi].GVPOffset
 	add	edi, eax
 
 	;*===================================================================
 	;* Adjust the source for the top clip.
 	;*===================================================================
-	mov	ebx, [(MouseType esi).CursorWidth]	; turn this into an offset
+	mov	ebx, [esi].CursorWidth	; turn this into an offset
 	mov	esi, [buffy0]			; edx points to source
 	add	esi, [buffx0]					; plus clipped lines
 
@@ -424,7 +424,7 @@ CODESEG
 	jle	??out
 
 	sub	edx, eax
-	sub	ebx, eax	
+	sub	ebx, eax
 
 	;*===================================================================
 	;* Handle restoring the buffer to the visible page
@@ -432,11 +432,11 @@ CODESEG
 ??top_loop:
 	mov	ah, al
 ??inner_loop:
-	mov	ch, [esi]
+	mov	ch, BYTE PTR [esi]
 	inc	esi
 	or	ch, ch
 	jz	??inc_edi
-	mov	[edi], ch
+	mov	BYTE PTR [edi], ch
 ??inc_edi:
 	inc	edi
 	dec	ah
@@ -448,7 +448,7 @@ CODESEG
 ??out:
 	ret
 
-	ENDP	Draw_Mouse
+Draw_Mouse	ENDP
 ;***************************************************************************
 ;* SET_MOUSE_CURSOR -- Sets the shape to be used as the mouse.             *
 ;*                                                                         *
@@ -470,14 +470,12 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   02/13/1992 JLB : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C ASM_Set_Mouse_Cursor:NEAR
-	PROC	ASM_Set_Mouse_Cursor C NEAR 
-	USES	ebx,ecx,edx,esi,edi
-
-	ARG	this:DWORD				; pointer to mouse cursor struct
-	ARG	xhotspot:DWORD				; the x hot spot of the mouse
-	ARG	yhotspot:DWORD				; the y hot spot of the mouse
-	ARG	cursor:DWORD				; ptr to the new mouse cursor
+	EXTERNDEF	C ASM_Set_Mouse_Cursor:NEAR
+ASM_Set_Mouse_Cursor	PROC	NEAR C	USES	ebx ecx edx esi edi,
+	this_object:DWORD,			; pointer to mouse cursor struct
+	xhotspot:DWORD,				; the x hot spot of the mouse
+	yhotspot:DWORD,				; the y hot spot of the mouse
+	cursor:DWORD				; ptr to the new mouse cursor
 
 	LOCAL	datasize:DWORD
 	LOCAL	stype:WORD
@@ -489,7 +487,8 @@ CODESEG
 	; Direction flag must be forward in this routine.
 	;*=========================================================================*
 	cld
-	mov	esi,[this]			; get offset of real mode data start
+	mov	esi,[this_object]			; get offset of real mode data start
+	assume esi:PTR MouseType
 
 	;-------------------------------------------------------------------
 	; Calculate the size of the buffer needed.
@@ -503,14 +502,14 @@ CODESEG
 	call	Get_Shape_Width
 	pop	edx
 	mov	[swidth],eax
-	cmp	eax,[(MouseType esi).MaxWidth]
+	cmp	eax,[esi].MaxWidth
 	jg	??end
 
 	push	[cursor]
 	call	Get_Shape_Original_Height
 	pop	edx
 	mov	[sheight],eax
-	cmp	eax,[(MouseType esi).MaxHeight]
+	cmp	eax,[esi].MaxHeight
 	jg	??end
 
 
@@ -519,9 +518,9 @@ CODESEG
 	imul	ebx,eax
 
 ??copy_mouse:
-	mov	edi,[(MouseType esi).MouseCursor]		; set edi to point to mouse buffer
+	mov	edi,[esi].MouseCursor		; set edi to point to mouse buffer
 	mov	esi,[cursor]			; set esi to point to mouse shape
-	mov	ax,[esi]			; get the shape type byte
+	mov	ax,WORD PTR [esi]		; get the shape type byte
 	mov	[stype],ax			; save off the shape type
 	test	ax,MAKESHAPE_NOCOMP		; is it marked as no compression?
 	je	??comp_shape			; if not go to the comped shape code
@@ -538,21 +537,21 @@ CODESEG
 	add	esi,10				; adjust past header of shape
 	mov	eax,[swidth]			; load up the width
 	mul	[sheight]				; find size of shape in pixels
-	mov	edx,eax				; save this in number of bytes 
+	mov	edx,eax				; save this in number of bytes
 	xor	ecx,ecx				; clear high of loop variable
 ??norm_unrle:
-	mov	al,[esi]			; get a byte out of the file
+	mov	al,BYTE PTR [esi]			; get a byte out of the file
 	inc	esi				; increment to the next pos
 	or	al,al				; set the flags on register state
 	jz	??norm_trans			; if its a zero its transparent
-	mov	[edi],al			; write out the pixel to dest
+	mov	BYTE PTR [edi],al			; write out the pixel to dest
 	inc	edi				; move to next dest position
 	dec	edx				; we have now written another pix
 	jnz	??norm_unrle			; if more to write then do it
 	jmp	??done_copy			; otherwise we are all done
 
 ??norm_trans:
-	mov	cl,[esi]			; get how many zeros to write
+	mov	cl,BYTE PTR [esi]			; get how many zeros to write
 	sub	edx,ecx
 	inc	esi				; increment the source position
 	xor	al,al				; clear out al cuz we're writing zeros
@@ -570,28 +569,28 @@ CODESEG
 	add	esi,16				; move past remap table
 	mov	eax,[swidth]			; load up the width
 	mul	[sheight]			; load up the height
-	mov	edx,eax				; save this in number of bytes 
+	mov	edx,eax				; save this in number of bytes
 	xor	eax,eax				; clear high of lookup variable
 	xor	ecx,ecx				; clear high of loop variable
 ??16_color_unrle:
-	mov	al,[esi]			; get a byte out of the file
+	mov	al,BYTE PTR [esi]			; get a byte out of the file
 	inc	esi				; increment to the next pos
 	or	al,al				; set the flags on register state
 	jz	??16_color_trans		; if its a zero its transparent
 	mov	al,[ebx+eax]			; remap the pixel from 16 color table
-	mov	[edi],al			; store it out to the dest address
+	mov	BYTE PTR [edi],al			; store it out to the dest address
 	inc	edi				; move to next dest address
 	dec	edx				; we have now written a pixel
 	jnz	??16_color_unrle
 	jmp	??done_copy
 ??16_color_trans:
-	mov	cl,[esi]			; get how many zeros to write
+	mov	cl,BYTE PTR [esi]			; get how many zeros to write
 	sub	edx,ecx				; subtract off count ahead of time
 	inc	esi				; increment the source position
 	xor	al,al				; clear out al cuz we're writing zeros
 	rep	stosb				; write all of them out
 	or	edx,edx				; or edx to test for zero
-	jnz	??16_color_unrle		
+	jnz	??16_color_unrle
 	jmp	??done_copy
 
 	;-------------------------------------------------------------------
@@ -600,11 +599,11 @@ CODESEG
 	;-------------------------------------------------------------------
 ??comp_shape:
 	mov	edi,[ShapeBuffer]	; get a pointer to ShapeBuffer
-	mov	ax,[esi]		; load in the shape type
+	mov	ax,WORD PTR [esi]		; load in the shape type
 	add	esi,2			; increment the shape pointer
 	or	ax,MAKESHAPE_NOCOMP	; make the shape as uncompressed
 	mov	[stype],ax		; save off the shape type
-	mov	[edi],ax		; write out uncompressed shape
+	mov	WORD PTR [edi],ax		; write out uncompressed shape
 	add	edi,2
 
 	;-------------------------------------------------------------------
@@ -617,7 +616,7 @@ CODESEG
 	add	ecx,8			; otherwise adjust ecx for header
 ??copy_head:
 	rep	movsw			; copy the necessary bytes
-	
+
 	mov 	eax,[datasize]		; get uncompressed length
 	push	eax			; push as third param
 	push	edi			; push the destination offset
@@ -626,34 +625,35 @@ CODESEG
 	pop	eax
 	pop	eax
 	pop	eax
-	mov	esi,[this]
-	mov	edi,[(MouseType esi).MouseCursor]		; set edi to point to mouse buffer
+	mov	esi,[this_object]
+	assume esi:PTR MouseType
+	mov	edi,[esi].MouseCursor		; set edi to point to mouse buffer
 	mov	esi,[ShapeBuffer]
 	jmp	??copy_type
 
 ??done_copy:
-	mov	esi,[this]	; get offset of real mode data start
+	mov	esi,[this_object]	; get offset of real mode data start
 
 	mov	eax,[xhotspot]		; get the mouse cursors x hotspot
-	mov	[(MouseType esi).MouseXHot],eax
+	mov	[esi].MouseXHot,eax
 	mov	eax,[yhotspot]		; get the mouse cursors y hotspot
-	mov	[(MouseType esi).MouseYHot],eax
+	mov	[esi].MouseYHot,eax
 
 	mov	ebx,[sheight]		; get shape height
-	mov	[(MouseType esi).CursorHeight],ebx
+	mov	[esi].CursorHeight,ebx
 	mov	ebx,[swidth]
-	mov	[(MouseType esi).CursorWidth],ebx
+	mov	[esi].CursorWidth,ebx
 
 	;-------------------------------------------------------------------
 	; Final cleanup and exit.
 	;-------------------------------------------------------------------
 ??end:
 	push	[cursor]
-	push	[(MouseType esi).PrevCursor]
+	push	[esi].PrevCursor
 	pop	eax
-	pop	[(MouseType esi).PrevCursor]
+	pop	[esi].PrevCursor
 	ret				; and return back to the world
 
-	ENDP	ASM_Set_Mouse_Cursor
+ASM_Set_Mouse_Cursor	ENDP
 
 END

@@ -34,13 +34,13 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-GLOBAL	C Build_Fading_Table	:NEAR
+EXTERNDEF	C Build_Fading_Table	:NEAR
 
-	CODESEG
+	.CODE	; converted from TASM: CODESEG
 
 ;***********************************************************
 ; BUILD_FADING_TABLE
@@ -53,7 +53,7 @@ GLOBAL	C Build_Fading_Table	:NEAR
 ;
 ; Bounds Checking: None
 ;*
-	PROC	Build_Fading_Table C near
+Build_Fading_Table	PROC	near C
 	USES	ebx, ecx, edi, esi
 	ARG	palette:DWORD
 	ARG	dest:DWORD
@@ -209,7 +209,7 @@ GLOBAL	C Build_Fading_Table	:NEAR
 	mov	eax,[dest]
 	ret
 
-	ENDP	Build_Fading_Table
+Build_Fading_Table	ENDP
 
 
 	END

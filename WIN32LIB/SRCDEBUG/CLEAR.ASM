@@ -35,14 +35,14 @@
 ;*   GVPC::Clear -- Clears a virtual viewport instance                     *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <.\drawbuff.inc>
+INCLUDE <.\gbuffer.inc>
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* VVPC::CLEAR -- Clears a virtual viewport instance                       *
@@ -58,7 +58,7 @@ CODESEG
 ;*   06/07/1994 PWG : Created.                                             *
 ;*   08/23/1994 SKB : Clear the direction flag to always go forward.       *
 ;*=========================================================================*
-	PROC	Buffer_Clear C near
+Buffer_Clear	PROC	near C
 	USES	eax,ebx,ecx,edx,esi,edi
 
 	ARG    	this_object:DWORD			; this is a member function
@@ -126,5 +126,5 @@ CODESEG
 	jnz	??byte_by_byte				; if any left then next line
 ??exit:
 	ret
-	ENDP	Buffer_Clear
+Buffer_Clear	ENDP
 END

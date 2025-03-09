@@ -17,27 +17,27 @@
 ;
 
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-LOCALS ??
+;LOCALS ??
 
 
 DPMI_INTR equ	031h
 
-GLOBAL 	DPMI_real_alloc   : near
-GLOBAL  DPMI_real_free    : near
-GLOBAL  DPMI_real_intr    : near
-GLOBAL  DPMI_real_call    : near
+EXTERNDEF 	DPMI_real_alloc   : near
+EXTERNDEF  DPMI_real_free    : near
+EXTERNDEF  DPMI_real_intr    : near
+EXTERNDEF  DPMI_real_call    : near
 
 
-STRUC SEGSEL
+SEGSEL STRUC
 	  segmen  dw ?
  	  select  dw ?
 ENDS
 
-STRUC REGS 
+REGS STRUC
 	_eax   dd ?
 	_ebx   dd ?
 	_ecx   dd ?
@@ -47,7 +47,7 @@ STRUC REGS
 	_cflag dd ?
 ENDS
 
-STRUC SREGS 
+SREGS STRUC
 	_es  dw ?
 	_cs  dw ?
 	_ss  dw ?
@@ -56,15 +56,15 @@ STRUC SREGS
 	_gs  dw ?
 ENDS
 
-STRUC DPMI_REGS
+DPMI_REGS STRUC
        _edi  dd ?
-       _esi  dd ?	
-       _ebp  dd ?	
+       _esi  dd ?
+       _ebp  dd ?
        	     dd ?
-       _ebx  dd ?	
-       _edx  dd ?	
-       _ecx  dd ?	
-       _eax  dd ?	
+       _ebx  dd ?
+       _edx  dd ?
+       _ecx  dd ?
+       _eax  dd ?
        Flags dw ?
        _es   dw ?
        _ds   dw ?
@@ -76,15 +76,15 @@ STRUC DPMI_REGS
        _ss   dw ?
        	     dd ?
 	     dd	?
-   size_ref  db	?	
+   size_ref  db	?
 ENDS
-    
-    
-CODESEG
+
+
+.CODE	; converted from TASM: CODESEG
 
 ; int  DPMI_real_alloc ( UINT , SEGREG * , USHORT * ) ;
 
-PROC DPMI_real_alloc C near 
+DPMI_real_allocPROC near C
 	USES	ebx , edx
 	ARG	paragra        : DWORD
 	ARG	blk_segptr    : DWORD
@@ -106,14 +106,14 @@ PROC DPMI_real_alloc C near
 	mov	[(type SEGSEL ptr ebx). select ] , dx
 	xor	eax , eax
 	ret
-		
-ENDP DPMI_real_alloc	
+
+DPMI_real_alloc ENDP
 
 
 ;**************************************************************************
 ; int  DPMI_real_free ( UINT ) ;
 
-PROC DPMI_real_free C near 
+DPMI_real_freePROC near C
 	USES	eax , edx
 	ARG	blk_selec  : DWORD
 
@@ -122,11 +122,11 @@ PROC DPMI_real_free C near
 	shr	edx , 16
 	int	DPMI_INTR
  	ret
-ENDP DPMI_real_free	
+DPMI_real_free ENDP
 
 
-PROC DPMI_real_intr C near 
-	USES	eax , ebx , ecx , edx , edi , esi 
+DPMI_real_intrPROC near C
+	USES	eax , ebx , ecx , edx , edi , esi
 	ARG	vector  : dword
 	ARG     regs_ptr: dword
 	ARG     sreg_ptr: dword
@@ -141,30 +141,30 @@ PROC DPMI_real_intr C near
 	rep	stosd
 
   	mov	ebx , [ regs_ptr ]
-	mov	eax , [ (type REGS ptr ebx) . _eax ] 
+	mov	eax , [ (type REGS ptr ebx) . _eax ]
 	mov	[ regblk . _eax ] , eax
 
-	mov	eax , [ (type REGS ptr ebx) . _ebx ] 
+	mov	eax , [ (type REGS ptr ebx) . _ebx ]
 	mov	[ regblk . _ebx ] , eax
 
-	mov	eax , [ (type REGS ptr ebx) . _ecx ] 
+	mov	eax , [ (type REGS ptr ebx) . _ecx ]
 	mov	[ regblk . _ecx ] , eax
 
-	mov	eax , [ (type REGS ptr ebx) . _edx ] 
+	mov	eax , [ (type REGS ptr ebx) . _edx ]
 	mov	[ regblk . _edx ] , eax
 
-	mov	eax , [ (type REGS ptr ebx) . _esi ] 
+	mov	eax , [ (type REGS ptr ebx) . _esi ]
 	mov	[ regblk . _esi ] , eax
 
-	mov	eax , [ (type REGS ptr ebx) . _edi ] 
+	mov	eax , [ (type REGS ptr ebx) . _edi ]
 	mov	[ regblk . _edi ] , eax
 
 
   	mov	ebx , [ sreg_ptr ]
-	mov	ax , [ (type SREGS ptr ebx) . _es ] 
+	mov	ax , [ (type SREGS ptr ebx) . _es ]
 	mov	[ regblk . _es ] , ax
 
-	mov	ax , [ (type SREGS ptr ebx) . _ds ] 
+	mov	ax , [ (type SREGS ptr ebx) . _ds ]
 	mov	[ regblk . _ds ] , ax
 
 	mov	eax , 0300h
@@ -176,38 +176,38 @@ PROC DPMI_real_intr C near
 	int	DPMI_INTR
 
   	mov	ebx , [ regs_ptr ]
-	mov	eax , [ regblk . _eax ] 
+	mov	eax , [ regblk . _eax ]
 	mov	[ (type REGS ptr ebx) . _eax ] , eax
 
-	mov	eax , [ regblk . _ebx ] 
+	mov	eax , [ regblk . _ebx ]
 	mov	[ (type REGS ptr ebx) . _ebx ] , eax
 
-	mov	eax , [ regblk . _ecx ] 
+	mov	eax , [ regblk . _ecx ]
 	mov	[ (type REGS ptr ebx) . _ecx ] , eax
 
-	mov	eax , [ regblk . _edx ] 
+	mov	eax , [ regblk . _edx ]
 	mov	[ (type REGS ptr ebx) . _edx ] , eax
 
-	mov	eax , [ regblk . _esi ] 
+	mov	eax , [ regblk . _esi ]
 	mov	[ (type REGS ptr ebx) . _esi ] , eax
 
-	mov	eax , [ regblk . _edi ] 
+	mov	eax , [ regblk . _edi ]
 	mov	[ (type REGS ptr ebx) . _edi ] , eax
 
 
   	mov	ebx , [ sreg_ptr ]
-	mov	ax , [ regblk . _es ] 
+	mov	ax , [ regblk . _es ]
 	mov	[ (type SREGS ptr ebx) . _es ] , ax
 
-	mov	ax , [ regblk . _ds ] 
+	mov	ax , [ regblk . _ds ]
 	mov	[ (type SREGS ptr ebx) . _ds ] , ax
 
  	ret
-ENDP DPMI_real_intr	
+DPMI_real_intr ENDP
 
 
-PROC DPMI_real_call C near 
-	USES	eax , ebx , ecx , edx , edi , esi 
+DPMI_real_callPROC near C
+	USES	eax , ebx , ecx , edx , edi , esi
 	ARG	vector  : dword
 	ARG     regs_ptr: dword
 	ARG     sreg_ptr: dword
@@ -223,30 +223,30 @@ PROC DPMI_real_call C near
 
 
   	mov	ebx , [ regs_ptr ]
-	mov	eax , [ (type REGS ptr ebx) . _eax ] 
+	mov	eax , [ (type REGS ptr ebx) . _eax ]
 	mov	[ regblk . _eax ] , eax
 
-	mov	eax , [ (type REGS ptr ebx) . _ebx ] 
+	mov	eax , [ (type REGS ptr ebx) . _ebx ]
 	mov	[ regblk . _ebx ] , eax
 
-	mov	eax , [ (type REGS ptr ebx) . _ecx ] 
+	mov	eax , [ (type REGS ptr ebx) . _ecx ]
 	mov	[ regblk . _ecx ] , eax
 
-	mov	eax , [ (type REGS ptr ebx) . _edx ] 
+	mov	eax , [ (type REGS ptr ebx) . _edx ]
 	mov	[ regblk . _edx ] , eax
 
-	mov	eax , [ (type REGS ptr ebx) . _esi ] 
+	mov	eax , [ (type REGS ptr ebx) . _esi ]
 	mov	[ regblk . _esi ] , eax
 
-	mov	eax , [ (type REGS ptr ebx) . _edi ] 
+	mov	eax , [ (type REGS ptr ebx) . _edi ]
 	mov	[ regblk . _edi ] , eax
 
 
   	mov	ebx , [ sreg_ptr ]
-	mov	ax , [ (type SREGS ptr ebx) . _es ] 
+	mov	ax , [ (type SREGS ptr ebx) . _es ]
 	mov	[ regblk . _es ] , ax
 
-	mov	ax , [ (type SREGS ptr ebx) . _ds ] 
+	mov	ax , [ (type SREGS ptr ebx) . _ds ]
 	mov	[ regblk . _ds ] , ax
 
 ;	mov	eax , 0300h
@@ -258,30 +258,30 @@ PROC DPMI_real_call C near
 ;	int	DPMI_INTR
 
   	mov	ebx , [ regs_ptr ]
-	mov	eax , [ regblk . _eax ] 
+	mov	eax , [ regblk . _eax ]
 	mov	[ (type REGS ptr ebx) . _eax ] , eax
-	mov	eax , [ regblk . _ebx ] 
+	mov	eax , [ regblk . _ebx ]
 	mov	[ (type REGS ptr ebx) . _ebx ] , eax
-	mov	eax , [ regblk . _ecx ] 
+	mov	eax , [ regblk . _ecx ]
 	mov	[ (type REGS ptr ebx) . _ecx ] , eax
-	mov	eax , [ regblk . _edx ] 
+	mov	eax , [ regblk . _edx ]
 	mov	[ (type REGS ptr ebx) . _edx ] , eax
 
-	mov	eax , [ regblk . _esi ] 
+	mov	eax , [ regblk . _esi ]
 	mov	[ (type REGS ptr ebx) . _esi ] , eax
-	mov	eax , [ regblk . _edi ] 
+	mov	eax , [ regblk . _edi ]
 	mov	[ (type REGS ptr ebx) . _edi ] , eax
 
 
   	mov	ebx , [ sreg_ptr ]
-	mov	ax , [ regblk . _es ] 
+	mov	ax , [ regblk . _es ]
 	mov	[ (type SREGS ptr ebx) . _es ] , ax
 
-	mov	ax , [ regblk . _ds ] 
+	mov	ax , [ regblk . _ds ]
 	mov	[ (type SREGS ptr ebx) . _ds ] , ax
 
  	ret
-ENDP DPMI_real_call
+DPMI_real_call ENDP
 
 END
 

@@ -32,17 +32,17 @@
 ;*  Force_VM_Page_In -- forces a buffer to be paged in under win95         *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-		IDEAL
-		P386
-		MODEL USE32 FLAT
+		; Converted TASM IDEAL to MASM
+		.386P
+		.MODEL FLAT
 
 
-		LOCALS ??
+		;LOCALS ??
 
 
-GLOBAL		C Force_VM_Page_In:near
+EXTERNDEF		C Force_VM_Page_In:near
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 
 ;***************************************************************************
@@ -64,7 +64,7 @@ CODESEG
 ;*=========================================================================*
 
 
-proc		Force_VM_Page_In C near
+Force_VM_Page_Inproc		near C
 		USES	eax,ecx,edx,edi
 		ARG	buffer_start:dword
 		ARG	buffer_length:dword
@@ -85,6 +85,6 @@ proc		Force_VM_Page_In C near
 
 ??out:		ret
 
-endp		Force_VM_Page_In
+Force_VM_Page_In		endp
 
 END

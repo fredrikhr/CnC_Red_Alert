@@ -33,13 +33,13 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
-LOCALS ??
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
+;LOCALS ??
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE "gbuffer.inc"
+INCLUDE <.\drawbuff.inc>
+INCLUDE <gbuffer.inc>
 
 
 ; typedef struct {
@@ -49,9 +49,9 @@ INCLUDE "gbuffer.inc"
 ; Note for efficiency reasons x1 must be >= x0 and y1 >= y0
 ; int get_clip ( CLIP_WIN * window , CLIP_WIN * sorce_rect ) ;
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
-	PROC	get_clip C near
+get_clip	PROC	near C
 	USES	eax , ebx
 
 	;*===================================================================
@@ -108,7 +108,7 @@ CODESEG
 	xor	dl , 5
 	mov	ah , dl
 	ret
-       ENDP	get_clip
+get_clip	ENDP
 
 
 

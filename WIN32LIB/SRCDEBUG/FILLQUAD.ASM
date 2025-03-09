@@ -35,18 +35,18 @@
 ;*	Fill_Quad -- Flood fills an arbitrary convex quadrilateral	   *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <.\drawbuff.inc>
+INCLUDE <.\gbuffer.inc>
 
 SLOT_VACANT	EQU	80008000h
 NULL		EQU	0h
 
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* VVC::FILL_QUAD -- Flood fills an arbitrary convex quadrilateral	   *
@@ -75,7 +75,7 @@ CODESEG
 ;*   08/26/1994 IML : Various optimizations.				   *
 ;*   08/30/1994 IML : Added rasterization rules for shared borders.	   *
 ;*=========================================================================*
-	PROC	Buffer_Fill_Quad C NEAR
+Buffer_Fill_Quad	PROC	NEAR C
 	USES	eax,ebx,ecx,edx,esi,edi
 
 
@@ -664,6 +664,6 @@ CODESEG
 ??exit:
 	retn
 
-	ENDP	Buffer_Fill_Quad
+Buffer_Fill_Quad	ENDP
 
 END

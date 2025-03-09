@@ -33,17 +33,17 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
-LOCALS ??
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
+;LOCALS ??
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <.\drawbuff.inc>
+INCLUDE <.\gbuffer.inc>
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
-	PROC	Linear_Blit_To_Linear C near
+Linear_Blit_To_Linear	PROC	near C
 	USES	ebx,ecx,edx,esi,edi
 
 	;*===================================================================
@@ -455,7 +455,7 @@ CODESEG
 
 ??real_out:
        ret
-       ENDP	Linear_Blit_To_Linear
+Linear_Blit_To_Linear	ENDP
 
 
 

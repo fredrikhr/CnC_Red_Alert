@@ -35,17 +35,17 @@
 ;*   Buffer_To_Page -- Copies a linear buffer to a virtual viewport	   *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+; Converted TASM IDEAL to MASM
+.386P
+.MODEL FLAT
 
 TRANSP	equ  0
 
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
 
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 ;***************************************************************************
 ;* VVC::TOPAGE -- Copies a linear buffer to a virtual viewport		   *
@@ -68,20 +68,14 @@ CODESEG
 ;* HISTORY:                                                                *
 ;*   06/15/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Buffer_To_Page C near
-	USES	eax,ebx,ecx,edx,esi,edi
-
-	;*===================================================================
-	;* define the arguements that our function takes.
-	;*===================================================================
-	ARG	x_pixel     :DWORD		; x pixel position in source
-	ARG	y_pixel     :DWORD		; y pixel position in source
-	ARG	pixel_width :DWORD		; width of rectangle to blit
-	ARG	pixel_height:DWORD		; height of rectangle to blit
-	ARG    	src         :DWORD		; this is a member function
-	ARG	dest        :DWORD		; what are we blitting to
-
-;	ARG	trans       :DWORD			; do we deal with transparents?
+Buffer_To_Page	PROC	near C	USES	eax ebx ecx edx esi edi,
+	x_pixel     :DWORD,		; x pixel position in source
+	y_pixel     :DWORD,		; y pixel position in source
+	pixel_width :DWORD,		; width of rectangle to blit
+	pixel_height:DWORD,		; height of rectangle to blit
+	src         :DWORD,		; this is a member function
+	dest        :DWORD;,	; what are we blitting to
+;	trans       :DWORD		; do we deal with transparents?
 
 	;*===================================================================
 	; Define some locals so that we can handle things quickly
@@ -103,9 +97,10 @@ CODESEG
 	mov	[ scr_x ] , 0
 	mov	[ scr_y ] , 0
 	mov  	esi , [ dest ]	    ; get ptr to dest
+	assume	esi : ptr GraphicViewPort
 	xor 	ecx , ecx
 	xor 	edx , edx
-	mov	edi , [ (GraphicViewPort esi) . GVPWidth ]  ; get width into register
+	mov	edi , [ esi ] . GVPWidth   ; get width into register
 	mov	ebx , [ x_pixel ]
 	mov	eax , [ x_pixel ]
 	add	ebx , [ pixel_width ]
@@ -118,7 +113,7 @@ CODESEG
 	shld	ecx , eax , 1
 	shld	edx , ebx , 1
 
-	mov	edi,[ ( GraphicViewPort esi) . GVPHeight ] ; get height into register
+	mov	edi,[ esi ] . GVPHeight  ; get height into register
 	mov	ebx , [ y_pixel ]
 	mov	eax , [ y_pixel ]
 	add	ebx , [ pixel_height ]
@@ -157,22 +152,22 @@ CODESEG
 ??dest_bottom_ok:
 	test	dl , 0100b
 	jz	??dest_right_ok
-	mov	eax , [ (GraphicViewPort esi) . GVPWidth ]  ; get width into register
+	mov	eax , [ esi ] . GVPWidth   ; get width into register
 	mov	[ x1_pixel ] , eax
 ??dest_right_ok:
 	test	dl , 0001b
 	jz	??do_blit
-	mov	eax , [ (GraphicViewPort esi) . GVPHeight ]  ; get width into register
+	mov	eax , [ esi ] . GVPHeight   ; get width into register
 	mov	[ y1_pixel ] , eax
 
 ??do_blit:
 
        cld
 
-       mov	eax , [ (GraphicViewPort esi) . GVPXAdd ]
-       add	eax , [ (GraphicViewPort esi) . GVPWidth ]
-       add	eax , [ (GraphicViewPort esi) . GVPPitch ]
-       mov	edi , [ (GraphicViewPort esi) . GVPOffset ]
+       mov	eax , [ esi ] . GVPXAdd
+       add	eax , [ esi ] . GVPWidth
+       add	eax , [ esi ] . GVPPitch
+       mov	edi , [ esi ] . GVPOffset
 
        mov	ecx , eax
        mul	[ y_pixel ]
@@ -290,5 +285,5 @@ ENDIF
        ret
 
 
-	ENDP	Buffer_To_Page
+Buffer_To_Page	ENDP
 END

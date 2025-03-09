@@ -55,17 +55,17 @@
 ;---------------------------------------------------------------------------
 ; Set the assembly directives
 ;---------------------------------------------------------------------------
-IDEAL				; the product runs in ideal mode
+; Converted TASM IDEAL to MASM				; the product runs in ideal mode
 P386N				; use 386 real mode instructions
 MODEL TINY			; code must be tiny so it fits
-LOCALS ??			; ?? is the symbol for a local
+;LOCALS ??			; ?? is the symbol for a local
 WARN				; generate all warnings we can
 JUMPS				; optimize jumps if possible
 
 ;---------------------------------------------------------------------------
 ; Include all of the keyboard specific defines
 ;---------------------------------------------------------------------------
-INCLUDE "keyboard.inc"
+INCLUDE <keyboard.inc>
 
 CONDHIDE		EQU	08000H		; bit for testing conditional region
 CONDHIDDEN		EQU	04000H		; bit for testing conditional hidden
@@ -73,10 +73,10 @@ RESTORE_VISIBLE_PAGE	EQU	0
 STORE_VISIBLE_PAGE	EQU	1
 
 
-GLOBAL	set_vesa_page 	:near
-GLOBAL	set_vesa_window :near
-GLOBAL	get_vesa_window :near
-GLOBAL	next_vesa_page	:near
+EXTERNDEF	set_vesa_page 	:near
+EXTERNDEF	set_vesa_window :near
+EXTERNDEF	get_vesa_window :near
+EXTERNDEF	next_vesa_page	:near
 
 ECHOON	equ 0
 ;---------------------------------------------------------------------------
@@ -85,7 +85,7 @@ ECHOON	equ 0
 ;   proper changes to KEYSTRUC.INC.  If you do not know what you are doing,
 ;   find someone who does!!!
 ;---------------------------------------------------------------------------
-CODESEG
+.CODE	; converted from TASM: CODESEG
 
 ;---------------------------------------------------------------------------
 ; Begin definition of Keyboard specific variables
@@ -297,8 +297,8 @@ current_page		dw	0
 ;* HISTORY:                                                                *
 ;*   07/11/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	KeyNum_Translate:FAR
-	PROC	KeyNum_Translate C FAR
+	EXTERNDEF	KeyNum_Translate:FAR
+KeyNum_Translate	PROC	FAR C
 	USES	cx,di,es,ds
 	ARG	keycode:WORD
 
@@ -322,7 +322,7 @@ current_page		dw	0
 	mov	al,[es:di]
 ??fini:
 	ret
-	ENDP	KeyNum_Translate
+KeyNum_Translate	ENDP
 
 ;***************************************************************************
 ;* STUFF_KEY_WORD -- Stuffs a word of data into keyboard buffer            *
@@ -336,8 +336,8 @@ current_page		dw	0
 ;* HISTORY:                                                                *
 ;*   07/11/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C Stuff_Key_WORD:FAR
-	PROC	Stuff_Key_WORD C FAR
+	EXTERNDEF	C Stuff_Key_WORD:FAR
+Stuff_Key_WORD	PROC	FAR C
 	USES	si,bx,ds
 	ARG	code:WORD
 
@@ -361,7 +361,7 @@ current_page		dw	0
 	mov	ax,1
 	ret
 
-	ENDP	Stuff_Key_WORD
+Stuff_Key_WORD	ENDP
 
 ;***************************************************************************
 ;* STUFF_KEY_NUM -- Stuffs a key num code into the circular buffer         *
@@ -375,8 +375,8 @@ current_page		dw	0
 ;* HISTORY:                                                                *
 ;*   07/11/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C Stuff_Key_Num:FAR
-	PROC	Stuff_Key_Num C FAR
+	EXTERNDEF	C Stuff_Key_Num:FAR
+Stuff_Key_Num	PROC	FAR C
 	USES	bx,cx,dx,di,si,ds
 	ARG	keycode:WORD
 	LOCAL	tail:WORD		; Original keybuffer tail (safety copy).
@@ -686,7 +686,7 @@ current_page		dw	0
 	popf
 	ret
 
-	ENDP	Stuff_Key_Num
+Stuff_Key_Num	ENDP
 ;***********************************************************
 
 
@@ -707,9 +707,9 @@ current_page		dw	0
 ;* HISTORY:                                                                *
 ;*   07/13/1994 PWG : Created.                                             *
 ;*=========================================================================*
-label RM_Keystroke_Interrupt
-	GLOBAL	C Keystroke_Interrupt:FAR
-	PROC	Keystroke_Interrupt C FAR
+RM_Keystroke_Interrupt label
+	EXTERNDEF	C Keystroke_Interrupt:FAR
+Keystroke_Interrupt	PROC	FAR C
 
 IF 0
 	push	ax
@@ -1163,7 +1163,7 @@ ENDIF
 	iret
 ENDIF
 
-	ENDP	Keystroke_Interrupt
+Keystroke_Interrupt	ENDP
 
 ;***************************************************************************
 ;* Break interrupt routines begin here!
@@ -1181,9 +1181,9 @@ ENDIF
 ;* HISTORY:                                                                *
 ;*   07/13/1994 PWG : Created.                                             *
 ;*=========================================================================*
-label RM_Break_Interrupt
-	GLOBAL	C Break_Interrupt:FAR
-	PROC	Break_Interrupt C FAR
+RM_Break_Interrupt label
+	EXTERNDEF	C Break_Interrupt:FAR
+Break_Interrupt	PROC	FAR C
 
 
 	pushf
@@ -1202,7 +1202,7 @@ label RM_Break_Interrupt
 
 	iret
 
-	ENDP	Break_Interrupt
+Break_Interrupt	ENDP
 
 ;**************************************************************************
 ;* CALL_INTERRUPT_CHAIN -- Function PM calls to call the RM interrupt chain*
@@ -1234,8 +1234,8 @@ Call_Interrupt_Chain:
 ;
 ;----------------------------------------------------------------------------
 
- 	GLOBAL	C Low_Hide_Mouse:FAR
-	PROC	Low_Hide_Mouse C FAR
+ 	EXTERNDEF	C Low_Hide_Mouse:FAR
+Low_Hide_Mouse	PROC	FAR C
 	USES	ax,bx,cx,dx,ds
 
 	mov	ax,cs				; since we are in tiny model
@@ -1263,7 +1263,7 @@ Call_Interrupt_Chain:
 ??end:
 	ret
 
-	ENDP	Low_Hide_Mouse
+Low_Hide_Mouse	ENDP
 
 ;----------------------------------------------------------------------------
 
@@ -1279,8 +1279,8 @@ Call_Interrupt_Chain:
 ; NOTE: does not check if mouse is currently being updated.
 ;----------------------------------------------------------------------------
 
- 	GLOBAL	C Low_Show_Mouse:FAR
-	PROC	Low_Show_Mouse C FAR
+ 	EXTERNDEF	C Low_Show_Mouse:FAR
+Low_Show_Mouse	PROC	FAR C
 	USES 	ax,bx,cx,dx,si,di,ds,es
 	LOCAL	mousex:WORD		; Draw X position.
 	LOCAL	mousey:WORD		; Draw Y position.
@@ -1351,12 +1351,12 @@ ENDIF
 ??exit:
 	ret
 
-	ENDP	Low_Show_Mouse
+Low_Show_Mouse	ENDP
 
 ;----------------------------------------------------------------------------
 ;----------------------------------------------------------------------------
-	GLOBAL	C Mouse_KeyNum:FAR
-	PROC	Mouse_KeyNum C FAR
+	EXTERNDEF	C Mouse_KeyNum:FAR
+Mouse_KeyNum	PROC	FAR C
 	USES	bx
 	ARG	state:WORD		; Current mouse state.
 	LOCAL	keynum:WORD		; Determined keynum.
@@ -1395,7 +1395,7 @@ ENDIF
 	mov	ax,[keynum]
 	ret
 
-	ENDP	Mouse_KeyNum
+Mouse_KeyNum	ENDP
 
 ;----------------------------------------------------------------------------
 
@@ -1430,8 +1430,8 @@ ENDIF
 ; PROTOTYPE:
 ;	This routine is called from an interrupt.
 ;----------------------------------------------------------------------------
-label RM_Mouse_Interrupt
-	PROC	Mouse_Int C FAR
+RM_Mouse_Interrupt label
+Mouse_Int	PROC	FAR C
 	USES	ax,bx,cx,dx,ds,si,es,di
 	LOCAL	cond:WORD		; Local copy of mouse event.
 	LOCAL	state:WORD		; Local copy of button state.
@@ -1685,7 +1685,7 @@ christopher:
 	mov sp, [Mouse_App_Stack_ES]           ; Get Syatem Stack offset
 	sti				       ; Enable Interrupts
 	ret
-	ENDP	Mouse_Int
+Mouse_Int	ENDP
 
 
 
@@ -1705,8 +1705,8 @@ christopher:
 ;* HISTORY:                                                                *
 ;*   10/27/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C VGA_Mouse_Shadow_Buffer:FAR
-	PROC	VGA_Mouse_Shadow_Buffer C FAR
+	EXTERNDEF	C VGA_Mouse_Shadow_Buffer:FAR
+VGA_Mouse_Shadow_Buffer	PROC	FAR C
 	USES	ax,bx,cx,dx,di,si,ds,es
 	ARG	store:WORD
 
@@ -1923,12 +1923,12 @@ mov [es:di+1],al
 ENDIF
 	ret
 
-	ENDP	VGA_Mouse_Shadow_Buffer
+VGA_Mouse_Shadow_Buffer	ENDP
 
 ;***************************************************************************
 
-	GLOBAL	C VGA_Draw_Mouse:FAR
-	PROC	VGA_Draw_Mouse C FAR
+	EXTERNDEF	C VGA_Draw_Mouse:FAR
+VGA_Draw_Mouse	PROC	FAR C
 	USES	ax,bx,cx,dx,di,si,ds,es
 	ARG	mousex:WORD
 	ARG	mousey:WORD
@@ -2106,7 +2106,7 @@ mov al,2
 mov [es:di+1],al
 ENDIF
 	ret
-ENDP	VGA_Draw_Mouse
+VGA_Draw_Mouse	ENDP
 
 
 ;***************************************************************************
@@ -2124,8 +2124,8 @@ ENDP	VGA_Draw_Mouse
 ;* HISTORY:                                                                *
 ;*   10/27/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C VESA_Mouse_Shadow_Buffer:FAR
-	PROC	VESA_Mouse_Shadow_Buffer C FAR
+	EXTERNDEF	C VESA_Mouse_Shadow_Buffer:FAR
+VESA_Mouse_Shadow_Buffer	PROC	FAR C
 	USES	ax,bx,cx,dx,di,si,ds,es
 	ARG	store:WORD
 
@@ -2365,14 +2365,14 @@ ENDIF
 	call	set_vesa_window
 	ret
 
-	ENDP	VESA_Mouse_Shadow_Buffer
+VESA_Mouse_Shadow_Buffer	ENDP
 
 
 
 ;***************************************************************************
 
-	GLOBAL	C VESA_Draw_Mouse:FAR
-	PROC	VESA_Draw_Mouse C FAR
+	EXTERNDEF	C VESA_Draw_Mouse:FAR
+VESA_Draw_Mouse	PROC	FAR C
 	USES	ax,bx,cx,dx,di,si,ds,es
 	ARG	mousex:WORD
 	ARG	mousey:WORD
@@ -2576,13 +2576,13 @@ ENDIF
 	ret
 
 
-ENDP	VESA_Draw_Mouse
+VESA_Draw_Mouse	ENDP
 
 
 
 ;************************************************************************
 
-PROC	get_vesa_window C near
+get_vesa_windowPROC	near C
 uses	ax,bx
 	mov	ax , 04f05h
 	mov	bh , 1
@@ -2593,7 +2593,7 @@ ENDP
 
 ;************************************************************************
 
-PROC	set_vesa_window C near
+set_vesa_windowPROC	near C
 uses	ax,bx,dx
 	mov	ax , 04f05h
 	mov	bh , 0
@@ -2605,7 +2605,7 @@ ENDP
 
 ;***************************************************************************
 
-PROC	set_vesa_page C near
+set_vesa_pagePROC	near C
 USES	ax,bx,dx
 
 	mov	bx , dx
@@ -2617,9 +2617,9 @@ USES	ax,bx,dx
 	mov	bl , 0
 	call	[ dword ptr cs: VesaPtr ]
 	ret
-ENDP	set_vesa_page
+set_vesa_page	ENDP
 
-PROC	next_vesa_page C near
+next_vesa_pagePROC	near C
 USES	ax,bx,dx
 	mov	bx , [ cs: current_page ]
 	add	bx , 4
@@ -2630,7 +2630,7 @@ USES	ax,bx,dx
 	mov	bl , 0
 	call	[ dword ptr cs: VesaPtr ]
 	ret
-ENDP	next_vesa_page
+next_vesa_page	ENDP
 
 
 
