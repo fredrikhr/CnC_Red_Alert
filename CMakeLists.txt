@@ -6,3 +6,5 @@ project(
     HOMEPAGE_URL "https://github.com/electronicarts/CnC_Red_Alert"
     LANGUAGES C CXX ASM_MASM
 )
+
+add_subdirectory(LAUNCH)
