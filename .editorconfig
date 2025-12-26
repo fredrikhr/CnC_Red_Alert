@@ -1,0 +1,19 @@
+root = true
+
+[*]
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{json}]
+indent_size = 2
+indent_style = space
+
+[{CMakeLists.txt,*.cmake,*.rst}]
+indent_size = 2
+indent_style = space
+
+[Makefile,Makefile.{wat,bor}]
+indent_style = tab
+
+[*.{c,h,cpp,hpp,i,inc,asm}]
+indent_style = tab
