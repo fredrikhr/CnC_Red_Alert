@@ -36,7 +36,10 @@
 
 #include	<stdio.h>
 #include	<stdlib.h>
-#include	<dir.h>
+// #include	<dir.h>
+#include	<windows.h>
+#include	<cstdlib>
+#include	<fileapi.h>
 #include	<dos.h>
 #include	<string.h>
 #include	<ctype.h>
@@ -230,7 +233,7 @@ int main(int argc, char **argv)
 		}
 
 		/*
-		**	Make sure that the destination filespec does not contain any 
+		**	Make sure that the destination filespec does not contain any
 		**	wildcard specifications.
 		*/
 		if (fnsplit(DestFile, Drive, Dir, File, Ext) & WILDCARDS) {
@@ -280,7 +283,7 @@ int main(int argc, char **argv)
 		}
 
 		/*
-		**	Scan through all specified source files and process them into the 
+		**	Scan through all specified source files and process them into the
 		**	appropriate audio format.
 		*/
 		struct ffblk block;
@@ -581,7 +584,7 @@ void Convert_WAV(FILE * src, FILE * dst)
 						}
 						raw.Size += fwrite(sptr, 1, (size_t)tocomp, dst);
 						(char*)sptr += (unsigned)tocomp;
-						#else 
+						#else
 
 						(char*)sptr += (unsigned)tocomp;
 						raw.Size += fwrite(&comped, 1, sizeof(short), dst);
@@ -810,7 +813,7 @@ void Convert_VOC(FILE *src, FILE *dst)
 				break;
 
 			/*
-			**	Extended block is used for highspeed or 
+			**	Extended block is used for highspeed or
 			** stereo samples.
 			*/
 			case 8:
@@ -876,10 +879,10 @@ signed char _4bitencode[19] = {
 signed int _4bitdecode[16] = {-9, -8, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 8};
 #else
 signed char _4bitencode[33] = {
-	0,	0, 0, 1, 1, 1, 2, 2, 
-	3, 3, 4, 4, 5, 5, 6, 7, 
-	8, (8), 9, 10, 11, 12, 12, 13, 
-	13, 13, 14, 14, 14, 15, 15, 15, 
+	0,	0, 0, 1, 1, 1, 2, 2,
+	3, 3, 4, 4, 5, 5, 6, 7,
+	8, (8), 9, 10, 11, 12, 12, 13,
+	13, 13, 14, 14, 14, 15, 15, 15,
 	15
 };
 signed int _4bitdecode[16] = {-16, -13, -10, -8, -6, -4, -2, -1, 1, 2, 4, 6, 8, 10, 13, 16};
@@ -919,7 +922,7 @@ long Compress_Frame(void * source, void * dest, long size)
 		if (delta == 18)  s[1] -= 2;
 		if (delta == 17)  s[1]--;
 
-		if ((*s > 0x7F && *s < 0x81) && s[1] > 0x7F && s[1] < 0x81) *s = 0x80; 
+		if ((*s > 0x7F && *s < 0x81) && s[1] > 0x7F && s[1] < 0x81) *s = 0x80;
 		s++;
 		max4--;
 	}
@@ -1121,7 +1124,7 @@ long Compress_Frame(void * source, void * dest, long size)
 				lastraw = 0;
 			}
 		} else {
-			
+
 			/*
 			**	If there is no current raw dump of samples, then check to see if
 			**	this sample can fit into a 5 bit delta.  If it can, then store

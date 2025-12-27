@@ -45,7 +45,10 @@
 #include	<stdlib.h>
 #include	<stdio.h>
 #include	<ctype.h>
-#include	<dir.h>
+// #include	<dir.h>
+#include	<windows.h>
+#include	<cstdlib>
+#include	<fileapi.h>
 #include	<string.h>
 
 #define	FALSE	0
