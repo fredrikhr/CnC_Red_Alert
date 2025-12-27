@@ -48,11 +48,10 @@ _2bitdecode	DB	-2, -1, 0, 1
 _4bitdecode	DB	-9,-8,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,8
 ;_4bitdecode	DB	-16,-13,-10,-8,-6,-4,-2,-1,1,2,4,6,8,10,13,16
 
-	GLOBAL	C Decompress_Frame:FAR
-	PROC	C Decompress_Frame FAR USES bx cx edx ds si es di bp
-	ARG	source:DWORD
-	ARG	dest:DWORD
-	ARG	count:WORD
+Decompress_Frame	PROC	FAR C PUBLIC USES bx cx edx ds si es di bp,
+	source:DWORD,
+	dest:DWORD,
+	count:WORD
 
 	LOCAL	previous:BYTE
 	LOCAL	incount:WORD
@@ -316,7 +315,7 @@ _4bitdecode	DB	-9,-8,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,8
 	mov	ax,[incount]
 	ret
 
-	ENDP	Decompress_Frame
+Decompress_Frame	ENDP
 
 	END
 
