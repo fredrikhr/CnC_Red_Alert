@@ -44,8 +44,9 @@
 ;*                                                                                             *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
+		OPTION SEGMENT:USE16
 
-
+		.MODEL	TINY,	C, NEARSTACK
 
 		TITLE	"Red Alert launcher"
 
