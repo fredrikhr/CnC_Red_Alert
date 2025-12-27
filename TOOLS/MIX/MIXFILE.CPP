@@ -331,12 +331,12 @@ void DataClass::Process_Input(char const *infile, int quiet, int paths)
  *                                                                                             *
  * HISTORY:                                                                                    *
  *   08/06/1994 JLB : Created.                                                                 *
- *   10/27/94   JLB : Handles multiple data paths.                                             * 
+ *   10/27/94   JLB : Handles multiple data paths.                                             *
  *=============================================================================================*/
 DataClass::DataClass(char const *filename)
 {
 	static char buffer[100];
-	
+
 	if (!filename) throw "NULL filename";
 
 	Filename = strdup(filename);
@@ -482,6 +482,7 @@ int compfunc(const void *ptr1, const void *ptr2)
  *=============================================================================================*/
 void DataClass::Process_Output(char const *outname)
 {
+	int index;
 	FILE *outfile;
 
 	if (Count) {
@@ -500,7 +501,7 @@ void DataClass::Process_Output(char const *outname)
 		**	Build a working array to the file objects.
 		*/
 		DataClass * ptr = First;
-		for (int index = 0; index < Count; index++) {
+		for (index = 0; index < Count; index++) {
 			array[index] = ptr;
 			ptr->Index = index;
 			ptr = ptr->Next;
@@ -669,10 +670,10 @@ char const * DataClass::Output_Filename(void)
 		fnmerge(filename, drive, path, file, ext);
 	}
 	return(&filename[0]);
-}	
+}
 
 
 char const * DataClass::Input_Filename(void)
 {
 	return(Filename);
-}	
+}
