@@ -16,6 +16,14 @@ file(GLOB
   "*.H"
 )
 
+target_compile_definitions(LAUNCHER
+  PRIVATE
+    _export=
+    __export=
+    $<$<CONFIG:Debug>:DEBUG>
+    $<$<CONFIG:Debug>:_DEBUG>
+    $<$<NOT:$<CONFIG:Debug>>:NDEBUG>
+)
 target_sources(LAUNCHER
   PRIVATE
     ${CnC_Red_Alert_LAUNCHER_SOURCES_FILES}
