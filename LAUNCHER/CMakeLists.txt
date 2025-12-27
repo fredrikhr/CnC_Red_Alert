@@ -1,12 +1,14 @@
 add_executable(LAUNCHER WIN32)
 file(GLOB
   CnC_Red_Alert_LAUNCHER_SOURCES_FILES
+  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
   "*.C"
   "*.CPP"
   "*.RC"
 )
 file(GLOB
   CnC_Red_Alert_LAUNCHER_HEADER_FILES
+  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
   "*.H"
 )
 
