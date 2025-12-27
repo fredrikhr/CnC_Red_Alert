@@ -80,7 +80,7 @@ Decompress_Frame	PROC	FAR C PUBLIC USES bx cx edx ds si es di bp,
 
 	; Fetch code byte from input stream.
 	xor	ah,ah
-	mov	al,[ds:si]
+	mov	al,ds:[si]
 	inc	[incount]
 	inc	si
 	shl	ax,2			; AH contains code.
@@ -100,7 +100,7 @@ Decompress_Frame	PROC	FAR C PUBLIC USES bx cx edx ds si es di bp,
 	shl	al,3
 	sar	al,3
 	add	dl,al
-	mov	[es:di],dl
+	mov	es:[di],dl
 	dec	cx
 	inc	di
 	jmp	??mainloop
@@ -120,7 +120,7 @@ Decompress_Frame	PROC	FAR C PUBLIC USES bx cx edx ds si es di bp,
 	add	[incount],ax
 	sub	cx,ax
 	dec	di
-	mov	dl,[es:di]		; Set "previous" value.
+	mov	dl,es:[di]		; Set "previous" value.
 	inc	di
 	jmp	??mainloop
 
@@ -134,7 +134,7 @@ Decompress_Frame	PROC	FAR C PUBLIC USES bx cx edx ds si es di bp,
 	; packed delta bytes to process.
 ??bit4loop:
 	; Fetch nibble packed delta codes.
-	mov	ah,[ds:si]
+	mov	ah,ds:[si]
 	mov	bl,ah
 	inc	[incount]
 	inc	si
@@ -174,7 +174,7 @@ Decompress_Frame	PROC	FAR C PUBLIC USES bx cx edx ds si es di bp,
 ??ok2:
 
 	; Output the two sample bytes.
-	mov	[es:di],dx
+	mov	es:[di],dx
 	sub	cx,2
 	add	di,2
 
@@ -192,11 +192,11 @@ Decompress_Frame	PROC	FAR C PUBLIC USES bx cx edx ds si es di bp,
 	cmp	ah,CODE_2BIT
 	jne	??zerodelta
 
-	; A sequence of 2bit deltas follow.  AL equals the number of 
+	; A sequence of 2bit deltas follow.  AL equals the number of
 	; packed delta bytes to process.
 ??bit2loop:
 	; Fetch packed delta codes.
-	mov	ah,[ds:si]
+	mov	ah,ds:[si]
 	inc	[incount]
 	inc	si
 
@@ -225,7 +225,7 @@ Decompress_Frame	PROC	FAR C PUBLIC USES bx cx edx ds si es di bp,
 	shr	bx,2
 	and	bl,00000011b
 	add	dl,[cs:_2bitdecode+bx]		; Add in delta
-	
+
 	pushf
 	cmp	[cs:_2bitdecode+bx],0
 	jl	short ??neg4
@@ -238,7 +238,7 @@ Decompress_Frame	PROC	FAR C PUBLIC USES bx cx edx ds si es di bp,
 	jc	short ??ok4
 	xor	dl,dl
 ??ok4:
-	
+
 	mov	dh,dl
 	ror	edx,8
 
@@ -246,7 +246,7 @@ Decompress_Frame	PROC	FAR C PUBLIC USES bx cx edx ds si es di bp,
 	shr	bx,4
 	and	bl,00000011b
 	add	dl,[cs:_2bitdecode+bx]		; Add in delta
-     
+
 	pushf
 	cmp	[cs:_2bitdecode+bx],0
 	jl	short ??neg5
@@ -259,7 +259,7 @@ Decompress_Frame	PROC	FAR C PUBLIC USES bx cx edx ds si es di bp,
 	jc	short ??ok5
 	xor	dl,dl
 ??ok5:
-	
+
 	mov	dh,dl
 	ror	edx,8
 
@@ -267,7 +267,7 @@ Decompress_Frame	PROC	FAR C PUBLIC USES bx cx edx ds si es di bp,
 	shr	bx,6
 	and	bl,00000011b
 	add	dl,[cs:_2bitdecode+bx]		; Add in delta
-	
+
 	pushf
 	cmp	[cs:_2bitdecode+bx],0
 	jl	short ??neg6
@@ -280,12 +280,12 @@ Decompress_Frame	PROC	FAR C PUBLIC USES bx cx edx ds si es di bp,
 	jc	short ??ok6
 	xor	dl,dl
 ??ok6:
-	
+
 	;mov	dh,dl
 	ror	edx,8
 
 	; Output the two sample bytes.
-	mov	[es:di],edx
+	mov	es:[di],edx
 	sub	cx,4
 	add	di,4
 
