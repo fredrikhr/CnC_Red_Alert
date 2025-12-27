@@ -608,7 +608,7 @@ long Calc_CRC(void const *data, long size)
 	*/
 	for (; size > sizeof(long); size -= sizeof(long)) {
 		long temp = *ptr++;
-		asm {
+		__asm {
 			mov	eax,crc
 			rol	eax,1
 			add	eax,temp
@@ -625,7 +625,7 @@ long Calc_CRC(void const *data, long size)
 		long temp = 0;
 
 		memcpy(&temp, ptr, (size_t)size);
-		asm {
+		__asm {
 			mov	eax,crc
 			rol	eax,1
 			add	eax,temp
