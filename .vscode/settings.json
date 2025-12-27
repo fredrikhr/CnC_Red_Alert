@@ -1,10 +1,18 @@
 {
   "files.encoding": "windows1252",
   "files.associations": {
+    "*.mak": "makefile",
+    "*.resx": "xml",
+    "*.*proj": "xml",
+    "*.props": "xml",
+    "*.ruleset": "xml",
+    "*.slnx": "xml",
     "*.ASM": "masm",
     "*.I": "masm",
     "*.INC": "masm",
-    "*.16": "masm"
+    "*.16": "masm",
+    "*.C": "c",
+    "*.CPP": "cpp",
   },
   "cmake.buildDirectory": "${workspaceFolder}/OBJ/${generator}/${buildType}",
   "cmake.installPrefix": "${workspaceFolder}/BIN/${buildType}",
