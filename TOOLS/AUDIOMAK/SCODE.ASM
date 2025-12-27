@@ -17,15 +17,15 @@
 ;
 
 
-	IDEAL
-IDEAL_MODE	EQU	1
-	VERSION T300		; Code written for V3.0 TASM version.
-	IDEAL
-	P386N			; target machine.
-	SMART			; Enable optimizations.
-	WARN			; Full warnings.
-	LOCALS ??
-	MODEL	LARGE @filename
+;	IDEAL
+;	IDEAL_MODE	EQU	1
+;	VERSION T300		; Code written for V3.0 TASM version.
+;	IDEAL
+	.386			; target machine.
+;	SMART			; Enable optimizations.
+;	WARN			; Full warnings.
+;	LOCALS ??
+	.MODEL	LARGE	; @filename
 ;	INCLUDE	"d:\library\wwlib.i"
 
 CODE_2BIT	EQU	0
@@ -41,7 +41,7 @@ MAGICNUMBER2	EQU	0BABEBABEh
 ;	WARN			; Full warnings.
 ;	LOCALS ??
 
-	CODESEG
+	.CODE
 
 _2bitdecode	DB	-2, -1, 0, 1
 ;_2bitdecode	DB	-2, -1, 1, 2
