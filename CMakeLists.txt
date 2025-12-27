@@ -9,3 +9,4 @@ project(
 
 # add_subdirectory(LAUNCH)
 add_subdirectory(LAUNCHER)
+add_subdirectory(TOOLS/AUDIOMAK)
