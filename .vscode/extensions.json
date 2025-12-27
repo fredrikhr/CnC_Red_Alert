@@ -3,6 +3,7 @@
     "editorconfig.editorconfig",
     "ms-vscode.cpptools",
     "ms-vscode.cmake-tools",
-    "blindtiger.masm"
+    "ms-vscode.makefile-tools",
+    "blindtiger.masm",
   ]
 }
