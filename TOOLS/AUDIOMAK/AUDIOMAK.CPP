@@ -890,6 +890,7 @@ signed int _4bitdecode[16] = {-16, -13, -10, -8, -6, -4, -2, -1, 1, 2, 4, 6, 8, 
 
 long Compress_Frame(void * source, void * dest, long size)
 {
+	int				i;
 	unsigned char	*s = (unsigned char *)source;
 	unsigned char	*d = (unsigned char *)dest;
 	int				delta;
@@ -937,7 +938,7 @@ long Compress_Frame(void * source, void * dest, long size)
 		*/
 		s4 = s;
 		max4 = MIN(63+1, size);
-		for (int i = 0; i < max4; i++) {
+		for (i = 0; i < max4; i++) {
 			if (previous != *s4++) break;
 		}
 		if (i > 2) {
