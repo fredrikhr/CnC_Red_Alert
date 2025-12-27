@@ -7,6 +7,7 @@ project(
     LANGUAGES C CXX ASM_MASM
 )
 
+add_subdirectory(IPX)
 # add_subdirectory(LAUNCH)
 add_subdirectory(LAUNCHER)
 add_subdirectory(TOOLS/AUDIOMAK)
