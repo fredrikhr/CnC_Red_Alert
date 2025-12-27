@@ -7,4 +7,4 @@ project(
     LANGUAGES C CXX ASM_MASM
 )
 
-add_subdirectory(LAUNCH)
+# add_subdirectory(LAUNCH)
