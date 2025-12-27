@@ -18,7 +18,8 @@
 
 #include <windows.h>
 #include <windowsx.h>
-#include <alloc.h>
+// #include <alloc.h>
+#include <stdio.h>
 
 DWORD GetDibInfoHeaderSize (BYTE huge *);
 WORD GetDibWidth (BYTE huge *);
