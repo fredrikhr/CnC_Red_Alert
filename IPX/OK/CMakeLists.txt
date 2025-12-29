@@ -2,6 +2,7 @@ add_executable(THUNK_OK FIXTHUNK.CPP)
 
 add_executable(IPXTEST_OK WIN32 IPXTEST.CPP)
 
+if(WITH_16BIT_TARGETS)
 add_library(IPX16_OK SHARED)
 target_sources(IPX16_OK
   PRIVATE
@@ -18,5 +19,6 @@ target_sources(IPX16_OK
       IPX16.H
       PCMACRO.16
 )
+endif(WITH_16BIT_TARGETS)
 
 set_asm_masm_source_file_properties()

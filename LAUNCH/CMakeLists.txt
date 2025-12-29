@@ -1,4 +1,5 @@
-add_executable(LAUNCH WIN32)
+if(WITH_16BIT_TARGETS)
+add_executable(LAUNCH)
 target_sources(LAUNCH
   PRIVATE
     LAUNCH.ASM
@@ -10,5 +11,6 @@ target_sources(LAUNCH
     FILES PCMACRO.16
 )
 install(TARGETS LAUNCH)
+endif(WITH_16BIT_TARGETS)
 
 set_asm_masm_source_file_properties()

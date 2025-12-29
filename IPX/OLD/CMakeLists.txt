@@ -1,3 +1,4 @@
+if(WITH_16BIT_TARGETS)
 add_library(IPX16A_OLD OBJECT IPX16A.ASM)
 target_include_directories(IPX16A_OLD
   PRIVATE
@@ -10,5 +11,6 @@ target_sources(IPX16A_OLD
     TYPE HEADERS
     FILES ../PCMACRO.16
 )
+endif(WITH_16BIT_TARGETS)
 
 set_asm_masm_source_file_properties()
