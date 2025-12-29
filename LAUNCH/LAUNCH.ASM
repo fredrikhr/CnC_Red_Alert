@@ -46,7 +46,7 @@
 
 		OPTION SEGMENT:USE16
 
-		.MODEL	TINY,	C, NEARSTACK
+		.MODEL	SMALL
 
 		TITLE	"Red Alert launcher"
 
