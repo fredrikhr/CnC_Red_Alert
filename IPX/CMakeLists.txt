@@ -79,5 +79,7 @@ target_sources(THIPX32
 
 set_asm_masm_source_file_properties()
 
+if(WITH_REDUNDANT_SUBDIRECTORY_TARGETS)
 add_subdirectory(OK)
 add_subdirectory(OLD)
+endif(WITH_REDUNDANT_SUBDIRECTORY_TARGETS)

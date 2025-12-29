@@ -39,4 +39,6 @@ install(TARGETS LAUNCHER)
 
 set_asm_masm_source_file_properties()
 
+if(WITH_REDUNDANT_SUBDIRECTORY_TARGETS)
 add_subdirectory(UTIL)
+endif(WITH_REDUNDANT_SUBDIRECTORY_TARGETS)

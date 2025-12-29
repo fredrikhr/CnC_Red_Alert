@@ -23,6 +23,7 @@ macro(set_asm_masm_source_file_properties)
 endmacro(set_asm_masm_source_file_properties)
 
 option(WITH_16BIT_TARGETS "Enable CMake targets for legacy 16-bit components.")
+option(WITH_REDUNDANT_SUBDIRECTORY_TARGETS "Enable CMake targets for duplicate, old, new or unspecified components located in sub-directories.")
 
 add_subdirectory(IPX)
 add_subdirectory(LAUNCH)
