@@ -45,7 +45,7 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 
-
+		.MODEL	SMALL
 
 		TITLE	"Red Alert launcher"
 
