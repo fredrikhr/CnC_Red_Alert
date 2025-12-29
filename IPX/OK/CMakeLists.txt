@@ -1,4 +1,5 @@
 add_executable(THUNK_OK FIXTHUNK.CPP)
+
 add_executable(IPXTEST_OK WIN32 IPXTEST.CPP)
 
 add_library(IPX16_OK SHARED)
@@ -17,10 +18,5 @@ target_sources(IPX16_OK
       IPX16.H
       PCMACRO.16
 )
-set_source_files_properties(
-  IPX16.ASM
-  IPX16A.ASM
-  PCMACRO.16
-  PROPERTIES
-    LANGUAGE ASM_MASM
-)
+
+set_asm_masm_source_file_properties()

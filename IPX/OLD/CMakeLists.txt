@@ -10,9 +10,5 @@ target_sources(IPX16A_OLD
     TYPE HEADERS
     FILES ../PCMACRO.16
 )
-set_source_files_properties(
-  IPX16A.ASM
-  ../PCMACRO.16
-  PROPERTIES
-    LANGUAGE ASM_MASM
-)
+
+set_asm_masm_source_file_properties()

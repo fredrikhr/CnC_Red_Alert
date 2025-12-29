@@ -9,10 +9,6 @@ target_sources(LAUNCH
     TYPE HEADERS
     FILES PCMACRO.16
 )
-set_source_files_properties(
-  LAUNCH.ASM
-  PCMACRO.16
-  PROPERTIES
-    LANGUAGE ASM_MASM
-)
 install(TARGETS LAUNCH)
+
+set_asm_masm_source_file_properties()

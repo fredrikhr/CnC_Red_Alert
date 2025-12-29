@@ -22,7 +22,6 @@ target_compile_definitions(LAUNCHER
     __export=
     $<$<CONFIG:Debug>:DEBUG>
     $<$<CONFIG:Debug>:_DEBUG>
-    $<$<NOT:$<CONFIG:Debug>>:NDEBUG>
 )
 target_sources(LAUNCHER
   PRIVATE
@@ -37,5 +36,7 @@ target_sources(LAUNCHER
       ${CnC_Red_Alert_LAUNCHER_HEADER_FILES}
 )
 install(TARGETS LAUNCHER)
+
+set_asm_masm_source_file_properties()
 
 add_subdirectory(UTIL)

@@ -7,6 +7,21 @@ project(
     LANGUAGES C CXX ASM_MASM
 )
 
+macro(set_asm_masm_source_file_properties)
+  file(GLOB
+    PROJECT_COMPONENT_ASM_MASM_SOURCE_FILES
+    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    "*.ASM"
+    "*.16"
+  )
+  set_source_files_properties(
+    ${PROJECT_COMPONENT_ASM_MASM_SOURCE_FILES}
+    PROPERTIES
+      LANGUAGE ASM_MASM
+      COMPILE_OPTIONS "$<$<CONFIG:Debug>:/Zd>"
+  )
+endmacro(set_asm_masm_source_file_properties)
+
 add_subdirectory(IPX)
 # add_subdirectory(LAUNCH)
 add_subdirectory(LAUNCHER)

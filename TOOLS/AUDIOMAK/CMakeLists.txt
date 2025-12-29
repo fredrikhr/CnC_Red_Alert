@@ -2,9 +2,15 @@ add_executable(AUDIOMAK WIN32
   AUDIOMAK.CPP
   SCODE.ASM
 )
-set_source_files_properties(
-  SCODE.ASM
-  PROPERTIES
-    LANGUAGE ASM_MASM
+target_compile_definitions(AUDIOMAK
+  PRIVATE
+    MAXPATH=MAX_PATH
+    MAXDRIVE=_MAX_DRIVE
+    MAXDIR=_MAX_DIR
+    MAXFILE=_MAX_FNAME
+    MAXEXT=_MAX_EXT
+    fnsplit=_splitpath_s
+    fnmerge=_makepath_s
 )
-install(TARGETS AUDIOMAK)
+
+set_asm_masm_source_file_properties()
