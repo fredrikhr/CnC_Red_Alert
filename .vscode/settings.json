@@ -14,8 +14,16 @@
     "*.C": "c",
     "*.CPP": "cpp",
   },
-  "cmake.buildDirectory": "${workspaceFolder}/OBJ/${generator}/${buildType}",
+  "cmake.buildDirectory": "${workspaceFolder}/OBJ/${generator}",
   "cmake.installPrefix": "${workspaceFolder}/BIN/${buildType}",
+  "cmake.platform": "Win32",
+  "cmake.preferredGenerators": [
+    "Visual Studio 18 2026",
+    "Visual Studio 17 2022",
+    "Visual Studio 16 2019",
+    "Visual Studio 15 2017",
+    "Visual Studio 14 2015",
+  ],
   "[cmake]": {
     "files.encoding": "utf8"
   },
