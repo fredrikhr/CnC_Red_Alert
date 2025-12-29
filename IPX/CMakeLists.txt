@@ -1,3 +1,5 @@
+file_glob_enabled_languages_source_files()
+
 add_executable(THUNK FIXTHUNK.CPP)
 
 add_executable(IPXTEST WIN32 IPXTEST.CPP)
@@ -17,8 +19,7 @@ target_sources(IPX16
 )
 target_sources(IPX16
   PRIVATE
-    FILE_SET local_headers
-    TYPE HEADERS
+    FILE_SET HEADERS
     FILES
       IPX16.H
       PCMACRO.16
@@ -77,7 +78,7 @@ target_sources(THIPX32
     WWIPX.ASM
 )
 
-set_asm_masm_source_file_properties()
+set_asm_masm_source_files_language_property()
 
 if(WITH_REDUNDANT_SUBDIRECTORY_TARGETS)
 add_subdirectory(OK)

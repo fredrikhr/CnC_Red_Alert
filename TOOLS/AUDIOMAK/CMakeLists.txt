@@ -1,3 +1,5 @@
+file_glob_enabled_languages_source_files()
+
 add_executable(AUDIOMAK WIN32
   AUDIOMAK.CPP
   SCODE.ASM
@@ -13,4 +15,4 @@ target_compile_definitions(AUDIOMAK
     fnmerge=_makepath_s
 )
 
-set_asm_masm_source_file_properties()
+set_asm_masm_source_files_language_property()
