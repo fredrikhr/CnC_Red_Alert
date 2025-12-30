@@ -10,8 +10,6 @@ target_compile_definitions(LAUNCHER
   PRIVATE
     _export=
     __export=
-    $<$<CONFIG:Debug>:DEBUG>
-    $<$<CONFIG:Debug>:_DEBUG>
 )
 target_sources(LAUNCHER
   PRIVATE
