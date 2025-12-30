@@ -18,7 +18,7 @@
 
 
 
-		;.8086
+		.8086
 
 
 		.model	large
@@ -26,9 +26,8 @@
 		option	readonly
 		option	oldstructs
 
-		.386
 
-		assume	ds:_data
+		assume	ds:@data
 		assume	es:nothing
 
 
@@ -199,7 +198,7 @@ _IPX_Initialise	proc far pascal
 		test	al,al
 		jz	@f
 
-		mov	bx,_data
+		mov	bx,@data
 		mov	ds,bx
 		mov	[IPXCallSegment],es
 		mov	[IPXCallOffset],di
@@ -223,7 +222,7 @@ _IPX_Initialise	endp
 _IPX_Open_Socket95 proc far pascal uses bx cx dx si di ds es fs gs,
 		socket:word
 
-		mov	bx,_data
+		mov	bx,@data
 		mov	ds,bx
 		mov	bx,IPX_OPEN_SOCKET	;open socket
 		mov_w	dx,[socket]		;socket number
@@ -343,7 +342,7 @@ ifdef cuts ;(unfinished)
 		; Save it here for posterity (or perhaps later use)
 		;
 		mov	di,offset MyNetworkNumber
-		mov	ax,_data
+		mov	ax,@data
 		mov	es,ax
 		mov	ds,[selector]
 		mov	si,sizeof request_buffer + network_number
@@ -358,7 +357,7 @@ ifdef cuts ;(unfinished)
 		;
 		; Free the DOS memory
 		;
-		mov	bx,_data
+		mov	bx,@data
 		mov	ds,bx
 		mov	es,bx
 		mov	fs,bx
@@ -409,7 +408,7 @@ _IPX_Get_User_ID95 proc far pascal uses bx cx dx si di ds es fs gs,
 		mov	[selector],ax
 		mov	fs,dx
 		xor	di,di
-		mov	ax,_data
+		mov	ax,@data
 		mov	ds,ax
 
 		mov_w	fs:[di.len],2
@@ -438,7 +437,7 @@ _IPX_Get_User_ID95 proc far pascal uses bx cx dx si di ds es fs gs,
 		;
 		; Free the DOS memory
 		;
-		mov	bx,_data
+		mov	bx,@data
 		mov	ds,bx
 		mov	es,bx
 		mov	fs,bx
@@ -581,7 +580,7 @@ _IPX_Send_Packet95 proc far pascal uses ebx ecx edx esi edi ds es fs gs,
 		;
 		; Fill in the ECB
 		;
-		mov	ax,_data
+		mov	ax,@data
 		mov	ds,ax
 		mov	fs,ax			;keep ptr to data seg in fs
 		les	di,[dos_send_ecb]
@@ -666,7 +665,7 @@ _IPX_Send_Packet95 proc far pascal uses ebx ecx edx esi edi ds es fs gs,
 		;
 		; Free the DOS memory
 		;
-		mov	bx,_data
+		mov	bx,@data
 		mov	ds,bx
 		mov	es,bx
 		mov	fs,bx
@@ -762,7 +761,7 @@ _IPX_Broadcast_Packet95 proc far pascal uses ebx ecx edx esi edi ds es fs gs,
 		;
 		; Fill in the ECB
 		;
-		mov	ax,_data
+		mov	ax,@data
 		mov	ds,ax
 		mov	fs,ax			;keep ptr to data seg in fs
 		les	di,[dos_send_ecb]
@@ -841,7 +840,7 @@ _IPX_Broadcast_Packet95 proc far pascal uses ebx ecx edx esi edi ds es fs gs,
 		;
 		; Free the DOS memory
 		;
-		mov	bx,_data
+		mov	bx,@data
 		mov	ds,bx
 		mov	es,bx
 		mov	fs,bx
@@ -938,7 +937,7 @@ _IPX_Get_Local_Target95	proc far pascal uses ebx ecx edx esi edi ds es fs gs,
 		;
 		; Free the DOS memory
 		;
-		mov	bx,_data
+		mov	bx,@data
 		mov	ds,bx
 		mov	es,bx
 		mov	fs,bx
@@ -966,7 +965,7 @@ _IPX_Get_Local_Target95	endp
 _IPX_Get_Outstanding_Buffer95 proc far pascal uses ebx ecx edx esi edi ebp ds es fs gs,
 		copy_receive_buffer:far ptr byte
 
-		mov	ax,_data
+		mov	ax,@data
 		mov	ds,ax
 
 		xor	ax,ax
@@ -1005,7 +1004,7 @@ Receive_Callback proc far
 		push	es
 		push	fs
 		push	gs
-		mov	ax,_data
+		mov	ax,@data
 		mov	ds,ax
 		cmp	[NoReenter],0
 		jnz	@@out
@@ -1019,7 +1018,7 @@ Receive_Callback proc far
 @@no_wrap:	mov	[CurrentReceiveBuffer],ax
 
 		call	Listen_For_Packet
-		mov	ax,_data
+		mov	ax,@data
 		mov	ds,ax
 		mov	[NoReenter],0
 
@@ -1039,7 +1038,7 @@ Receive_Callback endp
 
 Init_Receive_ECB proc near uses eax ebx ecx edx esi edi ebp ds es
 
-		mov	ax,_data
+		mov	ax,@data
 		mov	ds,ax
 		mov	es,[ReceiveBufferSelector]
 
@@ -1092,7 +1091,7 @@ Init_Receive_ECB endp
 
 _IPX_Start_Listening95 proc far pascal uses ebx ecx edx esi edi ebp ds es fs gs
 
-		mov	ax,_data
+		mov	ax,@data
 		mov	ds,ax
 		cmp	[Listening],0
 		jnz	@@restart		;already listening
@@ -1129,14 +1128,14 @@ _IPX_Start_Listening95 proc far pascal uses ebx ecx edx esi edi ebp ds es fs gs
 		;mov	di,offset CallbackRegisterDump
 		;push	cs
 		;pop	ds
-		;mov	bx,_data
+		;mov	bx,@data
 		;mov	es,bx
 		;save	bp
 		;int	31h
 		;restore	bp
 		;bcs	@@error
 
-		mov	ax,_data
+		mov	ax,@data
 		mov	ds,ax
 		mov	[RealModeCallbackSegment],cx
 		mov	[RealModeCallbackOffset],dx
@@ -1159,7 +1158,7 @@ _IPX_Start_Listening95 endp
 
 _IPX_Shut_Down95 proc far pascal uses eax ebx ecx edx esi edi ebp ds es fs gs
 
-		mov	ax,_data
+		mov	ax,@data
 		mov	ds,ax
 		cmp	[Listening],0
 		jz	@@out
@@ -1187,7 +1186,7 @@ _IPX_Shut_Down95 proc far pascal uses eax ebx ecx edx esi edi ebp ds es fs gs
 		;
 		; Free the DOS memory
 		;
-		mov	ax,_data
+		mov	ax,@data
 		mov	ds,ax
 		mov	es,ax
 		mov	ax,[ReceiveBufferSelector]
@@ -1209,7 +1208,7 @@ Listen_For_Packet proc near uses ebx ecx edx esi edi ebp ds es fs gs
 
 		call	Init_Receive_ECB
 
-		mov	ax,_data
+		mov	ax,@data
 		mov	ds,ax
 		mov	es,[ReceiveBufferSelector]
 		mov	si,[ReceiveECBOffset]
@@ -1232,7 +1231,7 @@ Call_IPX	proc far
 
 		push	gs
 		push	ax
-		mov	ax,_data
+		mov	ax,@data
 		mov	gs,ax
 		pop	ax
 
@@ -1251,7 +1250,7 @@ Call_IPX	proc far
 
 		push	gs
 		push	ax
-		mov	ax,_data
+		mov	ax,@data
 		mov	gs,ax
 		pop	ax
 
@@ -1349,7 +1348,7 @@ Call_IPX	proc far
 
 		restore	gs
 
-		mov	ax,_data
+		mov	ax,@data
 		mov	ds,ax
 		mov	es,ax
 		mov	fs,ax
@@ -1377,7 +1376,7 @@ Call_DOS	proc far
 
 		push	gs
 		push	ax
-		mov	ax,_data
+		mov	ax,@data
 		mov	gs,ax
 		pop	ax
 		;
