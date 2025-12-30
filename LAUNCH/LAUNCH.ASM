@@ -44,9 +44,8 @@
 ;*                                                                                             *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-		OPTION SEGMENT:USE16
 
-		.MODEL	SMALL
+
 
 		TITLE	"Red Alert launcher"
 
