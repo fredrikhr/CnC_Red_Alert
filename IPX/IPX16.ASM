@@ -17,21 +17,23 @@
 ;
 
 
-
-		IDEAL
-		P386N
-		LOCALS ??
-
-
-
-		segment realcode para public USE16 'code'
+		.MODEL SMALL
+		OPTION SEGMENT:USE16
+;		IDEAL
+;		P386N
+		.386
+;		LOCALS ??
 
 
-global		PASCAL ASM_IPX_INITIALISE:far
-global		PASCAL ASM_IPX_UNINITIALISE:far
+
+realcode	segment para public USE16 'code'
 
 
-proc		ASM_IPX_INITIALISE PASCAL FAR
+;global		PASCAL ASM_IPX_INITIALISE:far
+;global		PASCAL ASM_IPX_UNINITIALISE:far
+
+
+ASM_IPX_INITIALISE	proc	FAR PASCAL PUBLIC
 
 		int	3
 		mov	ax,7a00h
@@ -41,20 +43,20 @@ proc		ASM_IPX_INITIALISE PASCAL FAR
 		setz	al
 		ret
 
-endp		ASM_IPX_INITIALISE
+ASM_IPX_INITIALISE	endp
 
 
 
 
-proc		ASM_IPX_UNINITIALISE PASCAL FAR
+ASM_IPX_UNINITIALISE	proc	FAR PASCAL PUBLIC
 
 		ret
 
-endp		ASM_IPX_UNINITIALISE
+ASM_IPX_UNINITIALISE	endp
 
 
 
-		ends
+realcode	ends
 
 		end
 

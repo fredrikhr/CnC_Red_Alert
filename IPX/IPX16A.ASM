@@ -68,7 +68,7 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 
-		.8086			;cant specify .386 until we are into the code segment
+;		.8086			;cant specify .386 until we are into the code segment
 
 
 		.model	large
