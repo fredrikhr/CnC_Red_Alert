@@ -3,13 +3,17 @@ file_glob_enabled_languages_source_files()
 add_executable(THUNK FIXTHUNK.CPP)
 
 add_executable(IPXTEST WIN32 IPXTEST.CPP)
-target_link_libraries(IPXTEST
-  PRIVATE
-    THIPX32
-)
+target_link_libraries(IPXTEST PRIVATE THIPX32)
 
-if(BUILD_16BIT_TARGETS)
+if(WITH_16BIT_TARGETS)
 add_library(IPX16 SHARED)
+target_compile_options(IPX16 PRIVATE
+  $<$<COMPILE_LANG_AND_ID:ASM_MASM,MSVC>:/omf>
+)
+target_compile_definitions(IPX16 PRIVATE
+  $<$<COMPILE_LANG_AND_ID:CXX,MSVC>:__pascal=__stdcall>
+  $<$<COMPILE_LANG_AND_ID:CXX,MSVC>:_export=>
+)
 target_sources(IPX16
   PRIVATE
     IPX.RC
@@ -24,32 +28,13 @@ target_sources(IPX16
       IPX16.H
       PCMACRO.16
 )
-endif(BUILD_16BIT_TARGETS)
+endif(WITH_16BIT_TARGETS)
 
-if(BUILD_16BIT_TARGETS)
-add_library(OLTHIPX16 OBJECT)
-target_sources(OLTHIPX16
-  PUBLIC
-    OLTHIPX.ASM
-)
-target_compile_definitions(OLTHIPX16
-  PRIVATE
-    IS_16
-)
-endif(BUILD_16BIT_TARGETS)
-
-add_library(OLTHIPX32 OBJECT)
-target_compile_definitions(OLTHIPX32
-  PUBLIC
-    IS_32
-)
-target_sources(OLTHIPX32
-  PRIVATE
-    OLTHIPX.ASM
-)
-
-if(BUILD_16BIT_TARGETS)
+if(WITH_16BIT_TARGETS)
 add_library(THIPX16 SHARED)
+target_compile_options(THIPX16 PRIVATE
+  $<$<COMPILE_LANG_AND_ID:ASM_MASM,MSVC>:/omf>
+)
 target_compile_definitions(THIPX16
   PRIVATE
     IS_16
@@ -62,7 +47,7 @@ target_sources(THIPX16
     THMAP16.ASM
     WWIPX16.ASM
 )
-endif(BUILD_16BIT_TARGETS)
+endif(WITH_16BIT_TARGETS)
 
 add_library(THIPX32 SHARED)
 target_compile_definitions(THIPX32
