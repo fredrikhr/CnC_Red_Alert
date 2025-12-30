@@ -18,11 +18,10 @@
 
 
 
-;		.8086
+		.8086
+
+
 		.model	large
-		.386
-
-
 		option	segment:USE16
 		option	readonly
 		option	oldstructs
