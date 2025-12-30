@@ -79,5 +79,3 @@ target_sources(THIPX32
 )
 
 set_asm_masm_source_files_language_property()
-
-add_subdirectory(OK)
