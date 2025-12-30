@@ -26,7 +26,6 @@ target_sources(IPX16
 )
 endif(BUILD_16BIT_TARGETS)
 
-if(WITH_REDUNDANT_SUBDIRECTORY_TARGETS)
 if(BUILD_16BIT_TARGETS)
 add_library(OLTHIPX16 OBJECT)
 target_sources(OLTHIPX16
@@ -38,9 +37,7 @@ target_compile_definitions(OLTHIPX16
     IS_16
 )
 endif(BUILD_16BIT_TARGETS)
-endif(WITH_REDUNDANT_SUBDIRECTORY_TARGETS)
 
-if(WITH_REDUNDANT_SUBDIRECTORY_TARGETS)
 add_library(OLTHIPX32 OBJECT)
 target_compile_definitions(OLTHIPX32
   PUBLIC
@@ -50,7 +47,6 @@ target_sources(OLTHIPX32
   PRIVATE
     OLTHIPX.ASM
 )
-endif(WITH_REDUNDANT_SUBDIRECTORY_TARGETS)
 
 if(BUILD_16BIT_TARGETS)
 add_library(THIPX16 SHARED)
@@ -84,7 +80,5 @@ target_sources(THIPX32
 
 set_asm_masm_source_files_language_property()
 
-if(WITH_REDUNDANT_SUBDIRECTORY_TARGETS)
 add_subdirectory(OK)
 add_subdirectory(OLD)
-endif(WITH_REDUNDANT_SUBDIRECTORY_TARGETS)

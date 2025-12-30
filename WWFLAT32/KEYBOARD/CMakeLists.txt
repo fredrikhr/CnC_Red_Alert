@@ -14,7 +14,5 @@ target_sources(WWFLAT32
 
 set_asm_masm_source_files_language_property()
 
-if(WITH_REDUNDANT_SUBDIRECTORY_TARGETS)
 add_subdirectory(NEW)
 add_subdirectory(X)
-endif(WITH_REDUNDANT_SUBDIRECTORY_TARGETS)

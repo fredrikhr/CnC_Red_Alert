@@ -16,6 +16,4 @@ target_sources(WIN32LIB_DRAWBUFF_TEST
 
 set_asm_masm_source_files_language_property()
 
-if(WITH_REDUNDANT_SUBDIRECTORY_TARGETS)
 add_subdirectory(TEST)
-endif(WITH_REDUNDANT_SUBDIRECTORY_TARGETS)

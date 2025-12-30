@@ -14,7 +14,6 @@ set(CMAKE_ASM_MASM_COMPILE_OPTIONS_MSVC_DEBUG_INFORMATION_FORMAT_PogramDatabase 
 set_enabled_languages_file_globs()
 
 option(WITH_16BIT_TARGETS "Enable CMake targets for legacy 16-bit components.")
-option(WITH_REDUNDANT_SUBDIRECTORY_TARGETS "Enable CMake targets for duplicate, old, new or unspecified components located in sub-directories.")
 
 add_subdirectory(IPX)
 add_subdirectory(LAUNCH)

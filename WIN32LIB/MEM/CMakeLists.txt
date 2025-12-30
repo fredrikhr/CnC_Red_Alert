@@ -11,7 +11,5 @@ target_sources(WIN32LIB
 
 set_asm_masm_source_files_language_property()
 
-if(WITH_REDUNDANT_SUBDIRECTORY_TARGETS)
 add_subdirectory(MSVC)
 add_subdirectory(OLDMEM)
-endif(WITH_REDUNDANT_SUBDIRECTORY_TARGETS)
