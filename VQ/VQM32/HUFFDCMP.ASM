@@ -138,7 +138,7 @@ HuffDecompress	PROC	NEAR C USES esi edi ebx ecx edx,
 ;*	Fill empty nodes with 0
 
 ??zerocount:
-	mov	[DWORD PTR ebx],ecx
+	mov	DWORD PTR [ebx],ecx
 	inc	edx		;i++
 	add	ebx,8		;Next node
 
@@ -146,7 +146,7 @@ HuffDecompress	PROC	NEAR C USES esi edi ebx ecx edx,
 	cmp	edx,256
 	jl	short ??getcounts
 
-	mov	[WORD PTR ebx],1
+	mov	WORD PTR [ebx],1
 	mov	[data],esi
 
 ;*---------------------------------------------------------------------------
@@ -157,11 +157,11 @@ HuffDecompress	PROC	NEAR C USES esi edi ebx ecx edx,
 ;*	The two minimum nodes are then marked as inactive. This process
 ;*	repeats until their is only one node left, which is the root.
 ;*---------------------------------------------------------------------------
-	
+
 	mov	eax,[temp]		;Nodes array
 	mov	esi,eax
 	add	eax,(513 * 8)		;Node[513] = guaranteed maximum
-	mov	[DWORD PTR eax],-1
+	mov	DWORD PTR [eax],-1
 
 	mov	[next],((HUFF_EOS + 1) * 8)
 
@@ -172,13 +172,13 @@ HuffDecompress	PROC	NEAR C USES esi edi ebx ecx edx,
 	mov	ebx,esi		;nodes[i]
 
 ??sortnodes:
-	cmp	[WORD PTR ebx],0	;Only check non-zero nodes
+	cmp	WORD PTR [ebx],0	;Only check non-zero nodes
 	jz	??nextnode
 
 ;*	nodes[i].count < nodes[first].count
 
-	mov	eax,[DWORD PTR esi + edx]
-	cmp	eax,[DWORD PTR ebx]
+	mov	eax,DWORD PTR [esi + edx]
+	cmp	eax,DWORD PTR [ebx]
 	jbe	??checklast
 
 	mov	edi,edx		;last = first
@@ -188,8 +188,8 @@ HuffDecompress	PROC	NEAR C USES esi edi ebx ecx edx,
 ;*	nodes[i].count < nodes[last].count
 
 ??checklast:
-	mov	eax,[DWORD PTR esi + edi]
-	cmp	eax,[DWORD PTR ebx]
+	mov	eax,DWORD PTR [esi + edi]
+	cmp	eax,DWORD PTR [ebx]
 	jbe	??nextnode
 
 	mov	edi,ecx		;last = i
@@ -207,20 +207,20 @@ HuffDecompress	PROC	NEAR C USES esi edi ebx ecx edx,
 
 	mov	ebx,[next]
 	add	ebx,esi
-	mov	[WORD PTR ebx+4],dx	;nodes[next].child0 = first
-	mov	[WORD PTR ebx+6],di	;nodes[next].child1 = last
+	mov	WORD PTR [ebx+4],dx	;nodes[next].child0 = first
+	mov	WORD PTR [ebx+6],di	;nodes[next].child1 = last
 
 	add	edx,esi
-	mov	eax,[DWORD PTR edx]	;nodes[first].count
+	mov	eax,DWORD PTR [edx]	;nodes[first].count
 	add	edi,esi
-	mov	[DWORD PTR ebx],eax
-	
-	mov	ecx,[DWORD PTR edi]	;nodes[last].count
-	xor	eax,eax
-	add	[DWORD PTR ebx],ecx
+	mov	DWORD PTR [ebx],eax
 
-	mov	[DWORD PTR edx],eax	;nodes[first].count = 0
-	mov	[DWORD PTR edi],eax	;nodes[lats].count = 0
+	mov	ecx,DWORD PTR [edi]	;nodes[last].count
+	xor	eax,eax
+	add	DWORD PTR [ebx],ecx
+
+	mov	DWORD PTR [edx],eax	;nodes[first].count = 0
+	mov	DWORD PTR [edi],eax	;nodes[lats].count = 0
 	add	[next],8
 	jmp	??sortnext
 
@@ -245,7 +245,7 @@ HuffDecompress	PROC	NEAR C USES esi edi ebx ecx edx,
 
 ??decodeloop:
 	mov	edx,[next]		;node = root
-	
+
 ??walktree:
 	mov	ecx,4
 	add	ecx,edx
@@ -255,7 +255,7 @@ HuffDecompress	PROC	NEAR C USES esi edi ebx ecx edx,
 	add	ecx,2
 
 ??getnode:
-	mov	dx,[WORD PTR ebx + ecx]		;nodes[node].child
+	mov	dx,WORD PTR [ebx + ecx]		;nodes[node].child
 	shr	al,1
 	jnz	short ??checkleaf
 
@@ -310,13 +310,13 @@ HuffDecompress	ENDP
 					;from TASM:	GLOBAL	C BuildHuffTree:NEAR
 BuildHuffTree	PROC	NEAR C USES esi edi ebx ecx edx,
 	temp:NEAR PTR	;from TASM:	ARG	temp:NEAR PTR
-	
+
 	LOCAL	next:DWORD
 
 	mov	eax,[temp]		;Nodes array
 	mov	esi,eax
 	add	eax,(513 * 8)		;Node[513] = guaranteed maximum
-	mov	[DWORD PTR eax],-1
+	mov	DWORD PTR [eax],-1
 
 	mov	[next],((HUFF_EOS + 1) * 8)
 
@@ -327,13 +327,13 @@ BuildHuffTree	PROC	NEAR C USES esi edi ebx ecx edx,
 	mov	ebx,esi		;nodes[i]
 
 ??sortnodes:
-	cmp	[WORD PTR ebx],0	;Only check non-zero nodes
+	cmp	WORD PTR [ebx],0	;Only check non-zero nodes
 	jz	??nextnode
 
 ;*	nodes[i].count < nodes[first].count
 
-	mov	eax,[DWORD PTR esi + edx]
-	cmp	eax,[DWORD PTR ebx]
+	mov	eax,DWORD PTR [esi + edx]
+	cmp	eax,DWORD PTR [ebx]
 	jbe	??checklast
 
 	mov	edi,edx		;last = first
@@ -343,8 +343,8 @@ BuildHuffTree	PROC	NEAR C USES esi edi ebx ecx edx,
 ;*	nodes[i].count < nodes[last].count
 
 ??checklast:
-	mov	eax,[DWORD PTR esi + edi]
-	cmp	eax,[DWORD PTR ebx]
+	mov	eax,DWORD PTR [esi + edi]
+	cmp	eax,DWORD PTR [ebx]
 	jbe	??nextnode
 
 	mov	edi,ecx		;last = i
@@ -362,20 +362,20 @@ BuildHuffTree	PROC	NEAR C USES esi edi ebx ecx edx,
 
 	mov	ebx,[next]
 	add	ebx,esi		;nodes[next]
-	mov	[WORD PTR ebx+4],dx	;nodes[next].child0 = first
-	mov	[WORD PTR ebx+6],di	;nodes[next].child1 = last
+	mov	WORD PTR [ebx+4],dx	;nodes[next].child0 = first
+	mov	WORD PTR [ebx+6],di	;nodes[next].child1 = last
 
 	add	edx,esi
-	mov	eax,[DWORD PTR edx]	;nodes[first].count
+	mov	eax,DWORD PTR [edx]	;nodes[first].count
 	add	edi,esi
-	mov	[DWORD PTR ebx],eax
+	mov	DWORD PTR [ebx],eax
 
-	mov	ecx,[DWORD PTR edi]	;nodes[last].count
-	xor	eax,eax 
-	add	[DWORD PTR ebx],ecx
+	mov	ecx,DWORD PTR [edi]	;nodes[last].count
+	xor	eax,eax
+	add	DWORD PTR [ebx],ecx
 
-	mov	[DWORD PTR edx],eax	;nodes[first].count = 0
-	mov	[DWORD PTR edi],eax	;nodes[lats].count = 0
+	mov	DWORD PTR [edx],eax	;nodes[first].count = 0
+	mov	DWORD PTR [edi],eax	;nodes[lats].count = 0
 	add	[next],8
 	jmp	??sortnext
 
