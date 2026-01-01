@@ -437,7 +437,7 @@ Mono_Put_Char	PROC	NEAR C USES es eax edi,
 	mov	edi,0B0000h		;EDI = mono screen
 	add	edi,[MonoOff]		;Add cursor offset
 	mov	eax,[character]
-	mov	ah,[BYTE PTR attrib]
+	mov	ah,BYTE PTR [attrib]
 	stosw
 
 ;	Update cursor position.
@@ -526,11 +526,11 @@ Mono_Draw_Rect	PROC	NEAR C,
 
 ??drawloop:
 	mov	ecx,[_width]
-	cmp	[BYTE PTR esi+2],1
+	cmp	BYTE PTR [esi+2],1
 	je	short ??gotlen
 
 	mov	ecx,[height]
-	cmp	[BYTE PTR esi+2],2
+	cmp	BYTE PTR [esi+2],2
 	je	short ??gotlen
 
 	mov	ecx,1
@@ -540,15 +540,15 @@ Mono_Draw_Rect	PROC	NEAR C,
 
 ??runloop:
 	xor	eax,eax
-	mov	al,[BYTE PTR edi]
+	mov	al,BYTE PTR [edi]
 	invoke	Mono_Put_Char,eax,[attrib]	;Output the character.
 
-	mov	al,[BYTE PTR esi+1]
+	mov	al,BYTE PTR [esi+1]
 	cbw
 	cwde
 	add	eax,[MonoY]
 	push	eax
-	mov	al,[BYTE PTR esi]
+	mov	al,BYTE PTR [esi]
 	cbw
 	cwde
 	add	eax,[MonoX]
@@ -563,7 +563,7 @@ Mono_Draw_Rect	PROC	NEAR C,
 ??donerun:
 	add	esi,3
 	inc	edi
-	cmp	[BYTE PTR esi+2],-1
+	cmp	BYTE PTR [esi+2],-1
 	jne	??drawloop
 
 ;	Restore cursor to original position.
@@ -864,7 +864,7 @@ Mono_View_Page	PROC	NEAR C USES ds es eax ebx ecx edi esi,
 ??fini:
 	mov      	eax,[oldpage]
 	ret
-	
+
 Mono_View_Page	ENDP
 
 	END
