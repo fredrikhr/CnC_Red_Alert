@@ -194,7 +194,7 @@ long FAR PASCAL _export MainWndProc(HWND hWnd,UINT message,UINT wParam,LONG lPar
 			RealizePalette(hdc);
 
 			SetStretchBltMode(hdc,COLORONCOLOR);
-			lpDib=ReadDib(bmp_fname);
+			lpDib=ReadDib("somefile.bmp");
 			lpDibBits=GetDibBitsAddr(lpDib);
 			cxDib=GetDibWidth(lpDib);
 			cyDib=GetDibHeight(lpDib);
