@@ -29,6 +29,7 @@ target_compile_options(PROJECT_DEFAULT INTERFACE
   $<$<COMPILE_LANG_AND_ID:ASM_MASM,MSVC>:/W3>
 )
 
+add_subdirectory(CODE)
 add_subdirectory(IPX)
 add_subdirectory(LAUNCH)
 add_subdirectory(LAUNCHER)
