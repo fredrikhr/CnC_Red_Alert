@@ -200,7 +200,7 @@ SetVESAWindow		PROTO	C,
 ;
 ;----------------------------------------------------------------------------
 
-	MACRO	SET_WINDOW grain_num
+SET_WINDOW	MACRO	grain_num
 	push	esi
 	push	edi
 	push	es
