@@ -13,6 +13,10 @@
     "*.16": "masm",
     "*.C": "c",
     "*.CPP": "cpp",
+    "**/CODE/ENG/*.TXT": "x-cnc-redalert-eng",
+    "**/CODE/ENG/*.BAK": "x-cnc-redalert-eng",
+    "**/CODE/ENG/*/*.TXT": "x-cnc-redalert-eng",
+    "**/CODE/ENG/*/*.BAK": "x-cnc-redalert-eng"
   },
   "cmake.buildDirectory": "${workspaceFolder}/OBJ/${generator}",
   "cmake.installPrefix": "${workspaceFolder}/BIN/${buildType}",
@@ -24,6 +28,9 @@
     "Visual Studio 15 2017",
     "Visual Studio 14 2015",
   ],
+  "[x-cnc-redalert-eng]": {
+    "files.encoding": "cp850"
+  },
   "[cmake]": {
     "files.encoding": "utf8"
   },
