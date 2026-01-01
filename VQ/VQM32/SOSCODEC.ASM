@@ -41,10 +41,11 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
+							;from TASM	IDEAL
+	.386					;from TASM:	P386
+	.MODEL FLAT				;from TASM:	MODEL	USE32 FLAT
+	OPTION SEGMENT:USE32	;from TASM:	MODEL	USE32 FLAT
+							;from TASM:	LOCALS	??
 
 	STRUC	sCompInfo
 lpSource	DD	?	;Compressed data pointer
@@ -71,7 +72,7 @@ wStep2	DW	?	;Step value in table
 wIndex2	DW	?	;Index into step table
 	ENDS	sCompInfo
 
-	DATASEG
+	.DATA					;from TASM:	DATASEG
 
 ;* Index table for stepping into step table
 
@@ -115,7 +116,7 @@ dwCODECByteIndex		DD	0 ; this is when to stop compressing
 dwCODECBytesProcessed		DD	0 ; this is how many so far compressed
 dwCODECTempStep		DD	0 ; tempory storage for step value
 wCODECMask			DW	0 ; Current mask
-	CODESEG
+	.CODE					;from TASM:	CODESEG
 
 ;****************************************************************************
 ;*
