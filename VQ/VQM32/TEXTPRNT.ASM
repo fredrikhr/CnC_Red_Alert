@@ -74,7 +74,7 @@ Set_Font_Palette_Range	PROTO	NEAR C,
 ;	EXTRN	C Set_Font_Palette_Range:NEAR
 	EXTRN	FontPtr:NEAR PTR
 	EXTRN	FontYSpacing:DWORD
-	
+
 ;----------------------------------------------------------------------------
 ; TEXT_PRINT
 ;
@@ -113,9 +113,9 @@ Text_Print	PROC	NEAR C USES ebx ecx edx edi esi,
 	or	eax,eax
 	je	??exit
 
-	movzx	ebx,[WORD PTR eax+FONTINFOBLOCK]
+	movzx	ebx,WORD PTR [eax+FONTINFOBLOCK]
 	add	ebx,eax
-	movzx	eax,[BYTE PTR ebx+FONTINFOMAXHEIGHT]
+	movzx	eax,BYTE PTR [ebx+FONTINFOMAXHEIGHT]
 	mov	[fontheight],eax
 	mov	esi,[string]
 
