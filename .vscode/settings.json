@@ -18,7 +18,7 @@
     "**/CODE/ENG/*/*.TXT": "x-cnc-redalert-eng",
     "**/CODE/ENG/*/*.BAK": "x-cnc-redalert-eng"
   },
-  "cmake.buildDirectory": "${workspaceFolder}/OBJ/${generator}",
+  "cmake.buildDirectory": "${workspaceFolder}/BLD/${generator}",
   "cmake.installPrefix": "${workspaceFolder}/BIN/${buildType}",
   "cmake.platform": "Win32",
   "cmake.preferredGenerators": [
