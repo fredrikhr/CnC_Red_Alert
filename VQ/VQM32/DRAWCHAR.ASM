@@ -67,11 +67,11 @@ FONTINFOMAXWIDTH	EQU	5
 ; NOTE: This is a routine called by Text_Print.
 ;
 ;*
-	GLOBAL	C Draw_Char:NEAR
-	PROC	Draw_Char C NEAR USES eax ebx ecx edx esi edi 
-	ARG	fontchar:DWORD
-	ARG	x_pixel:DWORD
-	ARG	y_pixel:DWORD
+					;from TASM:	GLOBAL	C Draw_Char:NEAR
+	Draw_Char	PROC	NEAR C USES eax ebx ecx edx esi edi,
+	fontchar:DWORD,	;from TASM:	ARG	fontchar:DWORD
+	x_pixel:DWORD,	;from TASM:	ARG	x_pixel:DWORD
+	y_pixel:DWORD,	;from TASM:	ARG	y_pixel:DWORD
 
 	LOCAL	infoblock:DWORD
 	LOCAL	offsetblock:DWORD
@@ -267,7 +267,7 @@ FONTINFOMAXWIDTH	EQU	5
 ??exit:
 	ret
 
-	ENDP	Draw_Char
+Draw_Char	ENDP
 
 ;***********************************************************
 
@@ -282,11 +282,11 @@ FONTINFOMAXWIDTH	EQU	5
 ;
 ; Bounds Checking: forces start and end to a range of 0-15
 ;*
-	GLOBAL	C Set_Font_Palette_Range:NEAR
-	PROC	Set_Font_Palette_Range C NEAR USES eax ebx ecx edi esi
-	ARG	palette:NEAR PTR
-	ARG	start:DWORD
-	ARG	endval:DWORD
+						;from TASM:	GLOBAL	C Set_Font_Palette_Range:NEAR
+Set_Font_Palette_Range	PROC	NEAR C USES eax ebx ecx edi esi,
+	palette:NEAR PTR,	;from TASM:	ARG	palette:NEAR PTR
+	start:DWORD,		;from TASM:	ARG	start:DWORD
+	endval:DWORD,		;from TASM:	ARG	endval:DWORD
 
 	cld
 	mov	esi,[palette]
@@ -320,7 +320,7 @@ FONTINFOMAXWIDTH	EQU	5
 ??exit:
 	ret
 
-	ENDP	Set_Font_Palette_Range
+Set_Font_Palette_Range	ENDP
 
 ;***********************************************************
 
@@ -335,12 +335,12 @@ FONTINFOMAXWIDTH	EQU	5
 ; NOTE: This is a routine called by Set_Font.
 ;
 ;*
-	GLOBAL	C Draw_Char_Setup:NEAR
-	PROC	Draw_Char_Setup C NEAR
+				;from TASM:	GLOBAL	C Draw_Char_Setup:NEAR
+Draw_Char_Setup	PROC	NEAR C
 
 	ret
 
-	ENDP	Draw_Char_Setup
+Draw_Char_Setup	ENDP
 
 	.data					;from TASM:	DATASEG
 
