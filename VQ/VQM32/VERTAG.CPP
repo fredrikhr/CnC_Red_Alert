@@ -42,8 +42,12 @@
 
 #ifdef __WATCOMC__
 #define DEVNAME "Watcom/4GW"
-#else
+#elif defined(_MSC_VER)
+#define DEVNAME "MSVC/Win32"
+#elif defined(__BORLANDC__)
 #define DEVNAME "Borland/TNT"
+#else
+#define DEVNAME "Unknown"
 #endif
 
-char VerTag[] = {"$VER$VQM32 2.12 "DEVNAME" ("__DATE__" "__TIME__")"};
+char VerTag[] = {"$VER$VQM32 2.12 " DEVNAME " (" __DATE__ " " __TIME__ ")"};
