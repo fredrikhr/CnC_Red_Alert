@@ -42,10 +42,11 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
+							;from TASM	IDEAL
+	.386					;from TASM:	P386
+	.MODEL FLAT				;from TASM:	MODEL	USE32 FLAT
+	OPTION SEGMENT:USE32	;from TASM:	MODEL	USE32 FLAT
+							;from TASM:	LOCALS	??
 
 	STRUC	TreeNode
 count	DD	?	;Weight of the node
@@ -55,7 +56,7 @@ child1	DW	?	;Child node 1
 
 HUFF_EOS	EQU	256
 
-	CODESEG
+	.CODE					;from TASM:	CODESEG
 
 ;****************************************************************************
 ;*
