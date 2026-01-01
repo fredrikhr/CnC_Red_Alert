@@ -42,11 +42,12 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
-	CODESEG
+							;from TASM	IDEAL
+	.386					;from TASM:	P386
+	.MODEL FLAT				;from TASM:	MODEL	USE32 FLAT
+	OPTION SEGMENT:USE32	;from TASM:	MODEL	USE32 FLAT
+							;from TASM:	LOCALS	??
+	.CODE					;from TASM:	CODESEG
 
 ;****************************************************************************
 ;*
