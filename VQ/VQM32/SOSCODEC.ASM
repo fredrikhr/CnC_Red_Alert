@@ -47,7 +47,7 @@
 	OPTION SEGMENT:USE32	;from TASM:	MODEL	USE32 FLAT
 							;from TASM:	LOCALS	??
 
-	STRUC	sCompInfo
+sCompInfo	STRUC
 lpSource	DD	?	;Compressed data pointer
 lpDest	DD	?	;Uncompressed data pointer
 dwCompSize	DD	?	;Compressed size
@@ -70,7 +70,7 @@ wCodeBuf2 	DW	?	;Holds 2 nibbles for decompression
 wCode2	DW	?	;Current 4 bit code
 wStep2	DW	?	;Step value in table
 wIndex2	DW	?	;Index into step table
-	ENDS	sCompInfo
+sCompInfo	ENDS
 
 	.DATA					;from TASM:	DATASEG
 
