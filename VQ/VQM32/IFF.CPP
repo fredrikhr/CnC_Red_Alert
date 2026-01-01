@@ -30,7 +30,7 @@
 *
 * PROGRAMMER
 *     Denzil E. Long, Jr.
-*      
+*
 * DATE
 *     January 26, 1995
 *
@@ -54,6 +54,7 @@
 ****************************************************************************/
 
 #include <stdio.h>
+#include <memory.h>
 #include <malloc.h>
 #include <io.h>
 #include <fcntl.h>
