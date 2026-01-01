@@ -99,12 +99,11 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C SetPalette:NEAR
-	PROC	SetPalette C NEAR USES eax ecx edx esi ds
-
-	ARG	palette:NEAR PTR
-	ARG	numbytes:DWORD
-	ARG	slowpal:DWORD
+						;from TASM:	GLOBAL	C SetPalette:NEAR
+SetPalette	PROC	NEAR C USES eax ecx edx esi ds,
+	palette:NEAR PTR,	;from TASM:	ARG	palette:NEAR PTR
+	numbytes:DWORD,		;from TASM:	ARG	numbytes:DWORD
+	slowpal:DWORD,		;from TASM:	ARG	slowpal:DWORD
 
 	pushf
 	cld
@@ -158,7 +157,7 @@
 	popf
 	ret
 
-	ENDP	SetPalette
+SetPalette	ENDP
 
 
 ;****************************************************************************
@@ -181,10 +180,9 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C ReadPalette:NEAR
-	PROC	ReadPalette C NEAR USES ecx edx edi es
-
-	ARG	palette:NEAR PTR
+						;from TASM:	GLOBAL	C ReadPalette:NEAR
+ReadPalette	PROC	NEAR C USES ecx edx edi es,
+	palette:NEAR PTR	;from TASM:	ARG	palette:NEAR PTR
 
 	mov	edi,[palette]
 	mov	ecx,256
@@ -210,7 +208,7 @@
 	jnz	??Read_loop
 	ret
 
-	ENDP	ReadPalette
+ReadPalette	ENDP
 
 
 ;****************************************************************************
@@ -236,13 +234,12 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C SetDAC:NEAR
-	PROC	SetDAC C NEAR USES edx
-
-	ARG	color_num:DWORD
-	ARG	red:BYTE
-	ARG	green:BYTE
-	ARG	blue:BYTE
+						;from TASM:	GLOBAL	C SetDAC:NEAR
+SetDAC	PROC	NEAR C USES edx,
+	color_num:DWORD,	;from TASM:	ARG	color_num:DWORD
+	red:BYTE,			;from TASM:	ARG	red:BYTE
+	green:BYTE,			;from TASM:	ARG	green:BYTE
+	blue:BYTE,			;from TASM:	ARG	blue:BYTE
 
 	mov	edx,PEL_WRITE_ADDR
 	mov	eax,[color_num]
@@ -262,7 +259,7 @@
 	out	dx,al	;Set blue gun
 	ret
 
-	ENDP	SetDAC
+SetDAC	ENDP
 
 
 ;****************************************************************************
@@ -287,12 +284,11 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C TranslatePalette:NEAR
-	PROC	TranslatePalette C NEAR USES ecx edx edi esi
-
-	ARG	pal24:NEAR PTR
-	ARG	pal15:NEAR PTR
-	ARG	numbytes:DWORD
+							;from TASM:	GLOBAL	C TranslatePalette:NEAR
+TranslatePalette	PROC	NEAR C USES ecx edx edi esi,
+	pal24:NEAR PTR,			;from TASM:	ARG	pal24:NEAR PTR
+	pal15:NEAR PTR,			;from TASM:	ARG	pal15:NEAR PTR
+	numbytes:DWORD,			;from TASM:	ARG	numbytes:DWORD
 
 	mov	esi,[pal24]
 	mov	edi,[pal15]
@@ -315,6 +311,6 @@
 	ja	??TranslatePalette
 	ret
 
-	ENDP	TranslatePalette
+TranslatePalette	ENDP
 
 	END
