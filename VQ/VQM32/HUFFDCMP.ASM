@@ -48,11 +48,11 @@
 	OPTION SEGMENT:USE32	;from TASM:	MODEL	USE32 FLAT
 							;from TASM:	LOCALS	??
 
-	STRUC	TreeNode
+TreeNode	STRUC
 count	DD	?	;Weight of the node
 child0	DW	?	;Child node 0
 child1	DW	?	;Child node 1
-	ENDS	TreeNode
+TreeNode	ENDS
 
 HUFF_EOS	EQU	256
 
