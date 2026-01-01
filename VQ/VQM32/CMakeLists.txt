@@ -1,5 +1,14 @@
 file_glob_enabled_language_files()
 
+add_library(VQM32_PORTIO OBJECT PORTIO.ASM)
+target_compile_definitions(VQM32_PORTIO
+  PUBLIC PHARLAP_TNT=0
+)
+set_source_files_properties(PORTIO.ASM PROPERTIES LANGUAGE ASM_MASM)
+# PORTIO implemented as compiler intrinsic in VQM32
+list(REMOVE_ITEM PROJECT_ASM_MASM_SOURCE_FILES PORTIO.ASM)
+list(REMOVE_ITEM PROJECT_ANY_LANG_SOURCE_FILES PORTIO.ASM)
+
 add_library(VQM32 STATIC)
 target_link_libraries(VQM32 PUBLIC VQ_INCLUDE)
 target_compile_definitions(VQM32
