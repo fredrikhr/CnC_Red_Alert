@@ -53,12 +53,13 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
+							;from TASM	IDEAL
+	.386					;from TASM:	P386
+	.MODEL FLAT				;from TASM:	MODEL	USE32 FLAT
+	OPTION SEGMENT:USE32	;from TASM:	MODEL	USE32 FLAT
+							;from TASM:	LOCALS	??
 
-	DATASEG
+	.DATA					;from TASM:	DATASEG
 
 MonoEnabled	DD	1
 MonoX	DD	0
@@ -84,7 +85,7 @@ BoxData	DB	1,0,0		; Upper left corner.
 
 PageMap	DD	0,1,2,3,4,5,6,7
 
-	CODESEG
+	.CODE					;from TASM:	CODESEG
 
 ;****************************************************************************
 ;*
