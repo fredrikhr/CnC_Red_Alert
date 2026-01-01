@@ -24,7 +24,7 @@
 *
 * FILE
 *     targa.c
-* 
+*
 * DESCRIPTION
 *     Targa Image File reader. (32-Bit protected mode)
 *
@@ -50,6 +50,7 @@
 
 #include <stdio.h>
 #include <malloc.h>
+#include <memory.h>
 #include <mem.h>
 #include <io.h>
 #include <fcntl.h>
@@ -154,7 +155,7 @@ TGAHandle *OpenTarga(char *name, unsigned short mode)
 				}
 				break;
 		}
- 
+
 		/* Close on any error! */
 		if (error) {
 			CloseTarga(tga);
@@ -407,7 +408,7 @@ long SaveTarga(char *name, TGAHeader *tgahd, char *palette, char *image)
 					/* Next entry */
 					palette += depth;
 				}
-				
+
 				/* Write the palette. */
 				if (write(tga->fh, temppal, size) != size) {
 					error = TGAERR_WRITE;
