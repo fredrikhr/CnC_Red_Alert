@@ -82,12 +82,11 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C LCW_Uncompress:NEAR
-	PROC	LCW_Uncompress C NEAR USES ebx ecx edx esi edi
-
-	ARG	source:DWORD
-	ARG	dest:DWORD
-	ARG	length:DWORD
+						;from TASM:	GLOBAL	C LCW_Uncompress:NEAR
+LCW_Uncompress	PROC	NEAR C USES ebx ecx edx esi edi,
+	source:DWORD,		;from TASM:	ARG	source:DWORD
+	dest:DWORD,			;from TASM:	ARG	dest:DWORD
+	_length:DWORD,		;from TASM:	ARG	length:DWORD
 
 	LOCAL	a1stdest:DWORD
 	LOCAL	maxlen:DWORD
@@ -97,7 +96,7 @@
 
 	mov	esi,[source]		;ESI - Source address
 	mov	edi,[dest]		;EDI - Destination address
-	mov	edx,[length]		;EDX - Maximum length
+	mov	edx,[_length]		;EDX - Maximum length
 
 	mov	[a1stdest],edi		;Save dest address
 	add	edx,edi		;Last address (Dest + length)
@@ -216,7 +215,7 @@
 	sub	eax,ebx		;Calculate bytes uncompressed.
 	ret
 
-	ENDP	LCW_Uncompress
+LCW_Uncompress	ENDP
 
 	END
-        
+
