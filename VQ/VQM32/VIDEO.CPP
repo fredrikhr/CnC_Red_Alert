@@ -47,7 +47,7 @@
 #include <dos.h>
 #include <conio.h>
 
-#ifndef __WATCOMC__
+#if !defined(__WATCOMC__) && PHARLAP_TNT
 #include <pharlap.h>
 #include <pldos32.h>
 #else
