@@ -54,7 +54,7 @@
 ;*     Calculate_CRC - Calculate CRC checksum.
 ;*
 ;* SYNOPSIS
-;*     CRC = Calculate_CRC(Buffer, Length)
+;*     CRC = Calculate_CRC(Buffer, _Length)
 ;*
 ;*     long Calculate_CRC(void *, long);
 ;*
@@ -62,18 +62,18 @@
 ;*     Compute a CRC checksum for a block of memory.
 ;*
 ;* INPUTS
-;*     Buffer - Pointer to buffer to calculate CRC for.
-;*     Length - Length of buffer.
+;*     Buffer  - Pointer to buffer to calculate CRC for.
+;*     _Length - Length of buffer.
 ;*
 ;* RESULT
 ;*     CRC - CRC value.
 ;*
 ;****************************************************************************
 
-	GLOBAL	C Calculate_CRC:NEAR
-	PROC	Calculate_CRC C NEAR USES esi ebx ecx edx
-	ARG	buffer:NEAR PTR
-	ARG	length:DWORD
+						;from TASM:	GLOBAL	C Calculate_CRC:NEAR
+Calculate_CRC	PROC	NEAR C USES esi ebx ecx edx,
+	buffer:NEAR PTR,	;from TASM:	ARG	buffer:NEAR PTR
+	_length:DWORD,		;from TASM:	ARG	length:DWORD
 
 	mov	esi,[buffer]
 	cld
@@ -81,7 +81,7 @@
 	; Clear CRC to default (NULL) value.
 	xor	ebx,ebx
 
-	mov	ecx,[length]	;Get length of data block
+	mov	ecx,[_length]	;Get length of data block
 	or	ecx,ecx
 	jz	short ??fini
 
@@ -129,6 +129,6 @@
 	mov	eax,ebx
 	ret
 
-	ENDP	Calculate_CRC
+Calculate_CRC	ENDP
 
 	END
