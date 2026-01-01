@@ -85,13 +85,12 @@ HUFF_EOS	EQU	256
 ;*
 ;****************************************************************************
 
-	GLOBAL	C HuffDecompress:NEAR
-	PROC	HuffDecompress C NEAR USES esi edi ebx ecx edx
-
-	ARG	data:NEAR PTR
-	ARG	buffer:NEAR PTR
-	ARG	length:DWORD
-	ARG	temp:NEAR PTR
+						;from TASM:	GLOBAL	C HuffDecompress:NEAR
+HuffDecompress	PROC	NEAR C USES esi edi ebx ecx edx,
+	data:NEAR PTR,		;from TASM:	ARG	data:NEAR PTR
+	buffer:NEAR PTR,	;from TASM:	ARG	buffer:NEAR PTR
+	_length:DWORD,		;from TASM:	ARG	length:DWORD
+	temp:NEAR PTR,		;from TASM:	ARG	temp:NEAR PTR
 
 	LOCAL	next:DWORD
 
@@ -279,7 +278,7 @@ HUFF_EOS	EQU	256
 	sub	eax,[buffer]
 	ret
 
-	ENDP	HuffDecompress
+HuffDecompress	ENDP
 
 
 ;****************************************************************************
@@ -308,10 +307,9 @@ HUFF_EOS	EQU	256
 ;*
 ;****************************************************************************
 
-	GLOBAL	C BuildHuffTree:NEAR
-	PROC	BuildHuffTree C NEAR USES esi edi ebx ecx edx
-
-	ARG	temp:NEAR PTR
+					;from TASM:	GLOBAL	C BuildHuffTree:NEAR
+BuildHuffTree	PROC	NEAR C USES esi edi ebx ecx edx,
+	temp:NEAR PTR	;from TASM:	ARG	temp:NEAR PTR
 	
 	LOCAL	next:DWORD
 
@@ -386,7 +384,7 @@ HUFF_EOS	EQU	256
 	sub	eax,8
 	ret
 
-	ENDP	BuildHuffTree
+BuildHuffTree	ENDP
 
 	END
 
