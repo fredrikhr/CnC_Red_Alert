@@ -139,10 +139,9 @@ wCODECMask			DW	0 ; Current mask
 ;*
 ;****************************************************************************
 
-	GLOBAL	C sosCODECInitStream:NEAR
-	PROC	sosCODECInitStream C NEAR
-
-	ARG	sSOSInfo:NEAR PTR
+							;from TASM:	GLOBAL	C sosCODECInitStream:NEAR
+sosCODECInitStream	PROC	NEAR C,
+	sSOSInfo:NEAR PTR		;from TASM:	ARG	sSOSInfo:NEAR PTR
 
 	mov	eax,[sSOSInfo]
 	mov	[(sCompInfo eax).wIndex],0 		; starting index 0
@@ -155,7 +154,7 @@ wCODECMask			DW	0 ; Current mask
 	mov	[(sCompInfo eax).dwSampleIndex2],0 	;start at head of index
 	ret
 
-	ENDP	sosCODECInitStream
+sosCODECInitStream	ENDP
 
 ;****************************************************************************
 ;*
@@ -180,10 +179,10 @@ wCODECMask			DW	0 ; Current mask
 ;*
 ;****************************************************************************
 
-	GLOBAL	C sosCODECCompressData:NEAR
-	PROC	sosCODECCompressData C NEAR
-	ARG	sSOSInfo:NEAR PTR
-	ARG	wBytes:DWORD
+						;from TASM:	GLOBAL	C sosCODECCompressData:NEAR
+sosCODECCompressData	PROC	NEAR C,
+	sSOSInfo:NEAR PTR,	;from TASM:	ARG	sSOSInfo:NEAR PTR
+	wBytes:DWORD,		;from TASM:	ARG	wBytes:DWORD
 
 	push	esi
 	push	edi
@@ -799,7 +798,7 @@ wCODECMask			DW	0 ; Current mask
 	pop	esi
 	ret
 
-	ENDP	sosCODECCompressData
+sosCODECCompressData	ENDP
 
 
 ;****************************************************************************
@@ -825,11 +824,10 @@ wCODECMask			DW	0 ; Current mask
 ;*
 ;****************************************************************************
 
-	GLOBAL	C sosCODECDecompressData:NEAR
-	PROC	sosCODECDecompressData C NEAR
-
-	ARG	sSOSInfo:NEAR PTR
-	ARG	wBytes:DWORD
+						;from TASM:	GLOBAL	C sosCODECDecompressData:NEAR
+sosCODECDecompressData	PROC	NEAR C,
+	sSOSInfo:NEAR PTR,	;from TASM:	ARG	sSOSInfo:NEAR PTR
+	wBytes:DWORD,		;from TASM:	ARG	wBytes:DWORD
 
 	push	esi
 	push	edi			   
@@ -1266,7 +1264,7 @@ wCODECMask			DW	0 ; Current mask
 	pop	esi
 	ret
 
-	ENDP	sosCODECDecompressData
+sosCODECDecompressData	ENDP
 	END
 
 
