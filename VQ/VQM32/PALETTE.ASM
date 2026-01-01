@@ -46,7 +46,7 @@
 ;* writes; on very fast machines, this means that the system may not be
 ;* able to handle a rapid-fire of RGB values.  So, a "safe" routine is
 ;* provided that has wait states between each out.
-;* 
+;*
 ;* Reference: Progammers Guide to the EGA & VGA Cards, Ferraro, 2nd ed.
 ;* (Chapter 8.)
 ;*
@@ -66,7 +66,7 @@
 ;*     ReadPalette      - Read the palette from the display adapter.
 ;*     SetDAC           - Set a single palette color in the DAC.
 ;*     TranslatePalette - Translate 24-bit color to 15-bit color.
-;*      
+;*
 ;****************************************************************************
 
 							;from TASM	IDEAL
@@ -117,7 +117,7 @@ SetPalette	PROC	NEAR C USES eax ecx edx esi ds,
 
 	mov	esi,[palette]
 	mov	edx,PEL_WRITE_ADDR
-	xor	al,al			
+	xor	al,al
 	out	dx,al	;Select color to write too.
 	inc	al	;Step to the next color for next loop
 	inc	edx	;DX = PEL_DATA
@@ -125,7 +125,7 @@ SetPalette	PROC	NEAR C USES eax ecx edx esi ds,
 	rep 	outsb	;Write 256 * RGB out to the palette
 	popf
 	ret
-	
+
 ;----------------------------------------------------------------------------
 ;	Safe palette set
 ;----------------------------------------------------------------------------
@@ -295,16 +295,16 @@ TranslatePalette	PROC	NEAR C USES ecx edx edi esi,
 	mov	ecx,[numbytes]
 
 ??TranslatePalette:
-	mov	ah,[BYTE PTR esi]	;AH = red
-	mov	al,[BYTE PTR esi+1]	;AL = green
-	mov	dl,[BYTE PTR esi+2]	;DL = blue
+	mov	ah,BYTE PTR [esi]	;AH = red
+	mov	al,BYTE PTR [esi+1]	;AL = green
+	mov	dl,BYTE PTR [esi+2]	;DL = blue
 	shr	ah,1		;Red = lower 5 bits of AH
 	shl	al,2		;Green = upper 6 bits of AL
 	shr	dl,1		;Blue = lower 5 bits of DL
 	shl	eax,2		;Make room for blue
 	and	al,0E0h		;Trim off bottom bit of green
 	or	al,dl		;Load in blue bits
-	mov	[WORD PTR edi],ax	;Store the value
+	mov	WORD PTR [edi],ax	;Store the value
 	add	esi,3		;Increment to next RGB values
 	add	edi,2		;Increment to next palette word
 	sub	ecx,3
