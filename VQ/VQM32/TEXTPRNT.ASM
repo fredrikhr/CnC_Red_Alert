@@ -91,13 +91,13 @@ Set_Font_Palette_Range	PROTO	NEAR C,
 ; if y_pixel >= YPIXEL_MAX, then exit
 ;*
 
-	GLOBAL	C Text_Print:NEAR
-	PROC	Text_Print C NEAR USES ebx ecx edx edi esi
-	ARG	string:NEAR PTR
-	ARG	x_pixel:DWORD
-	ARG	y_pixel:DWORD
-	ARG	fcol:DWORD
-	ARG	bcol:DWORD
+						;from TASM:	GLOBAL	C Text_Print:NEAR
+Text_Print	PROC	NEAR C USES ebx ecx edx edi esi,
+	string:NEAR PTR,	;from TASM:	ARG	string:NEAR PTR
+	x_pixel:DWORD,		;from TASM:	ARG	x_pixel:DWORD
+	y_pixel:DWORD,		;from TASM:	ARG	y_pixel:DWORD
+	fcol:DWORD,			;from TASM:	ARG	fcol:DWORD
+	bcol:DWORD,			;from TASM:	ARG	bcol:DWORD
 
 	LOCAL	fwidth:DWORD	;Pixel width of font.
 	LOCAL	fgbg:DWORD	;Two bytes of background & foreground colors.
@@ -183,7 +183,7 @@ Set_Font_Palette_Range	PROTO	NEAR C,
 	mov	eax,[lines]
 	ret
 
-	ENDP	Text_Print
+Text_Print	ENDP
 
 ;----------------------------------------------------------------------------
 	END
