@@ -164,11 +164,20 @@ VESAModeInfo	ENDS
 ; Function definitions
 ;----------------------------------------------------------------------------
 
-	GLOBAL C InitVESA:PROC
-	GLOBAL C UninitVESA:PROC
-	GLOBAL C SetVESAMode:PROC
-	GLOBAL C ReadVESAModeInfo:PROC
-	GLOBAL C SetVESAWindow:PROC
+InitVESA			PROTO	C
+UninitVESA			PROTO	C
+SetVESAMode			PROTO	C,
+	mode:DWORD
+ReadVESAModeInfo	PROTO	C,
+	mode:DWORD
+SetVESAWindow		PROTO	C,
+	grain_num:DWORD
+;from TASM:
+;	GLOBAL C InitVESA:PROC
+;	GLOBAL C UninitVESA:PROC
+;	GLOBAL C SetVESAMode:PROC
+;	GLOBAL C ReadVESAModeInfo:PROC
+;	GLOBAL C SetVESAWindow:PROC
 
 ;----------------------------------------------------------------------------
 ;
