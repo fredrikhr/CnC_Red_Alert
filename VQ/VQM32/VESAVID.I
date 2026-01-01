@@ -204,7 +204,7 @@ SET_WINDOW	MACRO	grain_num
 	push	esi
 	push	edi
 	push	es
-	call	SetVESAWindow C,grain_num
+	invoke	SetVESAWindow,grain_num
 	pop	es
 	pop	edi
 	pop	esi
