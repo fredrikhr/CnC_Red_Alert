@@ -71,12 +71,11 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C LCW_Compress:NEAR
-	PROC	LCW_Compress C NEAR USES ebx ecx edx esi edi
-
-	ARG	source:DWORD
-	ARG	dest:DWORD
-	ARG	datasize:DWORD
+						;from TASM:	GLOBAL	C LCW_Compress:NEAR
+LCW_Compress	PROC	NEAR C USES ebx ecx edx esi edi,
+	source:DWORD,		;from TASM:	ARG	source:DWORD
+	dest:DWORD,			;from TASM:	ARG	dest:DWORD
+	datasize:DWORD,		;from TASM:	ARG	datasize:DWORD
 
 	LOCAL	inlen:DWORD
 	LOCAL	a1stdest:DWORD
@@ -262,6 +261,6 @@
 	sub	eax,[a1stdest]		;Sub the first for the compressed size
 	ret
 
-	ENDP	LCW_Compress
+LCW_Compress	ENDP
 
 	END
