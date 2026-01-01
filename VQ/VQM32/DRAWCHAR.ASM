@@ -37,7 +37,7 @@
 
 							;from TASM	IDEAL
 	.386					;from TASM:	P386
-.MODEL FLAT				;from TASM:	MODEL	USE32 FLAT
+	.MODEL FLAT				;from TASM:	MODEL	USE32 FLAT
 	OPTION SEGMENT:USE32	;from TASM:	MODEL	USE32 FLAT
 							;from TASM:	LOCALS	??
 	.CODE					;from TASM:	CODESEG
@@ -63,12 +63,12 @@ FONTINFOMAXWIDTH	EQU	5
 ;
 ; Draws a character to the screen only if given coordinates that will allow
 ; the entire character to be drawn on the screen else will exit.
-; 
+;
 ; NOTE: This is a routine called by Text_Print.
 ;
 ;*
 					;from TASM:	GLOBAL	C Draw_Char:NEAR
-	Draw_Char	PROC	NEAR C USES eax ebx ecx edx esi edi,
+Draw_Char	PROC	NEAR C USES eax ebx ecx edx esi edi,
 	fontchar:DWORD,	;from TASM:	ARG	fontchar:DWORD
 	x_pixel:DWORD,	;from TASM:	ARG	x_pixel:DWORD
 	y_pixel:DWORD,	;from TASM:	ARG	y_pixel:DWORD
@@ -174,7 +174,7 @@ FONTINFOMAXWIDTH	EQU	5
 	je	short ??skiplead	; skip drawing top background lines
 
 	mov	al,0
-	xlat	[ebx]		; get background color
+	xlat	byte ptr [ebx]		; get background color
 
 	or	al,al		; check for none zero color
 	jne	short ??lheight	; update background color
@@ -212,7 +212,7 @@ FONTINFOMAXWIDTH	EQU	5
 	lodsb				; get byte value from font data
 	mov	ah,al			; save hinibble
 	and	al,00FH			; get lonibble
-	xlat	[ebx]			; get new color
+	xlat	byte ptr [ebx]			; get new color
 	or	al,al
 	je	short ??chklowidth		; skip color zero
 
@@ -225,7 +225,7 @@ FONTINFOMAXWIDTH	EQU	5
 
 	mov	al,ah			; get byte value
 	and	al,0F0H			; get hinibble
-	xlat	[ebx]			; get new color
+	xlat	BYTE PTR [ebx]		; get new color
 	or	al,al
 	je	short ??chkhiwidth		; skip color zero
 
@@ -247,7 +247,7 @@ FONTINFOMAXWIDTH	EQU	5
 	jle	short ??exit			; skip drawing bottom background lines
 
 	mov	al,0
-	xlat	[ebx]			; get background color
+	xlat	BYTE PTR [ebx]	; get background color
 	or	al,al			; check for color zero
 	je	short ??exit			; skip drawing
 
@@ -331,7 +331,7 @@ Set_Font_Palette_Range	ENDP
 ; VOID Draw_Char_Setup(VOID);
 ;
 ; This routine sets up code segment variables for Draw_Char.
-; 
+;
 ; NOTE: This is a routine called by Set_Font.
 ;
 ;*
