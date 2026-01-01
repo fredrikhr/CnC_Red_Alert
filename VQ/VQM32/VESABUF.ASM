@@ -71,16 +71,16 @@ DRAW_BLOCK_ROWS	MACRO	numrows
 	mov	ecx,320
 
 ??Not_finished_a_line:
-	mov	al,[BYTE PTR esi]
+	mov	al,BYTE PTR [esi]
 	mov	ah,al
 	inc	esi
 
 	IF	PHARLAP_TNT
-	mov	[WORD PTR es:edi],ax
-	mov	[WORD PTR es:edi+640],ax
+	mov	WORD PTR es:[edi],ax
+	mov	WORD PTR es:[edi+640],ax
 	ELSE
-	mov	[WORD PTR edi],ax
-	mov	[WORD PTR edi+640],ax
+	mov	WORD PTR [edi],ax
+	mov	WORD PTR [edi+640],ax
 	ENDIF
 
 	add	edi,2
@@ -107,16 +107,16 @@ DRAW_BLOCK_ROW	MACRO	numblks
 	mov	ecx,numblks
 
 ??Not_done:
-	mov	al,[BYTE PTR esi]
+	mov	al,BYTE PTR [esi]
 	mov	ah,al
 	inc	esi
 
 	IF	PHARLAP_TNT
-	mov	[WORD PTR es:edi],ax
-	mov	[WORD PTR es:edi+640],ax
+	mov	WORD PTR es:[edi],ax
+	mov	WORD PTR es:[edi+640],ax
 	ELSE
-	mov	[WORD PTR edi],ax
-	mov	[WORD PTR edi+640],ax
+	mov	WORD PTR [edi],ax
+	mov	WORD PTR [edi+640],ax
 	ENDIF
 
 	add	edi,2
@@ -137,14 +137,14 @@ DRAW_PIXEL_ROW	MACRO	numblks
 	mov	ecx,numblks
 
 ??Not_done:
-	mov	al,[BYTE PTR esi]
+	mov	al,BYTE PTR [esi]
 	mov	ah,al
 	inc	esi
 
 	IF	PHARLAP_TNT
-	mov	[WORD PTR es:edi],ax
+	mov	WORD PTR es:[edi],ax
 	ELSE
-	mov	[WORD PTR edi],ax
+	mov	WORD PTR [edi],ax
 	ENDIF
 
 	add	edi,2
@@ -348,7 +348,7 @@ Buf_320x200_To_VESA_320x200	ENDP
 ;*
 ;* SYNOPSIS
 ;*     Buf_320x200_To_VESA_640x400(Buffer, GrainPerWin)
-;*     
+;*
 ;*     void Buf_320x200_To_VESA_640x400(char *, long);
 ;*
 ;* FUNCTION
@@ -492,7 +492,7 @@ Buf_320x200_To_VESA_640x400	ENDP
 ;*
 ;* SYNOPSIS
 ;*     Buf_320x200_To_VESA_32K(Buffer, Palette, GrainPerWin)
-;*     
+;*
 ;*     void Buf_320x200_To_VESA_32K(char *, char *, long);
 ;*
 ;* FUNCTION
@@ -538,19 +538,19 @@ Buf_320x200_To_VESA_32K	PROC	NEAR C USES ebx ecx edx esi edi,
 ??Buf0Loop:
 	xor	eax,eax
 	mov	ebx,[palette]
-	mov	al,[BYTE PTR esi]
+	mov	al,BYTE PTR [esi]
 	add	ebx,eax
 	inc	esi
 	add	ebx,eax
 
 ;	store the 15-bit palette value
 
-	mov	ax,[WORD PTR ebx]
+	mov	ax,WORD PTR [ebx]
 
 	IF	PHARLAP_TNT
-	mov	[WORD PTR es:edi],ax
+	mov	WORD PTR es:[edi],ax
 	ELSE
-	mov	[WORD PTR edi],ax
+	mov	WORD PTR [edi],ax
 	ENDIF
 
 	add	edi,2
@@ -570,19 +570,19 @@ Buf_320x200_To_VESA_32K	PROC	NEAR C USES ebx ecx edx esi edi,
 ??Buf1Loop:
 	xor	eax,eax
 	mov	ebx,[palette]
-	mov	al,[BYTE PTR esi]
+	mov	al,BYTE PTR [esi]
 	add	ebx,eax
 	inc	esi
 	add	ebx,eax
 
 ;	Store the 15-bit palette value
 
-	mov	ax,[WORD PTR ebx]
+	mov	ax,WORD PTR [ebx]
 
 	IF	PHARLAP_TNT
-	mov	[WORD PTR es:edi],ax
+	mov	WORD PTR es:[edi],ax
 	ELSE
-	mov	[WORD PTR edi],ax
+	mov	WORD PTR [edi],ax
 	ENDIF
 
 	add	edi,2
@@ -710,7 +710,7 @@ Copy_Word_Row	PROC	NEAR C USES ebx ecx esi edi,
 	pop	es
 	ENDIF
 
-	ret  
+	ret
 
 Copy_Word_Row	ENDP
 
