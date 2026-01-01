@@ -38,7 +38,7 @@
 *
 ****************************************************************************/
 
-#ifndef __WATCOMC__
+#if !defined(__WATCOMC__) && PHARLAP_TNT
 #include <pharlap.h>
 #else
 #include "realmode.h"

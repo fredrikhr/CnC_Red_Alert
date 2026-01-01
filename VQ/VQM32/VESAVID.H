@@ -26,7 +26,7 @@
 *
 * FILE
 *     VESAVid.h (32-Bit protected mode)
-* 
+*
 * DESCRIPTION
 *     VESA video manager definitions.
 *
@@ -38,7 +38,7 @@
 *
 ****************************************************************************/
 
-#ifndef __WATCOMC__
+#if !defined(__WATCOMC__) && PHARLAP_TNT
 #include <pharlap.h>
 #else
 #include "realmode.h"
@@ -112,10 +112,10 @@ typedef struct _VESAInfo {
  * WinSize          - size of windows in KB (ie 64, 32)
  * WinA_Segment     - location of Window A in CPU space (usually 0xa000)
  * WinB_Segment     - location of Window B in CPU space (usually 0xb000)
- * WinFunc          - address of window-setting function (This is provided 
+ * WinFunc          - address of window-setting function (This is provided
  *                    as an alternative to Int 10 for speed.)
  * BytesPerScanline - # bytes per scan line
- * 
+ *
  * Optional info (available if bit 1 of Attributes is set):
  *
  * XRes             - X-resolution
@@ -131,7 +131,7 @@ typedef struct _VESAInfo {
  *                    03h = 4 plane planar mode
  *                    04h = packed pixel mode (1 byte/pixel)
  *                    05h = non-chain 4, 256-color mode
- *                    06-0Fh = 
+ *                    06-0Fh =
  *                    10-FFh = OEM-specific
  * BankSize         - Bank size in KB
  */
@@ -160,7 +160,7 @@ typedef struct _VESAModeInfo {
 	unsigned char  RedFieldPosition;
 	unsigned char  GreenMaskSize;
 	unsigned char  GreenFieldPosition;
-	unsigned char  BlueMaskSize; 
+	unsigned char  BlueMaskSize;
 	unsigned char  BlueFieldPosition;
 	unsigned char  RsvdMaskSize;
 	unsigned char  RsvdFieldPosition;
