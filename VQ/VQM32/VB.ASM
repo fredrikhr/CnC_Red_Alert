@@ -71,9 +71,9 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C WaitNoVB:NEAR
-	PROC	WaitNoVB C NEAR USES edx
-	ARG	vbibit:DWORD
+					;from TASM:	GLOBAL	C WaitNoVB:NEAR
+WaitNoVB	PROC	NEAR C USES edx,
+	vbibit:DWORD	;from TASM:	ARG	vbibit:DWORD
 
 	mov	eax,[vbibit]
 	and	al,1
@@ -90,7 +90,7 @@
 	jnz	short ??no_scan_yet
 	ret
 
-	ENDP	WaitNoVB
+WaitNoVB	ENDP
 
 
 ;****************************************************************************
@@ -114,9 +114,9 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C WaitVB:NEAR
-	PROC	WaitVB C NEAR USES
-	ARG	vbibit:DWORD
+					;from TASM:	GLOBAL	C WaitVB:NEAR
+WaitVB	PROC	NEAR C,
+	vbibit:DWORD	;from TASM:	ARG	vbibit:DWORD
 
 	mov	eax,[vbibit]
 	and	al,1
@@ -133,6 +133,6 @@
 	jz	short ??no_vbl_yet
 	ret
 
-	ENDP	WaitVB
+WaitVB	ENDP
 
 	END
