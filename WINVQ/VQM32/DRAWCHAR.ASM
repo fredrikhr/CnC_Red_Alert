@@ -35,11 +35,10 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
-	CODESEG
+	.386
+	.MODEL FLAT
+	OPTION SEGMENT:USE32
+	.CODE
 
 XPIXEL_MAX		EQU	320
 YPIXEL_MAX		EQU	200
@@ -341,7 +340,7 @@ FONTINFOMAXWIDTH	EQU	5
 
 	ENDP	Draw_Char_Setup
 
-	DATASEG
+	.DATA
 
 ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 	DB	008H,009H,00AH,00BH,00CH,00DH,00EH,00FH
