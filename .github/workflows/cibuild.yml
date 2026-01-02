@@ -1,0 +1,21 @@
+name: Build
+on:
+  - workflow_dispatch
+  - push
+jobs:
+  vsbuild:
+    name: Visual Studio CMake
+    runs-on: windows-latest
+    steps:
+      - id: checkout-source
+        uses: actions/checkout@v5
+      - id: detect-visual-studio
+        name: Detect Visual Studio
+        shell: cmd
+        run: CALL .github\scripts\detect-visual-studio.cmd
+      - id: cmake-configure-generate
+        name: CMake Configure and Generate
+        shell: cmd
+        env:
+          VISUAL_STUDIO_INSTALLATION_PATH: ${{ steps.detect-visual-studio.outputs.visual-studio-installationpath }}
+        run: CALL .github\scripts\vs-cmake-configure-generate.cmd
