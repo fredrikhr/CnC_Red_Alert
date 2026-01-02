@@ -30,7 +30,7 @@
 *
 * PROGRAMMER
 *     Joe L. Bostic
-*      
+*
 * DATE
 *     January 26, 1995
 *
@@ -42,6 +42,7 @@
 ****************************************************************************/
 
 #include <stdio.h>
+#include <memory.h>
 #include <mem.h>
 #include "compress.h"
 
@@ -321,7 +322,7 @@ long AudioZap(void *source, void *dest, long size)
 						size--;
 						delta2 = _4bitencode[((((int)*s++) - previous) + 9)];
 						previous += _4bitdecode[delta2];
-						
+
 						if (((signed)previous) < 0) {
 							previous = 0;
 						}
@@ -354,7 +355,7 @@ long AudioZap(void *source, void *dest, long size)
 				lastraw = 0;
 			}
 		} else {
-			
+
 			/* If there is no current raw dump of samples, then check to see if
 			 * this sample can fit into a 5 bit delta.  If it can, then store
 			 * it as such as a parasite to the "raw" code.  This will save a byte
