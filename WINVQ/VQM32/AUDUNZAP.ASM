@@ -42,11 +42,10 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
-	CODESEG
+	.386
+	.MODEL FLAT
+	OPTION SEGMENT:USE32
+	.CODE
 
 CODE_2BIT	EQU	0
 CODE_4BIT	EQU	1
