@@ -51,7 +51,11 @@ void __cdecl outp(unsigned short portid, short value);
 }
 #endif
 
-#endif /* __BORLANDC__ */
+#elif defined(_MSC_VER) /* !__BORLANDC__ && __MSVC__ */
+#include <intrin.h>
+#define inp __inbyte
+#define outp __outbyte
+#endif /* !__BORLANDC__ && __MSVC__ */
 
 #endif /* VQMPORTIO_H */
 
