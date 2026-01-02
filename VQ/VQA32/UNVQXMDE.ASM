@@ -94,7 +94,7 @@ CBOOK_SEG	EQU	(0B0000h - 270h)
 ;*
 ;****************************************************************************
 
-	IF	PHARLAP_TNT
+IF	PHARLAP_TNT
 UnVQ_4x2_Xmode	PROC	NEAR C,
 	codebook:NEAR PTR,
 	pointers:NEAR PTR,
@@ -110,7 +110,7 @@ UnVQ_4x2_Xmode	PROC	NEAR C,
 	blocksperrow:DWORD,
 	numrows:DWORD,
 	bufwidth:DWORD
-	ENDIF
+ENDIF
 ;from TASM:
 ;	GLOBAL	C UnVQ_4x2_Xmode:NEAR
 ;	PROC	UnVQ_4x2_Xmode C NEAR USES
@@ -186,8 +186,8 @@ UnVQ_4x2_Xmode	PROC	NEAR C,
 ;	mov	ebx,[bufwidth]
 
 	IF	PHARLAP_TNT
-	mov	[es:edi],eax		;Write 1st row to dest
-	mov	[es:edi+ebx],edx	;Write 2nd row to dest
+	mov	es:[edi],eax		;Write 1st row to dest
+	mov	es:[edi+ebx],edx	;Write 2nd row to dest
 	ELSE
 	mov	[edi],al		;Write 1st row to dest
 	mov	[edi+80],dl		;Write 2nd row to dest
@@ -196,7 +196,7 @@ UnVQ_4x2_Xmode	PROC	NEAR C,
 ;	add	edi,4		;Next dest block position
 	inc	edi		;Next dest block position
 	dec	ecx		;More blocks for this row?
-	jnz	short ??Not_finished_a_line
+	jnz	short ??Not_finished_a_line1
 
 ;	Advance to the next destination row of blocks.
 
@@ -216,7 +216,7 @@ UnVQ_4x2_Xmode	PROC	NEAR C,
 
 	add	edi,4		;Move to next dest block position
 	dec	ecx		;More blocks for this row?
-	jnz	short ??Not_finished_a_line
+	jnz	short ??Not_finished_a_line1
 	jmp	??Next_row
 
 ??Draw_One_Color:
@@ -228,8 +228,8 @@ UnVQ_4x2_Xmode	PROC	NEAR C,
 ;	mov	ebx,[bufwidth]
 
 	IF	PHARLAP_TNT
-	mov	[es:edi],eax		;Write 1st row to dest
-	mov	[es:edi+ebx],eax	;Write 2nd row to dest
+	mov	es:[edi],eax		;Write 1st row to dest
+	mov	es:[edi+ebx],eax	;Write 2nd row to dest
 	ELSE
 	mov	[edi],al		;Write 1st row to dest
 	mov	[edi+80],al		;Write 2nd row to dest
@@ -237,7 +237,7 @@ UnVQ_4x2_Xmode	PROC	NEAR C,
 
 	add	edi,4		;Next dest block positionw
 	dec	ecx		;More blocks for this row?
-	jnz	short ??Not_finished_a_line
+	jnz	short ??Not_finished_a_line1
 
 ;	Advance to the next destination row of blocks.
 
@@ -266,7 +266,7 @@ UnVQ_4x2_Xmode	ENDP
 ;*
 ;* SYNOPSIS
 ;*     UnVQ_4x2_XmodeCB(Dummy, Pointers, Buffer, BPR, Rows)
-;* 
+;*
 ;*     void UnVQ_4x2_XmodeCB(unsigned char *, unsigned char *,
 ;*                           unsigned char *, unsigned short,
 ;*                           unsigned short);
@@ -374,7 +374,7 @@ UnVQ_4x2_XmodeCB	PROC	NEAR C,
 ;	;
 ;	;..................... get next pointer word .......................
 ;	;
-;	mov	si,WORD PTR [fs:bx]		; SI = ptr word (cbook offset)
+;	mov	si,WORD PTR fs:[bx]		; SI = ptr word (cbook offset)
 ;	add	bx,2				; next ptr word
 ;	;
 ;	;................... skip ptr value SKIP_PTR .......................
@@ -401,8 +401,8 @@ UnVQ_4x2_XmodeCB	PROC	NEAR C,
 ;	;..................... draw 1st 4 pixels ...........................
 ;	;
 ;??Draw_Block:
-;	mov	al,[ds:si]			; latch 1st 4 cbook bytes
-;	mov	[es:di],al			; write 4 pixels
+;	mov	al,ds:[si]			; latch 1st 4 cbook bytes
+;	mov	es:[di],al			; write 4 pixels
 ;	;
 ;	;.................. check for 1-color block ........................
 ;	;
@@ -411,9 +411,9 @@ UnVQ_4x2_XmodeCB	PROC	NEAR C,
 ;	;
 ;	;..................... draw next 4 pixels ..........................
 ;	;
-;	mov	al,[ds:si+1]			; latch next 4 cbook bytes
+;	mov	al,ds:[si+1]			; latch next 4 cbook bytes
 ;??One_Color:
-;	mov	[es:di+80],al			; write next 4 pixels
+;	mov	es:[di+80],al			; write next 4 pixels
 ;	inc	di				; next block position
 ;	;
 ;	;...................... check block count ..........................
@@ -510,9 +510,9 @@ Upload_4x2CB	PROC	NEAR C,
 ;	mov	cx,256
 ;	mov	ax,0
 ;??1_Color_Loop:
-;	mov	[es:di],al			; write 4 bytes
+;	mov	es:[di],al		; write 4 bytes
 ;	inc	di				; next 4-byte position
-;	mov	[es:di],al			; write 4 bytes
+;	mov	es:[di],al		; write 4 bytes
 ;	inc	di				; next 4-byte position
 ;	inc	ax				; next color #
 ;	dec	cx				; decrement loop counter
@@ -545,8 +545,8 @@ Upload_4x2CB	PROC	NEAR C,
 ;	; Loop through codebook entries
 ;	;...................................................................
 ;??CB_Loop_1:
-;	mov	al,[ds:si]
-;	mov	[es:di],al
+;	mov	al,ds:[si]
+;	mov	es:[di],al
 ;	add	si,4
 ;	inc	di
 ;	dec	cx
@@ -577,8 +577,8 @@ Upload_4x2CB	PROC	NEAR C,
 ;	; Loop through codebook entries
 ;	;...................................................................
 ;??CB_Loop_2:
-;	mov	al,[ds:si]
-;	mov	[es:di],al
+;	mov	al,ds:[si]
+;	mov	es:[di],al
 ;	add	si,4
 ;	inc	di
 ;	dec	cx
@@ -609,8 +609,8 @@ Upload_4x2CB	PROC	NEAR C,
 ;	; Loop through codebook entries
 ;	;...................................................................
 ;??CB_Loop_3:
-;	mov	al,[ds:si]
-;	mov	[es:di],al
+;	mov	al,ds:[si]
+;	mov	es:[di],al
 ;	add	si,4
 ;	inc	di
 ;	dec	cx
@@ -641,8 +641,8 @@ Upload_4x2CB	PROC	NEAR C,
 ;	; Loop through codebook entries
 ;	;...................................................................
 ;??CB_Loop_4:
-;	mov	al,[ds:si]
-;	mov	[es:di],al
+;	mov	al,ds:[si]
+;	mov	es:[di],al
 ;	add	si,4
 ;	inc	di
 ;	dec	cx
@@ -691,7 +691,7 @@ XlatePointers	PROC	NEAR C,
 ;	;
 ;	;..................... get next pointer word .......................
 ;	;
-;	mov	ax,WORD PTR [ds:si]	; SI = ptr word (cbook offset)
+;	mov	ax,WORD PTR ds:[si]	; SI = ptr word (cbook offset)
 ;	;
 ;	;.................... check for a 1-color block ....................
 ;	;
@@ -703,7 +703,7 @@ XlatePointers	PROC	NEAR C,
 ;	sub	ax,4				; subtract 4
 ;	shr	ax,2				; divide by 4
 ;	add	ax,512				; add 512
-;	mov	WORD PTR [ds:si],ax	; save new value
+;	mov	WORD PTR ds:[si],ax	; save new value
 ;	add	si,2				; next ptr word
 ;	;
 ;	;....................... see if we're done .........................
@@ -718,7 +718,7 @@ XlatePointers	PROC	NEAR C,
 ;	;
 ;	not	ax				; get actual color value
 ;	shl	ax,1				; multiply by 2
-;	mov	WORD PTR [ds:si],ax	; save new value
+;	mov	WORD PTR ds:[si],ax	; save new value
 ;	add	si,2				; next ptr word
 ;	;
 ;	;....................... see if we're done .........................
