@@ -19,15 +19,7 @@ jobs:
         name: CMake Configure and Generate
         shell: cmd
         run: CALL .github\scripts\vs-cmake-configure-generate.cmd
-      - id: cmake-build-target-vqm32
-        name: Build VQM32
+      - id: cmake-build-target-winvqm32
+        name: Build WINVQM32
         shell: cmd
-        env:
-          VISUAL_STUDIO_INSTALLATION_PATH: ${{ steps.detect-visual-studio.outputs.visual-studio-installationpath }}
-        run: CALL .github\scripts\vs-cmake-build-config-target.cmd Debug VQM32
-      - id: cmake-build-target-vqa32
-        name: Build VQA32
-        shell: cmd
-        env:
-          VISUAL_STUDIO_INSTALLATION_PATH: ${{ steps.detect-visual-studio.outputs.visual-studio-installationpath }}
-        run: CALL .github\scripts\vs-cmake-build-config-target.cmd Debug VQA32
+        run: CALL .github\scripts\vs-cmake-build-config-target.cmd Debug WINVQM32
