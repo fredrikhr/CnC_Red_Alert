@@ -154,7 +154,7 @@ UnVQ_4x2_Xmode	PROC	NEAR C,
 
 	IF	PHARLAP_TNT
 	push	es
-	les	edi,[FWORD buffer]	;KLUDGE - bcc32 pads FARPTR
+	les	edi,FWORD PTR buffer	;KLUDGE - bcc32 pads FARPTR
 	ELSE
 	mov	edi,[buffer]
 	ENDIF
