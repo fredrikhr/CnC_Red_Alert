@@ -90,7 +90,7 @@ SKIP_PTR	EQU	8000h
 ;*
 ;****************************************************************************
 
-	IF	PHARLAP_TNT
+IF	PHARLAP_TNT
 UnVQ_2x2	PROC	NEAR C USES ebx ecx edx esi edi,
 	codebook:NEAR PTR,
 	pointers:NEAR PTR,
@@ -106,7 +106,7 @@ UnVQ_2x2	PROC	NEAR C USES ebx ecx edx esi edi,
 	blocksperrow:DWORD,
 	numrows:DWORD,
 	bufwidth:DWORD
-	ENDIF
+ENDIF
 ;from TASM:
 ;	GLOBAL	C UnVQ_2x2:NEAR
 ;	PROC	UnVQ_2x2 C NEAR USES ebx ecx edx esi edi
@@ -179,7 +179,7 @@ UnVQ_2x2	PROC	NEAR C USES ebx ecx edx esi edi,
 	mov	ebx,[bufwidth]
 
 	IF	PHARLAP_TNT
-	mov	[es:edi],ax		;Write 1st row to dest
+	mov	es:[edi],ax		;Write 1st row to dest
 	ELSE
 	mov	[edi],ax		;Write 1st row to dest
 	ENDIF
@@ -187,7 +187,7 @@ UnVQ_2x2	PROC	NEAR C USES ebx ecx edx esi edi,
 	shr	eax,16
 
 	IF	PHARLAP_TNT
-	mov	[es:edi+ebx],ax	;Write 2nd row to dest
+	mov	es:[edi+ebx],ax	;Write 2nd row to dest
 	ELSE
 	mov	[edi+ebx],ax		;Write 2nd row to dest
 	ENDIF
@@ -225,8 +225,8 @@ UnVQ_2x2	PROC	NEAR C USES ebx ecx edx esi edi,
 	mov	ebx,[bufwidth]
 
 	IF	PHARLAP_TNT
-	mov	[es:edi],ax		;Write 1st row to dest
-	mov	[es:edi+ebx],ax	;Write 2nd row to dest
+	mov	es:[edi],ax		;Write 1st row to dest
+	mov	es:[edi+ebx],ax	;Write 2nd row to dest
 	ELSE
 	mov	[edi],ax		;Write 1st row to dest
 	mov	[edi+ebx],ax		;Write 2nd row to dest
@@ -288,7 +288,7 @@ UnVQ_2x2	ENDP
 ;*
 ;****************************************************************************
 
-	IF	PHARLAP_TNT
+IF	PHARLAP_TNT
 UnVQ_2x3	PROC	NEAR C USES ebx ecx edx esi edi,
 	codebook:NEAR PTR,
 	pointers:NEAR PTR,
@@ -304,7 +304,7 @@ UnVQ_2x3	PROC	NEAR C USES ebx ecx edx esi edi,
 	blocksperrow:DWORD,
 	numrows:DWORD,
 	bufwidth:DWORD
-	ENDIF
+ENDIF
 ;from TASM:
 ;	GLOBAL	C UnVQ_2x3:NEAR
 ;	PROC	UnVQ_2x3 C NEAR USES ebx ecx edx esi edi
@@ -379,7 +379,7 @@ UnVQ_2x3	PROC	NEAR C USES ebx ecx edx esi edi,
 	mov	ebx,[bufwidth]
 
 	IF	PHARLAP_TNT
-	mov	[es:edi],ax		;Write 1st row to dest
+	mov	es:[edi],ax		;Write 1st row to dest
 	ELSE
 	mov	[edi],ax		;Write 1st row to dest
 	ENDIF
@@ -387,7 +387,7 @@ UnVQ_2x3	PROC	NEAR C USES ebx ecx edx esi edi,
 	shr	eax,16
 
 	IF	PHARLAP_TNT
-	mov	[es:edi+ebx],ax	;Write 2nd row to dest
+	mov	es:[edi+ebx],ax	;Write 2nd row to dest
 	ELSE
 	mov	[edi+ebx],ax		;Write 2nd row to dest
 	ENDIF
@@ -395,7 +395,7 @@ UnVQ_2x3	PROC	NEAR C USES ebx ecx edx esi edi,
 	add	ebx,[bufwidth]
 
 	IF	PHARLAP_TNT
-	mov	[es:edi+ebx],dx
+	mov	es:[edi+ebx],dx
 	ELSE
 	mov	[edi+ebx],dx
 	ENDIF
@@ -432,8 +432,8 @@ UnVQ_2x3	PROC	NEAR C USES ebx ecx edx esi edi,
 	mov	ebx,[bufwidth]
 
 	IF	PHARLAP_TNT
-	mov	[es:edi],ax		;Write 1st row to dest
-	mov	[es:edi+ebx],ax	;Write 2nd row to dest
+	mov	es:[edi],ax		;Write 1st row to dest
+	mov	es:[edi+ebx],ax	;Write 2nd row to dest
 	ELSE
 	mov	[edi],ax		;Write 1st row to dest
 	mov	[edi+ebx],ax		;Write 2nd row to dest
@@ -442,7 +442,7 @@ UnVQ_2x3	PROC	NEAR C USES ebx ecx edx esi edi,
 	add	ebx,[bufwidth]
 
 	IF	PHARLAP_TNT
-	mov	[es:edi+ebx],ax	;Write 2rd row to dest
+	mov	es:[edi+ebx],ax	;Write 2rd row to dest
 	ELSE
 	mov	[edi+ebx],ax		;Write 2rd row to dest
 	ENDIF
@@ -575,8 +575,8 @@ UnVQ_2x3	ENDP
 ;;;	mov	ebx,[bufwidth]
 ;;;
 ;;;	IF	PHARLAP_TNT
-;;;	mov	[es:edi],eax		;Write 1st row to dest
-;;;	mov	[es:edi+ebx],edx	;Write 2nd row to dest
+;;;	mov	es:[edi],eax		;Write 1st row to dest
+;;;	mov	es:[edi+ebx],edx	;Write 2nd row to dest
 ;;;	ELSE
 ;;;	mov	[edi],eax		;Write 1st row to dest
 ;;;	mov	[edi+ebx],edx		;Write 2nd row to dest
@@ -616,8 +616,8 @@ UnVQ_2x3	ENDP
 ;;;	mov	ebx,[bufwidth]
 ;;;
 ;;;	IF	PHARLAP_TNT
-;;;	mov	[es:edi],eax		;Write 1st row to dest
-;;;	mov	[es:edi+ebx],eax	;Write 2nd row to dest
+;;;	mov	es:[edi],eax		;Write 1st row to dest
+;;;	mov	es:[edi+ebx],eax	;Write 2nd row to dest
 ;;;	ELSE
 ;;;	mov	[edi],eax		;Write 1st row to dest
 ;;;	mov	[edi+ebx],eax		;Write 2nd row to dest
@@ -681,7 +681,7 @@ UnVQ_4x2	PROC	NEAR C USES ebx ecx edx esi edi,
 	mov	[entries],eax
 	add	eax,esi
 	mov	[data_end],eax
-	
+
 	mov	edi,[buffer]
 	mov	[edi_startval],edi
 
@@ -799,7 +799,7 @@ UnVQ_4x2	ENDP
 ;*
 ;****************************************************************************
 
-	IF	PHARLAP_TNT
+IF	PHARLAP_TNT
 UnVQ_4x4	PROC	NEAR C USES ebx ecx edx esi edi,
 	codebook:NEAR PTR,
 	pointers:NEAR PTR,
@@ -815,7 +815,7 @@ UnVQ_4x4	PROC	NEAR C USES ebx ecx edx esi edi,
 	blocksperrow:DWORD,
 	numrows:DWORD,
 	bufwidth:DWORD
-	ENDIF
+ENDIF
 ;from TASM:
 ;	GLOBAL	C UnVQ_4x4:NEAR
 ;	PROC	UnVQ_4x4 C NEAR USES ebx ecx edx esi edi
@@ -848,7 +848,7 @@ UnVQ_4x4	PROC	NEAR C USES ebx ecx edx esi edi,
 
 	mov	eax,[bufwidth]		;Compute the offset to the next
 	shl	eax,2		; row of blocks
-	mov	[rowoffset],eax 
+	mov	[rowoffset],eax
 
 	mov	esi,[pointers]
 	mov	eax,[numrows]		;Compute the end address of the
@@ -888,7 +888,7 @@ UnVQ_4x4	PROC	NEAR C USES ebx ecx edx esi edi,
 	mov	edx,[ebx+4]		;Read 2nd row of codeword
 
 	IF	PHARLAP_TNT
-	mov	[es:edi],eax		;Write 1st row to dest
+	mov	es:[edi],eax		;Write 1st row to dest
 	ELSE
 	mov	[edi],eax		;Write 1st row to dest
 	ENDIF
@@ -897,7 +897,7 @@ UnVQ_4x4	PROC	NEAR C USES ebx ecx edx esi edi,
 	mov	ebx,[bufwidth]
 
 	IF	PHARLAP_TNT
-	mov	[es:edi+ebx],edx	;Write 2nd row to dest
+	mov	es:[edi+ebx],edx	;Write 2nd row to dest
 	ELSE
 	mov	[edi+ebx],edx		;Write 2nd row to dest
 	ENDIF
@@ -909,7 +909,7 @@ UnVQ_4x4	PROC	NEAR C USES ebx ecx edx esi edi,
 	shl	ebx,1
 
 	IF	PHARLAP_TNT
-	mov	[es:edi+ebx],eax	;Write 2nd row to dest
+	mov	es:[edi+ebx],eax	;Write 2nd row to dest
 	ELSE
 	mov	[edi+ebx],eax		;Write 2nd row to dest
 	ENDIF
@@ -917,7 +917,7 @@ UnVQ_4x4	PROC	NEAR C USES ebx ecx edx esi edi,
 	add	ebx,[bufwidth]
 
 	IF	PHARLAP_TNT
-	mov	[es:edi+ebx],edx	;Write 2nd row to dest
+	mov	es:[edi+ebx],edx	;Write 2nd row to dest
 	ELSE
 	mov	[edi+ebx],edx		;Write 2nd row to dest
 	ENDIF
@@ -956,8 +956,8 @@ UnVQ_4x4	PROC	NEAR C USES ebx ecx edx esi edi,
 	mov	ebx,[bufwidth]
 
 	IF	PHARLAP_TNT
-	mov	[es:edi],eax		;Write 1st row to dest
-	mov	[es:edi+ebx],eax	;Write 2nd row to dest
+	mov	es:[edi],eax		;Write 1st row to dest
+	mov	es:[edi+ebx],eax	;Write 2nd row to dest
 	ELSE
 	mov	[edi],eax		;Write 1st row to dest
 	mov	[edi+ebx],eax		;Write 2nd row to dest
@@ -966,7 +966,7 @@ UnVQ_4x4	PROC	NEAR C USES ebx ecx edx esi edi,
 	add	ebx,[bufwidth]
 
 	IF	PHARLAP_TNT
-	mov	[es:edi+ebx],eax	;Write 3rd row to dest
+	mov	es:[edi+ebx],eax	;Write 3rd row to dest
 	ELSE
 	mov	[edi+ebx],eax		;Write 3rd row to dest
 	ENDIF
@@ -974,7 +974,7 @@ UnVQ_4x4	PROC	NEAR C USES ebx ecx edx esi edi,
 	add	ebx,[bufwidth]
 
 	IF	PHARLAP_TNT
-	mov	[es:edi+ebx],eax	;Write 4th row to dest
+	mov	es:[edi+ebx],eax	;Write 4th row to dest
 	ELSE
 	mov	[edi+ebx],eax		;Write 4th row to dest
 	ENDIF
@@ -1036,7 +1036,7 @@ UnVQ_4x4	ENDP
 ;*
 ;****************************************************************************
 
-	IF	PHARLAP_TNT
+IF	PHARLAP_TNT
 UnVQ_4x2_Woofer	PROC	NEAR C USES ebx ecx edx esi edi,
 	codebook:NEAR PTR,
 	pointers:NEAR PTR,
@@ -1052,7 +1052,7 @@ UnVQ_4x2_Woofer	PROC	NEAR C USES ebx ecx edx esi edi,
 	blocksperrow:DWORD,
 	numrows:DWORD,
 	bufwidth:DWORD
-	ENDIF
+ENDIF
 ;from TASM:
 ;	GLOBAL	C UnVQ_4x2_Woofer:NEAR
 ;	PROC	UnVQ_4x2_Woofer C NEAR USES ebx ecx edx esi edi
@@ -1137,12 +1137,12 @@ UnVQ_4x2_Woofer	PROC	NEAR C USES ebx ecx edx esi edi,
 	mov	ebx,[bufwidth]
 
 	IF	PHARLAP_TNT
-	mov	[es:edi],al		;Write 1st row to dest
+	mov	es:[edi],al		;Write 1st row to dest
 	shr	eax,16
-	mov	[es:edi+2],al
-	mov	[es:edi+ebx+1],dh		;Write 1st row to dest
+	mov	es:[edi+2],al
+	mov	es:[edi+ebx+1],dh		;Write 1st row to dest
 	shr	edx,16
-	mov	[es:edi+ebx+3],dh
+	mov	es:[edi+ebx+3],dh
 	ELSE
 	mov	[edi],al		;Write 1st row to dest
 	shr	eax,16
@@ -1183,10 +1183,10 @@ UnVQ_4x2_Woofer	PROC	NEAR C USES ebx ecx edx esi edi,
 	mov	ebx,[bufwidth]
 
 	IF	PHARLAP_TNT
-	mov	[es:edi],al
-	mov	[es:edi+2],al
-	mov	[es:edi+ebx+1],al	;Write 2nd row to dest
-	mov	[es:edi+ebx+3],al	;Write 2nd row to dest
+	mov	es:[edi],al
+	mov	es:[edi+2],al
+	mov	es:[edi+ebx+1],al	;Write 2nd row to dest
+	mov	es:[edi+ebx+3],al	;Write 2nd row to dest
 	ELSE
 	mov	[edi],al
 	mov	[edi+2],al
