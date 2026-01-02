@@ -289,7 +289,7 @@ DRAW_BLOCK_PART_ROW	MACRO	numblocks,cb_add
 ; The actual procedure:
 ;===========================================================================
 
-	IF	PHARLAP_TNT
+IF	PHARLAP_TNT
 UnVQ_4x2_VESA320_32K	PROC	NEAR C,
 	codebook:NEAR PTR,
 	pointers:NEAR PTR,
@@ -305,7 +305,7 @@ UnVQ_4x2_VESA320_32K	PROC	NEAR C,
 	grains_per_win:DWORD,
 	dummy1:DWORD,
 	dummy2:DWORD
-	ENDIF
+ENDIF
 ;from TASM:
 ;	GLOBAL	C UnVQ_4x2_VESA320_32K:NEAR
 ;	PROC	UnVQ_4x2_VESA320_32K C NEAR
@@ -350,7 +350,7 @@ UnVQ_4x2_VESA320_32K	PROC	NEAR C,
 
 	IF	PHARLAP_TNT
 	push	es
-	les	edi,[FWORD pal]
+	les	edi,FWORD PTR pal
 	mov	[palette],edi
 	mov	eax,01Ch
 	mov	es,ax
