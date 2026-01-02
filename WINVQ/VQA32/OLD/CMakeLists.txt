@@ -1,0 +1,41 @@
+file_glob_enabled_languages_source_files()
+
+add_library(WINVQA32_OLD STATIC)
+target_compile_definitions(WINVQA32_OLD
+  PUBLIC
+    PHARLAP_TNT=0
+)
+target_include_directories(WINVQA32_OLD
+  PUBLIC
+    ../../INCLUDE
+)
+target_include_directories(WINVQA32_OLD
+  INTERFACE
+    ../../INCLUDE/VQA32
+)
+target_include_directories(WINVQA32_OLD
+  PRIVATE
+    ../../INCLUDE/VQM32
+)
+target_sources(WINVQA32_OLD
+  PRIVATE ${PROJECT_ANY_LANG_SOURCE_FILES}
+)
+target_sources(WINVQA32_OLD
+  PRIVATE
+    FILE_SET HEADERS
+    FILES ${PROJECT_ANY_LANG_IGNORES}
+)
+list(TRANSFORM CMAKE_CXX_IGNORE_GLOB_EXPRESSIONS
+  PREPEND "../../INCLUDE/"
+  OUTPUT_VARIABLE PROJECT_CXX_IGNORE_GLOB_EXPRESSIONS
+)
+file(GLOB_RECURSE PROJECT_CXX_IGNORES
+  ${PROJECT_CXX_IGNORE_GLOB_EXPRESSIONS}
+)
+target_sources(WINVQA32_OLD
+  PRIVATE
+    FILE_SET include
+    TYPE HEADERS
+    BASE_DIRS "../../INCLUDE"
+    FILES ${PROJECT_CXX_IGNORES}
+)
