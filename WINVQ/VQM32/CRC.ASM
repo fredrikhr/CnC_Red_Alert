@@ -68,10 +68,9 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C Calculate_CRC:NEAR
-	PROC	Calculate_CRC C NEAR USES esi ebx ecx edx
-	ARG	buffer:NEAR PTR
-	ARG	length:DWORD
+Calculate_CRC	PROC	NEAR C USES esi ebx ecx edx,
+	buffer:NEAR PTR,
+	_length:DWORD,
 
 	mov	esi,[buffer]
 	cld
@@ -79,7 +78,7 @@
 	; Clear CRC to default (NULL) value.
 	xor	ebx,ebx
 
-	mov	ecx,[length]	;Get length of data block
+	mov	ecx,[_length]	;Get length of data block
 	or	ecx,ecx
 	jz	short ??fini
 
@@ -127,6 +126,6 @@
 	mov	eax,ebx
 	ret
 
-	ENDP	Calculate_CRC
+Calculate_CRC	ENDP
 
 	END
