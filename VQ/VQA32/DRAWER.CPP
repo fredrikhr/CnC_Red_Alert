@@ -112,7 +112,7 @@ static void PageFlip_VESA(VQAHandle *vqabuf);
 static long DrawFrame_Buffer(VQAHandle *vqa);
 static long PageFlip_Nop(VQAHandle *vqa);
 
-#ifndef PHARLAP_TNT
+#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 static void cdecl UnVQ_Nop(unsigned char *codebook, unsigned char *pointers,
 		unsigned char *buffer, unsigned long blocksperrow,
 		unsigned long numrows, unsigned long bufwidth);
@@ -455,7 +455,7 @@ static long Select_Frame(VQAHandleP *vqap)
 	drawer->DesiredFrame = desiredframe;
 	#endif
 
-	/* Handle the cases where the player is going so fast that it's not time 
+	/* Handle the cases where the player is going so fast that it's not time
 	 * to draw this frame yet.
 	 *
 	 * - If the Drawer is using a slower frame rate than the Loader, use a
@@ -483,13 +483,13 @@ static long Select_Frame(VQAHandleP *vqap)
 		return (0);
 	}
 
-	/* Handle the case where the player is going too slow, so we have to skip 
+	/* Handle the case where the player is going too slow, so we have to skip
 	 * some frames:
 	 *
 	 * - If this is a Key Frame, draw it
 	 * - If this frame's # is less than what we're supposed to draw, skip it
-	 *   (Because the 1st 'desiredframe' will be 0, FrameNum MUST be typecast 
-	 *   to signed WORD for the comparison; otherwise, the comparison uses 
+	 *   (Because the 1st 'desiredframe' will be 0, FrameNum MUST be typecast
+	 *   to signed WORD for the comparison; otherwise, the comparison uses
 	 *   UWORDs, and the first frame is always skipped.)
 	 * - If this is a palette-set frame, set the palette before skipping it
 	 * - Loop until we get the frame we need, or there's no frames available
@@ -548,7 +548,7 @@ static long Select_Frame(VQAHandleP *vqap)
 			break;
 		}
 	}
-	
+
 	drawer->LastFrame = curframe->FrameNum;
 	drawer->LastTime = curtime;
 
@@ -1205,7 +1205,7 @@ static long PageFlip_MCGA(VQAHandle *vqa)
 	long          blocksperrow;
 	long          numrows;
 
-	#ifndef PHARLAP_TNT
+	#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 	unsigned char *scrn;
 	#else
 	FARPTR        scrn;
@@ -1266,7 +1266,7 @@ static long PageFlip_MCGA(VQAHandle *vqa)
 	 *-----------------------------------------------------------------------*/
 
 	/* Get screen address, blocks per row and number of rows. */
-	#ifndef PHARLAP_TNT
+	#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 	scrn = (unsigned char *)(0xA0000 + (unsigned long)drawer->ScreenOffset);
 	#else
 	FP_SET(scrn, drawer->ScreenOffset, 0x1C);
@@ -1347,7 +1347,7 @@ static long DrawFrame_MCGABuf(VQAHandle *vqa)
 	VQAFrameNode *curframe;
 	long         rc;
 
-	#ifndef PHARLAP_TNT
+	#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 	unsigned char *scrn;
 	#else
 	FARPTR        scrn;
@@ -1383,7 +1383,7 @@ static long DrawFrame_MCGABuf(VQAHandle *vqa)
 	/* Dereference current frame for quicker access. */
 	curframe = drawer->CurFrame;
 
-	#ifndef PHARLAP_TNT
+	#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 	scrn = drawer->ImageBuf;
 	#else
 	FP_SET(scrn, drawer->ImageBuf, 0x14);
@@ -1500,12 +1500,12 @@ static long PageFlip_MCGABuf(VQAHandle *vqa)
 	imgheight = ((VQAHandleP *)vqa)->Header.ImageHeight;
 	buf = drawer->ImageBuf;
 
-	#ifndef PHARLAP_TNT
+	#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 	scrn = (unsigned char *)0xA0000;
 	#endif
 
 	if ((imgwidth < 320) || (imgheight < 200)) {
-		#ifndef PHARLAP_TNT
+		#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 		scrn += drawer->ScreenOffset;
 		#else
 		scrn = (unsigned char *)drawer->ScreenOffset;
@@ -1556,7 +1556,7 @@ static long DrawFrame_VESA640(VQAHandle *vqa)
 	VQAFrameNode *curframe;
 	long         rc;
 
-	#ifndef PHARLAP_TNT
+	#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 	unsigned char *scrn;
 	#else
 	FARPTR        scrn;
@@ -1592,7 +1592,7 @@ static long DrawFrame_VESA640(VQAHandle *vqa)
 		vqabuf->Flags &= (~VQADATF_DSLEEP);
 	}
 
-	#ifndef PHARLAP_TNT
+	#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 	scrn = drawer->ImageBuf + drawer->ScreenOffset;
 	#else
 	FP_SET(scrn, drawer->ImageBuf + drawer->ScreenOffset, 0x14);
@@ -1680,7 +1680,7 @@ static long DrawFrame_VESA320_32K(VQAHandle *vqa)
 		grain = ((VESAModeInfo *)(drawer->Display->Extended))->WinSize
 				/ ((VESAModeInfo *)(drawer->Display->Extended))->WinGranularity;
 
-		#ifndef PHARLAP_TNT
+		#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 		vqabuf->UnVQ(curframe->Codebook->Buffer, curframe->Pointers,
 				drawer->Palette_15, grain, 0, 0);
 		#else
@@ -1777,7 +1777,7 @@ static long DrawFrame_VESA320_32KBuf(VQAHandle *vqa)
 		Prepare_Frame(vqabuf);
 
 		/* UnVQ buffered mode */
-		#ifndef PHARLAP_TNT
+		#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 		vqabuf->UnVQ(curframe->Codebook->Buffer, curframe->Pointers,
 				drawer->ImageBuf, drawer->BlocksPerRow, drawer->NumRows,
 				((VQAHandleP *)vqa)->Header.image_width);
@@ -1978,7 +1978,7 @@ static long DrawFrame_Buffer(VQAHandle *vqa)
 	VQAConfig    *config;
 	long         rc;
 
-	#ifndef PHARLAP_TNT
+	#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 	unsigned char *buff;
 	#else
 	FARPTR        buff;
@@ -2000,7 +2000,7 @@ static long DrawFrame_Buffer(VQAHandle *vqa)
 		/* Uncompress the frame data */
 		Prepare_Frame(vqabuf);
 	}
- 
+
 	/* Wait for Update_Enabled to be set low */
 	if (vqabuf->Flags & VQADATF_UPDATE) {
 		vqabuf->Flags |= VQADATF_DSLEEP;
@@ -2015,7 +2015,7 @@ static long DrawFrame_Buffer(VQAHandle *vqa)
 	/* Dereference current frame for quicker access. */
 	curframe = drawer->CurFrame;
 
-	#ifndef PHARLAP_TNT
+	#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 	buff = (unsigned char *)(drawer->ImageBuf + drawer->ScreenOffset);
 	#else
 	FP_SET(buff, drawer->ImageBuf + drawer->ScreenOffset, 0x14);
@@ -2073,7 +2073,7 @@ static long DrawFrame_Buffer(VQAHandle *vqa)
 *
 ****************************************************************************/
 
-#ifndef PHARLAP_TNT
+#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 static void cdecl UnVQ_Nop(unsigned char *codebook, unsigned char *pointers,
 		unsigned char *buffer, unsigned long blocksperrow,
 		unsigned long numrows, unsigned long bufwidth)
