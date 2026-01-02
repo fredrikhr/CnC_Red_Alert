@@ -104,7 +104,7 @@ SET_2_PIXELS	MACRO	cb_index,edi_index
 	mov	ax,WORD PTR [esi]
 
 	IF	PHARLAP_TNT
-	mov	DWORD PTR [es:edi+edi_index],eax
+	mov	DWORD PTR es:[edi+edi_index],eax
 	ELSE
 	mov	DWORD PTR [edi+edi_index],eax
 	ENDIF
@@ -183,10 +183,10 @@ DRAW_BLOCK_ROWS	MACRO	numrows,blocksperrow
 	mov	edx,eax				; edx = 2 pixels, same color
 
 	IF	PHARLAP_TNT
-	mov	DWORD PTR [es:edi],eax		; set 2 pixels
-	mov	DWORD PTR [es:edi+4],edx	; set 2 pixels
-	mov	DWORD PTR [es:edi+640],eax	; set 2 pixels
-	mov	DWORD PTR [es:edi+644],edx	; set 2 pixels
+	mov	DWORD PTR es:[edi],eax		; set 2 pixels
+	mov	DWORD PTR es:[edi+4],edx	; set 2 pixels
+	mov	DWORD PTR es:[edi+640],eax	; set 2 pixels
+	mov	DWORD PTR es:[edi+644],edx	; set 2 pixels
 	ELSE
 	mov	DWORD PTR [edi],eax		; set 2 pixels
 	mov	DWORD PTR [edi+4],edx	; set 2 pixels
@@ -270,8 +270,8 @@ DRAW_BLOCK_PART_ROW	MACRO	numblocks,cb_add
 	mov	edx,eax				; edx = 2 pixels, same color
 
 	IF	PHARLAP_TNT
-	mov	DWORD PTR [es:edi],eax		; set 2 pixels
-	mov	DWORD PTR [es:edi+4],edx		; set 2 pixels
+	mov	DWORD PTR es:[edi],eax		; set 2 pixels
+	mov	DWORD PTR es:[edi+4],edx		; set 2 pixels
 	ELSE
 	mov	DWORD PTR [edi],eax		; set 2 pixels
 	mov	DWORD PTR [edi+4],edx		; set 2 pixels
