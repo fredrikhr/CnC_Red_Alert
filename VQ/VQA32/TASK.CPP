@@ -59,6 +59,7 @@
 
 #include <stdio.h>
 #include <malloc.h>
+#include <memory.h>
 #include <dos.h>
 #include <mem.h>
 #include <conio.h>
@@ -273,7 +274,7 @@ long VQA_Play(VQAHandle *vqa, long mode)
 			/* Start up the movie if is it currently paused. */
 			if (vqabuf->Flags & VQADATF_PAUSED) {
 				vqabuf->Flags &= ~VQADATF_PAUSED;
-			 
+
 				/* Start the audio if it was previously on. */
 				#if(VQAAUDIO_ON)
 				if (config->OptionFlags & VQAOPTF_AUDIO) {
@@ -283,7 +284,7 @@ long VQA_Play(VQAHandle *vqa, long mode)
 
 				VQA_SetTimer((VQAHandleP *)vqa, vqabuf->EndTime, config->TimerMethod);
 			}
-			
+
 			/* Load, Draw, Load, Draw, Load, Draw ... */
 			while ((vqabuf->Flags & (VQADATF_DDONE|VQADATF_LDONE))
 					!= (VQADATF_DDONE|VQADATF_LDONE)) {

@@ -71,6 +71,7 @@
 #include <fcntl.h>
 #include <io.h>
 #include <malloc.h>
+#include <memory.h>
 #include <mem.h>
 #include <dos.h>
 #include "vq.h"
@@ -511,7 +512,7 @@ long VQA_Open(VQAHandle *vqa, char const *filename, VQAConfig *config)
 			|| (config->TimerMethod == VQA_TMETHOD_INT)) {
 
 		/* Start HMI timer system for timing. */
-		if (VQA_StartTimerInt(vqap, (config->OptionFlags & VQAOPTF_HMIINIT))) { 
+		if (VQA_StartTimerInt(vqap, (config->OptionFlags & VQAOPTF_HMIINIT))) {
 			VQA_Close(vqa);
 			return (VQAERR_AUDIO);
 		}
@@ -849,7 +850,7 @@ long VQA_LoadFrame(VQAHandle *vqa)
 
 			case ID_SNA0:
 				if (vqap->Config.OptionFlags & VQAOPTF_ALTAUDIO) {
-				
+
 					/* Move the last audio frame to the play buffer. */
 					if (CopyAudio(vqap) == VQAERR_SLEEPING) {
 						vqabuf->Flags |= VQADATF_LSLEEP;
@@ -1022,7 +1023,7 @@ long VQA_LoadFrame(VQAHandle *vqa)
 * FUNCTION
 *     This function sets the movie stream to the new frame specified by
 *     the 'offset' parameter. 'FromWhere' is a symbolic constant that is used
-*     to specify from where in the stream offset should be applied. 
+*     to specify from where in the stream offset should be applied.
 *
 * INPUTS
 *     VQA       - Pointer to VQAHandle of movie to seek into.
@@ -1062,7 +1063,7 @@ long VQA_SeekFrame(VQAHandle *vqa, long framenum, long fromwhere)
 	#endif
 
 	fromwhere = fromwhere;
-	
+
 	#if(VQAAUDIO_ON)
 	audio = &vqabuf->Audio;
 
@@ -1075,7 +1076,7 @@ long VQA_SeekFrame(VQAHandle *vqa, long framenum, long fromwhere)
 	 * array is allocated before continuing.
 	 */
 	if ((framenum < header->Frames) && (vqabuf->Foff != NULL)) {
-		
+
 		/* Get the current frame. */
 		frame = loader->CurFrame;
 
@@ -1163,7 +1164,7 @@ long VQA_SeekFrame(VQAHandle *vqa, long framenum, long fromwhere)
 				 * along the way.
 				 */
 				for (i = 0; i < (framenum - group); i++) {
-			
+
 					/* Fool the loader into thinking the frame has been drawn. */
 					loader->CurFrame->Flags = 0;
 
@@ -1351,7 +1352,7 @@ static VQAData *AllocBuffers(VQAHeader *header, VQAConfig *config)
 	 * ALLOCATE THE FRAME BUFFERS.
 	 *-----------------------------------------------------------------------*/
 	for (i = 0; i < config->NumFrameBufs; i++) {
-		
+
 		/* Allocate a pointer node */
 		framenode = (VQAFrameNode *)malloc((sizeof(VQAFrameNode)
 				+ vqa->Max_Ptr_Size + vqa->Max_Pal_Size));
@@ -1549,14 +1550,14 @@ static VQAData *AllocBuffers(VQAHeader *header, VQAConfig *config)
 	if (vqa->Foff == NULL) {
 		FreeBuffers(vqa, config, header);
 		return (NULL);
-	} 
+	}
 
 	/* Lock to prevent page swapping. */
 	DPMI_Lock(vqa->Foff, header->Frames * sizeof(long));
 
 	/* Keep a running total of memory usage. */
 	vqa->MemUsed += (header->Frames * sizeof(long));
-	
+
 	return (vqa);
 }
 
@@ -2483,7 +2484,7 @@ static long Load_SND0(VQAHandleP *vqap, unsigned long iffsize)
 
 	/* Set the TempBufLen */
 	audio->TempBufLen = iffsize;
-	
+
 	return (0);
 }
 
@@ -2618,7 +2619,7 @@ static long Load_SND1(VQAHandleP *vqap, unsigned long iffsize)
 
 	/* Set the TempBufLen */
 	audio->TempBufLen = zap.UnCompSize;
-	
+
 	return (0);
 }
 
@@ -2725,7 +2726,7 @@ static long Load_SND2(VQAHandleP *vqap, unsigned long iffsize)
 
 	/* Set the TempBufLen */
 	audio->TempBufLen = uncomp_size;
-	
+
 	return (0);
 }
 
@@ -2792,7 +2793,7 @@ static void Load_AudFrame(VQAHandleP *vqap)
 		}
 
 		myblock += numblocks;
-		
+
 		if (myblock >= audio->NumAudBlocks) {
 			myblock = 0;
 		}

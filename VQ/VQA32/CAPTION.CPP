@@ -39,6 +39,7 @@
 *
 ****************************************************************************/
 
+#include <memory.h>
 #include <mem.h>
 #include <malloc.h>
 #include <vqm32\font.h>
@@ -343,7 +344,7 @@ static CaptionNode *AddCaptionNode(CaptionList *list, CaptionText *captext)
 		node->Char = captext->Text;
 		node->CurX = captext->Xpos;
 		node->CurY = captext->Ypos;
-		
+
 		/* Add the node to the head. */
 		node->Succ = list->Head;
 		list->Head = node;
