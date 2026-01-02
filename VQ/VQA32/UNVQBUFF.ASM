@@ -166,7 +166,7 @@ UnVQ_2x2	PROC	NEAR C USES ebx ecx edx esi edi,
 
 ??Not_finished_a_line:
 	sub	ebx,ebx
-	mov	bx,[WORD PTR esi]	;Get the codebook pointer value
+	mov	bx,WORD PTR [esi]	;Get the codebook pointer value
 	add	esi,2		; then advance to the next one.
 
 	or	bx,bx		;Is it a one color block?
@@ -365,7 +365,7 @@ UnVQ_2x3	PROC	NEAR C USES ebx ecx edx esi edi,
 
 ??Not_finished_a_line:
 	sub	ebx,ebx
-	mov	bx,[WORD PTR esi]	;Get the codebook pointer value
+	mov	bx,WORD PTR [esi]	;Get the codebook pointer value
 	add	esi,2		; then advance to the next one.
 
 	or	bx,bx		;Is it a one color block?
@@ -561,7 +561,7 @@ UnVQ_2x3	ENDP
 ;;;
 ;;;??Not_finished_a_line:
 ;;;	sub	ebx,ebx
-;;;	mov	bx,[WORD PTR esi]	;Get the codebook pointer value
+;;;	mov	bx,WORD PTR [esi]	;Get the codebook pointer value
 ;;;	add	esi,2		; then advance to the next one.
 ;;;
 ;;;	or	bx,bx		;Is it a one color block?
@@ -875,7 +875,7 @@ UnVQ_4x4	PROC	NEAR C USES ebx ecx edx esi edi,
 
 ??Not_finished_a_line:
 	sub	ebx,ebx
-	mov	bx,[WORD PTR esi]	;Get the codebook pointer value
+	mov	bx,WORD PTR [esi]	;Get the codebook pointer value
 	add	esi,2		; then advance to the next one.
 
 	or	bx,bx		;Is it a one color block?
@@ -1115,7 +1115,7 @@ UnVQ_4x2_Woofer	PROC	NEAR C USES ebx ecx edx esi edi,
 ??Not_finished_a_line:
 	mov	eax,[entries]
 	xor	ebx,ebx
-;	mov	bx,[WORD PTR esi]	;Get the codebook pointer value
+;	mov	bx,WORD PTR [esi]	;Get the codebook pointer value
 ;	add	esi,2		; then advance to the next one.
 	mov	bl,[esi]
 	mov	bh,[esi + eax]
