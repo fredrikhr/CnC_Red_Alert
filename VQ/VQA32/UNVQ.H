@@ -106,16 +106,16 @@ void cdecl UnVQ_4x2_VESA320_32K(unsigned char *codebook,
 #endif /* PHARLAP_TNT */
 
 /* unvqxmde.asm */
-void cdecl UnVQ_4x2_Xmode(unsigned char *codebook, unsigned char *pointers,
+void __cdecl UnVQ_4x2_Xmode(unsigned char *codebook, unsigned char *pointers,
 		unsigned char *buffer, unsigned long blocksperrow,
 		unsigned long numrows, unsigned long dummy);
 
-void cdecl UnVQ_4x2_XmodeCB(unsigned char *cbdummy, unsigned char *pointers,
+void __cdecl UnVQ_4x2_XmodeCB(unsigned char *cbdummy, unsigned char *pointers,
 		unsigned char *buffer, unsigned long blocksperrow,
 		unsigned long numrows, unsigned long dummy);
 
-void cdecl Upload_4x2CB(unsigned char *codebook, unsigned long numentries);
-void cdecl XlatePointers(unsigned char *pointers, unsigned long numpointers);
+void __cdecl Upload_4x2CB(unsigned char *codebook, unsigned long numentries);
+void __cdecl XlatePointers(unsigned char *pointers, unsigned long numpointers);
 
 #ifdef __cplusplus
 }
