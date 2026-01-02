@@ -42,10 +42,9 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
+	.386
+	.MODEL FLAT
+	OPTION SEGMENT:USE32
 
 	STRUC	TreeNode
 count	DD	?	;Weight of the node
@@ -55,7 +54,7 @@ child1	DW	?	;Child node 1
 
 HUFF_EOS	EQU	256
 
-	CODESEG
+	.CODE
 
 ;****************************************************************************
 ;*
