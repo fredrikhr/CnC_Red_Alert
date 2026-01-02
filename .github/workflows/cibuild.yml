@@ -8,6 +8,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - id: checkout-source
+        name: Checkout ${{ github.repository }} at ${{ github.ref_type }} ${{ github.ref_name }}
         uses: actions/checkout@v5
       - id: add-problem-matcher
         name: Add problem matcher
