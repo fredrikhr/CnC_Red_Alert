@@ -9,6 +9,11 @@ jobs:
     steps:
       - id: checkout-source
         uses: actions/checkout@v5
+      - id: add-problem-matcher
+        name: Add problem matcher
+        shell: cmd
+        run: |
+          ECHO.::add-matcher::.github\matchers\ninja.json
       - id: detect-visual-studio
         name: Detect Visual Studio
         shell: cmd
