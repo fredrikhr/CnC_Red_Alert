@@ -150,7 +150,7 @@ ENDIF
 
 	IF	PHARLAP_TNT
 	push	es
-	les	edi,[FWORD buffer]	;KLUDGE - bcc32 pads FARPTR
+	les	edi,FWORD PTR buffer	;KLUDGE - bcc32 pads FARPTR
 	ELSE
 	mov	edi,[buffer]
 	ENDIF
@@ -349,7 +349,7 @@ ENDIF
 
 	IF	PHARLAP_TNT
 	push	es
-	les	edi,[FWORD buffer]	;KLUDGE - bcc32 pads FARPTR
+	les	edi,FWORD PTR buffer	;KLUDGE - bcc32 pads FARPTR
 	ELSE
 	mov	edi,[buffer]
 	ENDIF
@@ -545,7 +545,7 @@ UnVQ_2x3	ENDP
 ;;;
 ;;;	IF	PHARLAP_TNT
 ;;;	push	es
-;;;	les	edi,[FWORD buffer]	;KLUDGE - bcc32 pads FARPTR
+;;;	les	edi,FWORD PTR buffer	;KLUDGE - bcc32 pads FARPTR
 ;;;	ELSE
 ;;;	mov	edi,[buffer]
 ;;;	ENDIF
@@ -859,7 +859,7 @@ ENDIF
 
 	IF	PHARLAP_TNT
 	push	es
-	les	edi,[FWORD buffer]	;KLUDGE - bcc32 pads FARPTR
+	les	edi,FWORD PTR buffer	;KLUDGE - bcc32 pads FARPTR
 	ELSE
 	mov	edi,[buffer]
 	ENDIF
@@ -1098,7 +1098,7 @@ ENDIF
 
 	IF	PHARLAP_TNT
 	push	es
-	les	edi,[FWORD buffer]	;KLUDGE - bcc32 pads FARPTR
+	les	edi,FWORD PTR buffer	;KLUDGE - bcc32 pads FARPTR
 	ELSE
 	mov	edi,[buffer]
 	ENDIF
