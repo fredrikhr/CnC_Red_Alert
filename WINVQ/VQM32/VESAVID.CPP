@@ -49,7 +49,7 @@
 #include <mem.h>
 #include <dos.h>
 
-#ifndef __WATCOMC__
+#if !defined(__WATCOMC__) && PHARLAP_TNT
 #include <pldos32.h>
 #include <pharlap.h>
 #else
@@ -171,7 +171,7 @@ long InitVESA(void)
 
 	/* Calculate size of VESAInfo structure in paragraphs */
 	paras = (sizeof(VESAInfo) + 15) >> 4;
-	
+
 	/* Allocate real-mode memory for VESA structure. */
 	if (_dx_real_alloc(paras, (unsigned short *)&rseg,
 			(unsigned short *)&paras) == 0) {
@@ -204,7 +204,7 @@ long InitVESA(void)
 	}
 
 	if (error != 0) {
-		UninitVESA();		
+		UninitVESA();
 	}
 
 	return (error);
@@ -310,7 +310,7 @@ VESAModeInfo *SetVESAMode(long mode)
 			#ifdef __WATCOMC__
 			{
 			union REGS r;
-			
+
 			r.x.eax = 0x4F02;
 			r.x.ebx = mode;
 			int386(0x10, &r, &r);
@@ -447,7 +447,7 @@ void SetVESAWindow(long grain)
 	#else  /* __WATCOMC__ */
 
   RMC_BLK regp;
-	
+
 	regp.eax = 0x4F05;
 	regp.ebx = 0x00;
 	regp.edx = grain;
