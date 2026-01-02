@@ -2,9 +2,13 @@ file_glob_enabled_languages_source_files()
 
 if(WITH_16BIT_TARGETS)
 add_executable(LAUNCH)
+target_compile_options(LAUNCH
+  PRIVATE
+    $<$<COMPILE_LANG_AND_ID:ASM_MASM,MSVC>:/omf>
+)
 target_sources(LAUNCH
   PRIVATE
-    LAUNCH.ASM
+    ${PROJECT_ANY_LANG_SOURCE_FILES}
 )
 target_sources(LAUNCH
   PRIVATE
