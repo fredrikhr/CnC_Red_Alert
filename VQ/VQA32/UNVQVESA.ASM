@@ -90,23 +90,23 @@ SKIP_PTR	EQU	8000h
 
 SET_2_PIXELS	MACRO	cb_index,edi_index
 	xor	edx,edx
-	mov	dl,[BYTE PTR ebx+1+cb_index]
+	mov	dl,BYTE PTR [ebx+1+cb_index]
 	shl	edx,1
 	add	edx,[palette]
 	mov	esi,edx
-	mov	ax,[WORD PTR esi]
+	mov	ax,WORD PTR [esi]
 	shl	eax,16
 	xor	edx,edx
-	mov	dl,[BYTE PTR ebx+cb_index]
+	mov	dl,BYTE PTR [ebx+cb_index]
 	shl	edx,1
 	add	edx,[palette]
 	mov	esi,edx
-	mov	ax,[WORD PTR esi]
+	mov	ax,WORD PTR [esi]
 
 	IF	PHARLAP_TNT
-	mov	[DWORD PTR es:edi+edi_index],eax
+	mov	DWORD PTR [es:edi+edi_index],eax
 	ELSE
-	mov	[DWORD PTR edi+edi_index],eax
+	mov	DWORD PTR [edi+edi_index],eax
 	ENDIF
 	ENDM
 
@@ -133,7 +133,7 @@ DRAW_BLOCK_ROWS	MACRO	numrows,blocksperrow
 ??Not_finished_a_line:
 	;........................................ Get next pointer word:
 	xor	ebx,ebx
-	mov	bx,[WORD PTR esi]		; BX = pointer word
+	mov	bx,WORD PTR [esi]		; BX = pointer word
 	add	esi,2
 
 	;........................................ Check for a 1-color block:
@@ -173,25 +173,25 @@ DRAW_BLOCK_ROWS	MACRO	numrows,blocksperrow
 	jnz	??Not_finished_a_line
 	jmp	??Next_row
 ??Draw_One_Color:
-	not	bx				; get palette index
+	not	bx					; get palette index
 	shl	bx,1				; convert to WORD offset
 	add	ebx,[palette]
-	mov	ax,[WORD PTR ebx]		; get 15-bit palette value
+	mov	ax,WORD PTR [ebx]	; get 15-bit palette value
 	mov	dx,ax				; copy it into dx
 	shl	eax,16
 	mov	ax,dx				; eax = 2 pixels, same color
 	mov	edx,eax				; edx = 2 pixels, same color
 
 	IF	PHARLAP_TNT
-	mov	[DWORD PTR es:edi],eax		; set 2 pixels
-	mov	[DWORD PTR es:edi+4],edx		; set 2 pixels
-	mov	[DWORD PTR es:edi+640],eax	; set 2 pixels
-	mov	[DWORD PTR es:edi+644],edx	; set 2 pixels
+	mov	DWORD PTR [es:edi],eax		; set 2 pixels
+	mov	DWORD PTR [es:edi+4],edx	; set 2 pixels
+	mov	DWORD PTR [es:edi+640],eax	; set 2 pixels
+	mov	DWORD PTR [es:edi+644],edx	; set 2 pixels
 	ELSE
-	mov	[DWORD PTR edi],eax		; set 2 pixels
-	mov	[DWORD PTR edi+4],edx		; set 2 pixels
-	mov	[DWORD PTR edi+640],eax	; set 2 pixels
-	mov	[DWORD PTR edi+644],edx	; set 2 pixels
+	mov	DWORD PTR [edi],eax		; set 2 pixels
+	mov	DWORD PTR [edi+4],edx	; set 2 pixels
+	mov	DWORD PTR [edi+640],eax	; set 2 pixels
+	mov	DWORD PTR [edi+644],edx	; set 2 pixels
 	ENDIF
 
 	add	edi,8				; next block position
@@ -230,7 +230,7 @@ DRAW_BLOCK_PART_ROW	MACRO	numblocks,cb_add
 ??Not_finished_a_line:
 	;........................................ Get next pointer word:
 	xor	ebx,ebx
-	mov	bx,[WORD PTR esi]		; BX = pointer word
+	mov	bx,WORD PTR [esi]		; BX = pointer word
 	add	esi,2
 
 	;........................................ Check for a 1-color block:
@@ -263,18 +263,18 @@ DRAW_BLOCK_PART_ROW	MACRO	numblocks,cb_add
 	not	bx				; get palette index
 	shl	bx,1				; convert to WORD offset
 	add	ebx,[palette]
-	mov	ax,[WORD PTR ebx]		; get 15-bit palette value
+	mov	ax,WORD PTR [ebx]		; get 15-bit palette value
 	mov	dx,ax				; copy it into dx
 	shl	eax,16
 	mov	ax,dx				; eax = 2 pixels, same color
 	mov	edx,eax				; edx = 2 pixels, same color
 
 	IF	PHARLAP_TNT
-	mov	[DWORD PTR es:edi],eax		; set 2 pixels
-	mov	[DWORD PTR es:edi+4],edx		; set 2 pixels
+	mov	DWORD PTR [es:edi],eax		; set 2 pixels
+	mov	DWORD PTR [es:edi+4],edx		; set 2 pixels
 	ELSE
-	mov	[DWORD PTR edi],eax		; set 2 pixels
-	mov	[DWORD PTR edi+4],edx		; set 2 pixels
+	mov	DWORD PTR [edi],eax		; set 2 pixels
+	mov	DWORD PTR [edi+4],edx		; set 2 pixels
 	ENDIF
 
 	add	edi,8				; next block position
