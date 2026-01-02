@@ -48,14 +48,15 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
-	INCLUDE	"vga.i"
-	INCLUDE	"vesavid.i"
-	INCLUDE	"vqaplay.i"
-	CODESEG
+							;from TASM	IDEAL
+	.386					;from TASM:	P386
+	.MODEL FLAT				;from TASM:	MODEL	USE32 FLAT
+	OPTION SEGMENT:USE32	;from TASM:	MODEL	USE32 FLAT
+							;from TASM:	LOCALS	??
+	INCLUDE	<vga.i>			;from TASM:	INCLUDE	"vga.i"
+	INCLUDE	<vesavid.i>		;from TASM:	INCLUDE	"vesavid.i"
+	INCLUDE	<vqaplay.i>		;from TASM:	INCLUDE	"vqaplay.i"
+	.CODE					;from TASM:	CODESEG
 
 	IF	VQAXMODE_ON
 
