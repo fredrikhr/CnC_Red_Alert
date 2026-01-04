@@ -67,16 +67,15 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C inp:NEAR
-	PROC	inp C NEAR USES edx
-	ARG	port:WORD
+inp	PROC	NEAR C USES edx,
+	port:WORD
 
 	mov	dx,[port]
 	xor	eax,eax
 	in	al,dx
 	ret
 
-	ENDP	inp
+inp	ENDP
 
 
 ;****************************************************************************
@@ -100,16 +99,15 @@
 ;*
 ;****************************************************************************
 
-	GLOBAL	C outp:NEAR
-	PROC	outp C NEAR USES edx
-	ARG	port:WORD
-	ARG	value:WORD
+outp	PROC	NEAR C USES edx,
+	port:WORD,
+	value:WORD
 
 	mov	dx,[port]
 	mov	ax,[value]
 	out	dx,al
 	ret
 
-	ENDP	outp
+outp	ENDP
 
 	END
