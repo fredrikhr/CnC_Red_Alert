@@ -1,6 +1,6 @@
 file_glob_enabled_language_files()
 
-add_library(WINVQA32_OLD STATIC)
+add_library(WINVQA32_OLD STATIC EXCLUDE_FROM_ALL)
 target_compile_definitions(WINVQA32_OLD
   PUBLIC
     PHARLAP_TNT=0
