@@ -9,6 +9,7 @@ project(
     LANGUAGES C CXX ASM_MASM
 )
 list(APPEND CMAKE_ASM_MASM_IGNORE_EXTENSIONS "I" "INC")
+list(APPEND CMAKE_RC_IGNORE_EXTENSIONS "RH")
 set(CACHE{CMAKE_ASM_MASM_COMPILE_OPTIONS_MSVC_DEBUG_INFORMATION_FORMAT_ProgramDatabase}
   TYPE STRING
   VALUE "/Zd"
@@ -17,6 +18,8 @@ set(CACHE{CMAKE_ASM_MASM_COMPILE_OPTIONS_MSVC_DEBUG_INFORMATION_FORMAT_ProgramDa
 set_enabled_languages_file_globs()
 
 option(WITH_16BIT_TARGETS "Enable CMake targets for legacy 16-bit components.")
+
+option(USE_WINVQ_AS_VQ "Use WINVQ as the VQ module and disable the VQ subdirectory" ON)
 
 add_library(PROJECT_DEFAULT INTERFACE)
 target_compile_definitions(PROJECT_DEFAULT INTERFACE
@@ -35,10 +38,16 @@ add_subdirectory(LAUNCH)
 add_subdirectory(LAUNCHER)
 add_subdirectory(TOOLS/AUDIOMAK)
 add_subdirectory(TOOLS/MIX)
+if(NOT USE_WINVQ_AS_VQ)
 add_subdirectory(VQ/VQA32)
 add_subdirectory(VQ/VQM32)
+endif(NOT USE_WINVQ_AS_VQ)
 add_subdirectory(WIN32LIB)
-add_subdirectory(WINVQ)
+add_subdirectory(WINVQ/LIB)
+add_subdirectory(WINVQ/VPLAY32)
+add_subdirectory(WINVQ/VQAVIEW)
+add_subdirectory(WINVQ/VQA32)
+add_subdirectory(WINVQ/VQM32)
 add_subdirectory(WWFLAT32)
 
 function(get_project_buildsystem_targets_recursive PROJECT_DIRECTORY)

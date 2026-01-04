@@ -1,4 +1,4 @@
-file_glob_enabled_languages_source_files()
+file_glob_enabled_language_files()
 
 add_executable(AUDIOMAK WIN32
   AUDIOMAK.CPP

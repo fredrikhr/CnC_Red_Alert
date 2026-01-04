@@ -1,4 +1,4 @@
-file_glob_enabled_languages_source_files()
+file_glob_enabled_language_files()
 
 if(WITH_16BIT_TARGETS)
 add_executable(LAUNCH)
@@ -8,7 +8,7 @@ target_compile_options(LAUNCH
 )
 target_sources(LAUNCH
   PRIVATE
-    ${PROJECT_ANY_LANG_SOURCE_FILES}
+    ${PROJECT_CURRENT_SOURCE_DIR_ANY_LANG_SOURCE_FILES}
 )
 target_sources(LAUNCH
   PRIVATE

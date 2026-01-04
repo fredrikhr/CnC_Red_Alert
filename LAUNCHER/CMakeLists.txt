@@ -1,4 +1,4 @@
-file_glob_enabled_languages_source_files()
+file_glob_enabled_language_files()
 
 add_library(256BMP OBJECT 256BMP.C)
 target_compile_definitions(256BMP PRIVATE
@@ -20,14 +20,14 @@ target_compile_definitions(LAUNCHER
 )
 target_sources(LAUNCHER
   PRIVATE
-    ${PROJECT_ANY_LANG_SOURCE_FILES}
+    ${PROJECT_CURRENT_SOURCE_DIR_ANY_LANG_SOURCE_FILES}
     $<TARGET_OBJECTS:256BMP>
     REDALERT.ICO
 )
 target_sources(LAUNCHER
   PRIVATE
     FILE_SET HEADERS
-    FILES ${PROJECT_ANY_LANG_IGNORES}
+    FILES ${PROJECT_CURRENT_SOURCE_DIR_ANY_LANG_IGNORES}
 )
 install(TARGETS LAUNCHER)
 
