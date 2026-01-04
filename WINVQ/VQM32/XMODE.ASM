@@ -477,9 +477,9 @@ ShowXPage	PROC	NEAR C USES eax ebx ecx edx,
 
 	mov	edx,R_CRT_CONTROLLER
 	mov	bl,CRT_STARTADDR_LOW
-	mov	bh,[byte ptr StartOffset]
+	mov	bh,byte ptr [StartOffset]
 	mov	cl,CRT_STARTADDR_HIGH
-	mov	ch,[byte ptr StartOffset+1]
+	mov	ch,byte ptr [StartOffset+1]
 	mov	eax,ebx
 	out	dx,ax
 	mov	eax,ecx
