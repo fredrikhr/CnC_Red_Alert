@@ -1,5 +1,0 @@
-add_subdirectory(LIB)
-add_subdirectory(VPLAY32)
-add_subdirectory(VQA32)
-add_subdirectory(VQAVIEW)
-add_subdirectory(VQM32)

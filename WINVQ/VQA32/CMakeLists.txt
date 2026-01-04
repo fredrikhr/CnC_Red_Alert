@@ -1,4 +1,4 @@
-file_glob_enabled_languages_source_files()
+file_glob_enabled_language_files()
 
 add_library(WINVQA32 STATIC)
 target_compile_definitions(WINVQA32
@@ -8,36 +8,36 @@ target_compile_definitions(WINVQA32
 target_include_directories(WINVQA32
   PUBLIC
     ../INCLUDE
-)
-target_include_directories(WINVQA32
-  INTERFACE
     ../INCLUDE/VQA32
 )
-target_include_directories(WINVQA32
-  PRIVATE
-    ../INCLUDE/VQM32
-)
 target_sources(WINVQA32
-  PRIVATE ${PROJECT_ANY_LANG_SOURCE_FILES}
+  PRIVATE ${PROJECT_CURRENT_SOURCE_DIR_ANY_LANG_SOURCE_FILES}
 )
 target_sources(WINVQA32
   PRIVATE
-    FILE_SET HEADERS
-    FILES ${PROJECT_ANY_LANG_IGNORES}
-)
-list(TRANSFORM CMAKE_CXX_IGNORE_GLOB_EXPRESSIONS
-  PREPEND "../INCLUDE/"
-  OUTPUT_VARIABLE PROJECT_CXX_IGNORE_GLOB_EXPRESSIONS
-)
-file(GLOB_RECURSE PROJECT_CXX_IGNORES
-  ${PROJECT_CXX_IGNORE_GLOB_EXPRESSIONS}
-)
-target_sources(WINVQA32
-  PRIVATE
-    FILE_SET include
+    FILE_SET private_headers
     TYPE HEADERS
-    BASE_DIRS "../INCLUDE"
-    FILES ${PROJECT_CXX_IGNORES}
+    FILES ${PROJECT_CURRENT_SOURCE_DIR_ANY_LANG_IGNORES}
 )
+file_glob_enabled_language_files_in_directory(WINVQ_INCLUDE ../INCLUDE)
+file_glob_enabled_language_files_in_directory(WINVQA32_INCLUDE ../INCLUDE/VQA32)
+list(TRANSFORM PROJECT_WINVQ_INCLUDE_ANY_LANG_IGNORES
+  PREPEND ../INCLUDE/
+)
+list(TRANSFORM PROJECT_WINVQA32_INCLUDE_ANY_LANG_IGNORES
+  PREPEND ../INCLUDE/VQA32/
+)
+target_sources(WINVQA32
+  PUBLIC
+    FILE_SET HEADERS
+    BASE_DIRS ../INCLUDE
+    FILES
+      ${PROJECT_WINVQ_INCLUDE_ANY_LANG_IGNORES}
+      ${PROJECT_WINVQA32_INCLUDE_ANY_LANG_IGNORES}
+)
+target_link_libraries(WINVQA32 PRIVATE WINVQM32)
+if(USE_WINVQ_AS_VQ)
+add_library(VQA32 ALIAS WINVQA32)
+endif(USE_WINVQ_AS_VQ)
 
 add_subdirectory(OLD)
