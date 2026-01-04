@@ -56,7 +56,7 @@ FONTHEIGHTBLOCK	EQU	12
 FONTINFOMAXHEIGHT	EQU	4
 FONTINFOMAXWIDTH	EQU	5
 
-	Char_Pixel_Width		PROTO	NEAR C,
+Char_Pixel_Width		PROTO	NEAR C,
 	chr:DWORD
 Draw_Char				PROTO	NEAR C,
 	character:DWORD,
@@ -68,7 +68,7 @@ Set_Font_Palette_Range	PROTO	NEAR C,
 	_end:DWORD
 	EXTRN	FontPtr:NEAR PTR
 	EXTRN	FontYSpacing:DWORD
-	
+
 ;----------------------------------------------------------------------------
 ; TEXT_PRINT
 ;
@@ -106,9 +106,9 @@ Text_Print	PROC	 NEAR C USES ebx ecx edx edi esi,
 	or	eax,eax
 	je	??exit
 
-	movzx	ebx,[WORD PTR eax+FONTINFOBLOCK]
+	movzx	ebx,WORD PTR [eax+FONTINFOBLOCK]
 	add	ebx,eax
-	movzx	eax,[BYTE PTR ebx+FONTINFOMAXHEIGHT]
+	movzx	eax,BYTE PTR [ebx+FONTINFOMAXHEIGHT]
 	mov	[fontheight],eax
 	mov	esi,[string]
 
@@ -120,8 +120,8 @@ Text_Print	PROC	 NEAR C USES ebx ecx edx edi esi,
 	cmp	ecx,YPIXEL_MAX		; check max y pos
 	jge	short ??exit
 
-	mov	al,[BYTE PTR bcol]
-	mov	ah,[BYTE PTR fcol]
+	mov	al,BYTE PTR [bcol]
+	mov	ah,BYTE PTR [fcol]
 	mov	[fgbg],eax
 	lea	eax,[fgbg]
 	invoke	Set_Font_Palette_Range,eax,0,1
