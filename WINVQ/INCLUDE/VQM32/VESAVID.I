@@ -79,7 +79,7 @@ VESA_MAX EQU	VESA_1024X768_65K
 ; TotalMemory  - ???
 ; Reserved     - Pads structure to 256 bytes total
 
-	STRUC	VESAInfo
+VESAInfo	STRUC
 Signature	DD	?
 Ver	DW	?
 OEMString	DD	?
@@ -87,7 +87,7 @@ Capabilities	DD	?
 AvailModes	DD	?
 TotalMemory	DW	?
 Reserved	DB	236 DUP (?)
-	ENDS	VESAInfo
+VESAInfo	ENDS
 
 ; VESAModeInfo - Information about this VESA mode.
 ;                (Filled in by VESA BIOS Function 1)
@@ -127,7 +127,7 @@ Reserved	DB	236 DUP (?)
 ;                    10-FFh = OEM-specific
 ; BankSize         - Bank size in KB
 
-		STRUC	VESAModeInfo 
+VESAModeInfo	STRUC
 Attributes		DW	?
 WinA_Attributes	DB	?
 WinB_Attributes	DB	?
@@ -158,7 +158,7 @@ RsvdMaskSize		DB	?
 RsvdFieldPosition	DB	?
 DirectColorModeInfo	DB	?
 pad		DB	216 DUP (?)
-		ENDS	VESAModeInfo
+VESAModeInfo	ENDS
 
 ;----------------------------------------------------------------------------
 ; Function definitions
