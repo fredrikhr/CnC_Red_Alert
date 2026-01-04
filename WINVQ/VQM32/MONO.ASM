@@ -53,12 +53,11 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
+	.386
+	.MODEL FLAT
+	OPTION SEGMENT:USE32
 
-	DATASEG
+	.DATA
 
 MonoEnabled	DD	1
 MonoX	DD	0
@@ -84,7 +83,7 @@ BoxData	DB	1,0,0		; Upper left corner.
 
 PageMap	DD	0,1,2,3,4,5,6,7
 
-	CODESEG
+	.CODE
 
 ;****************************************************************************
 ;*
@@ -864,7 +863,7 @@ PageMap	DD	0,1,2,3,4,5,6,7
 ??fini:
 	mov      	eax,[oldpage]
 	ret
-	
+
 	ENDP	Mono_View_Page
 
 	END
