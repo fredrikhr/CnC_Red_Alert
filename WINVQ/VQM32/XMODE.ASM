@@ -521,7 +521,7 @@ Xmode_BufferCopy_320x200	PROC	NEAR C USES eax ecx edx edi esi es,
 ;----------------------------------------------------------------------------
 ;	Initialize
 ;----------------------------------------------------------------------------
-	
+
 	IF	PHARLAP_TNT
 	mov	eax,01Ch	;Set ES selector to VRAM.
 	mov	es,ax
@@ -545,7 +545,7 @@ x_loop_1:
 	ror	eax,16
 	mov	al,[esi]	;Get pixel
 	mov	ah,[esi + 4]	;Get pixel
-	mov	[es:edi],eax 	;Write plane 1 pixels to VRAM
+	mov	es:[edi],eax 	;Write plane 1 pixels to VRAM
 
 	add	esi,16	;Next source pixel position
 	add	edi,4	;Next VRAM position
@@ -569,7 +569,7 @@ x_loop_2:
 	ror	eax,16
 	mov	al,[esi]	;Get pixel
 	mov	ah,[esi + 4]	;Get pixel
-	mov	[es:edi],eax	;Write plane 2 pixels to VRAM
+	mov	es:[edi],eax	;Write plane 2 pixels to VRAM
 
 	add	esi,16	;Next source pixel position
 	add	edi,4	;Next VRAM position
@@ -593,7 +593,7 @@ x_loop_3:
 	ror	eax,16
 	mov	al,[esi]	;Get pixel
 	mov	ah,[esi + 4]	;Get pixel
-	mov	[es:edi],eax	;Write plane 3 pixels to VRAM
+	mov	es:[edi],eax	;Write plane 3 pixels to VRAM
 
 	add	esi,16	;Next source pixel position
 	add	edi,4	;Next VRAM position
@@ -616,7 +616,7 @@ x_loop_4:
 	ror	eax,16
 	mov	al,[esi]	;Get pixel
 	mov	ah,[esi + 4]	;Get pixel
-	mov	[es:edi],eax	;Write plane 4 pixels to VRAM
+	mov	es:[edi],eax	;Write plane 4 pixels to VRAM
 
 	add	esi,16	;Next source pixel position
 	add	edi,4	;Next screen position
@@ -709,7 +709,7 @@ Xmode_Blit	PROC	NEAR C USES ecx edx esi edi es,
 	ror	eax,16
 	mov	al,[esi]	;Get pixel
 	mov	ah,[esi + 4]	;Get pixel
-	mov	[es:edi],eax	;Write pixels to VRAM plane
+	mov	es:[edi],eax	;Write pixels to VRAM plane
 
 	add	esi,16	;Next source position
 	add	edi,4	;Next VRAM position
