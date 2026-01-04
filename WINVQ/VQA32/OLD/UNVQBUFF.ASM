@@ -132,7 +132,7 @@ ENDIF
 
 	IF	PHARLAP_TNT
 	push	es
-	les	edi,[FWORD buffer]	;KLUDGE - bcc32 pads FARPTR
+	les	edi,FWORD PTR buffer	;KLUDGE - bcc32 pads FARPTR
 	ELSE
 	mov	edi,[buffer]
 	ENDIF
@@ -148,7 +148,7 @@ ENDIF
 
 ??Not_finished_a_line:
 	sub	ebx,ebx
-	mov	bx,[WORD PTR esi]	;Get the codebook pointer value
+	mov	bx,WORD PTR [esi]	;Get the codebook pointer value
 	add	esi,2		; then advance to the next one.
 
 	or	bx,bx		;Is it a one color block?
@@ -315,7 +315,7 @@ ENDIF
 
 	IF	PHARLAP_TNT
 	push	es
-	les	edi,[FWORD buffer]	;KLUDGE - bcc32 pads FARPTR
+	les	edi,FWORD PTR buffer	;KLUDGE - bcc32 pads FARPTR
 	ELSE
 	mov	edi,[buffer]
 	ENDIF
@@ -331,7 +331,7 @@ ENDIF
 
 ??Not_finished_a_line:
 	sub	ebx,ebx
-	mov	bx,[WORD PTR esi]	;Get the codebook pointer value
+	mov	bx,WORD PTR [esi]	;Get the codebook pointer value
 	add	esi,2		; then advance to the next one.
 
 	or	bx,bx		;Is it a one color block?
@@ -513,7 +513,7 @@ UnVQ_2x3	ENDP
 ;;;
 ;;;	IF	PHARLAP_TNT
 ;;;	push	es
-;;;	les	edi,[FWORD buffer]	;KLUDGE - bcc32 pads FARPTR
+;;;	les	edi,FWORD PTR buffer	;KLUDGE - bcc32 pads FARPTR
 ;;;	ELSE
 ;;;	mov	edi,[buffer]
 ;;;	ENDIF
@@ -529,7 +529,7 @@ UnVQ_2x3	ENDP
 ;;;
 ;;;??Not_finished_a_line:
 ;;;	sub	ebx,ebx
-;;;	mov	bx,[WORD PTR esi]	;Get the codebook pointer value
+;;;	mov	bx,WORD PTR [esi]	;Get the codebook pointer value
 ;;;	add	esi,2		; then advance to the next one.
 ;;;
 ;;;	or	bx,bx		;Is it a one color block?
@@ -810,7 +810,7 @@ ENDIF
 
       	IF	PHARLAP_TNT
       	push	es
-      	les	edi,[FWORD buffer]	;KLUDGE - bcc32 pads FARPTR
+      	les	edi,FWORD PTR buffer	;KLUDGE - bcc32 pads FARPTR
       	ELSE
       	mov	edi,[buffer]
       	ENDIF
@@ -826,7 +826,7 @@ ENDIF
 
       ??Not_finished_a_line:
       	sub	ebx,ebx
-      	mov	bx,[WORD PTR esi]	;Get the codebook pointer value
+      	mov	bx,WORD PTR [esi]	;Get the codebook pointer value
       	add	esi,2		; then advance to the next one.
 
       	or	bx,bx		;Is it a one color block?
@@ -1035,7 +1035,7 @@ ENDIF
 
       	IF	PHARLAP_TNT
       	push	es
-      	les	edi,[FWORD buffer]	;KLUDGE - bcc32 pads FARPTR
+      	les	edi,FWORD PTR buffer	;KLUDGE - bcc32 pads FARPTR
       	ELSE
       	mov	edi,[buffer]
       	ENDIF
@@ -1052,7 +1052,7 @@ ENDIF
       ??Not_finished_a_line:
       	mov	eax,[entries]
       	xor	ebx,ebx
-      ;	mov	bx,[WORD PTR esi]	;Get the codebook pointer value
+      ;	mov	bx,WORD PTR [esi]	;Get the codebook pointer value
       ;	add	esi,2		; then advance to the next one.
       	mov	bl,[esi]
       	mov	bh,[esi + eax]
