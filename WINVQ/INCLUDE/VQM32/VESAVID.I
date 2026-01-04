@@ -104,10 +104,10 @@ VESAInfo	ENDS
 ; WinSize          - size of windows in KB (ie 64, 32)
 ; WinA_Segment     - location of Window A in CPU space (usually 0xa000)
 ; WinB_Segment     - location of Window B in CPU space (usually 0xb000)
-; WinFunc          - address of window-setting function (This is provided 
+; WinFunc          - address of window-setting function (This is provided
 ;                    as an alternative to Int 10 for speed.)
 ; BytesPerScanline - # bytes per scan line
-; 
+;
 ; Optional info (available if bit 1 of Attributes is set):
 ;
 ; XRes             - X-resolution
@@ -123,7 +123,7 @@ VESAInfo	ENDS
 ;                    03h = 4 plane planar mode
 ;                    04h = packed pixel mode (1 byte/pixel)
 ;                    05h = non-chain 4, 256-color mode
-;                    06-0Fh = 
+;                    06-0Fh =
 ;                    10-FFh = OEM-specific
 ; BankSize         - Bank size in KB
 
@@ -191,7 +191,7 @@ VESAModeInfo	ENDS
 ;
 ;----------------------------------------------------------------------------
 
-	MACRO	SET_WINDOW grain_num
+SET_WINDOW	MACRO	grain_num
 	push	esi
 	push	edi
 	push	es
