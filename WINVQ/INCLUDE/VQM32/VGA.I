@@ -99,7 +99,7 @@ XPLANE_4	EQU	8
 ;
 ;----------------------------------------------------------------------------
 
-	MACRO	SET_PLANE plane
+SET_PLANE	MACRO	plane
 	mov	edx,R_SEQUENCER
 	mov	eax,SEQ_MAP_MASK
 	out	dx,al
@@ -124,12 +124,12 @@ XPLANE_4	EQU	8
 ;
 ;----------------------------------------------------------------------------
 
-	MACRO	SET_BITMASK mask
+SET_BITMASK	MACRO	_mask
 	mov	edx,R_GRAPHICS_CONTROLLER
 	mov	eax,GC_BITMASK
 	out	dx,al
 	inc	edx
-	mov	eax,mask
+	mov	eax,_mask
 	out	dx,al
 	ENDM
 
@@ -149,7 +149,7 @@ XPLANE_4	EQU	8
 ;
 ;----------------------------------------------------------------------------
 
-	MACRO	SET_WRITEMODE mode
+SET_WRITEMODE	MACRO	mode
 	mov	edx,R_GRAPHICS_CONTROLLER
 	mov	eax,GC_MODE
 	out	dx,al
@@ -178,7 +178,7 @@ XPLANE_4	EQU	8
 ;
 ;----------------------------------------------------------------------------
 
-	MACRO	OUTPORT port,register,data
+OUTPORT	MACRO	port,register,data
 	mov	edx,port
 	mov	al,register
 	out	dx,al
@@ -207,7 +207,7 @@ XPLANE_4	EQU	8
 ;
 ;----------------------------------------------------------------------------
 
-	MACRO	INPORT port,register
+INPORT	MACRO	port,register
 	mov	edx,port
 	mov	al,register
 	out	dx,al
