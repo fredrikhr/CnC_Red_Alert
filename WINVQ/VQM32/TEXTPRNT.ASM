@@ -39,11 +39,10 @@
 ;*                                                                         *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
-	CODESEG
+	.386
+	.MODEL FLAT
+	OPTION SEGMENT:USE32
+	.CODE
 
 XPIXEL_MAX    EQU	320
 YPIXEL_MAX	EQU	200
