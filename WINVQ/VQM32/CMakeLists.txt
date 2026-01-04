@@ -39,3 +39,5 @@ target_sources(WINVQM32
 if(USE_WINVQ_AS_VQ)
 add_library(VQM32 ALIAS WINVQM32)
 endif(USE_WINVQ_AS_VQ)
+
+set_asm_masm_source_files_language_property()
