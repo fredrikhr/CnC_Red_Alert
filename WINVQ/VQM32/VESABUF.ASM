@@ -59,7 +59,7 @@
 ; Set DS:SI to current source location
 ; Uses: ax, cx, dx
 ;---------------------------------------------------------------------------
-	MACRO	DRAW_BLOCK_ROWS numrows
+DRAW_BLOCK_ROWS	MACRO	numrows
 	LOCAL	??Start_row
 	LOCAL	??Not_finished_a_line
 	LOCAL	??Done
@@ -99,7 +99,7 @@
 ; Set DS:SI to current source location
 ; Uses: ax, cx
 ;---------------------------------------------------------------------------
-	MACRO	DRAW_BLOCK_ROW numblks
+DRAW_BLOCK_ROW	MACRO	numblks
 	LOCAL	??Not_done
 
 	mov	ecx,numblks
@@ -129,7 +129,7 @@
 ; Set DS:SI to current source location
 ; Uses: ax, cx
 ;---------------------------------------------------------------------------
-	MACRO	DRAW_PIXEL_ROW numblks
+DRAW_PIXEL_ROW	MACRO	numblks
 	LOCAL	??Not_done
 
 	mov	ecx,numblks
