@@ -74,8 +74,8 @@ DRAW_BLOCK_ROWS	MACRO	numrows
 	inc	esi
 
 	IF	PHARLAP_TNT
-	mov	WORD PTR [es:edi],ax
-	mov	WORD PTR [es:edi+640],ax
+	mov	WORD PTR es:[edi],ax
+	mov	WORD PTR es:[edi+640],ax
 	ELSE
 	mov	WORD PTR [edi],ax
 	mov	WORD PTR [edi+640],ax
@@ -110,8 +110,8 @@ DRAW_BLOCK_ROW	MACRO	numblks
 	inc	esi
 
 	IF	PHARLAP_TNT
-	mov	WORD PTR [es:edi],ax
-	mov	WORD PTR [es:edi+640],ax
+	mov	WORD PTR es:[edi],ax
+	mov	WORD PTR es:[edi+640],ax
 	ELSE
 	mov	WORD PTR [edi],ax
 	mov	WORD PTR [edi+640],ax
@@ -140,7 +140,7 @@ DRAW_PIXEL_ROW	MACRO	numblks
 	inc	esi
 
 	IF	PHARLAP_TNT
-	mov	WORD PTR [es:edi],ax
+	mov	WORD PTR es:[edi],ax
 	ELSE
 	mov	WORD PTR [edi],ax
 	ENDIF
@@ -541,7 +541,7 @@ Buf_320x200_To_VESA_32K	PROC	NEAR C USES ebx ecx edx esi edi,
 	mov	ax,WORD PTR [ebx]
 
 	IF	PHARLAP_TNT
-	mov	WORD PTR [es:edi],ax
+	mov	WORD PTR es:[edi],ax
 	ELSE
 	mov	WORD PTR [edi],ax
 	ENDIF
@@ -573,7 +573,7 @@ Buf_320x200_To_VESA_32K	PROC	NEAR C USES ebx ecx edx esi edi,
 	mov	ax,WORD PTR [ebx]
 
 	IF	PHARLAP_TNT
-	mov	WORD PTR [es:edi],ax
+	mov	WORD PTR es:[edi],ax
 	ELSE
 	mov	WORD PTR [edi],ax
 	ENDIF
@@ -687,7 +687,7 @@ Copy_Word_Row	PROC	NEAR C USES ebx ecx esi edi,
 	mov	ax,[ebx]	;Get color
 
 	IF	PHARLAP_TNT
-	mov	[es:edi],ax	;Set 16bit pixel
+	mov	es:[edi],ax	;Set 16bit pixel
 	ELSE
 	mov	[edi],ax	;Set 16bit pixel
 	ENDIF
