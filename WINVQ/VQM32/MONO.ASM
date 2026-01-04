@@ -306,7 +306,7 @@ Mono_Clear_Screen	PROC	NEAR C USES es eax ecx edi
 	xor	eax,eax		;Set char & attributes to 0
 	mov	ecx,8000h/4		;Number of longwords to clear
 	rep	stosd		;Clear the mono screen.
-	call	Mono_Set_Cursor C,eax,eax
+	invoke	Mono_Set_Cursor,eax,eax
 
 ??fini:
 	ret
@@ -433,7 +433,7 @@ Mono_Put_Char	PROC	NEAR C USES es eax edi,
 ;	Update cursor position.
 
 	inc	[MonoX]		; X position moves.
-	call	Mono_Set_Cursor C,[MonoX],[MonoY]
+	invoke	Mono_Set_Cursor,[MonoX],[MonoY]
 
 ??fini:
 	ret
@@ -505,7 +505,7 @@ Mono_Draw_Rect	PROC	NEAR C,
 
 	push	[MonoY]
 	push	[MonoX]		;Save current cursor position
-	call	Mono_Set_Cursor C,[xpos],[ypos]
+	invoke	Mono_Set_Cursor,[xpos],[ypos]
 
 ;	Draw the rectangle
 
@@ -530,7 +530,7 @@ Mono_Draw_Rect	PROC	NEAR C,
 ??runloop:
 	xor	eax,eax
 	mov	al,[BYTE PTR edi]
-	call	Mono_Put_Char C,eax,[attrib]	;Output the character.
+	invoke	Mono_Put_Char,eax,[attrib]	;Output the character.
 
 	mov	al,[BYTE PTR esi+1]
 	cbw
@@ -608,7 +608,7 @@ _Mono_Text_Print	PROC	NEAR C USES eax esi,
 	cmp	[text],0		;Exit if the string is NULL
 	je	short ??fini
 
-	call	Mono_Set_Cursor C,[xpos],[ypos]
+	invoke	Mono_Set_Cursor,[xpos],[ypos]
 
 ;	Print string to the mono screen
 
@@ -627,7 +627,7 @@ _Mono_Text_Print	PROC	NEAR C USES eax esi,
 
 ??normal:
 	xor	ah,ah
-	call	Mono_Put_Char C,eax,[attrib]
+	invoke	Mono_Put_Char,eax,[attrib]
 
 ;	Perform adjustments if wrapping past right margin.
 
@@ -635,14 +635,14 @@ _Mono_Text_Print	PROC	NEAR C USES eax esi,
 	jb	short ??nowrap
 
 	inc	[ypos]
-	call	Mono_Set_Cursor C,0,[ypos]
+	invoke	Mono_Set_Cursor,0,[ypos]
 	jmp	short ??nowrap
 
 	; Move to start of next line.
 
 ??cr:
 	inc	[ypos]
-	call	Mono_Set_Cursor C,[xpos],[ypos]
+	invoke	Mono_Set_Cursor,[xpos],[ypos]
 
 ;	Scroll the monochrome screen if necessary.
 
@@ -650,7 +650,7 @@ _Mono_Text_Print	PROC	NEAR C USES eax esi,
 	cmp	[MonoY],25
 	jb	short ??noscroll
 
-	call	Mono_Scroll C,1
+	invoke	Mono_Scroll,1
 	dec	[ypos]
 
 ??noscroll:
@@ -709,7 +709,7 @@ Mono_Text_Print	PROC	NEAR C,
 	cmp	[MonoEnabled],0
 	je	short ??fini
 
-	call	_Mono_Text_Print C,[text],[xpos],[ypos],[attrib],0
+	invoke	_Mono_Text_Print,[text],[xpos],[ypos],[attrib],0
 
 ??fini:
 	ret
@@ -747,7 +747,7 @@ Mono_Print	PROC	NEAR C,
 	cmp	[MonoEnabled],0
 	je	short ??fini
 
-	call	_Mono_Text_Print C,[text],[MonoX],[MonoY],2,1
+	invoke	_Mono_Text_Print,[text],[MonoX],[MonoY],2,1
 
 ??fini:
 	ret
