@@ -40,4 +40,6 @@ if(USE_WINVQ_AS_VQ)
 add_library(VQA32 ALIAS WINVQA32)
 endif(USE_WINVQ_AS_VQ)
 
+set_asm_masm_source_files_language_property()
+
 add_subdirectory(OLD)

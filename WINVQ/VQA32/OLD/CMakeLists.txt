@@ -40,3 +40,5 @@ target_link_libraries(WINVQA32_OLD PRIVATE WINVQM32)
 if(USE_WINVQ_AS_VQ)
 add_library(VQA32_OLD ALIAS WINVQA32_OLD)
 endif(USE_WINVQ_AS_VQ)
+
+set_asm_masm_source_files_language_property()
