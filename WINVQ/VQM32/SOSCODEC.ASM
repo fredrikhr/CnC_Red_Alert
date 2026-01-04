@@ -137,10 +137,8 @@ wCODECMask			DW	0 ; Current mask
 ;*
 ;****************************************************************************
 
-	GLOBAL	C VQA_sosCODECInitStream:NEAR
-	PROC	VQA_sosCODECInitStream C NEAR
-
-	ARG	sSOSInfo:NEAR PTR
+VQA_sosCODECInitStream	PROC	NEAR C,
+	sSOSInfo:NEAR PTR
 
 	mov	eax,[sSOSInfo]
 	mov	[(sCompInfo eax).wIndex],0 		; starting index 0
@@ -153,7 +151,7 @@ wCODECMask			DW	0 ; Current mask
 	mov	[(sCompInfo eax).dwSampleIndex2],0 	;start at head of index
 	ret
 
-	ENDP	VQA_sosCODECInitStream
+VQA_sosCODECInitStream	ENDP
 
 ;****************************************************************************
 ;*
@@ -178,10 +176,9 @@ wCODECMask			DW	0 ; Current mask
 ;*
 ;****************************************************************************
 
-	GLOBAL	C VQA_sosCODECCompressData:NEAR
-	PROC	VQA_sosCODECCompressData C NEAR
-	ARG	sSOSInfo:NEAR PTR
-	ARG	wBytes:DWORD
+VQA_sosCODECCompressData	PROC	NEAR C,
+	sSOSInfo:NEAR PTR,
+	wBytes:DWORD
 
 	push	esi
 	push	edi
@@ -797,7 +794,7 @@ wCODECMask			DW	0 ; Current mask
 	pop	esi
 	ret
 
-	ENDP	VQA_sosCODECCompressData
+VQA_sosCODECCompressData	ENDP
 
 
 ;****************************************************************************
@@ -823,11 +820,9 @@ wCODECMask			DW	0 ; Current mask
 ;*
 ;****************************************************************************
 
-	GLOBAL	C VQA_sosCODECDecompressData:NEAR
-	PROC	VQA_sosCODECDecompressData C NEAR
-
-	ARG	sSOSInfo:NEAR PTR
-	ARG	wBytes:DWORD
+VQA_sosCODECDecompressData	PROC	NEAR C,
+	sSOSInfo:NEAR PTR,
+	wBytes:DWORD
 
 	push	esi
 	push	edi
@@ -1264,7 +1259,7 @@ wCODECMask			DW	0 ; Current mask
 	pop	esi
 	ret
 
-	ENDP	VQA_sosCODECDecompressData
+VQA_sosCODECDecompressData	ENDP
 	END
 
 
