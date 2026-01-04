@@ -46,13 +46,12 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
-	INCLUDE	"vga.i"
-	INCLUDE	"video.i"
-	CODESEG
+	.386
+	.MODEL FLAT
+	OPTION SEGMENT:USE32
+	INCLUDE	<vga.i>
+	INCLUDE	<video.i>
+	.CODE
 
 ;****************************************************************************
 ;*
