@@ -47,12 +47,11 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
-	INCLUDE	"video.i"
-	CODESEG
+	.386
+	.MODEL FLAT
+	OPTION SEGMENT:USE32
+	INCLUDE	<video.i>
+	.CODE
 
 ;---------------------------------------------------------------------------
 ; DRAW_BLOCK_ROWS: draws 'numrows' rows of 2x2 blocks
