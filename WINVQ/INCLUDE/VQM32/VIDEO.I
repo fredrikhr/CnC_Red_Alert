@@ -75,6 +75,6 @@ DisplayInfo	ENDS
 ; Function definitions
 ;----------------------------------------------------------------------------
 
-	GLOBAL C GetDisplayInfo:NEAR
-	GLOBAL C GetVBIBit:NEAR
+GetDisplayInfo	PROTO	NEAR C
+GetVBIBit		PROTO	NEAR C
 
