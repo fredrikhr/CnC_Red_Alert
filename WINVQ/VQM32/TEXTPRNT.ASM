@@ -124,7 +124,7 @@ Text_Print	PROC	 NEAR C USES ebx ecx edx edi esi,
 	mov	ah,[BYTE PTR fcol]
 	mov	[fgbg],eax
 	lea	eax,[fgbg]
-	call	Set_Font_Palette_Range C,eax,0,1
+	invoke	Set_Font_Palette_Range,eax,0,1
 
 ; start of loop to print string
 
@@ -154,7 +154,7 @@ Text_Print	PROC	 NEAR C USES ebx ecx edx edi esi,
 	jmp	??loop
 
 ??chkxy:
-	call	Char_Pixel_Width C,edx
+	invoke	Char_Pixel_Width,edx
 
 	; Check to see if this character would spill past the right edge
 	; of the screen. If it would then drop down a line.
@@ -165,7 +165,7 @@ Text_Print	PROC	 NEAR C USES ebx ecx edx edi esi,
 	cmp	eax,XPIXEL_MAX		; check x pos
 	ja	short ??onelinedown
 
-	call	Draw_Char C,edx,ebx,ecx
+	invoke	Draw_Char,edx,ebx,ecx
 
 	add	ebx,[fwidth]		; add font width
 	jmp	??loop
