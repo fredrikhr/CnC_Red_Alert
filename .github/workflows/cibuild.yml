@@ -15,13 +15,7 @@ jobs:
         shell: cmd
         run: |
           ECHO.::add-matcher::.github\matchers\ninja.json
-      - id: detect-visual-studio
-        name: Detect Visual Studio
-        shell: cmd
-        run: CALL .github\scripts\detect-visual-studio.cmd
       - id: cmake-configure-generate
         name: CMake Configure and Generate
         shell: cmd
-        env:
-          VISUAL_STUDIO_INSTALLATION_PATH: ${{ steps.detect-visual-studio.outputs.visual-studio-installationpath }}
         run: CALL .github\scripts\vs-cmake-configure-generate.cmd
