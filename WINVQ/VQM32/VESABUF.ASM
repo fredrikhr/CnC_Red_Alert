@@ -69,16 +69,16 @@ DRAW_BLOCK_ROWS	MACRO	numrows
 	mov	ecx,320
 
 ??Not_finished_a_line:
-	mov	al,[BYTE PTR esi]
+	mov	al,BYTE PTR [esi]
 	mov	ah,al
 	inc	esi
 
 	IF	PHARLAP_TNT
-	mov	[WORD PTR es:edi],ax
-	mov	[WORD PTR es:edi+640],ax
+	mov	WORD PTR [es:edi],ax
+	mov	WORD PTR [es:edi+640],ax
 	ELSE
-	mov	[WORD PTR edi],ax
-	mov	[WORD PTR edi+640],ax
+	mov	WORD PTR [edi],ax
+	mov	WORD PTR [edi+640],ax
 	ENDIF
 
 	add	edi,2
@@ -105,16 +105,16 @@ DRAW_BLOCK_ROW	MACRO	numblks
 	mov	ecx,numblks
 
 ??Not_done:
-	mov	al,[BYTE PTR esi]
+	mov	al,BYTE PTR [esi]
 	mov	ah,al
 	inc	esi
 
 	IF	PHARLAP_TNT
-	mov	[WORD PTR es:edi],ax
-	mov	[WORD PTR es:edi+640],ax
+	mov	WORD PTR [es:edi],ax
+	mov	WORD PTR [es:edi+640],ax
 	ELSE
-	mov	[WORD PTR edi],ax
-	mov	[WORD PTR edi+640],ax
+	mov	WORD PTR [edi],ax
+	mov	WORD PTR [edi+640],ax
 	ENDIF
 
 	add	edi,2
@@ -135,14 +135,14 @@ DRAW_PIXEL_ROW	MACRO	numblks
 	mov	ecx,numblks
 
 ??Not_done:
-	mov	al,[BYTE PTR esi]
+	mov	al,BYTE PTR [esi]
 	mov	ah,al
 	inc	esi
 
 	IF	PHARLAP_TNT
-	mov	[WORD PTR es:edi],ax
+	mov	WORD PTR [es:edi],ax
 	ELSE
-	mov	[WORD PTR edi],ax
+	mov	WORD PTR [edi],ax
 	ENDIF
 
 	add	edi,2
@@ -200,17 +200,17 @@ DRAW_PIXEL_ROW	MACRO	numblks
 ;
 ;	mov	esi,[disp]
 ;	xor	eax,eax
-;	mov	edi,[(DisplayInfo esi).Extended]
+;	mov	edi,(DisplayInfo PTR [esi]).Extended
 ;	xor	ebx,ebx
-;	mov	ax,[(VESAModeInfo edi).WinSize]
+;	mov	ax,(VESAModeInfo PTR [edi]).WinSize
 ;	xor	edx,edx
-;	mov	bx,[(VESAModeInfo edi).WinGranularity]
+;	mov	bx,(VESAModeInfo PTR [edi]).WinGranularity
 ;	idiv	ebx
 ;	mov	[grain],eax
 ;
 ;;	Calculate screen offset
 ;
-;	mov	eax,[(DisplayInfo esi).XRes]
+;	mov	eax,(DisplayInfo PTR [esi]).XRes
 ;	mov	[xres],eax
 ;	imul	[y]
 ;	add	eax,[x]
@@ -531,19 +531,19 @@ Buf_320x200_To_VESA_32K	PROC	NEAR C USES ebx ecx edx esi edi,
 ??Buf0Loop:
 	xor	eax,eax
 	mov	ebx,[palette]
-	mov	al,[BYTE PTR esi]
+	mov	al,BYTE PTR [esi]
 	add	ebx,eax
 	inc	esi
 	add	ebx,eax
 
 ;	store the 15-bit palette value
 
-	mov	ax,[WORD PTR ebx]
+	mov	ax,WORD PTR [ebx]
 
 	IF	PHARLAP_TNT
-	mov	[WORD PTR es:edi],ax
+	mov	WORD PTR [es:edi],ax
 	ELSE
-	mov	[WORD PTR edi],ax
+	mov	WORD PTR [edi],ax
 	ENDIF
 
 	add	edi,2
@@ -563,19 +563,19 @@ Buf_320x200_To_VESA_32K	PROC	NEAR C USES ebx ecx edx esi edi,
 ??Buf1Loop:
 	xor	eax,eax
 	mov	ebx,[palette]
-	mov	al,[BYTE PTR esi]
+	mov	al,BYTE PTR [esi]
 	add	ebx,eax
 	inc	esi
 	add	ebx,eax
 
 ;	Store the 15-bit palette value
 
-	mov	ax,[WORD PTR ebx]
+	mov	ax,WORD PTR [ebx]
 
 	IF	PHARLAP_TNT
-	mov	[WORD PTR es:edi],ax
+	mov	WORD PTR [es:edi],ax
 	ELSE
-	mov	[WORD PTR edi],ax
+	mov	WORD PTR [edi],ax
 	ENDIF
 
 	add	edi,2
