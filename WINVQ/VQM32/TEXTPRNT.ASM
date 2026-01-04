@@ -56,9 +56,16 @@ FONTHEIGHTBLOCK	EQU	12
 FONTINFOMAXHEIGHT	EQU	4
 FONTINFOMAXWIDTH	EQU	5
 
-	EXTRN	C Char_Pixel_Width:NEAR
-	EXTRN	C Draw_Char:NEAR
-	EXTRN	C Set_Font_Palette_Range:NEAR
+	Char_Pixel_Width		PROTO	NEAR C,
+	chr:DWORD
+Draw_Char				PROTO	NEAR C,
+	character:DWORD,
+	x:DWORD,
+	y:DWORD
+Set_Font_Palette_Range	PROTO	NEAR C,
+	palette:NEAR PTR,
+	start:DWORD,
+	_end:DWORD
 	EXTRN	FontPtr:NEAR PTR
 	EXTRN	FontYSpacing:DWORD
 	
