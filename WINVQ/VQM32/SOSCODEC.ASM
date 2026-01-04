@@ -41,10 +41,9 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
+	.386
+	.MODEL FLAT
+	OPTION SEGMENT:USE32
 
 	STRUC	sCompInfo
 lpSource	DD	?	;Compressed data pointer
@@ -71,7 +70,7 @@ wStep2	DW	?	;Step value in table
 wIndex2	DW	?	;Index into step table
 	ENDS	sCompInfo
 
-	DATASEG
+	.DATA
 
 ;* Index table for stepping into step table
 
@@ -115,7 +114,7 @@ dwCODECByteIndex		DD	0 ; this is when to stop compressing
 dwCODECBytesProcessed		DD	0 ; this is how many so far compressed
 dwCODECTempStep		DD	0 ; tempory storage for step value
 wCODECMask			DW	0 ; Current mask
-	CODESEG
+	.CODE
 
 ;****************************************************************************
 ;*
