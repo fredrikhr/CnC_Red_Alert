@@ -221,11 +221,11 @@ LCW_Compress	PROC	NEAR  C USES ebx ecx edx esi edi,
 
 ??len:
 	mov	ebx,[lenoff]		;Get the offset of the length code
-	cmp	[BYTE PTR ebx],0BFh	;See if its maxed out
+	cmp	BYTE PTR [ebx],0BFh	;See if its maxed out
 	je	??lenin1		;If so put out a new len code
 
 ??stolen:
-	inc	[BYTE PTR ebx] 	;Inc the count code
+	inc	BYTE PTR [ebx] 	;Inc the count code
 	lodsb			;Get the byte
 	stosb			;Store it
 	mov	[inlen],1		;We are now in a length so save it
