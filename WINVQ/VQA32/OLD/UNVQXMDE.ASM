@@ -136,7 +136,7 @@ ENDIF
 
 	IF	PHARLAP_TNT
 	push	es
-	les	edi,[FWORD buffer]	;KLUDGE - bcc32 pads FARPTR
+	les	edi,FWORD PTR buffer	;KLUDGE - bcc32 pads FARPTR
 	ELSE
 	mov	edi,[buffer]
 	ENDIF
@@ -154,7 +154,7 @@ ENDIF
 
 ??Not_finished_a_line1:
 	sub	ebx,ebx
-	mov	bx,[WORD PTR esi]	;Get the codebook pointer value
+	mov	bx,WORD PTR [esi]	;Get the codebook pointer value
 	add	esi,2		; then advance to the next one.
 
 	or	bx,bx		;Is it a one color block?
