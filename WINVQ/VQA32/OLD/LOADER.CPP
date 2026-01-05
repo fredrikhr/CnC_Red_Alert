@@ -71,6 +71,7 @@
 #include <fcntl.h>
 #include <io.h>
 #include <malloc.h>
+#include <memory.h>
 #include <mem.h>
 #include <dos.h>
 #include "vq.h"

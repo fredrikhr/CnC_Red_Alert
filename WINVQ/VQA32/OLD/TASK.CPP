@@ -61,6 +61,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <dos.h>
+#include <memory.h>
 #include <mem.h>
 #include <conio.h>
 #include <sys\timeb.h>
