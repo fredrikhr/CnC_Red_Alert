@@ -168,8 +168,8 @@ ENDIF
 ;	mov	ebx,[bufwidth]
 
 	IF	PHARLAP_TNT
-	mov	[es:edi],eax		;Write 1st row to dest
-	mov	[es:edi+ebx],edx	;Write 2nd row to dest
+	mov	es:[edi],eax		;Write 1st row to dest
+	mov	es:[edi+ebx],edx	;Write 2nd row to dest
 	ELSE
 	mov	[edi],al		;Write 1st row to dest
 	mov	[edi+80],dl		;Write 2nd row to dest
@@ -210,8 +210,8 @@ ENDIF
 ;	mov	ebx,[bufwidth]
 
 	IF	PHARLAP_TNT
-	mov	[es:edi],eax		;Write 1st row to dest
-	mov	[es:edi+ebx],eax	;Write 2nd row to dest
+	mov	es:[edi],eax		;Write 1st row to dest
+	mov	es:[edi+ebx],eax	;Write 2nd row to dest
 	ELSE
 	mov	[edi],al		;Write 1st row to dest
 	mov	[edi+80],al		;Write 2nd row to dest
