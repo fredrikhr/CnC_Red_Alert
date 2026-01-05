@@ -59,9 +59,9 @@
 
 /* Internal library version. */
 #define VQA_VERSION "2.42"
-#define VQA_DATE    __DATE__" "__TIME__
+#define VQA_DATE    __DATE__ " " __TIME__
 
-#define VQA_IDSTRING "VQA32 "VQA_VERSION" ("VQA_DATE")"
+#define VQA_IDSTRING "VQA32 " VQA_VERSION " (" VQA_DATE ")"
 #define VQA_REQUIRES "VQM32 2.12 or better."
 
 /* Block dimensions macro and identifiers. */
@@ -157,7 +157,7 @@ typedef struct _VQAFrameNode {
 	VQACBNode            *Codebook;
 	unsigned char        *Palette;
 	struct _VQAFrameNode *Next;
-	unsigned long        Flags; 
+	unsigned long        Flags;
 	long                 FrameNum;
 	long                 PtrOffset;
 	long                 PalOffset;
