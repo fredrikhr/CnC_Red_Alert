@@ -405,11 +405,11 @@ typedef struct _VQAData {
 	long (*Page_Flip)(VQAHandle *vqa);
 
 	#ifndef PHARLAP_TNT
-	void cdecl (*UnVQ)(unsigned char *codebook, unsigned char *pointers,
+	void (__cdecl *UnVQ)(unsigned char *codebook, unsigned char *pointers,
 			unsigned char *buffer, unsigned long blocksperrow,
 			unsigned long numrows, unsigned long bufwidth);
 	#else
-	void cdecl (*UnVQ)(unsigned char *codebook, unsigned char *pointers,
+	void (__cdecl *UnVQ)(unsigned char *codebook, unsigned char *pointers,
 			FARPTR buffer, unsigned long blocksperrow, unsigned long numrows,
 			unsigned long bufwidth);
 	#endif

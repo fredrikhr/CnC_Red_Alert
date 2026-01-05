@@ -114,7 +114,7 @@ static long DrawFrame_Buffer(VQAHandle *vqa);
 static long PageFlip_Nop(VQAHandle *vqa);
 
 #ifndef PHARLAP_TNT
-static void cdecl UnVQ_Nop(unsigned char *codebook, unsigned char *pointers,
+static void __cdecl UnVQ_Nop(unsigned char *codebook, unsigned char *pointers,
 		unsigned char *buffer, unsigned long blocksperrow,
 		unsigned long numrows, unsigned long bufwidth);
 #else
@@ -628,7 +628,7 @@ static long Select_Frame(VQAHandleP *vqap)
 	drawer->DesiredFrame = desiredframe;
 	#endif
 
-	/* Handle the cases where the player is going so fast that it's not time 
+	/* Handle the cases where the player is going so fast that it's not time
 	 * to draw this frame yet.
 	 *
 	 * - If the Drawer is using a slower frame rate than the Loader, use a
@@ -656,13 +656,13 @@ static long Select_Frame(VQAHandleP *vqap)
 		return (0);
 	}
 
-	/* Handle the case where the player is going too slow, so we have to skip 
+	/* Handle the case where the player is going too slow, so we have to skip
 	 * some frames:
 	 *
 	 * - If this is a Key Frame, draw it
 	 * - If this frame's # is less than what we're supposed to draw, skip it
-	 *   (Because the 1st 'desiredframe' will be 0, FrameNum MUST be typecast 
-	 *   to signed WORD for the comparison; otherwise, the comparison uses 
+	 *   (Because the 1st 'desiredframe' will be 0, FrameNum MUST be typecast
+	 *   to signed WORD for the comparison; otherwise, the comparison uses
 	 *   UWORDs, and the first frame is always skipped.)
 	 * - If this is a palette-set frame, set the palette before skipping it
 	 * - Loop until we get the frame we need, or there's no frames available
@@ -721,7 +721,7 @@ static long Select_Frame(VQAHandleP *vqap)
 			break;
 		}
 	}
-	
+
 	drawer->LastFrame = curframe->FrameNum;
 	drawer->LastTime = curtime;
 
@@ -2170,7 +2170,7 @@ static long DrawFrame_Buffer(VQAHandle *vqa)
 		/* Uncompress the frame data */
 		Prepare_Frame(vqabuf);
 	}
- 
+
 	/* Wait for Update_Enabled to be set low */
 	if (vqabuf->Flags & VQADATF_UPDATE) {
 		vqabuf->Flags |= VQADATF_DSLEEP;
