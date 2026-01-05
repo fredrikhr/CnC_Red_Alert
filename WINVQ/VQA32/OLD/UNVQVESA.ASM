@@ -86,7 +86,7 @@ SKIP_PTR	EQU	8000h
 ; Uses: EAX, DX, SI!
 ;---------------------------------------------------------------------------
 
-	MACRO	SET_2_PIXELS cb_index,edi_index
+SET_2_PIXELS	MACRO	cb_index,edi_index
 	xor	edx,edx
 	mov	dl,[BYTE PTR ebx+1+cb_index]
 	shl	edx,1
@@ -113,7 +113,7 @@ SKIP_PTR	EQU	8000h
 ; Draws 'numrows' rows of 'blocksperrow' blocks each
 ;---------------------------------------------------------------------------
 
-	MACRO	DRAW_BLOCK_ROWS numrows,blocksperrow
+DRAW_BLOCK_ROWS	MACRO	numrows,blocksperrow
 	LOCAL	??Start_row
 	LOCAL	??Not_finished_a_line
 	LOCAL	??One_color
@@ -216,7 +216,7 @@ SKIP_PTR	EQU	8000h
 ; 'cb_add' = amt to add to codebook (0=top half, 4=bottom half)
 ;---------------------------------------------------------------------------
 
-	MACRO	DRAW_BLOCK_PART_ROW numblocks,cb_add
+DRAW_BLOCK_PART_ROW	MACRO	numblocks,cb_add
 	LOCAL	??Not_finished_a_line
 	LOCAL	??One_color
 	LOCAL	??Draw_One_Color
