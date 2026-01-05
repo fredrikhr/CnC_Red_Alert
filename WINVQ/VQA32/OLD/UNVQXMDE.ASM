@@ -92,21 +92,23 @@ CBOOK_SEG	EQU	(0B0000h - 270h)
 ;*
 ;****************************************************************************
 
-	GLOBAL	C UnVQ_4x2_Xmode:NEAR
-	PROC	UnVQ_4x2_Xmode C NEAR USES
-
-	ARG	codebook:NEAR PTR
-	ARG	pointers:NEAR PTR
-
-	IF	PHARLAP_TNT
-	ARG	buffer:QWORD	;KLUDGE - bcc32 pads FARPTR
-	ELSE
-	ARG	buffer:NEAR PTR
-	ENDIF
-
-	ARG	blocksperrow:DWORD
-	ARG	numrows:DWORD
-	ARG	bufwidth:DWORD
+IF	PHARLAP_TNT
+UnVQ_4x2_Xmode	PROC	NEAR C,
+	codebook:NEAR PTR,
+	pointers:NEAR PTR,
+	buffer:QWORD,	;KLUDGE - bcc32 pads FARPTR
+	blocksperrow:DWORD,
+	numrows:DWORD,
+	bufwidth:DWORD
+ELSE
+UnVQ_4x2_Xmode	PROC	NEAR C,
+	codebook:NEAR PTR,
+	pointers:NEAR PTR,
+	buffer:NEAR PTR,
+	blocksperrow:DWORD,
+	numrows:DWORD,
+	bufwidth:DWORD
+ENDIF
 
 	LOCAL	data_end:DWORD
 	LOCAL	cb_offset:DWORD
@@ -236,7 +238,7 @@ CBOOK_SEG	EQU	(0B0000h - 270h)
 	ENDIF
 
 	ret
-	ENDP	UnVQ_4x2_Xmode
+UnVQ_4x2_Xmode	ENDP
 
 
 ;****************************************************************************
@@ -282,14 +284,12 @@ CBOOK_SEG	EQU	(0B0000h - 270h)
 ;*
 ;****************************************************************************
 
-	GLOBAL	C UnVQ_4x2_XmodeCB:NEAR
-	PROC	UnVQ_4x2_XmodeCB C NEAR USES
-
-	ARG	cbdummy:FAR PTR
-	ARG	pointers:FAR PTR
-	ARG	buffer:FAR PTR
-	ARG	blocksperrow:WORD
-	ARG	numrows:WORD
+UnVQ_4x2_XmodeCB	PROC	NEAR C,
+	cbdummy:FAR PTR,
+	pointers:FAR PTR,
+	buffer:FAR PTR,
+	blocksperrow:WORD,
+	numrows:WORD,
 
 ;	;-------------------------------------------------------------------
 ;	; Local variables:
@@ -436,7 +436,7 @@ CBOOK_SEG	EQU	(0B0000h - 270h)
 ;	pop	ds
 	ret
 
-	ENDP	UnVQ_4x2_XmodeCB
+UnVQ_4x2_XmodeCB	ENDP
 
 
 ;****************************************************************************
@@ -472,11 +472,9 @@ CBOOK_SEG	EQU	(0B0000h - 270h)
 ;*
 ;****************************************************************************
 
-	GLOBAL	C Upload_4x2CB:NEAR
-	PROC	Upload_4x2CB C NEAR USES
-
-	ARG	codebook:NEAR PTR
-	ARG	numentries:DWORD
+Upload_4x2CB	PROC	NEAR C,
+	codebook:NEAR PTR,
+	numentries:DWORD,
 
 ;	;===================================================================
 ;	; Generate the 1-color block table by writing each color value from
@@ -632,7 +630,7 @@ CBOOK_SEG	EQU	(0B0000h - 270h)
 ;
 	ret
 
-	ENDP	Upload_4x2CB
+Upload_4x2CB	ENDP
 
 	ENDIF	;VQABLOCK_4X2
 
@@ -657,11 +655,9 @@ CBOOK_SEG	EQU	(0B0000h - 270h)
 ;*
 ;****************************************************************************
 
-	GLOBAL	C XlatePointers:NEAR
-	PROC	XlatePointers C NEAR USES
-
-	ARG	pointers:NEAR PTR
-	ARG	numpointers:DWORD
+XlatePointers	PROC	NEAR C,
+	pointers:NEAR PTR,
+	numpointers:DWORD,
 
 ;	;-------------------------------------------------------------------
 ;	; Load pointers into DS:SI
@@ -712,7 +708,7 @@ CBOOK_SEG	EQU	(0B0000h - 270h)
 ;??Done:
 	ret
 
-	ENDP	XlatePointers
+XlatePointers	ENDP
 
 	ENDIF	;VQAXMODE_ON
 	END
