@@ -287,21 +287,23 @@ DRAW_BLOCK_PART_ROW	MACRO	numblocks,cb_add
 ; The actual procedure:
 ;===========================================================================
 
-	GLOBAL	C UnVQ_4x2_VESA320_32K:NEAR
-	PROC	UnVQ_4x2_VESA320_32K C NEAR
-
-	ARG	codebook:NEAR PTR
-	ARG	pointers:NEAR PTR
-
 	IF	PHARLAP_TNT
-	ARG	pal:QWORD	;KLUDGE - bcc32 pads FARPTR
-	ELSE
-	ARG	palette:NEAR PTR
+UnVQ_4x2_VESA320_32K	PROC	NEAR C,
+	codebook:NEAR PTR,
+	pointers:NEAR PTR,
+	pal:QWORD,	;KLUDGE - bcc32 pads FARPTR
+	grains_per_win:DWORD,
+	dummy1:DWORD,
+	dummy2:DWORD
+ELSE
+UnVQ_4x2_VESA320_32K	PROC	NEAR C,
+	codebook:NEAR PTR,
+	pointers:NEAR PTR,
+	palette:NEAR PTR,
+	grains_per_win:DWORD,
+	dummy1:DWORD,
+	dummy2:DWORD
 	ENDIF
-
-	ARG	grains_per_win:DWORD
-	ARG	dummy1:DWORD
-	ARG	dummy2:DWORD
 
 	LOCAL	rowcount:DWORD		; # rows drawn
 	LOCAL	esi_save:DWORD
@@ -370,7 +372,7 @@ DRAW_BLOCK_PART_ROW	MACRO	numblocks,cb_add
 	popad
 	ret
 
-	ENDP	UnVQ_4x2_VESA320_32K
+UnVQ_4x2_VESA320_32K	ENDP
 
 	ENDIF	;VQABLOCK_4X2
 	ENDIF	;VQAVESA_ON
