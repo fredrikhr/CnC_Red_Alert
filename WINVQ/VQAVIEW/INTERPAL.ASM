@@ -49,7 +49,7 @@
 
 	mycode	segment page public use32 'code'	; Need stricter segment alignment
 
-global		C	Palette_Interpolation_Table:byte
+extern		C	Palette_Interpolation_Table:byte
 
 
 
