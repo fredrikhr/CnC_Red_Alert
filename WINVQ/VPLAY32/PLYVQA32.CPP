@@ -274,7 +274,7 @@ void main(long argc, char **argv)
 	/*-------------------------------------------------------------------------
 	 * RESTORE DISPLAY TO TEXT AND PRINT STATISTICS
 	 *-----------------------------------------------------------------------*/
-	SetVideoMode(TEXT);
+	SetVideoMode(VPLAY32_TEXT);
 
 	#if(CAPTIONS)
 	if (myconfig.CapFont != NULL) free(myconfig.CapFont);
