@@ -112,7 +112,7 @@ static void PageFlip_VESA(VQAHandle *vqabuf);
 static long DrawFrame_Buffer(VQAHandle *vqa);
 static long PageFlip_Nop(VQAHandle *vqa);
 
-#ifndef PHARLAP_TNT
+#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 static void __cdecl UnVQ_Nop(unsigned char *codebook, unsigned char *pointers,
 		unsigned char *buffer, unsigned long blocksperrow,
 		unsigned long numrows, unsigned long bufwidth);
@@ -1377,7 +1377,7 @@ static long PageFlip_MCGA(VQAHandle *vqa)
 	long          blocksperrow;
 	long          numrows;
 
-	#ifndef PHARLAP_TNT
+	#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 	unsigned char *scrn;
 	#else
 	FARPTR        scrn;
@@ -1438,7 +1438,7 @@ static long PageFlip_MCGA(VQAHandle *vqa)
 	 *-----------------------------------------------------------------------*/
 
 	/* Get screen address, blocks per row and number of rows. */
-	#ifndef PHARLAP_TNT
+	#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 	scrn = (unsigned char *)(0xA0000 + (unsigned long)drawer->ScreenOffset);
 	#else
 	FP_SET(scrn, drawer->ScreenOffset, 0x1C);
@@ -1522,7 +1522,7 @@ static long DrawFrame_MCGABuf(VQAHandle *vqa)
 	VQAFrameNode *curframe;
 	long         rc;
 
-	#ifndef PHARLAP_TNT
+	#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 	unsigned char *scrn;
 	#else
 	FARPTR        scrn;
@@ -1558,7 +1558,7 @@ static long DrawFrame_MCGABuf(VQAHandle *vqa)
 	/* Dereference current frame for quicker access. */
 	curframe = drawer->CurFrame;
 
-	#ifndef PHARLAP_TNT
+	#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 	scrn = drawer->ImageBuf;
 	#else
 	FP_SET(scrn, drawer->ImageBuf, 0x14);
@@ -1675,12 +1675,12 @@ static long PageFlip_MCGABuf(VQAHandle *vqa)
 	imgheight = ((VQAHandleP *)vqa)->Header.ImageHeight;
 	buf = drawer->ImageBuf;
 
-	#ifndef PHARLAP_TNT
+	#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 	scrn = (unsigned char *)0xA0000;
 	#endif
 
 	if ((imgwidth < 320) || (imgheight < 200)) {
-		#ifndef PHARLAP_TNT
+		#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 		scrn += drawer->ScreenOffset;
 		#else
 		scrn = (unsigned char *)drawer->ScreenOffset;
@@ -1731,7 +1731,7 @@ static long DrawFrame_VESA640(VQAHandle *vqa)
 	VQAFrameNode *curframe;
 	long         rc;
 
-	#ifndef PHARLAP_TNT
+	#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 	unsigned char *scrn;
 	#else
 	FARPTR        scrn;
@@ -1767,7 +1767,7 @@ static long DrawFrame_VESA640(VQAHandle *vqa)
 		vqabuf->Flags &= (~VQADATF_DSLEEP);
 	}
 
-	#ifndef PHARLAP_TNT
+	#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 	scrn = drawer->ImageBuf + drawer->ScreenOffset;
 	#else
 	FP_SET(scrn, drawer->ImageBuf + drawer->ScreenOffset, 0x14);
@@ -1855,7 +1855,7 @@ static long DrawFrame_VESA320_32K(VQAHandle *vqa)
 		grain = ((VESAModeInfo *)(drawer->Display->Extended))->WinSize
 				/ ((VESAModeInfo *)(drawer->Display->Extended))->WinGranularity;
 
-		#ifndef PHARLAP_TNT
+		#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 		vqabuf->UnVQ(curframe->Codebook->Buffer, curframe->Pointers,
 				drawer->Palette_15, grain, 0, 0);
 		#else
@@ -1952,7 +1952,7 @@ static long DrawFrame_VESA320_32KBuf(VQAHandle *vqa)
 		Prepare_Frame(vqabuf);
 
 		/* UnVQ buffered mode */
-		#ifndef PHARLAP_TNT
+		#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 		vqabuf->UnVQ(curframe->Codebook->Buffer, curframe->Pointers,
 				drawer->ImageBuf, drawer->BlocksPerRow, drawer->NumRows,
 				((VQAHandleP *)vqa)->Header.image_width);
@@ -2158,7 +2158,7 @@ static long DrawFrame_Buffer(VQAHandle *vqa)
 	long          palsize;
 	long          slowpal;
 
-	#ifndef PHARLAP_TNT
+	#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 	unsigned char *buff;
 	#else
 	FARPTR        buff;
@@ -2195,7 +2195,7 @@ static long DrawFrame_Buffer(VQAHandle *vqa)
 	/* Dereference current frame for quicker access. */
 	curframe = drawer->CurFrame;
 
-	#ifndef PHARLAP_TNT
+	#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 	buff = (unsigned char *)(drawer->ImageBuf + drawer->ScreenOffset);
 	#else
 	FP_SET(buff, drawer->ImageBuf + drawer->ScreenOffset, 0x14);
@@ -2267,7 +2267,7 @@ static long DrawFrame_Buffer(VQAHandle *vqa)
 *
 ****************************************************************************/
 
-#ifndef PHARLAP_TNT
+#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 static void __cdecl UnVQ_Nop(unsigned char *codebook, unsigned char *pointers,
 		unsigned char *buffer, unsigned long blocksperrow,
 		unsigned long numrows, unsigned long bufwidth)

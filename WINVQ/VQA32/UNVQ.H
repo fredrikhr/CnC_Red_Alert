@@ -41,7 +41,7 @@
 *
 ****************************************************************************/
 
-#ifdef PHARLAP_TNT
+#if defined(PHARLAP_TNT) && PHARLAP_TNT
 #include <pltypes.h>
 #endif
 
@@ -54,7 +54,7 @@ extern "C" {
 #endif
 
 /* unvqbuff.asm */
-#ifndef PHARLAP_TNT
+#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
 void __cdecl UnVQ_2x2(unsigned char *codebook, unsigned char *pointers,
 		unsigned char *buffer, unsigned long blocksperrow,
 		unsigned long numrows, unsigned long bufwidth);
