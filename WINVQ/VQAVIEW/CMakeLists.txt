@@ -1,4 +1,13 @@
 file_glob_enabled_language_files()
+list(REMOVE_ITEM PROJECT_CURRENT_SOURCE_DIR_CXX_SOURCE_FILES
+  DEBUG.CPP
+)
+list(REMOVE_ITEM PROJECT_CURRENT_SOURCE_DIR_RC_SOURCE_FILES
+  DEBUG.RC
+)
+list(REMOVE_ITEM PROJECT_CURRENT_SOURCE_DIR_ANY_LANG_SOURCE_FILES
+  DEBUG.CPP DEBUG.RC
+)
 
 add_executable(VQAVIEW)
 target_include_directories(VQAVIEW
@@ -6,13 +15,17 @@ target_include_directories(VQAVIEW
     ../INCLUDE
 )
 target_sources(VQAVIEW
-  PRIVATE ${PROJECT_CURRENT_SOURCE_DIR_ANY_LANG_SOURCE_FILES}
+  PRIVATE
+    ${PROJECT_CURRENT_SOURCE_DIR_ANY_LANG_SOURCE_FILES}
+    $<$<CONFIG:Debug>:DEBUG.CPP>
+    $<$<CONFIG:Debug>:DEBUG.RC>
 )
 target_sources(VQAVIEW
   PRIVATE
     FILE_SET private_headers
     TYPE HEADERS
-    FILES ${PROJECT_CURRENT_SOURCE_DIR_ANY_LANG_IGNORES}
+    FILES
+      ${PROJECT_CURRENT_SOURCE_DIR_ANY_LANG_IGNORES}
 )
 file_glob_enabled_language_files_in_directory(VQ_INCLUDE ../INCLUDE)
 list(TRANSFORM PROJECT_VQ_INCLUDE_ANY_LANG_IGNORES PREPEND ../INCLUDE/)
@@ -24,5 +37,11 @@ target_sources(VQAVIEW
     FILES
       ${PROJECT_VQ_INCLUDE_ANY_LANG_IGNORES}
 )
-target_link_libraries(VQAVIEW PRIVATE WINVQA32)
+target_link_libraries(VQAVIEW
+  PRIVATE
+    WINVQM32
+    WINVQA32
+)
 install(TARGETS VQAVIEW)
+
+set_asm_masm_source_files_language_property()
