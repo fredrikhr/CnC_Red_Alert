@@ -1,6 +1,15 @@
 file_glob_enabled_language_files()
 
 add_executable(VPLAY32)
+target_compile_definitions(VPLAY32
+  PRIVATE
+    VQAMONO_ON=1
+    VQAAUDIO_ON=1
+    VQAVOC_ON=1
+    VQAMCGA_ON=1
+    VQAXMODE_ON=1
+    VQAVESA_ON=1
+)
 target_include_directories(VPLAY32
   PRIVATE
     ../INCLUDE
@@ -26,7 +35,7 @@ target_sources(VPLAY32
 )
 target_link_libraries(VPLAY32
   PRIVATE
+    WINVQM32
     WINVQA32
-    WINVQSOSDW1PS
 )
 install(TARGETS VPLAY32)
