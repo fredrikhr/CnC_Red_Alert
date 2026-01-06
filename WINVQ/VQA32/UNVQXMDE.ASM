@@ -48,14 +48,13 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
-	INCLUDE	"vga.i"
-	INCLUDE	"vesavid.i"
-	INCLUDE	"vqaplay.i"
-	CODESEG
+	.386
+	.MODEL FLAT
+	OPTION SEGMENT:USE32
+	INCLUDE	<vga.i>
+	INCLUDE	<vesavid.i>
+	INCLUDE	<vqaplay.i>
+	.CODE
 
 	IF	VQAXMODE_ON
 
@@ -247,7 +246,7 @@ CBOOK_SEG	EQU	(0B0000h - 270h)
 ;*
 ;* SYNOPSIS
 ;*     UnVQ_4x2_XmodeCB(Dummy, Pointers, Buffer, BPR, Rows)
-;* 
+;*
 ;*     void UnVQ_4x2_XmodeCB(unsigned char *, unsigned char *,
 ;*                           unsigned char *, unsigned short,
 ;*                           unsigned short);
