@@ -47,7 +47,7 @@
 		OPTION SEGMENT:USE32
 
 
-		segment mycode page public use32 'code'	; Need stricter segment alignment
+	mycode	segment page public use32 'code'	; Need stricter segment alignment
 
 global		C	Asm_Interpolate:near
 global		C	Palette_Interpolation_Table:byte
@@ -155,7 +155,7 @@ endp		Asm_Interpolate
 
 
 
-ends		mycode
+mycode	ends
 
 end
 
