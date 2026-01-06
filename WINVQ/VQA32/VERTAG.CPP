@@ -43,10 +43,14 @@
 
 #ifdef __WATCOMC__
 #define DEVNAME "Watcom/4GW"
-#else
+#elif defined(_MSC_VER)
+#define DEVNAME "MSVC/Win32"
+#elif defined(__BORLANDC__)
 #define DEVNAME "Borland/TNT"
+#else
+#define DEVNAME "Unknown"
 #endif
 
-char VerTag[] = {"$VER$" VQA_IDSTRING" "DEVNAME" ("VQA_DATE")"};
+char VerTag[] = {"$VER$" VQA_IDSTRING " " DEVNAME " (" VQA_DATE ")"};
 char ReqTag[] = {"$REQ$" VQA_REQUIRES};
 

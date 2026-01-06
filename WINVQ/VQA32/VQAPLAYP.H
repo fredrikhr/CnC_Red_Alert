@@ -63,9 +63,9 @@ extern HWND MainWindow;
 
 /* Internal library version. */
 #define VQA_VERSION "2.42"
-#define VQA_DATE    __DATE__" "__TIME__
+#define VQA_DATE    __DATE__ " " __TIME__
 
-#define VQA_IDSTRING "VQA32 "VQA_VERSION" ("VQA_DATE")"
+#define VQA_IDSTRING "VQA32 " VQA_VERSION " (" VQA_DATE ")"
 #define VQA_REQUIRES "VQM32 2.12 or better."
 
 /* Block dimensions macro and identifiers. */
@@ -434,11 +434,11 @@ typedef struct _VQAData {
 	long (*Page_Flip)(VQAHandle *vqa);
 
 	#if !defined(PHARLAP_TNT) || !PHARLAP_TNT
-	void __cdecl (*UnVQ)(unsigned char *codebook, unsigned char *pointers,
+	void (__cdecl *UnVQ)(unsigned char *codebook, unsigned char *pointers,
 			unsigned char *buffer, unsigned long blocksperrow,
 			unsigned long numrows, unsigned long bufwidth);
 	#else
-	void __cdecl (*UnVQ)(unsigned char *codebook, unsigned char *pointers,
+	void (__cdecl *UnVQ)(unsigned char *codebook, unsigned char *pointers,
 			FARPTR buffer, unsigned long blocksperrow, unsigned long numrows,
 			unsigned long bufwidth);
 	#endif
