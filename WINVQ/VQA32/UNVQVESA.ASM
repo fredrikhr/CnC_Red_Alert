@@ -41,14 +41,13 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
-	INCLUDE	"vga.i"
-	INCLUDE	"vesavid.i"
-	INCLUDE	"vqaplay.i"
-	CODESEG
+	.386
+	.MODEL FLAT
+	OPTION SEGMENT:USE32
+	INCLUDE	<vga.i>
+	INCLUDE	<vesavid.i>
+	INCLUDE	<vqaplay.i>
+	.CODE
 
 SKIP_PTR	EQU	8000h
 
@@ -76,7 +75,7 @@ SKIP_PTR	EQU	8000h
 ;*     NONE
 ;*
 ;****************************************************************************
- 
+
 ;---------------------------------------------------------------------------
 ; SET_2_PIXELS:
 ; - Loads 2 bytes from codebook, expands them into words in eax
