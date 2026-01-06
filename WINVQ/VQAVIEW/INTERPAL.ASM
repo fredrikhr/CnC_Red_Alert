@@ -49,7 +49,6 @@
 
 	mycode	segment page public use32 'code'	; Need stricter segment alignment
 
-global		C	Asm_Interpolate:near
 global		C	Palette_Interpolation_Table:byte
 
 
@@ -74,13 +73,12 @@ global		C	Palette_Interpolation_Table:byte
 ;*   12/15/95 ST : Created.                                                                  *
 ;*===========================================================================================*
 
-PROC		Asm_Interpolate C near
-
-		ARG	src_ptr:dword
-		ARG	dest_ptr:dword
-		ARG	source_height:dword
-		ARG	source_width:dword
-		ARG	dest_width:dword
+Asm_Interpolate	PROC	near C,
+		src_ptr:dword,
+		dest_ptr:dword,
+		source_height:dword,
+		source_width:dword,
+		dest_width:dword,
 
 		LOCAL	old_dest:dword
 		LOCAL	width_counter:dword
@@ -150,7 +148,7 @@ PROC		Asm_Interpolate C near
 		popad
 		ret
 
-endp		Asm_Interpolate
+Asm_Interpolate	endp
 
 
 
