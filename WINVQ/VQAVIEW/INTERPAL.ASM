@@ -137,7 +137,7 @@ Asm_Interpolate	PROC	near C,
 		inc	edi
 		mov	[edi],ah
 		inc	edi
-		mov	[byte edi],0
+		mov	byte ptr [edi],0
 
 		mov	edi,[dest_width]
 		add	[old_dest],edi
