@@ -178,7 +178,7 @@ ENDIF
 ;	add	edi,4		;Next dest block position
 	inc	edi		;Next dest block position
 	dec	ecx		;More blocks for this row?
-	jnz	short ??Not_finished_a_line
+	jnz	short ??Not_finished_a_line1
 
 ;	Advance to the next destination row of blocks.
 
@@ -198,7 +198,7 @@ ENDIF
 
 	add	edi,4		;Move to next dest block position
 	dec	ecx		;More blocks for this row?
-	jnz	short ??Not_finished_a_line
+	jnz	short ??Not_finished_a_line1
 	jmp	??Next_row
 
 ??Draw_One_Color:
@@ -219,7 +219,7 @@ ENDIF
 
 	add	edi,4		;Next dest block positionw
 	dec	ecx		;More blocks for this row?
-	jnz	short ??Not_finished_a_line
+	jnz	short ??Not_finished_a_line1
 
 ;	Advance to the next destination row of blocks.
 
