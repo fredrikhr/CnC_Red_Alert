@@ -136,7 +136,7 @@ ENDIF
 
 	IF	PHARLAP_TNT
 	push	es
-	les	edi,[FWORD buffer]	;KLUDGE - bcc32 pads FARPTR
+	les	edi,FWORD PTR buffer	;KLUDGE - bcc32 pads FARPTR
 	ELSE
 	mov	edi,[buffer]
 	ENDIF
@@ -154,7 +154,7 @@ ENDIF
 
 ??Not_finished_a_line1:
 	sub	ebx,ebx
-	mov	bx,[WORD PTR esi]	;Get the codebook pointer value
+	mov	bx,WORD PTR [esi]	;Get the codebook pointer value
 	add	esi,2		; then advance to the next one.
 
 	or	bx,bx		;Is it a one color block?
@@ -355,7 +355,7 @@ UnVQ_4x2_XmodeCB	PROC	NEAR C,
 ;	;
 ;	;..................... get next pointer word .......................
 ;	;
-;	mov	si,[WORD PTR fs:bx]		; SI = ptr word (cbook offset)
+;	mov	si,WORD PTR fs:[bx]		; SI = ptr word (cbook offset)
 ;	add	bx,2				; next ptr word
 ;	;
 ;	;................... skip ptr value SKIP_PTR .......................
@@ -670,7 +670,7 @@ XlatePointers	PROC	NEAR C,
 ;	;
 ;	;..................... get next pointer word .......................
 ;	;
-;	mov	ax,[WORD PTR ds:si]		; SI = ptr word (cbook offset)
+;	mov	ax,WORD PTR ds:[si]		; SI = ptr word (cbook offset)
 ;	;
 ;	;.................... check for a 1-color block ....................
 ;	;
@@ -682,7 +682,7 @@ XlatePointers	PROC	NEAR C,
 ;	sub	ax,4				; subtract 4
 ;	shr	ax,2				; divide by 4
 ;	add	ax,512				; add 512
-;	mov	[WORD PTR ds:si],ax		; save new value
+;	mov	WORD PTR ds:[si],ax		; save new value
 ;	add	si,2				; next ptr word
 ;	;
 ;	;....................... see if we're done .........................
@@ -697,7 +697,7 @@ XlatePointers	PROC	NEAR C,
 ;	;
 ;	not	ax				; get actual color value
 ;	shl	ax,1				; multiply by 2
-;	mov	[WORD PTR ds:si],ax		; save new value
+;	mov	WORD PTR ds:[si],ax		; save new value
 ;	add	si,2				; next ptr word
 ;	;
 ;	;....................... see if we're done .........................
