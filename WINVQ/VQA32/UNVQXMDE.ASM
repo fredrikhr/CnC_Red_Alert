@@ -168,8 +168,8 @@ ENDIF
 ;	mov	ebx,[bufwidth]
 
 	IF	PHARLAP_TNT
-	mov	[es:edi],eax		;Write 1st row to dest
-	mov	[es:edi+ebx],edx	;Write 2nd row to dest
+	mov	es:[edi],eax		;Write 1st row to dest
+	mov	es:[edi+ebx],edx	;Write 2nd row to dest
 	ELSE
 	mov	[edi],al		;Write 1st row to dest
 	mov	[edi+80],dl		;Write 2nd row to dest
@@ -210,8 +210,8 @@ ENDIF
 ;	mov	ebx,[bufwidth]
 
 	IF	PHARLAP_TNT
-	mov	[es:edi],eax		;Write 1st row to dest
-	mov	[es:edi+ebx],eax	;Write 2nd row to dest
+	mov	es:[edi],eax		;Write 1st row to dest
+	mov	es:[edi+ebx],eax	;Write 2nd row to dest
 	ELSE
 	mov	[edi],al		;Write 1st row to dest
 	mov	[edi+80],al		;Write 2nd row to dest
@@ -382,8 +382,8 @@ UnVQ_4x2_XmodeCB	PROC	NEAR C,
 ;	;..................... draw 1st 4 pixels ...........................
 ;	;
 ;??Draw_Block:
-;	mov	al,[ds:si]			; latch 1st 4 cbook bytes
-;	mov	[es:di],al			; write 4 pixels
+;	mov	al,ds:[si]			; latch 1st 4 cbook bytes
+;	mov	es:[di],al			; write 4 pixels
 ;	;
 ;	;.................. check for 1-color block ........................
 ;	;
@@ -392,9 +392,9 @@ UnVQ_4x2_XmodeCB	PROC	NEAR C,
 ;	;
 ;	;..................... draw next 4 pixels ..........................
 ;	;
-;	mov	al,[ds:si+1]			; latch next 4 cbook bytes
+;	mov	al,ds:[si+1]			; latch next 4 cbook bytes
 ;??One_Color:
-;	mov	[es:di+80],al			; write next 4 pixels
+;	mov	es:[di+80],al			; write next 4 pixels
 ;	inc	di				; next block position
 ;	;
 ;	;...................... check block count ..........................
@@ -490,9 +490,9 @@ Upload_4x2CB	PROC	NEAR C,
 ;	mov	cx,256
 ;	mov	ax,0
 ;??1_Color_Loop:
-;	mov	[es:di],al			; write 4 bytes
+;	mov	es:[di],al			; write 4 bytes
 ;	inc	di				; next 4-byte position
-;	mov	[es:di],al			; write 4 bytes
+;	mov	es:[di],al			; write 4 bytes
 ;	inc	di				; next 4-byte position
 ;	inc	ax				; next color #
 ;	dec	cx				; decrement loop counter
@@ -525,8 +525,8 @@ Upload_4x2CB	PROC	NEAR C,
 ;	; Loop through codebook entries
 ;	;...................................................................
 ;??CB_Loop_1:
-;	mov	al,[ds:si]
-;	mov	[es:di],al
+;	mov	al,ds:[si]
+;	mov	es:[di],al
 ;	add	si,4
 ;	inc	di
 ;	dec	cx
@@ -557,8 +557,8 @@ Upload_4x2CB	PROC	NEAR C,
 ;	; Loop through codebook entries
 ;	;...................................................................
 ;??CB_Loop_2:
-;	mov	al,[ds:si]
-;	mov	[es:di],al
+;	mov	al,ds:[si]
+;	mov	es:[di],al
 ;	add	si,4
 ;	inc	di
 ;	dec	cx
@@ -589,8 +589,8 @@ Upload_4x2CB	PROC	NEAR C,
 ;	; Loop through codebook entries
 ;	;...................................................................
 ;??CB_Loop_3:
-;	mov	al,[ds:si]
-;	mov	[es:di],al
+;	mov	al,ds:[si]
+;	mov	es:[di],al
 ;	add	si,4
 ;	inc	di
 ;	dec	cx
@@ -621,8 +621,8 @@ Upload_4x2CB	PROC	NEAR C,
 ;	; Loop through codebook entries
 ;	;...................................................................
 ;??CB_Loop_4:
-;	mov	al,[ds:si]
-;	mov	[es:di],al
+;	mov	al,ds:[si]
+;	mov	es:[di],al
 ;	add	si,4
 ;	inc	di
 ;	dec	cx
