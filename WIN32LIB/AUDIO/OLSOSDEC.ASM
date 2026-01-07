@@ -41,10 +41,9 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
+	.386
+	.MODEL FLAT
+	OPTION SEGMENT:USE32
 
 
 DPMI_INTR		equ	31h
@@ -77,7 +76,7 @@ wBitSize		DW	?	;Bit size for decompression
 wChannels		DW	?    	;number of channels
 	ENDS	sCompInfo
 
-	DATASEG
+	.DATA
 
 
 InitFlags	DD	0		; Flags to indicate what has been initialized.
@@ -133,7 +132,7 @@ wCODECStepTab	DW	7,  	8,  	9,   	10,   	11,  	12,   	13,14
 LABEL	LockedDataEnd	BYTE
 
 
-	CODESEG
+	.CODE
 
 LABEL	LockedCodeStart	BYTE
 
