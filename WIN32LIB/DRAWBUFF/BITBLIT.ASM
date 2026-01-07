@@ -88,7 +88,7 @@ Linear_Blit_To_Linear	PROC	near C	USES	ebx ecx edx esi edi,
 	xor 	edx,edx		    ; Set sutherland code to zero
 
    ; compute the difference in the X axis and get the bit signs into ecx , edx
-	mov	edi,[(GraphicViewPort esi).GVPWidth]  ; get width into register
+	mov	edi,(GraphicViewPort PTR [esi]).GVPWidth  ; get width into register
 	mov	ebx,[x_pixel]	    ; Get first end point x_pixel into register
 	mov	eax,[x_pixel]	    ; Get second end point x_pixel into register
 	add	ebx,[pixel_width]   ; second point x1_pixel = x + width
@@ -103,7 +103,7 @@ Linear_Blit_To_Linear	PROC	near C	USES	ebx ecx edx esi edi,
 
    ; the following code is just a repeticion of the above code
    ; in the Y axis.
-	mov	edi,[(GraphicViewPort esi).GVPHeight] ; get height into register
+	mov	edi,(GraphicViewPort PTR [esi]).GVPHeight ; get height into register
 	mov	ebx,[y_pixel]
 	mov	eax,[y_pixel]
 	add	ebx,[pixel_height]
@@ -140,12 +140,12 @@ Linear_Blit_To_Linear	PROC	near C	USES	ebx ecx edx esi edi,
 ??scr_bottom_ok:
 	test	dl,0100b	       ; if bit 3 in code1 is set then
 	jz	??scr_right_ok	       ; x1_pixel is greater than the width
-	mov	eax,[(GraphicViewPort esi).GVPWidth] ; get width into register
+	mov	eax,(GraphicViewPort PTR [esi]).GVPWidth ; get width into register
 	mov	[ x1_pixel ],eax       ; set x1_pixel to width.
 ??scr_right_ok:
 	test	dl,0001b	       ; if bit 0 in code1 is set then
 	jz	??clip_against_dest    ; y1_pixel is greater than the width
-	mov	eax,[(GraphicViewPort esi).GVPHeight]  ; get height into register
+	mov	eax,(GraphicViewPort PTR [esi]).GVPHeight  ; get height into register
 	mov	[ y1_pixel ],eax       ; set y1_pixel to height.
 
 ; Clip Source Rectangle against destination Window boundaries.
@@ -169,7 +169,7 @@ Linear_Blit_To_Linear	PROC	near C	USES	ebx ecx edx esi edi,
 	mov  	esi,[dest]	    ; get ptr to src
 	xor 	ecx,ecx
 	xor 	edx,edx
-	mov	edi,[(GraphicViewPort esi).GVPWidth]  ; get width into register
+	mov	edi,(GraphicViewPort PTR [esi]).GVPWidth  ; get width into register
 	mov	eax,[dest_x0]
 	mov	ebx,[dest_x1]
 	shld	ecx,eax,1
@@ -180,7 +180,7 @@ Linear_Blit_To_Linear	PROC	near C	USES	ebx ecx edx esi edi,
 	shld	ecx,eax,1
 	shld	edx,ebx,1
 
-	mov	edi,[( GraphicViewPort esi) . GVPHeight ] ; get height into register
+	mov	edi,( GraphicViewPort PTR [ esi ] ) . GVPHeight ; get height into register
 	mov	eax,[dest_y0]
 	mov	ebx,[dest_y1]
 	shld	ecx,eax,1
@@ -216,7 +216,7 @@ Linear_Blit_To_Linear	PROC	near C	USES	ebx ecx edx esi edi,
 ??dest_bottom_ok:
 	test	dl,0100b
 	jz	??dest_right_ok
-	mov	ebx,[ (GraphicViewPort esi) . GVPWidth ]  ; get width into register
+	mov	ebx,( GraphicViewPort PTR [ esi ] ) . GVPWidth  ; get width into register
 	mov	eax,[ dest_x1 ]
 	mov	[ dest_x1 ],ebx
 	sub	eax,ebx
@@ -225,7 +225,7 @@ Linear_Blit_To_Linear	PROC	near C	USES	ebx ecx edx esi edi,
 ??dest_right_ok:
 	test	dl,0001b
 	jz	??do_blit
-	mov	ebx,[ (GraphicViewPort esi) . GVPHeight ]  ; get width into register
+	mov	ebx,( GraphicViewPort PTR [ esi ] ) . GVPHeight  ; get width into register
 	mov	eax,[ dest_y1 ]
 	mov	[ dest_y1 ],ebx
 	sub	eax,ebx
@@ -236,10 +236,10 @@ Linear_Blit_To_Linear	PROC	near C	USES	ebx ecx edx esi edi,
 ??do_blit:
        cld
        mov	ebx,[this_object]
-       mov	esi,[(GraphicViewPort ebx).GVPOffset]
-       mov	eax,[(GraphicViewPort ebx).GVPXAdd]
-       add	eax,[(GraphicViewPort ebx).GVPWidth]
-       add	eax,[(GraphicViewPort ebx).GVPPitch]
+       mov	esi,(GraphicViewPort PTR [ebx]).GVPOffset
+       mov	eax,(GraphicViewPort PTR [ebx]).GVPXAdd
+       add	eax,(GraphicViewPort PTR [ebx]).GVPWidth
+       add	eax,(GraphicViewPort PTR [ebx]).GVPPitch
        mov	ecx,eax
        mul	[y_pixel]
        add	esi,[x_pixel]
@@ -251,10 +251,10 @@ Linear_Blit_To_Linear	PROC	near C	USES	ebx ecx edx esi edi,
        mov	[scr_ajust_width ],ecx
 
        mov	ebx,[dest]
-       mov	edi,[(GraphicViewPort ebx).GVPOffset]
-       mov	eax,[(GraphicViewPort ebx).GVPXAdd]
-       add	eax,[(GraphicViewPort ebx).GVPWidth]
-       add	eax,[(GraphicViewPort ebx).GVPPitch]
+       mov	edi,(GraphicViewPort PTR [ebx]).GVPOffset
+       mov	eax,(GraphicViewPort PTR [ebx]).GVPXAdd
+       add	eax,(GraphicViewPort PTR [ebx]).GVPWidth
+       add	eax,(GraphicViewPort PTR [ebx]).GVPPitch
        mov	ecx,eax
        mul	[ dest_y0 ]
        add	edi,[ dest_x0 ]
