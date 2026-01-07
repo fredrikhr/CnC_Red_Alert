@@ -82,7 +82,7 @@ sCompInfo	ENDS
 InitFlags	DD	0		; Flags to indicate what has been initialized.
 
 
-LABEL	LockedDataStart	BYTE
+LockedDataStart	LABEL	BYTE
 
 ;* Index table for stepping into step table
 
@@ -129,12 +129,12 @@ wCODECStepTab	DW	7,  	8,  	9,   	10,   	11,  	12,   	13,14
 ;dwCODECTempStep		DD	0 ; tempory storage for step value
 ;wCODECMask			DW	0 ; Current mask
 
-LABEL	LockedDataEnd	BYTE
+LockedDataEnd	LABEL	BYTE
 
 
 	.CODE
 
-LABEL	LockedCodeStart	BYTE
+LockedCodeStart	LABEL	BYTE
 
 ;****************************************************************************
 ;*
@@ -649,7 +649,7 @@ LABEL	LockedCodeStart	BYTE
 
 	ENDP	General_sosCODECDecompressData
 
-LABEL	LockedCodeEnd	BYTE
+LockedCodeEnd	LABEL	BYTE
 
 ;***************************************************************************
 ;* sosCODEC_LOCK -- locks the JLB audio decompression code		   *
