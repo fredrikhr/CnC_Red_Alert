@@ -87,7 +87,7 @@ sCompInfo	ENDS
 InitFlags	DD	0		; Flags to indicate what has been initialized.
 
 
-LABEL	LockedDataStart	BYTE
+LockedDataStart	LABEL	BYTE
 
 ;* Index table for stepping into step table
 
@@ -95,11 +95,11 @@ INCLUDE		<difftb.inc>
 INCLUDE		<indextb.inc>
 INCLUDE		<nybbtb.inc>
 
-LABEL	LockedDataEnd	BYTE
+LockedDataEnd	LABEL	BYTE
 
 	.CODE
 
-LABEL	LockedCodeStart	BYTE
+LockedCodeStart	LABEL	BYTE
 
 ;****************************************************************************
 ;*
@@ -618,7 +618,7 @@ dwMono16AlignJmpTable	DD	??fixAlign16Mono0
 
 	ENDP	sosCODECDecompressData
 
-LABEL	LockedCodeEnd	BYTE
+LockedCodeEnd	LABEL	BYTE
 
 ;***************************************************************************
 ;* sosCODEC_LOCK -- locks the JLB audio decompression code		   *
