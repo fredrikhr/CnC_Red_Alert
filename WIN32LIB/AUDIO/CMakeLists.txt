@@ -21,5 +21,3 @@ target_sources(WIN32LIB_${PROJECT_CURRENT_SOURCE_DIR_NAME}
 target_link_libraries(WIN32LIB PRIVATE WIN32LIB_${PROJECT_CURRENT_SOURCE_DIR_NAME})
 
 set_asm_masm_source_files_language_property()
-
-add_subdirectory(OLD)
