@@ -3,8 +3,11 @@ target_include_directories(WIN32LIB
   PUBLIC
     "INCLUDE"
 )
+file_glob_enabled_language_files_in_directory(WIN32LIB_INCLUDE INCLUDE)
+list(TRANSFORM PROJECT_WIN32LIB_INCLUDE_ANY_LANG_IGNORES
+  PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/INCLUDE/"
+)
 
-add_subdirectory(INCLUDE)
 add_subdirectory(AUDIO)
 add_subdirectory(DIPTHONG)
 add_subdirectory(DRAWBUFF)
