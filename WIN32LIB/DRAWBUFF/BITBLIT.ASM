@@ -33,15 +33,14 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
-LOCALS ??
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
 
-CODESEG
+.CODE
 
 	PROC	Linear_Blit_To_Linear C near
 	USES	ebx,ecx,edx,esi,edi
