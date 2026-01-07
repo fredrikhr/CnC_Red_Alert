@@ -84,10 +84,10 @@ GLOBAL C Buffer_Draw_Stamp 		:NEAR
 
 GLOBAL C get_clip	 	   : NEAR
 
-struc  RECTANGLE
+RECTANGLE	struc
 		  x0	dd	?
 		  y0 dd	?
 		  x1	dd	?
 		  y1 dd ?
-ends 	 RECTANGLE
+RECTANGLE	ends
 
