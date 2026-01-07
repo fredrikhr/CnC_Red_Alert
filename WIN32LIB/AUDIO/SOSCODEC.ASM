@@ -256,7 +256,7 @@ sosCODECDecompressData	PROC	NEAR C,
 	jmp	??start16Mono		;start with test... don't go if
 					;we have zero bytes to do
 ??fixalign16Mono:
-	jmp	[DWORD PTR dwMono16AlignJmpTable+ebx*4] ;do non-aligned first
+	jmp	DWORD PTR [dwMono16AlignJmpTable+ebx*4] ;do non-aligned first
 
 	align	4
 ??fixAlign16Mono1:
@@ -297,7 +297,7 @@ sosCODECDecompressData	PROC	NEAR C,
 	cmp	eax,0FFFF8000h		;check for underflow
 	jl	??fix1Smp16MonoU
 ??fixed1Smp16Mono:
-	or	dl,[BYTE PTR bNybbleTableHigh+ebx] ;adjust index for nybble
+	or	dl,BYTE PTR [bNybbleTableHigh+ebx] ;adjust index for nybble
 	mov	[edi],ax		;save the sample
 ;
 ;
@@ -311,7 +311,7 @@ sosCODECDecompressData	PROC	NEAR C,
 	cmp	eax,0FFFF8000h		;check for underflow
 	jl	??fix2Smp16MonoU
 ??fixed2Smp16Mono:
-	or	dl,[BYTE PTR bNybbleTableLow+ebx] ;adjust index for nybble
+	or	dl,BYTE PTR [bNybbleTableLow+ebx] ;adjust index for nybble
 	mov	[edi+02h],ax		;save the sample
 	shr	ecx,16			;move top four nybbles into bottom
 ;
@@ -325,7 +325,7 @@ sosCODECDecompressData	PROC	NEAR C,
 	cmp	eax,0FFFF8000h		;check for underflow
 	jl	??fix3Smp16MonoU
 ??fixed3Smp16Mono:
-	or	dl,[BYTE PTR bNybbleTableHigh+ebx] ;adjust index for nybble
+	or	dl,BYTE PTR [bNybbleTableHigh+ebx] ;adjust index for nybble
 	mov	[edi+04h],ax		;save the sample
 ;
 ;
@@ -339,7 +339,7 @@ sosCODECDecompressData	PROC	NEAR C,
 	cmp	eax,0FFFF8000h		;check for underflow
 	jl	??fix4Smp16MonoU
 ??fixed4Smp16Mono:
-	or	dl,[BYTE PTR bNybbleTableLow+ebx] ;adjust index for nybble
+	or	dl,BYTE PTR [bNybbleTableLow+ebx] ;adjust index for nybble
 	mov	[edi+06h],ax		;save the sample
 ;
 ;
@@ -352,7 +352,7 @@ sosCODECDecompressData	PROC	NEAR C,
 	cmp	eax,0FFFF8000h		;check for underflow
 	jl	??fix5Smp16MonoU
 ??fixed5Smp16Mono:
-	or	dl,[BYTE PTR bNybbleTableHigh+ebx] ;adjust index for nybble
+	or	dl,BYTE PTR [bNybbleTableHigh+ebx] ;adjust index for nybble
 	mov	[edi+08h],ax		;save the sample
 ;
 ;
@@ -366,7 +366,7 @@ sosCODECDecompressData	PROC	NEAR C,
 	cmp	eax,0FFFF8000h		;check for underflow
 	jl	??fix6Smp16MonoU
 ??fixed6Smp16Mono:
-	or	dl,[BYTE PTR bNybbleTableLow+ebx] ;adjust index for nybble
+	or	dl,BYTE PTR [bNybbleTableLow+ebx] ;adjust index for nybble
 	mov	[edi+0Ah],ax		;save the sample
 ;
 ;
@@ -379,7 +379,7 @@ sosCODECDecompressData	PROC	NEAR C,
 	cmp	eax,0FFFF8000h		;check for underflow
 	jl	??fix7Smp16MonoU
 ??fixed7Smp16Mono:
-	or	dl,[BYTE PTR bNybbleTableHigh+ebx] ;adjust index for nybble
+	or	dl,BYTE PTR [bNybbleTableHigh+ebx] ;adjust index for nybble
 	mov	[edi+0Ch],ax		;save the sample
 ;
 ;
@@ -403,7 +403,7 @@ sosCODECDecompressData	PROC	NEAR C,
 	jng	??cleanup16Mono		;if done, clean up
 	mov	ecx,[esi]		;get 4 nybbles in one whack (whee!)
 	mov	bl,cl			;get next 2 nybbles in ebx
-	or	dl,[BYTE PTR bNybbleTableLow+ebx] ;adjust index for nybble
+	or	dl,BYTE PTR [bNybbleTableLow+ebx] ;adjust index for nybble
 	jmp	??loop16Mono		;loop until done
 
 ??cleanup16Mono:
@@ -527,7 +527,7 @@ sosCODECDecompressData	PROC	NEAR C,
 	shl	ch,4			;move it over
 	mov	bl,ch			;get nybble in ebx
 	sub	edi,0Eh			;back edi up
-	or	dl,[BYTE PTR bNybbleTableHigh+ebx] ;adjust index for nybble
+	or	dl,BYTE PTR [bNybbleTableHigh+ebx] ;adjust index for nybble
 	jmp	??finish1Smp16Mono	;go finish it
 
 	align	4
@@ -537,7 +537,7 @@ sosCODECDecompressData	PROC	NEAR C,
 	mov	bl,ch			;get nybbles in ebx
 	sub	edi,0Ch			;back edi up
 	sub	esi,3			;adjust esi (used for dword aligning)
-	or	dl,[BYTE PTR bNybbleTableLow+ebx] ;adjust index for nybble
+	or	dl,BYTE PTR [bNybbleTableLow+ebx] ;adjust index for nybble
 	jmp	??finish2Smp16Mono	;go finish it
 
 	align	4
@@ -547,7 +547,7 @@ sosCODECDecompressData	PROC	NEAR C,
 	shl	cx,4			;move it over
 	mov	bl,cl			;get nybbles in ebx
 	sub	edi,0Ah			;back edi up
-	or	dl,[BYTE PTR bNybbleTableHigh+ebx] ;adjust index for nybble
+	or	dl,BYTE PTR [bNybbleTableHigh+ebx] ;adjust index for nybble
 	jmp	??finish3Smp16Mono	;go finish it
 
 	align	4
@@ -557,7 +557,7 @@ sosCODECDecompressData	PROC	NEAR C,
 	mov	bl,cl			;get nybbles in ebx
 	sub	edi,08h			;back edi up
 	sub	esi,2			;adjust esi (used for dword aligning)
-	or	dl,[BYTE PTR bNybbleTableLow+ebx] ;adjust index for nybble
+	or	dl,BYTE PTR [bNybbleTableLow+ebx] ;adjust index for nybble
 	jmp	??finish4Smp16Mono	;go finish it
 
 	align	4
@@ -570,7 +570,7 @@ sosCODECDecompressData	PROC	NEAR C,
 	shr	ecx,4			;move it over
 	shl	bl,4			;move it over
 	sub	edi,06h			;back edi up
-	or	dl,[BYTE PTR bNybbleTableHigh+ebx] ;adjust index for nybble
+	or	dl,BYTE PTR [bNybbleTableHigh+ebx] ;adjust index for nybble
 	jmp	??finish5Smp16Mono	;go finish it
 
 	align	4
@@ -583,7 +583,7 @@ sosCODECDecompressData	PROC	NEAR C,
 	shr	ecx,8			;move it over
 	sub	esi,1			;adjust esi (used for dword aligning)
 	sub	edi,04h			;back edi up
-	or	dl,[BYTE PTR bNybbleTableLow+ebx] ;adjust index for nybble
+	or	dl,BYTE PTR [bNybbleTableLow+ebx] ;adjust index for nybble
 	jmp	??finish6Smp16Mono	;go finish it
 
 	align	4
@@ -593,7 +593,7 @@ sosCODECDecompressData	PROC	NEAR C,
 	shl	ecx,4			;move it over
 	mov	bl,cl			;get nybbles in ebx
 	sub	edi,02h			;back edi up
-	or	dl,[BYTE PTR bNybbleTableHigh+ebx] ;adjust index for nybble
+	or	dl,BYTE PTR [bNybbleTableHigh+ebx] ;adjust index for nybble
 	jmp	??finish7Smp16Mono	;go finish it
 ;
 ;
