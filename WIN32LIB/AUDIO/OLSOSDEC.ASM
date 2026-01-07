@@ -157,10 +157,8 @@ LockedCodeStart	LABEL	BYTE
 ;*
 ;****************************************************************************
 
-	GLOBAL	C sosCODECInitStream:NEAR
-	PROC	sosCODECInitStream C NEAR
-
-	ARG	sSOSInfo:NEAR PTR
+sosCODECInitStream	PROC	NEAR C,
+	sSOSInfo:NEAR PTR sCompInfo
 
 	mov	eax,[sSOSInfo]
 	mov	[(sCompInfo eax).wIndex],0 		; starting index 0
@@ -173,7 +171,7 @@ LockedCodeStart	LABEL	BYTE
 	mov	[(sCompInfo eax).dwSampleIndex2],0 	;start at head of index
 	ret
 
-	ENDP	sosCODECInitStream
+sosCODECInitStream	ENDP
 
 
 
@@ -200,11 +198,9 @@ LockedCodeStart	LABEL	BYTE
 ;*
 ;****************************************************************************
 
-	GLOBAL	C General_sosCODECDecompressData:NEAR
-	PROC	General_sosCODECDecompressData C NEAR
-
-	ARG	sSOSInfo:NEAR PTR
-	ARG	wBytes:DWORD
+General_sosCODECDecompressData	PROC	NEAR C,
+	sSOSInfo:NEAR PTR sCompInfo,
+	wBytes:DWORD,
 
 	local	dwCODECBytesProcessed:dword             ;bytes to decompress
 	local	dwCODECByteIndex:dword			;this is when to stop compressing
@@ -647,7 +643,7 @@ LockedCodeStart	LABEL	BYTE
 	pop	esi
 	ret
 
-	ENDP	General_sosCODECDecompressData
+General_sosCODECDecompressData	ENDP
 
 LockedCodeEnd	LABEL	BYTE
 
@@ -663,8 +659,7 @@ LockedCodeEnd	LABEL	BYTE
 ;* HISTORY:								   *
 ;*   06/26/1995 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C sosCODEC_Lock:NEAR
-	PROC	sosCODEC_Lock C NEAR USES ebx ecx edx esi edi
+sosCODEC_Lock	PROC	NEAR C USES ebx ecx edx esi edi
 
 	;
 	; Lock the code that is used by the sos decompression method.
@@ -698,7 +693,7 @@ LockedCodeEnd	LABEL	BYTE
 	xor	eax,eax
 ??exit:
 	ret
-	ENDP	sosCODEC_Lock
+sosCODEC_Lock	ENDP
 
 ;***************************************************************************
 ;* DECOMPRESS_FRAME_UNLOCK -- Unlocks the JLB audio compression code       *
@@ -712,8 +707,7 @@ LockedCodeEnd	LABEL	BYTE
 ;* HISTORY:								   *
 ;*   06/26/1995 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C sosCODEC_Unlock:NEAR
-	PROC	sosCODEC_Unlock C NEAR USES ebx ecx edx esi edi
+sosCODEC_Unlock	PROC	NEAR C USES ebx ecx edx esi edi
 
 	test	[InitFlags],IF_LOCKED_PM_CODE
 	jz	??code_not_locked
@@ -748,7 +742,7 @@ LockedCodeEnd	LABEL	BYTE
 	xor	eax,eax
 ??exit:
 	ret
-	ENDP	sosCODEC_Unlock
+sosCODEC_Unlock	ENDP
 
 
 	END
