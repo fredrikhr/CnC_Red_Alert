@@ -1,30 +1,88 @@
-add_library(WIN32LIB STATIC)
-target_include_directories(WIN32LIB
-  PUBLIC
-    "INCLUDE"
-)
-file_glob_enabled_language_files_in_directory(WIN32LIB_INCLUDE INCLUDE)
-list(TRANSFORM PROJECT_WIN32LIB_INCLUDE_ANY_LANG_IGNORES
-  PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/INCLUDE/"
+file_glob_enabled_language_files_in_directory(
+  WIN32LIB_INCLUDE
+  "INCLUDE"
 )
 
-add_subdirectory(AUDIO)
-add_subdirectory(DIPTHONG)
-add_subdirectory(DRAWBUFF)
-add_subdirectory(FONT)
-add_subdirectory(IFF)
-add_subdirectory(KEYBOARD)
-add_subdirectory(MEM)
-add_subdirectory(MISC)
-add_subdirectory(MONO)
-add_subdirectory(PALETTE)
-add_subdirectory(SHAPE)
-add_subdirectory(TILE)
-add_subdirectory(TIMER)
-add_subdirectory(WW_WIN)
-add_subdirectory(WSA)
-add_subdirectory(PROFILE)
-add_subdirectory(PLAYCD)
-add_subdirectory(WINCOMM)
-add_subdirectory(SRCDEBUG)
+add_library(WIN32LIB_INCLUDE INTERFACE)
+target_include_directories(WIN32LIB_INCLUDE INTERFACE "INCLUDE")
+target_sources(
+  WIN32LIB_INCLUDE
+  PUBLIC
+    FILE_SET HEADERS
+    BASE_DIRS "INCLUDE"
+    FILES ${PROJECT_WIN32LIB_INCLUDE_ANY_LANG_IGNORES}
+)
+
+add_library(WIN32LIB STATIC)
+target_link_libraries(WIN32LIB PUBLIC WIN32LIB_INCLUDE)
+unset(PROJECT_WIN32LIB_ASM_MASM_SOURCE_FILES)
+unset(PROJECT_WIN32LIB_ANY_LANG_SOURCE_FILES)
+unset(PROJECT_WIN32LIB_ANY_LANG_IGNORES)
+foreach(WIN32LIB_SUBDIR
+  AUDIO
+  DIPTHONG
+  DRAWBUFF
+  FONT
+  IFF
+  KEYBOARD
+  MEM
+  MISC
+  MONO
+  MOVIE
+  PALETTE
+  SHAPE
+  TILE
+  TIMER
+  WW_WIN
+  WSA
+  PROFILE
+  PLAYCD
+  WINCOMM
+)
+  file_glob_enabled_language_files_in_directory(
+    WIN32LIB_${WIN32LIB_SUBDIR}
+    "${WIN32LIB_SUBDIR}"
+  )
+  list(APPEND PROJECT_WIN32LIB_ASM_MASM_SOURCE_FILES
+    ${PROJECT_WIN32LIB_${WIN32LIB_SUBDIR}_ASM_MASM_SOURCE_FILES}
+  )
+  list(APPEND PROJECT_WIN32LIB_ANY_LANG_SOURCE_FILES
+    ${PROJECT_WIN32LIB_${WIN32LIB_SUBDIR}_ANY_LANG_SOURCE_FILES}
+  )
+  list(APPEND PROJECT_WIN32LIB_ANY_LANG_IGNORES
+    ${PROJECT_WIN32LIB_${WIN32LIB_SUBDIR}_ANY_LANG_IGNORES}
+  )
+  if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${WIN32LIB_SUBDIR}/CMakeLists.txt")
+    add_subdirectory(${WIN32LIB_SUBDIR})
+  endif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${WIN32LIB_SUBDIR}/CMakeLists.txt")
+endforeach(WIN32LIB_SUBDIR)
+
+list(REMOVE_ITEM PROJECT_WIN32LIB_ANY_LANG_SOURCE_FILES
+  "${CMAKE_CURRENT_SOURCE_DIR}/AUDIO/TEST.CPP"
+  "${CMAKE_CURRENT_SOURCE_DIR}/AUDIO/TST.CPP"
+)
+
+target_sources(
+  WIN32LIB
+  PRIVATE
+    ${PROJECT_WIN32LIB_ANY_LANG_SOURCE_FILES}
+  PRIVATE
+    FILE_SET private_headers_${WIN32LIB_SUBDIR}
+    TYPE HEADERS
+    BASE_DIRS "${WIN32LIB_SUBDIR}"
+    FILES ${PROJECT_WIN32LIB_ANY_LANG_IGNORES}
+)
+target_sources(
+  WIN32LIB
+  PUBLIC
+    FILE_SET HEADERS
+    BASE_DIRS "INCLUDE"
+    FILES ${PROJECT_WIN32LIB_INCLUDE_ANY_LANG_IGNORES}
+)
+set_source_files_properties(
+  ${PROJECT_WIN32LIB_ASM_MASM_SOURCE_FILES}
+  PROPERTIES LANGUAGE ASM_MASM
+)
+
 add_subdirectory(EXAMPLE)
+add_subdirectory(PROFILE/UTIL)

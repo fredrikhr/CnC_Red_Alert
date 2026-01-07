@@ -1,8 +1,9 @@
 file_glob_enabled_language_files()
 
-add_library(WIN32LIB_MEM_MSVC OBJECT)
-target_include_directories(WIN32LIB_MEM_MSVC
-  PRIVATE ../../INCLUDE
+add_library(WIN32LIB_MEM_MSVC STATIC EXCLUDE_FROM_ALL)
+target_link_libraries(WIN32LIB_MEM_MSVC
+  PUBLIC
+    WIN32LIB_INCLUDE
 )
 target_sources(WIN32LIB_MEM_MSVC
   PRIVATE
