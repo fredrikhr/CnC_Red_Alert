@@ -42,21 +42,19 @@ INCLUDE <gbuffer.inc>
 
 .CODE
 
-	PROC	Linear_Blit_To_Linear C near
-	USES	ebx,ecx,edx,esi,edi
-
 	;*===================================================================
 	;* define the arguements that our function takes.
 	;*===================================================================
-	ARG    	this_object :DWORD		; this is a member function
-	ARG	dest        :DWORD		; what are we blitting to
-	ARG	x_pixel     :DWORD		; x pixel position in source
-	ARG	y_pixel     :DWORD		; y pixel position in source
-	ARG	dest_x0     :dword
-	ARG	dest_y0     :dword
-	ARG	pixel_width :DWORD		; width of rectangle to blit
-	ARG	pixel_height:DWORD		; height of rectangle to blit
-	ARG	trans       :DWORD			; do we deal with transparents?
+Linear_Blit_To_Linear	PROC	near C	USES	ebx ecx edx esi edi,
+	this_object :DWORD,		; this is a member function
+	dest        :DWORD,		; what are we blitting to
+	x_pixel     :DWORD,		; x pixel position in source
+	y_pixel     :DWORD,		; y pixel position in source
+	dest_x0     :dword,
+	dest_y0     :dword,
+	pixel_width :DWORD,		; width of rectangle to blit
+	pixel_height:DWORD,		; height of rectangle to blit
+	trans       :DWORD,			; do we deal with transparents?
 
 	;*===================================================================
 	; Define some locals so that we can handle things quickly
@@ -454,7 +452,7 @@ INCLUDE <gbuffer.inc>
 
 ??real_out:
        ret
-       ENDP	Linear_Blit_To_Linear
+Linear_Blit_To_Linear	ENDP
 
 
 
