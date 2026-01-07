@@ -71,12 +71,10 @@ _4bitdecode	DB	-9,-8,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,8
 ;*   03/14/1995 PWG : Created.                                             *
 ;*=========================================================================*
 
-	GLOBAL	C Decompress_Frame:NEAR
-	PROC	Decompress_Frame C NEAR USES ebx ecx edx esi edi
-
-	ARG	source:DWORD
-	ARG	dest:DWORD
-	ARG	count:DWORD
+Decompress_Frame	PROC	NEAR C USES ebx ecx edx esi edi,
+	source:DWORD,
+	dest:DWORD,
+	count:DWORD,
 
 	LOCAL	previous:BYTE
 	LOCAL	incount:DWORD
@@ -362,7 +360,7 @@ _4bitdecode	DB	-9,-8,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,8
 	mov	eax,[incount]
 	ret
 
-	ENDP	Decompress_Frame
+Decompress_Frame	ENDP
 
 LockedCodeEnd	LABEL 	BYTE
 
