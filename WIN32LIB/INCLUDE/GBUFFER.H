@@ -129,9 +129,9 @@
 #include "drawbuff.h"
 #endif
 
-//#ifndef BUFFER_H
+#ifndef BUFFER_H
 #include "buffer.h"
-//#endif
+#endif
 
 #ifndef WINDOWS_H
 #include "ww_win.h"
