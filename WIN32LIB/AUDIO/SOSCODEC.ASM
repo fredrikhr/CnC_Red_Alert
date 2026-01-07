@@ -46,10 +46,9 @@
 ;*
 ;****************************************************************************
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
+	.386
+	.MODEL FLAT
+	OPTION SEGMENT:USE32
 
 DPMI_INTR		equ	31h
 IF_LOCKED_PM_CODE	equ	1h		; Locked PM code for DPMI.
@@ -82,7 +81,7 @@ wChannels		DW	?    	;number of channels
 ENDS	sCompInfo
 
 
-	DATASEG
+	.DATA
 
 
 InitFlags	DD	0		; Flags to indicate what has been initialized.
@@ -92,13 +91,13 @@ LABEL	LockedDataStart	BYTE
 
 ;* Index table for stepping into step table
 
-INCLUDE		"difftb.inc"
-INCLUDE		"indextb.inc"
-INCLUDE		"nybbtb.inc"
+INCLUDE		<difftb.inc>
+INCLUDE		<indextb.inc>
+INCLUDE		<nybbtb.inc>
 
 LABEL	LockedDataEnd	BYTE
 
-	CODESEG
+	.CODE
 
 LABEL	LockedCodeStart	BYTE
 
