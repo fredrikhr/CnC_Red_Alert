@@ -126,10 +126,11 @@ sosCODECInitStream	PROC	NEAR C,
 	sSOSInfo:NEAR PTR sCompInfo
 
 	mov	eax,[sSOSInfo]
-	mov	[(sCompInfo eax).wIndex],0 		; starting index 0
-	mov	[(sCompInfo eax).dwPredicted],0 	; no predicted value
-	mov	[(sCompInfo eax).wIndex2],0 		; starting index 0
-	mov	[(sCompInfo eax).dwPredicted2],0 	; no predicted value
+	assume	eax:NEAR PTR sCompInfo
+	mov	[eax].wIndex,0			; starting index 0
+	mov	[eax].dwPredicted,0		; no predicted value
+	mov	[eax].wIndex2,0			; starting index 0
+	mov	[eax].dwPredicted2,0	; no predicted value
 	ret
 
 sosCODECInitStream	ENDP
@@ -183,8 +184,9 @@ sosCODECDecompressData	PROC	NEAR C,
 	push	edx			;save all the regs
 
 	mov	ebx,[sSOSInfo]		;get base of sCompInfo struct
-	mov	cx,[(sCompInfo ebx).wBitSize] ;check the bit size
-	mov	dx,[(sCompInfo ebx).wChannels] ;check the number of channels
+	assume	ebx:NEAR PTR sCompInfo
+	mov	cx,[ebx].wBitSize ;check the bit size
+	mov	dx,[ebx].wChannels ;check the number of channels
 ;
 ;
 ; Determine the correct routine to use for decoding
@@ -224,10 +226,10 @@ sosCODECDecompressData	PROC	NEAR C,
 ??decomp16Mono:
 	push	ebx			;save struct base
 	xor	edx,edx			;clear index
-	mov	eax,[(sCompInfo ebx).dwPredicted]	;get last sample
-	mov	dx,[(sCompInfo ebx).wIndex]	;get last index value
-	mov	esi,[(sCompInfo ebx).lpSource]	;get source address
-	mov	edi,[(sCompInfo ebx).lpDest]	;get dest address
+	mov	eax,[ebx].dwPredicted	;get last sample
+	mov	dx,[ebx].wIndex	;get last index value
+	mov	esi,[ebx].lpSource	;get source address
+	mov	edi,[ebx].lpDest	;get dest address
 
 	mov	ebp,[wBytes]		;get the number of dest. bytes
 	cmp	ebp,16			;less than 16? (less than 8 samples)
@@ -415,15 +417,16 @@ sosCODECDecompressData	PROC	NEAR C,
 	pop	ecx			;restore # of words
 	shr	ecx,1			;divide by two to get samples
 	and	ecx,07h			;get # of samples we missed
-	jmp	[DWORD PTR dwMono16JmpTable+ecx*4] ;go finish the job...
+	jmp	DWORD PTR [dwMono16JmpTable+ecx*4] ;go finish the job...
 ;
 ;
 ; Structure cleanup
 ??done16Mono:
 	pop	ebx			;restore struct base
+	assume	ebx:NEAR PTR sCompInfo
 	pop	ebp			;restore stack frame pointer
-	mov	[(sCompInfo ebx).dwPredicted],eax ;save last sample
-	mov	[(sCompInfo ebx).wIndex],dx ;save last index value
+	mov	[ebx].dwPredicted,eax ;save last sample
+	mov	[ebx].wIndex,dx ;save last index value
 	mov	eax,[wBytes]		;get # of bytes we did
 ??byeBye:
 	pop	edx			;restore all the regs
