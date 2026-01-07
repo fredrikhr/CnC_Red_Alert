@@ -54,7 +54,7 @@ DPMI_INTR		equ	31h
 IF_LOCKED_PM_CODE	equ	1h		; Locked PM code for DPMI.
 IF_LOCKED_PM_DATA	equ	2h		; Locked PM code for DPMI.
 
-STRUC	sCompInfo
+sCompInfo	STRUC
 lpSource		DD	?	;Compressed data pointer
 lpDest			DD	?	;Uncompressed data pointer
 dwCompSize		DD	?	;Compressed size
@@ -78,7 +78,7 @@ wIndex2			DW	?	;Index into step table
 
 wBitSize		DW	?	;Bit size for decompression
 wChannels		DW	?    	;number of channels
-ENDS	sCompInfo
+sCompInfo	ENDS
 
 
 	.DATA
