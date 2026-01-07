@@ -36,11 +36,10 @@
 ;*   Decompress_Frame_Unlock -- Unlocks the JLB audio compression code     *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-	IDEAL
-	P386
-	MODEL	USE32 FLAT
-	LOCALS	??
-	CODESEG
+	.386
+	.MODEL FLAT
+	OPTION SEGMENT:USE32
+	.CODE
 
 DPMI_INTR		equ	31h
 
