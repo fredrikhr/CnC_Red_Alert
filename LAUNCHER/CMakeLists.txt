@@ -1,15 +1,19 @@
 file_glob_enabled_language_files()
+list(REMOVE_ITEM
+  PROJECT_CURRENT_SOURCE_DIR_C_SOURCE_FILES
+  "${CMAKE_CURRENT_SOURCE_DIR}/256BMP.C"
+)
+list(REMOVE_ITEM
+  PROJECT_CURRENT_SOURCE_DIR_ANY_LANG_SOURCE_FILES
+  "${CMAKE_CURRENT_SOURCE_DIR}/256BMP.C"
+)
 
-add_library(256BMP OBJECT 256BMP.C)
-target_compile_definitions(256BMP PRIVATE
+add_library(LAUNCHER_256BMP STATIC EXCLUDE_FROM_ALL 256BMP.C)
+target_compile_definitions(LAUNCHER_256BMP PRIVATE
   huge=
   _export=
   farmalloc=malloc
   farfree=free
-)
-list(REMOVE_ITEM
-  PROJECT_ANY_LANG_SOURCE_FILES
-  "256BMP.C"
 )
 
 add_executable(LAUNCHER WIN32)
@@ -21,7 +25,6 @@ target_compile_definitions(LAUNCHER
 target_sources(LAUNCHER
   PRIVATE
     ${PROJECT_CURRENT_SOURCE_DIR_ANY_LANG_SOURCE_FILES}
-    $<TARGET_OBJECTS:256BMP>
     REDALERT.ICO
 )
 target_sources(LAUNCHER
