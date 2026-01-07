@@ -43,7 +43,7 @@
 
 DPMI_INTR		equ	31h
 
-LABEL 	LockedCodeStart	BYTE
+LockedCodeStart	LABEL 	BYTE
 
 CODE_2BIT	EQU	0
 CODE_4BIT	EQU	1
@@ -364,7 +364,7 @@ _4bitdecode	DB	-9,-8,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,8
 
 	ENDP	Decompress_Frame
 
-LABEL 	LockedCodeEnd	BYTE
+LockedCodeEnd	LABEL 	BYTE
 
 
 
