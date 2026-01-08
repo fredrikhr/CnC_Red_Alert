@@ -53,12 +53,11 @@ PUBLIC	C Build_Fading_Table
 ;
 ; Bounds Checking: None
 ;*
-	PROC	Build_Fading_Table C near
-	USES	ebx, ecx, edi, esi
-	ARG	palette:DWORD
-	ARG	dest:DWORD
-	ARG	color:DWORD
-	ARG	frac:DWORD
+Build_Fading_Table	PROC	near C	USES	ebx ecx edi esi,
+	palette:DWORD,
+	dest:DWORD,
+	color:DWORD,
+	frac:DWORD,
 
 	LOCAL	matchvalue:DWORD	; Last recorded match value.
 	LOCAL	targetred:BYTE		; Target gun red.
@@ -209,7 +208,7 @@ PUBLIC	C Build_Fading_Table
 	mov	eax,[dest]
 	ret
 
-	ENDP	Build_Fading_Table
+Build_Fading_Table	ENDP
 
 
 	END
