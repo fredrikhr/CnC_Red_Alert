@@ -165,7 +165,7 @@ Mem_Copy PROC	near C	USES	ecx esi edi ebx,
 Mem_Copy	ENDP
 IF 0
 Largest_Mem_Block PROC	near C	uses	esi edi ebx ecx edx
-	local	mem_struct : dword : 16
+	local	mem_struct [16] : dword
 
 	mov	eax , 0500h
 	lea	edi , [ mem_struct ]
