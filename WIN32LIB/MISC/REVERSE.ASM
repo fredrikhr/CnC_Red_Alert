@@ -66,8 +66,8 @@ PUBLIC	 C Reverse_Long
 ; LONG Reverse_LONG(LONG number);
 ;
 ;*
-	PROC	Reverse_Long C near
-	ARG	number:DWORD
+Reverse_Long	PROC	near C,
+	number:DWORD
 
 IF 1
 	mov	eax,[DWORD PTR number]
@@ -85,7 +85,7 @@ ENDIF
 
 	ret
 
-	ENDP	Reverse_Long
+Reverse_Long	ENDP
 
 ;-----------------------------------------------------------------
 
@@ -96,14 +96,14 @@ ENDIF
 ; WORD Reverse_Short(WORD number);
 ;
 ;*
-	PROC	Reverse_Short C near
-	ARG	number:WORD
+Reverse_Short	PROC	near C,
+	number:WORD
 
 	mov	ax,[number]
 	xchg	ah,al
 	ret
 
-	ENDP	Reverse_Short
+Reverse_Short	ENDP
 
 ;-----------------------------------------------------------------
 
@@ -115,8 +115,8 @@ ENDIF
 ; Long Swap_Long(Long number);
 ;
 ;*
-	PROC	Swap_Long C near
-	ARG	number:DWORD
+Swap_Long	PROC	near C,
+	number:DWORD
 
 IF 1
 	; 32 bit code.
@@ -131,7 +131,7 @@ ENDIF
 	ret
 
 
-	ENDP	Swap_Long
+Swap_Long	ENDP
 
 ;-----------------------------------------------------------------
 
