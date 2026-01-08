@@ -41,8 +41,8 @@ OPTION SEGMENT:USE32
 
 
 
-GLOBAL	FontPtr:DWORD
-GLOBAL	Text_Print:NEAR
+EXTERN	FontPtr:DWORD
+PUBLIC	Text_Print
 
 ; The header of the font file looks like this:
 ; 	UWORD	FontLength;		0
