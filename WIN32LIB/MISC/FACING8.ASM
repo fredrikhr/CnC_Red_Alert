@@ -82,13 +82,11 @@ NewFacing8	DB	1,2,1,0,7,6,7,0,3,2,3,4,5,6,5,4
 ;*=========================================================================*
 ; long Desired_Facing8(long x1, long y1, long x2, long y2);
 
-	PROC	Desired_Facing8 C near
-	USES	ebx, ecx, edx
-
-	ARG	x1:DWORD
-	ARG	y1:DWORD
-	ARG	x2:DWORD
-	ARG	y2:DWORD
+Desired_Facing8	PROC	near C	USES	ebx ecx edx,
+	x1:DWORD,
+	y1:DWORD,
+	x2:DWORD,
+	y2:DWORD,
 
 	xor	ebx,ebx			; Index byte (built).
 
@@ -134,7 +132,7 @@ NewFacing8	DB	1,2,1,0,7,6,7,0,3,2,3,4,5,6,5,4
 
 	ret
 
-	ENDP	Desired_Facing8
+Desired_Facing8	ENDP
 
 
 	END
