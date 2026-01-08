@@ -277,8 +277,8 @@ Install_Keyboard_Interrupt	PROC	NEAR C	USES eax ebx ecx edx esi edi,
 	mov	esi,[RealModePtr]
 	mov	eax,esi
 	shl	eax,12						; make seg in high eax.
-	mov	ax,[(KeyboardType PTR esi).CallKeyRMIntOffset]	; create RM addr of call chain.
-	mov	[(KeyboardType PTR esi).CallKeyRMIntAddr],eax	; save it for use in PM int.
+	mov	ax,(KeyboardType PTR [esi]).CallKeyRMIntOffset	; create RM addr of call chain.
+	mov	(KeyboardType PTR [esi]).CallKeyRMIntAddr,eax	; save it for use in PM int.
 
 IF NOT PROT_INT_ENABLE
        ; Chain the Real Keyboard interrupt to any avilable
@@ -314,17 +314,17 @@ ENDIF
 	mov	al,[417H]		; get keyboard status flags
 	test	eax,040H 		; caps lock active?
 	je 	short ??nocap		; not active
-	or	[(KeyboardType PTR esi).KeyLock],CAPSLOCK
+	or	(KeyboardType PTR [esi]).KeyLock,CAPSLOCK
 
 ??nocap:
 	test	eax,020H			; num lock active?
 	je	short ??nonumlock		; not active
-	or	[(KeyboardType PTR esi).KeyLock],NUMLOCK
+	or	(KeyboardType PTR [esi]).KeyLock,NUMLOCK
 
 ??nonumlock:
 	test	eax,002H			; is left shift key down?
 	je	short ??noleftshift		; try the right
-	or	[(KeyboardType PTR esi+5).KeysUpDown],010H
+	or	(KeyboardType PTR [esi+5]).KeysUpDown,010H
 
 ??noleftshift:
 	and	eax,001H			; get right shift bit
@@ -339,18 +339,18 @@ ENDIF
 	je	short ??noralt
 	or	ah,040H
 ??noralt:
-	mov	[(KeyboardType PTR esi+7).KeysUpDown],ah
+	mov	(KeyboardType PTR [esi+7]).KeysUpDown,ah
 	test	al,004H			; test for right ctrl
 	je 	short ??norctrl
-	or	[(KeyboardType PTR esi+8).KeysUpDown],001h
+	or	(KeyboardType PTR [esi+8]).KeysUpDown,001h
 ??norctrl:
 	test	al,002H			; last code E0?
 	je short ??noe0
-	mov	[(KeyboardType PTR esi).LastKeyE0],001h
+	mov	(KeyboardType PTR [esi]).LastKeyE0,001h
 ??noe0:
 	test	al,001H			; last code E1?
 	je short ??noe1
-	mov	[(KeyboardType PTR esi).LastKeyE1],002h
+	mov	(KeyboardType PTR [esi]).LastKeyE1,002h
 ??noe1:
 	;==========================================================================
 	; Get the protected mode interrupt vector keyboard.
@@ -363,8 +363,8 @@ ENDIF
 	mov	bl,IRQ1INTNUM		; IRQ1 interrupt vector
 	int	DPMI_INTR		; do call.
 	jc	??error
-	mov	[(KeyboardType PTR esi).KeyOldPMIOffset],edx	; save offset.
-	mov	[(KeyboardType PTR esi).KeyOldPMISelector],ecx	; save selector.
+	mov	(KeyboardType PTR [esi]).KeyOldPMIOffset,edx	; save offset.
+	mov	(KeyboardType PTR [esi]).KeyOldPMISelector,ecx	; save selector.
 
 	;==========================================================================
 	; Get the real mode interrupt vector keyboard
@@ -378,7 +378,7 @@ ENDIF
 	jc	??error
 	shl 	edx,16
 	shld	ecx,edx,16
-	mov	[(KeyboardType PTR esi).KeyOldRMI],ecx
+	mov	(KeyboardType PTR [esi]).KeyOldRMI,ecx
 
 
 	;==========================================================================
@@ -407,7 +407,7 @@ ENDIF
 	mov	bl,IRQ1INTNUM
 	mov	ecx,[RealModePtr]     	; get address of real code int hand.
 	shr	ecx,4			; put segment in hi word.
-	mov	dx,[(KeyboardType PTR esi).KeyCodeOffset] ; Get address of code
+	mov	dx,(KeyboardType PTR [esi]).KeyCodeOffset ; Get address of code
 	int	DPMI_INTR		; do call.
 	jc	??error
 
@@ -419,12 +419,13 @@ ENDIF
 	; ES:EBX = address of PM int handler routine.
 	;==========================================================================
 
+
 	mov	eax,0204h		; Get proteced mode
 	mov	bl,BRKINTNUM		; IRQ1 interrupt vector
 	int	DPMI_INTR		; do call.
 	jc	??error
-	mov	[(KeyboardType PTR esi).BrkOldPMIOffset],edx	; save offset.
-	mov	[(KeyboardType PTR esi).BrkOldPMISelector],ecx	; save selector.
+	mov	(KeyboardType PTR [esi]).BrkOldPMIOffset,edx	; save offset.
+	mov	(KeyboardType PTR [esi]).BrkOldPMISelector,ecx	; save selector.
 
 
 	;==========================================================================
@@ -439,7 +440,7 @@ ENDIF
 	jc	??error
 	shl 	edx,16
 	shld	ecx,edx,16
-	mov	[(KeyboardType PTR esi).BrkOldRMI],ecx
+	mov	(KeyboardType PTR [esi]).BrkOldRMI,ecx
 
 	;==========================================================================
 	; Now it is time to set the Protected mode interrupt
@@ -468,7 +469,7 @@ ENDIF
 	mov	bl,BRKINTNUM
 	mov	ecx,[RealModePtr]     	; get address of real code int hand.
 	shr	ecx,4			; put segment in hi word.
-	mov	dx,[(KeyboardType PTR esi).BrkCodeOffset] ; Get address of code
+	mov	dx,(KeyboardType PTR [esi]).BrkCodeOffset ; Get address of code
 	int	DPMI_INTR		; do call.
 	jc	??error
 	or	[InitFlags],IF_SET_VECTORS
@@ -487,8 +488,8 @@ IF DEBUG
 	mov	bl,DBGINTNUM		; IRQ1 interrupt vector
 	int	DPMI_INTR		; do call.
 	jc	??error
-	mov	[(KeyboardType PTR esi).DbgOldPMIOffset],edx	; save offset.
-	mov	[(KeyboardType PTR esi).DbgOldPMISelector],ecx	; save selector.
+	mov	(KeyboardType PTR [esi]).DbgOldPMIOffset,edx	; save offset.
+	mov	(KeyboardType PTR [esi]).DbgOldPMISelector,ecx	; save selector.
 
 	;==========================================================================
 	; Now it is time to set the Protected mode interrupt
@@ -548,7 +549,7 @@ Remove_Keyboard_Interrupt	PROC	NEAR C	USES ebx ecx edx
 
 	mov	eax, 0201h
 	mov	bl,IRQ1INTNUM
-	mov	edx,[(KeyboardType esi).KeyOldRMI]     	; get address of real code int hand.
+	mov	edx,(KeyboardType PTR [esi]).KeyOldRMI     	; get address of real code int hand.
 	shld	ecx , edx , 16
 	int	DPMI_INTR		; do call.
 	jc	??error
@@ -562,8 +563,8 @@ Remove_Keyboard_Interrupt	PROC	NEAR C	USES ebx ecx edx
 
 	mov	eax, 0205h
 	mov	bl,IRQ1INTNUM
-	mov	ecx,[(KeyboardType esi).KeyOldPMISelector] 	; Get PM segment to put int ds later.
-	mov	edx,[(KeyboardType esi).KeyOldPMIOffset] 	; Get PM offset
+	mov	ecx,(KeyboardType PTR [esi]).KeyOldPMISelector 	; Get PM segment to put int ds later.
+	mov	edx,(KeyboardType PTR [esi]).KeyOldPMIOffset 	; Get PM offset
 	int	DPMI_INTR		  ; do call.
 	jc	??error
 
@@ -579,7 +580,7 @@ Remove_Keyboard_Interrupt	PROC	NEAR C	USES ebx ecx edx
 
 	mov	eax, 0201h
 	mov	bl,BRKINTNUM
-	mov	edx,[(KeyboardType esi).BrkOldRMI]     	; get address of real code int hand.
+	mov	edx,(KeyboardType PTR [esi]).BrkOldRMI     	; get address of real code int hand.
 	shld	ecx , edx , 16
 	int	DPMI_INTR		; do call.
 	jc	??error
@@ -593,8 +594,8 @@ Remove_Keyboard_Interrupt	PROC	NEAR C	USES ebx ecx edx
 
 	mov	eax, 0205h
 	mov	bl,BRKINTNUM
-	mov	ecx,[(KeyboardType esi).BrkOldPMISelector] 	; Get PM segment to put int ds later.
-	mov	edx,[(KeyboardType esi).BrkOldPMIOffset] 	; Get PM offset
+	mov	ecx,(KeyboardType PTR [esi]).BrkOldPMISelector 	; Get PM segment to put int ds later.
+	mov	edx,(KeyboardType PTR [esi]).BrkOldPMIOffset 	; Get PM offset
 	int	DPMI_INTR		  ; do call.
 	jc	??error
 
@@ -612,8 +613,8 @@ IF DEBUG
 
 	mov	eax, 0205h
 	mov	bl,DBGINTNUM
-	mov	ecx,[(KeyboardType esi).DbgOldPMISelector] 	; Get PM segment to put int ds later.
-	mov	edx,[(KeyboardType esi).DbgOldPMIOffset] 	; Get PM offset
+	mov	ecx,(KeyboardType PTR [esi]).DbgOldPMISelector 	; Get PM segment to put int ds later.
+	mov	edx,(KeyboardType PTR [esi]).DbgOldPMIOffset 	; Get PM offset
 	int	DPMI_INTR		  ; do call.
 	jc	??error
 
@@ -708,13 +709,13 @@ Check_Key_Num	PROC	NEAR C	USES ebx esi
 	cli					; disable interrupts
 
 	mov	esi,[RealModePtr]		; Point to start of RM data.
-	mov	eax,[(KeyboardType PTR esi).KeyBufferHead]
-	xor	eax,[(KeyboardType PTR esi).KeyBufferTail]
+	mov	eax,(KeyboardType PTR [esi]).KeyBufferHead
+	xor	eax,(KeyboardType PTR [esi]).KeyBufferTail
 	or	eax,eax				; check to see if head == tail
 	jz	short ??fini			; if so we are done
 
-	mov	eax,[(KeyboardType PTR esi).KeyBufferHead]	; get the head
-	mov	ax,[(KeyboardType PTR esi+eax).KeyBuffer]	; get key num
+	mov	eax,(KeyboardType PTR [esi]).KeyBufferHead	; get the head
+	mov	ax,(KeyboardType PTR [esi+eax]).KeyBuffer	; get key num
 
 ??fini:
 	sti
@@ -741,8 +742,8 @@ Get_Key_Num	PROC	NEAR C	USES	esi edi
 	mov	esi,[RealModePtr]		; Point to start of RM data.
 ??wait:
 	cli				; disable interrupts
-	mov	eax,[(KeyboardType PTR esi).KeyBufferHead]		; get the head
-	cmp	eax,[(KeyboardType PTR esi).KeyBufferTail]		; get the head
+	mov	eax,(KeyboardType PTR [esi]).KeyBufferHead		; get the head
+	cmp	eax,(KeyboardType PTR [esi]).KeyBufferTail		; get the head
 	jne	short ??getkey
 	sti				; enable interrupts
 	jmp	??wait
@@ -803,9 +804,10 @@ Low_Get_Key	PROC	NEAR C	USES	ebx esi edi
 ; from within a hardware interrupt then DS and ES will be preset to
 ; DGROUP _DATA
 
+
 	mov	esi,[RealModePtr]		; Point to start of RM data.
 
-	mov	ax,[(KeyboardType PTR esi+edi).KeyBuffer]		; get the head
+	mov	ax,(KeyboardType PTR [esi+edi]).KeyBuffer		; get the head
 
 	add	edi,2
 	and	edi,0FFH			; 128 word circular buffer
@@ -817,13 +819,13 @@ Low_Get_Key	PROC	NEAR C	USES	ebx esi edi
 
 	push	eax			; save off the keynum we got
 
-	mov	ax,[(KeyboardType PTR esi+edi).KeyBuffer]		; get the head
+	mov	ax,(KeyboardType PTR [esi+edi]).KeyBuffer		; get the head
 	add	edi,2
 	and	edi,0FFH		; 128 word circular buffer
 
 	mov	[MouseQX],eax
 
-	mov	ax,[(KeyboardType PTR esi+edi).KeyBuffer]		; get the head
+	mov	ax,(KeyboardType PTR [esi+edi]).KeyBuffer		; get the head
 	add	edi,2
 	and	edi,0FFH			; 128 word circular buffer
 
@@ -839,17 +841,17 @@ Low_Get_Key	PROC	NEAR C	USES	ebx esi edi
 
 	push	eax			; save off the keynum we got
 
-	mov	ax,[(KeyboardType PTR esi+edi).KeyBuffer]		; get the head
+	mov	ax,(KeyboardType PTR [esi+edi]).KeyBuffer		; get the head
 	add	edi,2
 	and	edi,0FFH			; 128 word circular buffer
 
-	mov	ax,[(KeyboardType PTR esi+edi).KeyBuffer]		; get the head
+	mov	ax,(KeyboardType PTR [esi+edi]).KeyBuffer		; get the head
 	add	edi,2
 	and	edi,0FFH			; 128 word circular buffer
 
 	pop	eax			; restore keynum for return
 ??cont:
-	mov	[(KeyboardType PTR esi).KeyBufferHead],edi	; set the head
+	mov	(KeyboardType PTR [esi]).KeyBufferHead,edi	; set the head
 
 ??out:
 	ret
@@ -948,10 +950,10 @@ Convert_Num_To_ASCII	PROC	NEAR C	USES	ebx ecx esi edi
 	mov	edi,ebx			; get index
 	and	edi,7			; only bits 0-7
 
-	mov	cl,[(KeyboardType PTR esi+edi).Bits]
+	mov	cl,(KeyboardType PTR [esi+edi]).Bits
 
 	shr	ebx,3			; div by 8 for byte offset
-	test	[(KeyboardType PTR esi+ebx).KeysCapsLock],cl
+	test	(KeyboardType PTR [esi+ebx]).KeysCapsLock,cl
 	je 	short ??jexit
 	and	al,01FH			; force to ctrl value
 
@@ -968,7 +970,7 @@ Convert_Num_To_ASCII	PROC	NEAR C	USES	ebx ecx esi edi
 	xor	ebx,ebx
 	mov	bl,al
 	sub	ebx,75			; get value from 0-34
-	test	[(KeyboardType PTR esi).KeyFlags],NONUMLOCK
+	test	(KeyboardType PTR [esi]).KeyFlags,NONUMLOCK
 	jne 	short ??no_numpad
 	test	[GetKeyLock],NUMLOCK	; look at the snap shot of bits
 	jne 	short ??numpad
@@ -1044,15 +1046,15 @@ Check_Key	PROC	NEAR C	USES	ebx edi esi
 
 ??clrloop:
 	cli				; disable interrupts
-	mov	eax,[(KeyboardType PTR ebx).KeyBufferHead]
-	cmp	eax,[(KeyboardType PTR ebx).KeyBufferTail]
+	mov	eax,(KeyboardType PTR [ebx]).KeyBufferHead
+	cmp	eax,(KeyboardType PTR [ebx]).KeyBufferTail
 	je	short ??clrexit
 	mov	esi,eax
-	mov	ax,[(KeyboardType PTR ebx+eax).KeyBuffer]	; get key num
+	mov	ax,(KeyboardType PTR [ebx+eax]).KeyBuffer	; get key num
 
 	mov	edi,ebx
-	add	edi,OFFSET (KeyboardType PTR 0).PassAlways
-	mov	ecx,(OFFSET (KeyboardType PTR 0).PassAlwaysEnd-OFFSET (KeyboardType PTR 0).PassAlways)+1 ; get number of pass always
+	add	edi,KeyboardType.PassAlways
+	mov	ecx,(KeyboardType.PassAlwaysEnd-KeyboardType.PassAlways)+1 ; get number of pass always
 	repne	scasb			; look for a match
 	or	ecx,ecx			; see if there was a match
 	jne	short ??getinvalid
@@ -1073,7 +1075,7 @@ Check_Key	PROC	NEAR C	USES	ebx edi esi
 ??contget:
 	add	esi,2			; get rid of invalid ascii key
 	and	esi,0FFH			; 128 word circular buffer
-	mov	[(KeyboardType PTR ebx).KeyBufferHead],esi
+	mov	(KeyboardType PTR [ebx]).KeyBufferHead,esi
 	sti				; enable interrupts
 	jmp	??clrloop
 
@@ -1081,7 +1083,7 @@ Check_Key	PROC	NEAR C	USES	ebx edi esi
 	xor	eax,eax
 
 ??convkey:
-	mov	cx,[(KeyboardType PTR ebx).KeyLock]
+	mov	cx,(KeyboardType PTR [ebx]).KeyLock
 	mov	[GetKeyLock],cx		; save status for convert to ASCII
 	sti				; enable interrupts
 	or	eax,eax
@@ -1121,8 +1123,8 @@ Get_Key	PROC	NEAR C	USES ebx ecx edi
 	mov	ebx,[RealModePtr]	; Point to start of RM data.
 ??chkkey:
 	cli				; disable interrupts
-	mov	eax,[(KeyboardType PTR ebx).KeyBufferHead]
-	cmp	eax,[(KeyboardType PTR ebx).KeyBufferTail]
+	mov	eax,(KeyboardType PTR [ebx]).KeyBufferHead
+	cmp	eax,(KeyboardType PTR [ebx]).KeyBufferTail
 	jne 	short ??getkey
 	sti				; enable interrupts
 	jmp	??chkkey
@@ -1132,14 +1134,14 @@ Get_Key	PROC	NEAR C	USES ebx ecx edi
 	call	near ptr Low_Get_Key
 					; AX has key num code with bits
 
-	mov	cx,[(KeyboardType PTR ebx).KeyLock]
+	mov	cx,(KeyboardType PTR [ebx]).KeyLock
 	mov	[GetKeyLock],cx		; save status for convert to ASCII
 
 	sti				; enable interrupts
 
 	mov	edi,ebx
-	add	edi,OFFSET (KeyboardType PTR 0).PassAlways
-	mov	ecx,(OFFSET (KeyboardType PTR 0).PassAlwaysEnd-OFFSET (KeyboardType PTR 0).PassAlways)+1 ; get number of pass always
+	add	edi,KeyboardType.PassAlways
+	mov	ecx,(KeyboardType.PassAlwaysEnd-KeyboardType.PassAlways)+1 ; get number of pass always
 	repne	scasb			; look for a match
 	or	ecx,ecx			; see if there was a match
 	jne	??chkkey
@@ -1176,7 +1178,7 @@ Keyboard_Attributes_On	PROC	NEAR C USES esi edi,
 	mov	esi,[RealModePtr]		; Point to start of RM data.
 
 	mov	eax,[bits]
-	or	[(KeyboardType PTR esi).KeyFlags],eax
+	or	(KeyboardType PTR [esi]).KeyFlags,eax
 
 	; Only do this if in playback or record mode.
 	test	eax,PASSBREAKS
@@ -1184,13 +1186,13 @@ Keyboard_Attributes_On	PROC	NEAR C USES esi edi,
 
 	xor	eax,eax
 	mov	edi,esi
-	add	edi,OFFSET (KeyboardType PTR 0).KeysUpDown
+	add	edi,KeyboardType.KeysUpDown
 	mov	[edi],eax
 	mov	[edi+4],eax
 	mov	[edi+8],eax
 	mov	[edi+12],eax
 ??fini:
-	mov	eax,[(KeyboardType PTR esi).KeyFlags]
+	mov	eax,(KeyboardType PTR [esi]).KeyFlags
 	ret
 Keyboard_Attributes_On	ENDP
 
@@ -1213,9 +1215,9 @@ Keyboard_Attributes_Off	PROC	NEAR C	USES	esi,
 
 	mov	eax,[bits]
 	not	eax
-	and	[(KeyboardType PTR esi).KeyFlags],eax
+	and	(KeyboardType PTR [esi]).KeyFlags,eax
 	xor	eax,eax
-	mov	eax,[(KeyboardType PTR esi).KeyFlags]
+	mov	eax,(KeyboardType PTR [esi]).KeyFlags
 	ret
 
 Keyboard_Attributes_Off	ENDP
@@ -1235,8 +1237,8 @@ Clear_KeyBuffer	PROC	NEAR C	USES	eax esi
 
 	mov	esi,[RealModePtr]		; Point to start of RM data.
 	cli
-	mov	eax,[(KeyboardType PTR esi).KeyBufferHead]
-	mov	[(KeyboardType PTR esi).KeyBufferTail],eax
+	mov	eax,(KeyboardType PTR [esi]).KeyBufferHead
+	mov	(KeyboardType PTR [esi]).KeyBufferTail,eax
 	sti
 
 	ret
@@ -1271,7 +1273,7 @@ Key_Down	PROC	NEAR C	USES	ebx ecx edi esi,
 	and	cl,0111b
 	mov	al,01b
 	shl	al,cl
-	and	al,[(KeyboardType PTR esi+edi).KeysUpDown]
+	and	al,(KeyboardType PTR [esi+edi]).KeysUpDown
 	ret
 
 Key_Down	ENDP
@@ -1296,16 +1298,16 @@ Check_Key_Bits	PROC	NEAR C	USES	ebx ecx edi esi
 	mov	ebx,[RealModePtr]		; Point to start of RM data.
 ??clrloop:
 	cli				; disable interrupts
-	mov	eax,[(KeyboardType PTR ebx).KeyBufferHead]
-	cmp	eax,[(KeyboardType PTR ebx).KeyBufferTail]
+	mov	eax,(KeyboardType PTR [ebx]).KeyBufferHead
+	cmp	eax,(KeyboardType PTR [ebx]).KeyBufferTail
 	je	short ??clrexit
 ??playback:
 	mov	esi,eax
-	mov	ax,[(KeyboardType PTR ebx+eax).KeyBuffer]	; get key num
+	mov	ax,(KeyboardType PTR [ebx+eax]).KeyBuffer	; get key num
 
 	mov	edi,ebx
-	add	edi,OFFSET (KeyboardType PTR 0).PassAlways
-	mov	ecx,(OFFSET (KeyboardType PTR 0).PassAlwaysEnd-OFFSET (KeyboardType PTR 0).PassAlways)+1 ; get number of pass always
+	add	edi,KeyboardType.PassAlways
+	mov	ecx,(KeyboardType.PassAlwaysEnd-KeyboardType.PassAlways)+1 ; get number of pass always
 	repne	scasb			; look for a match
 	or	ecx,ecx			; see if there was a match
 	jne	short ??getinvalid
@@ -1322,7 +1324,7 @@ Check_Key_Bits	PROC	NEAR C	USES	ebx ecx edi esi
 ??getinvalid:
 	add	esi,2			; get rid of invalid ascii key
 	and	esi,0FFH			; 128 word circular buffer
-	mov	[(KeyboardType PTR ebx).KeyBufferHead],esi
+	mov	(KeyboardType PTR [ebx]).KeyBufferHead,esi
 	sti				; enable interrupts
 	jmp	??clrloop
 
@@ -1330,7 +1332,7 @@ Check_Key_Bits	PROC	NEAR C	USES	ebx ecx edi esi
 	xor	ax,ax
 
 ??convkey:
-	mov	cx,[(KeyboardType PTR ebx).KeyLock]
+	mov	cx,(KeyboardType PTR [ebx]).KeyLock
 	mov	[GetKeyLock],cx		; save status for convert to ASCII
 
 	sti				; enable interrupts
@@ -1376,8 +1378,8 @@ Get_Key_Bits	PROC	NEAR C	USES	ebx ecx edi
 
 ??chkkey:
 	cli				; disable interrupts
-	mov	eax,[(KeyboardType PTR ebx).KeyBufferHead]
-	cmp	eax,[(KeyboardType PTR ebx).KeyBufferTail]
+	mov	eax,(KeyboardType PTR [ebx]).KeyBufferHead
+	cmp	eax,(KeyboardType PTR [ebx]).KeyBufferTail
 	jne 	short ??getkey
 	sti				; enable interrupts
 	jmp	??chkkey
@@ -1387,14 +1389,14 @@ Get_Key_Bits	PROC	NEAR C	USES	ebx ecx edi
 	call	near ptr Low_Get_Key
 					; AX has key num code with bits
 
-	mov	cx,[(KeyboardType PTR ebx).KeyLock]
+	mov	cx,(KeyboardType PTR [ebx]).KeyLock
 	mov	[GetKeyLock],cx		; save status for convert to ASCII
 
 	sti				; enable interrupts
 
 	mov	edi,ebx
-	add	edi,OFFSET (KeyboardType PTR 0).PassAlways
-	mov	ecx,(OFFSET (KeyboardType PTR 0).PassAlwaysEnd-OFFSET (KeyboardType PTR 0).PassAlways)+1 ; get number of pass always
+	add	edi,KeyboardType.PassAlways
+	mov	ecx,(KeyboardType.PassAlwaysEnd-KeyboardType.PassAlways)+1 ; get number of pass always
 	repne	scasb			; look for a match
 	or	ecx,ecx			; see if there was a match
 	jne	??chkkey
@@ -1451,34 +1453,34 @@ Key_Satisfied	PROC	NEAR C	USES	ebx ecx esi edi,
 
 ; now test the ctrl,alt and shift bits
 
-	test	[(KeyboardType PTR esi+7).KeysUpDown],04h	; is the left ctrl down?
+	test	(KeyboardType PTR [esi+7]).KeysUpDown,04h	; is the left ctrl down?
 	jne 	short ??ctrlon		; if so, ctrl is on
 
-	test	[(KeyboardType PTR esi+8).KeysUpDown],01h	; is the right ctrl down?
+	test	(KeyboardType PTR [esi+8]).KeysUpDown,01h	; is the right ctrl down?
 	je 	short ??ctrloff		; if not, neither are down, no ctrl
 ??ctrlon:
 	or	ah,02h			; or on the ctrl bit in flags
 ??ctrloff:
-	test	[(KeyboardType PTR esi+7).KeysUpDown],50h	; is either alt key down?
+	test	(KeyboardType PTR [esi+7]).KeysUpDown,50h	; is either alt key down?
 	je 	short ??altoff
 	or	ah,04h			; or on the alt bit in flags
 ??altoff:
-	test	[(KeyboardType PTR esi+5).KeysUpDown],10h	; is the left shift down?
+	test	(KeyboardType PTR [esi+5]).KeysUpDown,10h	; is the left shift down?
 	jne 	short ??shifton		; if so the sift is on
-	test	[(KeyboardType PTR esi+7).KeysUpDown],02h	; is the right shift down?
+	test	(KeyboardType PTR [esi+7]).KeysUpDown,02h	; is the right shift down?
 	je 	short ??shiftoff		; if not then neither shift is down
 ??shifton:
 	or	ah,01h			; or on the shift bit in flags
 ??shiftoff:
-	test	[(KeyboardType PTR esi).KeyLock],CAPSLOCK	; is the caps lock on?
+	test	(KeyboardType PTR [esi]).KeyLock,CAPSLOCK	; is the caps lock on?
 	je 	short ??capsoff		; if not don't worry about it
-	test	ch,[(KeyboardType PTR esi+edi).KeysCapsLock]	; get code for keycaps
+	test	ch,(KeyboardType PTR [esi+edi]).KeysCapsLock	; get code for keycaps
 	je 	short ??capsoff		; its not effected
 	xor	ah,1h			; toggle the shift flag
 ??capsoff:
-	test	[(KeyboardType PTR esi).KeyLock],NUMLOCK		; is the num lock key on?
+	test	(KeyboardType PTR [esi]).KeyLock,NUMLOCK		; is the num lock key on?
 	je 	short ??numlockoff		; if not don't worry about it
-	test	ch,[(KeyboardType PTR esi+edi).KeysNumLock]	; get code for numlock
+	test	ch,(KeyboardType PTR [esi+edi]).KeysNumLock	; get code for numlock
 	je 	short ??numlockoff		; if not effected skip toggle
 	xor	ah,1h			; toggle the shift flag if effected
 
@@ -1529,19 +1531,19 @@ KeyNum_Translate	PROC	NEAR C	USES	ebx ecx esi edi,
 
 	mov	esi,[RealModePtr]	; Point to start of RM data.
 	mov	eax,[keycode]
-	test	[(KeyboardType PTR esi).KeyFlags],TRACKEXT
+	test	(KeyboardType PTR [esi]).KeyFlags,TRACKEXT
 	jne 	short ??fini
 
 
-	mov	ecx,OFFSET ((KeyboardType PTR 0).ExtRemap)- OFFSET((KeyboardType PTR 0).ExtNums)
-	mov	edi,OFFSET (KeyboardType PTR 0).ExtNums
+	mov	ecx,KeyboardType.ExtRemap - KeyboardType.ExtNums
+	mov	edi,KeyboardType.ExtNums
 	add	edi,esi
 
 	repne	scasb
 	jcxz	short ??fini			; No match found.
 
 	mov	edi,esi
-	add	edi,OFFSET (KeyboardType PTR 0).ExtRemapEnd
+	add	edi,KeyboardType.ExtRemapEnd
 	dec	edi
 	sub	edi,ecx
 	mov	al,[edi]
@@ -1567,16 +1569,16 @@ Stuff_Key_WORD	PROC	NEAR C	USES	ebx esi edi,
 
 	mov	esi,[RealModePtr]		; Point to start of RM data.
 
-	mov	eax,[(KeyboardType PTR esi).KeyBufferTail]
+	mov	eax,(KeyboardType PTR [esi]).KeyBufferTail
 	mov	edi,eax
 	add	eax,2
 	and	eax,0FFh			; New KeyBufferTail value.
-	cmp	[(KeyboardType PTR esi).KeyBufferHead],eax
+	cmp	(KeyboardType PTR [esi]).KeyBufferHead,eax
 	je 	short ??noroom
 
 	mov	bx,[code]
-	mov	[(KeyboardType PTR esi+edi).KeyBuffer],bx		; Record the keystroke.
-	mov	[(KeyboardType PTR esi).KeyBufferTail],eax
+	mov	(KeyboardType PTR [esi+edi]).KeyBuffer,bx		; Record the keystroke.
+	mov	(KeyboardType PTR [esi]).KeyBufferTail,eax
 	xor	eax,eax
 	ret
 
@@ -1619,10 +1621,10 @@ Stuff_Key_Num	PROC	NEAR C	USES	ebx ecx edx edi esi,
 	mov	esi,[RealModePtr]		; Point to start of RM data.
 
 	; Record the mouse position to be stuffed into buffer.
-	mov	eax,[(KeyboardType PTR esi).MouseX]
-	mov	[(KeyboardType PTR esi).LocalMouseX],ax
-	mov	eax,[(KeyboardType PTR esi).MouseY]
-	mov	[(KeyboardType PTR esi).LocalMouseY],ax
+	mov	eax,(KeyboardType PTR [esi]).MouseX
+	mov	(KeyboardType PTR [esi]).LocalMouseX,ax
+	mov	eax,(KeyboardType PTR [esi]).MouseY
+	mov	(KeyboardType PTR [esi]).LocalMouseY,ax
 
 ??cando:
 	mov	eax,[keycode]		; get the code
@@ -1633,14 +1635,14 @@ Stuff_Key_Num	PROC	NEAR C	USES	ebx ecx edx edi esi,
 
 ??validkey:
 
-	test	[(KeyboardType PTR esi).KeyFlags],KEYMOUSE	; is the numeric keypad moving the mouse?
+	test	(KeyboardType PTR [esi]).KeyFlags,KEYMOUSE	; is the numeric keypad moving the mouse?
 	je	??no_pad_move
 
 	; ALT-cursor keys are undefined.  Pass them on to the program.
 	test	ah,ALTPRESS		; is either alt key down?
 	jne	??no_pad_move
 
-	test	[(KeyboardType PTR esi).KeyFlags],SIMLBUTTON	; are we simulating left mouse presses
+	test	(KeyboardType PTR [esi]).KeyFlags,SIMLBUTTON	; are we simulating left mouse presses
 	je	short ??chkinsert
 
 	cmp	al,KN_RETURN
@@ -1658,20 +1660,20 @@ Stuff_Key_Num	PROC	NEAR C	USES	ebx ecx edx edi esi,
 
 ??forceleft:
 	mov	al,KN_LMOUSE
-	or	[(KeyboardType PTR esi).Button],1		; Left mouse bit.
+	or	(KeyboardType PTR [esi]).Button,1		; Left mouse bit.
 	test	ah,KEYRELEASE
 	je	??mousefake
-	and	[(KeyboardType PTR esi).Button],NOT 1
+	and	(KeyboardType PTR [esi]).Button,NOT 1
 	jmp	??mousefake
 
 ??regular:
 	cmp	al,KN_DELETE
 	jne	short ??regular2
 	mov	al,KN_RMOUSE
-	or	[(KeyboardType PTR esi).Button],2		; Right mouse bit.
+	or	(KeyboardType PTR [esi]).Button,2		; Right mouse bit.
 	test	ah,KEYRELEASE
 	je	??mousefake
-	and	[(KeyboardType PTR esi).Button],NOT 2
+	and	(KeyboardType PTR [esi]).Button,NOT 2
 	jmp	??mousefake
 
 ??regular2:
@@ -1703,7 +1705,7 @@ Stuff_Key_Num	PROC	NEAR C	USES	ebx ecx edx edi esi,
 	sub	al,KN_UPLEFT		; get a number between 0 and 12
 	mov	bx,ax
 	shl	ebx,1			; double for WORD index
-	mov	ax,[WORD PTR ((KeyboardType PTR esi+ebx).XYAdjust)]
+	mov	ax,WORD PTR ((KeyboardType PTR [esi+ebx]).XYAdjust)
 
 	movsx	ebx,ah
 	movsx	eax,al
@@ -1722,11 +1724,11 @@ Stuff_Key_Num	PROC	NEAR C	USES	ebx ecx edx edi esi,
 	add	edx,3			; for fast speed
 ??normspeed:
 	add	ebx,edx			; add speed for y index
-	mov	bl,[(KeyboardType PTR esi+ebx).KeyMouseMove] 	; get speed for y delta
+	mov	bl,(KeyboardType PTR [esi+ebx]).KeyMouseMove 	; get speed for y delta
 	movsx	ebx,bl
 	xchg	ebx,edx			; save mouse y delta
 	add	ebx,eax			; add speed for x index
-	mov	al,[(KeyboardType PTR esi+ebx).KeyMouseMove]	; get speed for x delta
+	mov	al,(KeyboardType PTR [esi+ebx]).KeyMouseMove	; get speed for x delta
 	movsx	eax,al
 	xchg	ebx,edx			; restore mouse y delta
 	jmp	short ??ctrloff
@@ -1749,36 +1751,36 @@ Stuff_Key_Num	PROC	NEAR C	USES	ebx ecx edx edi esi,
 
 	; Convert raw index into logical (clockwise) index.
 	shl	ebx,1
-	movzx	ebx,[(KeyboardType PTR esi+ebx).EdgeConv]
+	movzx	ebx,(KeyboardType PTR [esi+ebx]).EdgeConv
 	shl	ebx,2
-	mov	ax,[(KeyboardType PTR esi+ebx).ScreenEdge]	; New absolute X
-	mov	bx,[(KeyboardType PTR esi+ebx+2).ScreenEdge] ; New absolute Y
-	mov	[(KeyboardType PTR esi).LocalMouseX],ax
-	mov	[(KeyboardType PTR esi).LocalMouseY],bx
+	mov	ax,(KeyboardType PTR [esi+ebx]).ScreenEdge	; New absolute X
+	mov	bx,(KeyboardType PTR [esi+ebx+2]).ScreenEdge ; New absolute Y
+	mov	(KeyboardType PTR [esi]).LocalMouseX,ax
+	mov	(KeyboardType PTR [esi]).LocalMouseY,bx
 
 ??set_xyz:
-	mov	ax,[(KeyboardType PTR esi).LocalMouseX]	; get new mouse x,y
-	mov	bx,[(KeyboardType PTR esi).LocalMouseY]
+	mov	ax,(KeyboardType PTR [esi]).LocalMouseX	; get new mouse x,y
+	mov	bx,(KeyboardType PTR [esi]).LocalMouseY
 	jmp	short ??set_xy
 
 	; Process a normal faked mouse move.
 ??ctrloff:
 	; DRD change
-	add	[(KeyboardType PTR esi).LocalMouseX],ax	; save it in our local
+	add	(KeyboardType PTR [esi]).LocalMouseX,ax	; save it in our local
 	jns	short ??not_negative_x
 	xor	eax,eax
-	mov	[(KeyboardType PTR esi).LocalMouseX],ax	; clear our local
+	mov	(KeyboardType PTR [esi]).LocalMouseX,ax	; clear our local
 
 ??not_negative_x:
 ; DRD change
-	add	[(KeyboardType PTR esi).LocalMouseY],bx	; save it in our local
+	add	(KeyboardType PTR [esi]).LocalMouseY,bx	; save it in our local
 	jns	short ??not_negative_y
 	xor	ebx,ebx
-	mov	[(KeyboardType PTR esi).LocalMouseY],bx	; clear our local
+	mov	(KeyboardType PTR [esi]).LocalMouseY,bx	; clear our local
 
 ??not_negative_y:
-	mov	ax,[(KeyboardType PTR esi).LocalMouseX]	; get new mouse x,y
-	mov	bx,[(KeyboardType PTR esi).LocalMouseY]
+	mov	ax,(KeyboardType PTR [esi]).LocalMouseX	; get new mouse x,y
+	mov	bx,(KeyboardType PTR [esi]).LocalMouseY
 	cmp	ax,MAX_X_PIXEL		; bigger than
 	jle	short ??check_y
 	mov	ax,MAX_X_PIXEL
@@ -1789,11 +1791,11 @@ Stuff_Key_Num	PROC	NEAR C	USES	ebx ecx edx edi esi,
 	mov	bx,MAX_Y_PIXEL
 
 ??set_xy:
-	mov	[(KeyboardType PTR esi).LocalMouseX],ax
-	mov	[(KeyboardType PTR esi).LocalMouseY],bx
-	mov	[WORD PTR (KeyboardType PTR esi).MouseX],ax
-	mov	[WORD PTR (KeyboardType PTR esi).MouseY],bx
-	cmp	[(KeyboardType PTR esi).MouseUpdate],0	; wait until mouse interrupt is done
+	mov	(KeyboardType PTR [esi]).LocalMouseX,ax
+	mov	(KeyboardType PTR [esi]).LocalMouseY,bx
+	mov	WORD PTR (KeyboardType PTR [esi]).MouseX,ax
+	mov	WORD PTR (KeyboardType PTR [esi]).MouseY,bx
+	cmp	(KeyboardType PTR [esi]).MouseUpdate,0	; wait until mouse interrupt is done
 	jne	short ??noshow
 ; PWG: ARRGGGHHHH!
 ;	call	Low_Hide_Mouse
@@ -1805,7 +1807,7 @@ Stuff_Key_Num	PROC	NEAR C	USES	ebx ecx edx edi esi,
 
 ??no_pad_move:
 	; Fetch working pointers to the keyboard ends.
-	mov	edi,[(KeyboardType PTR esi).KeyBufferTail]
+	mov	edi,(KeyboardType PTR [esi]).KeyBufferTail
 	mov	[tail],edi		; Safety record.
 
 	; Record the base keycode (if there is room).
@@ -1831,7 +1833,7 @@ Stuff_Key_Num	PROC	NEAR C	USES	ebx ecx edx edi esi,
 
 	; Record mouse coordinate X.
 ??recordmouse:
-	movzx	eax,[(KeyboardType esi).LocalMouseX]
+	movzx	eax,(KeyboardType PTR [esi]).LocalMouseX
 	push	eax
 	call	Stuff_Key_WORD
 	add	esp,4
@@ -1840,7 +1842,7 @@ Stuff_Key_Num	PROC	NEAR C	USES	ebx ecx edx edi esi,
 	add	[_size],2
 
 	; Record mouse coordinate Y.
-	movzx	eax,[(KeyboardType esi).LocalMouseY]
+	movzx	eax,(KeyboardType PTR [esi]).LocalMouseY
 	push	eax
 	call	Stuff_Key_WORD
 	add	esp,4
@@ -1861,14 +1863,14 @@ Stuff_Key_Num	PROC	NEAR C	USES	ebx ecx edx edi esi,
 	test	ah,KEYRELEASE
 	je	short ??real
 	xor	bl,bl
-	test	[(KeyboardType PTR esi).KeyFlags],PASSBREAKS
+	test	(KeyboardType PTR [esi]).KeyFlags,PASSBREAKS
 	jne 	short ??real
 	cmp	al,KN_LMOUSE
 	je 	short ??real
 	cmp	al,KN_RMOUSE
 	je 	short ??real
 ??notreal:
-	mov	[(KeyboardType esi).KeyBufferTail],edi	; Nullify any KeyBufferTail changes.
+	mov	(KeyboardType PTR [esi]).KeyBufferTail,edi	; Nullify any KeyBufferTail changes.
 ??real:
 
 	; Update the KeysUpDown bit array.
@@ -1883,15 +1885,15 @@ Stuff_Key_Num	PROC	NEAR C	USES	ebx ecx edx edi esi,
 
 	; If this is a reapeat key and the key is already being held
 	; down, then don't stuff it into the keyboard buffer.
-	test	bl,[(KeyboardType esi+edi).KeysUpDown]
+	test	bl,(KeyboardType PTR [esi+edi]).KeysUpDown
 	je	short ??notalready
-	test	[(KeyboardType PTR esi).KeyFlags],REPEATON
+	test	(KeyboardType PTR [esi]).KeyFlags,REPEATON
 	jne	short ??notalready
 	mov	edx,[tail]
-	mov	[(KeyboardType esi).KeyBufferTail],edx	; Nullify any KeyBufferTail changes.
+	mov	(KeyboardType PTR [esi]).KeyBufferTail,edx	; Nullify any KeyBufferTail changes.
 ??notalready:
-	and	[(KeyboardType esi+edi).KeysUpDown],bh	; Force key bit to zero.
-	or	[(KeyboardType esi+edi).KeysUpDown],bl	; Insert key bit as appropriate.
+	and	(KeyboardType PTR [esi+edi]).KeysUpDown,bh	; Force key bit to zero.
+	or	(KeyboardType PTR [esi+edi]).KeysUpDown,bl	; Insert key bit as appropriate.
 ;??notreal:
 
 	; Successful keybuffer stuff could result in a
@@ -1902,7 +1904,7 @@ Stuff_Key_Num	PROC	NEAR C	USES	ebx ecx edx edi esi,
 	; Unsuccessful keybuffer stuff.
 ??noroom:
 	mov	eax,[tail]
-	mov	[(KeyboardType PTR esi).KeyBufferTail],eax
+	mov	(KeyboardType PTR [esi]).KeyBufferTail,eax
 	xor	eax,eax			; Signal an error.
 
 ??exit:
@@ -1987,14 +1989,14 @@ Debug_Interrupt	PROC	NEAR C
 	;*==================================================================
 	;* Do the deed.
 	;*==================================================================
-	mov	[(KeyboardType PTR esi).KeyIntDisabled],1
+	mov	(KeyboardType PTR [esi]).KeyIntDisabled,1
 
 	;*==================================================================
 	;* Now get the address of the real debug handler and poke it into
 	;*   the stack so we can IRET to it.
 	;*==================================================================
-	mov	eax,[(KeyboardType PTR esi).DbgOldPMIOffset]	; Get orig offset.
-	mov	ebx,[(KeyboardType PTR esi).DbgOldPMISelector]	; Get orig selector.
+	mov	eax,(KeyboardType PTR [esi]).DbgOldPMIOffset	; Get orig offset.
+	mov	ebx,(KeyboardType PTR [esi]).DbgOldPMISelector	; Get orig selector.
 	mov	[ss:ebp+4],eax					; Poke offset.
 	mov	[ss:ebp+8],ebx					; Poke selector.
 
@@ -2072,25 +2074,25 @@ Keyboard_Interrupt	PROC	NEAR C
 	mov	ds , ax
 	mov	esi,[RealModePtr]		; Point to start of RM data.
 
-	mov	edx,[(KeyboardType PTR esi).KeyFlags]
+	mov	edx,(KeyboardType PTR [esi]).KeyFlags
 	;*** The following fix allows proper caps and num lock tracking on Tandy
 	; 10-6-89 LJC, DRD
 
-	and	[(KeyboardType PTR esi).KeyLock],NOT (NUMLOCK OR CAPSLOCK); assume caps and num inactive
+	and	(KeyboardType PTR [esi]).KeyLock,NOT (NUMLOCK OR CAPSLOCK); assume caps and num inactive
 	test	[BYTE PTR 417H],040H	; test Caps lock bit in BIOS
 	je	short ??bioscapsoff	; skip activate code
-	or	[(KeyboardType PTR esi).KeyLock],CAPSLOCK	; Caps Lock active
+	or	(KeyboardType PTR [esi]).KeyLock,CAPSLOCK	; Caps Lock active
 
 ??bioscapsoff:
 	test	[BYTE PTR 417H],020H	; test Num lock bit in BIOS
 	je	short ??biosnumoff	; skip activate code
-	or	[(KeyboardType PTR esi).KeyLock],NUMLOCK 	; Num Lock active
+	or	(KeyboardType PTR [esi]).KeyLock,NUMLOCK 	; Num Lock active
 
 ??biosnumoff:
-	mov	[(KeyboardType PTR esi).ExtKeyboard],TRUE 	; assume 101/102-key keyboard
+	mov	(KeyboardType PTR [esi]).ExtKeyboard,TRUE 	; assume 101/102-key keyboard
 	test	[BYTE PTR 496H],010H	; test for 101/102-key keyboard
 	jne	short ??extkeyboard	; skip deactivate code
-	mov	[(KeyboardType PTR esi).ExtKeyboard],FALSE 	; no 101/102-key keyboard
+	mov	(KeyboardType PTR [esi]).ExtKeyboard,FALSE 	; no 101/102-key keyboard
 
 ??extkeyboard:
 	xor	ah,ah			; clear ctrl flags to 0
@@ -2102,11 +2104,11 @@ Keyboard_Interrupt	PROC	NEAR C
 	; New CODE to montior key stream
 	;
 	xor	ebx,ebx
-	mov	bx,[(KeyboardType PTR esi).KeyStreamIndex]
-	mov	[(KeyboardType PTR esi+ebx).KeyStream],al
+	mov	bx,(KeyboardType PTR [esi]).KeyStreamIndex
+	mov	(KeyboardType PTR [esi+ebx]).KeyStream,al
 	inc	ebx
 	and	ebx,15
-	mov	[(KeyboardType PTR esi).KeyStreamIndex],bx
+	mov	(KeyboardType PTR [esi]).KeyStreamIndex,bx
 	mov	ebx,0101H		; set key to a make by default
 	;
 	; END OF SEQUENCE
@@ -2117,12 +2119,12 @@ Keyboard_Interrupt	PROC	NEAR C
 	;
 	cmp	al,0E1H			; see if this is a pause/break
 	jne	short ??notpcode	; not a pause/break start code
-	mov	[(KeyboardType PTR esi).LastKeyE1],3		; absorb this and next two codes
+	mov	(KeyboardType PTR [esi]).LastKeyE1,3		; absorb this and next two codes
 
 ??notpcode:
-	cmp	[(KeyboardType PTR esi).LastKeyE1],0		; are we in a pause/break code
+	cmp	(KeyboardType PTR [esi]).LastKeyE1,0		; are we in a pause/break code
 	je	short ??notpause	; no, just keep going
-	dec	[(KeyboardType PTR esi).LastKeyE1]		; yes, dec the count
+	dec	(KeyboardType PTR [esi]).LastKeyE1		; yes, dec the count
 	test	edx,PAUSEON		; should it pass these codes
 	jne 	??passcode		; pass the code
 	jmp	??absorbcode		; don't pass code
@@ -2134,7 +2136,7 @@ Keyboard_Interrupt	PROC	NEAR C
 	;
 	cmp	al,0E0H			; is it an extended code
 	jne	short ??notextcode	; if not skip to handle key
-	mov	[(KeyboardType PTR esi).LastKeyE0],TRUE	; set the extended code to 1
+	mov	(KeyboardType PTR [esi]).LastKeyE0,TRUE	; set the extended code to 1
 ??jmppasscode:
 	jmp	??passcode		; always pass E0s
 
@@ -2152,20 +2154,20 @@ Keyboard_Interrupt	PROC	NEAR C
 	;
 	; Translate the raw keycode into the Westwood keycode.
 	;
-	cmp	[(KeyboardType PTR esi).LastKeyE0],FALSE	; was the prev byte an E0?
+	cmp	(KeyboardType PTR [esi]).LastKeyE0,FALSE	; was the prev byte an E0?
 	je 	short ??normal		; if not it is a normal key
-	mov	[(KeyboardType PTR esi).LastKeyE0],FALSE	; if so clear for next read
-	mov	[(KeyboardType PTR esi).IsExtKey],TRUE	; it is an extended key
+	mov	(KeyboardType PTR [esi]).LastKeyE0,FALSE	; if so clear for next read
+	mov	(KeyboardType PTR [esi]).IsExtKey,TRUE	; it is an extended key
 
 
-	mov	edi,OFFSET (KeyboardType PTR 0).ExtCodes
+	mov	edi,KeyboardType.ExtCodes
 	add	edi,esi
-	mov	ecx,(OFFSET (KeyboardType PTR 0).ExtNums-OFFSET (KeyboardType PTR 0).ExtCodes)	; get number of entrys in ext table
+	mov	ecx,(KeyboardType.ExtNums-KeyboardType.ExtCodes)	; get number of entrys in ext table
 	repne	scasb			; look for a match
 	jcxz	??absorbcode		; Not recognized, so throw it away.
 
-	mov	al,[(OFFSET (KeyboardType PTR 0).ExtNums - OFFSET (KeyboardType PTR 0).ExtCodes) - 1 + edi] ; get the match
-	mov	[(KeyboardType PTR esi).IsExtKey],FALSE	; it is not an extended key
+	mov	al,[(KeyboardType.ExtNums - KeyboardType.ExtCodes) - 1 + edi] ; get the match
+	mov	(KeyboardType PTR [esi]).IsExtKey,FALSE	; it is not an extended key
 	jmp 	short ??notext
 
 ??normal:
@@ -2176,15 +2178,15 @@ Keyboard_Interrupt	PROC	NEAR C
 ??normok:
 	mov	edi,eax			; use code as an index
 	and	edi,007Fh		; Mask off any release bit.
-	mov	al,[(KeyboardType PTR esi+edi).KeyNums]		; get the key number of this key
+	mov	al,(KeyboardType PTR [esi+edi]).KeyNums		; get the key number of this key
 
 ??notext:
 	;
 	; Test and set the CTRL bit.
 	;
-	test	[(KeyboardType PTR esi+8).KeysUpDown],001H	; is the right ctrl down?
+	test	(KeyboardType PTR [esi+8]).KeysUpDown,001H	; is the right ctrl down?
 	jne	short ??ctrlon		; if so, ctrl is on
-	test	[(KeyboardType PTR esi+7).KeysUpDown],004H	; is the left ctrl down?
+	test	(KeyboardType PTR [esi+7]).KeysUpDown,004H	; is the left ctrl down?
 	je	short ??ctrloff		; if not, neither are down, no ctrl
 
 	; DRD
@@ -2193,7 +2195,7 @@ Keyboard_Interrupt	PROC	NEAR C
 	cmp	al,KN_NUMLOCK		; check for CTRL-NUMLOCK
 	jne	short ??ctrlon
 
-	cmp	[(KeyboardType PTR esi).ExtKeyboard],TRUE	; if 101/102-key keyboard it is ok
+	cmp	(KeyboardType PTR [esi]).ExtKeyboard,TRUE	; if 101/102-key keyboard it is ok
 	je	short ??ctrlon
 
 	test	edx,PAUSEON		; should it pass these codes
@@ -2208,7 +2210,7 @@ Keyboard_Interrupt	PROC	NEAR C
 	;
 	; Test and set the ALT bit.
 	;
-	test	[(KeyboardType PTR esi+7).KeysUpDown],050H	; is either alt key down?
+	test	(KeyboardType PTR [esi+7]).KeysUpDown,050H	; is either alt key down?
 	je	short ??altoff
 	or	ah,ALTPRESS		; or on the alt bit in flags
 
@@ -2221,9 +2223,9 @@ Keyboard_Interrupt	PROC	NEAR C
 	add	esp,4
 
 ;------	Set the shift bit if necessary.
-	test	[(KeyboardType PTR esi+5).KeysUpDown],010H	; is the left shift down?
+	test	(KeyboardType PTR [esi+5]).KeysUpDown,010H	; is the left shift down?
 	jne	short ??shifton		; if so the shift is on
-	test	[(KeyboardType PTR esi+7).KeysUpDown],002H	; is the right shift down?
+	test	(KeyboardType PTR [esi+7]).KeysUpDown,002H	; is the right shift down?
 	je	short ??shiftoff	; if not then neither shift is down
 
 ??shifton:
@@ -2239,10 +2241,10 @@ Keyboard_Interrupt	PROC	NEAR C
 	mov	ebx,eax
 	and	ebx,07Fh
 	and	bl,0111b
-	mov	ch,[(KeyboardType PTR esi+ebx).Bits]		; get the bit to test
-	test	[(KeyboardType PTR esi).KeyLock],CAPSLOCK	; is the caps lock on?
+	mov	ch,(KeyboardType PTR [esi+ebx]).Bits		; get the bit to test
+	test	(KeyboardType PTR [esi]).KeyLock,CAPSLOCK	; is the caps lock on?
 	je	short ??capsoff		; if not don't worry about it
-	test	ch,[(KeyboardType PTR esi+edi).KeysCapsLock]	; get code for keycaps
+	test	ch,(KeyboardType PTR [esi+edi]).KeysCapsLock	; get code for keycaps
 	je	short ??capsoff		; its not effected
 	xor	ah,SHIFTPRESS		; toggle the shift flag
 
@@ -2250,9 +2252,9 @@ Keyboard_Interrupt	PROC	NEAR C
 	;
 	;------	Toggle the shift state if the num-lock key is on (if necessary).
 	;
-	test	[(KeyboardType PTR esi).KeyLock],NUMLOCK	; is the num lock key on?
+	test	(KeyboardType PTR [esi]).KeyLock,NUMLOCK	; is the num lock key on?
 	je	short ??numlockoff	; if not don't worry about it
-	test	ch,[(KeyboardType PTR esi+edi).KeysNumLock]	; get code for numlock
+	test	ch,(KeyboardType PTR [esi+edi]).KeysNumLock	; get code for numlock
 	je	short ??numlockoff	; if not effected skip toggle
 	xor	ah,SHIFTPRESS		; toggle the shift flag if effected
 
@@ -2260,7 +2262,7 @@ Keyboard_Interrupt	PROC	NEAR C
 ;------ Remember the current control/shift/alt bit settings for later use.
 
 ;??noshiftever:
-	mov	[(KeyboardType PTR esi).CtrlFlags],ah		; save off shift-ctrl-alt flags
+	mov	(KeyboardType PTR [esi]).CtrlFlags,ah		; save off shift-ctrl-alt flags
 					; for the mouse and joystick routines
 					; to use in stuffing key into the
 					; keyboard buffer.
@@ -2270,7 +2272,7 @@ Keyboard_Interrupt	PROC	NEAR C
 	mov	ax,cx
 
 IF DEBUG
-	cmp	[(KeyboardType PTR esi).KeyIntDisabled],1
+	cmp	(KeyboardType PTR [esi]).KeyIntDisabled,1
 	jne	??not_currently_disabled
 
 	inc	[BYTE PTR 0B0002h]
@@ -2282,7 +2284,7 @@ IF DEBUG
 	cmp	eax,120			; is it greater than F9 key
 	ja	??justpass
 ??disable:
-	mov	[(KeyboardType PTR esi).KeyIntDisabled],0
+	mov	(KeyboardType PTR [esi]).KeyIntDisabled,0
 ??justpass:
 	jmp	??passcode
 
@@ -2293,7 +2295,7 @@ IF DEBUG
 
 	inc	[BYTE PTR 0B0000h]
 
-	mov	[(KeyboardType PTR esi).KeyIntDisabled],1
+	mov	(KeyboardType PTR [esi]).KeyIntDisabled,1
 	jmp	??absorbcode
 ENDIF
 
@@ -2312,7 +2314,7 @@ ENDIF
 	cmp	eax,027Eh
 	jne	short ??nobreak
 ??breaker:
-	mov	[(KeyboardType PTR esi).Break],1
+	mov	(KeyboardType PTR [esi]).Break,1
 
 ??nobreak:
 ;------	Check for Music and Sound control keys.
@@ -2345,30 +2347,30 @@ ENDIF
 ;------	Do the special ESC routine if necessary.
 	cmp	al,110			; is this the esc key?
 	jne	short ??noroutine	; if not goto the pass always
-	cmp	[(KeyboardType PTR esi).EscRoutine],0 ;if vector is 0 don't jump
+	cmp	(KeyboardType PTR [esi]).EscRoutine,0 ;if vector is 0 don't jump
 	je	short ??noroutine
 	push	eax
-	call	[(KeyboardType PTR esi).EscRoutine]
+	call	(KeyboardType PTR [esi]).EscRoutine
 	pop	eax
 
 ??noroutine:
 ;------	Check to see if the key is to be passed to the system or not.
-	mov	edi,OFFSET (KeyboardType PTR 0).PassAlways	; get offset to table
+	mov	edi,KeyboardType.PassAlways	; get offset to table
 	add	edi,esi
-	mov	ecx,(OFFSET (KeyboardType PTR 0).PassAlwaysEnd - OFFSET (KeyboardType PTR 0).PassAlways) ; get number of pass always CDY JLB MOD 7/11 was
+	mov	ecx,(KeyboardType.PassAlwaysEnd - KeyboardType.PassAlways) ; get number of pass always CDY JLB MOD 7/11 was
 	repne	scasb			; look for a match
 	or	ecx,ecx			; see if there was no match
 	jne	??passcode	; CDY JLB 7/11 optimization
 
 ??passalways:
 	; now check for conditional passes
-	mov	edi,OFFSET (KeyboardType PTR 0).CondPassKey	; get offset to cond key table
+	mov	edi,KeyboardType.CondPassKey	; get offset to cond key table
 	add	edi,esi
-	mov	ecx,(OFFSET (KeyboardType PTR 0).CondPassCond-OFFSET (KeyboardType PTR 0).CondPassKey) ; get number of entries
+	mov	ecx,(KeyboardType.CondPassCond-KeyboardType.CondPassKey) ; get number of entries
 	shr	ecx,1			; cut in half for words
 	repne	scasw			; look for a match
 	jcxz	short ??notcondpass	; OPTIMIZATION CDY JLB
-	mov	bx,[(OFFSET (KeyboardType PTR 0).CondPassCond - OFFSET (KeyboardType PTR 0).CondPassKey) - 2 + edi]
+	mov	bx,[(KeyboardType.CondPassCond - KeyboardType.CondPassKey) - 2 + edi]
 	and	bx,dx			; are the conditions met?
 	je	short ??notcondpass	; NO... check normally.
 	jmp	short ??passcode	; YES... pass back to system.
@@ -2380,14 +2382,14 @@ ENDIF
 	je	short ??absorbcode	; if not, absorb the code.
 
 ??passcode:
-	inc	[(KeyboardType PTR esi).PassCount]
+	inc	(KeyboardType PTR [esi]).PassCount
 
 	; Step 5.
 	; Now it is time to set up for the call by returning by poking
 	; the old interupt handle address in.
-	mov	[(KeyboardType PTR esi).PMIssuedKeyInt],1		; Make it TRUE
-	mov	eax,[(KeyboardType PTR esi).KeyOldPMIOffset]	; Get orig offset.
-	mov	ebx,[(KeyboardType PTR esi).KeyOldPMISelector]	; Get orig selector.
+	mov	(KeyboardType PTR [esi]).PMIssuedKeyInt,1		; Make it TRUE
+	mov	eax,(KeyboardType PTR [esi]).KeyOldPMIOffset	; Get orig offset.
+	mov	ebx,(KeyboardType PTR [esi]).KeyOldPMISelector	; Get orig selector.
 	mov	[ss:ebp+4],eax					; Poke offset.
 	mov	[ss:ebp+8],ebx					; Poke selector.
 
