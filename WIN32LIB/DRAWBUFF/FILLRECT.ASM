@@ -62,18 +62,16 @@ INCLUDE <gbuffer.inc>
 ;* HISTORY:                                                                *
 ;*   06/07/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Buffer_Fill_Rect C near
-	USES	eax,ebx,ecx,edx,esi,edi,ebp
-
 	;*===================================================================
 	;* define the arguements that our function takes.
 	;*===================================================================
-	ARG    	this_object:DWORD			; this is a member function
-	ARG	x1_pixel:WORD
-	ARG	y1_pixel:WORD
-	ARG	x2_pixel:WORD
-	ARG	y2_pixel:WORD
-	ARG    	color:BYTE			; what color should we clear to
+Buffer_Fill_Rect	PROC	near C	USES	eax ebx ecx edx esi edi ebp,
+	   	this_object:DWORD,			; this is a member function
+	x1_pixel:WORD,
+	y1_pixel:WORD,
+	x2_pixel:WORD,
+	y2_pixel:WORD,
+	   	color:BYTE			; what color should we clear to
 	;*===================================================================
 	; Define some locals so that we can handle things quickly
 	;*===================================================================
@@ -270,6 +268,6 @@ INCLUDE <gbuffer.inc>
 ??out:
 ??exit:
 	ret
-	ENDP	Buffer_Fill_Rect
+Buffer_Fill_Rect	ENDP
 
 END
