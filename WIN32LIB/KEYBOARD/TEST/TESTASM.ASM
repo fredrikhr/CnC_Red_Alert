@@ -58,10 +58,10 @@ set_dac_col endp
 
 
 
-global	Set_Palette_Register_:near
+public	Set_Palette_Register_
 
 
-proc Set_Palette_Register_ near
+Set_Palette_Register_	proc near
 
 		pushad
 		and	cl,63
@@ -72,6 +72,6 @@ proc Set_Palette_Register_ near
 		popad
 		ret
 
-endp Set_Palette_Register_
+Set_Palette_Register_	endp
 
 end
