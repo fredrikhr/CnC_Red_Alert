@@ -75,18 +75,16 @@ EXTERN	_ShapeBuffer		  :DWORD
 ;* HISTORY:                                                                *
 ;*   10/27/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C Mouse_Shadow_Buffer:NEAR
-	PROC	Mouse_Shadow_Buffer C NEAR
-	USES	eax,ebx,ecx,edx,edi,esi
-
-	ARG	this:		DWORD
-	ARG	src_dst_obj:	DWORD
-	ARG	buffer:DWORD
-	ARG	x:		DWORD
-	ARG	y:		DWORD
-	ARG	hotx:		DWORD
-	ARG	hoty:		DWORD
-	ARG	store:		DWORD
+	PUBLIC	C Mouse_Shadow_Buffer
+Mouse_Shadow_Buffer	PROC	NEAR C USES eax ebx ecx edx edi esi,
+	_this:		DWORD,
+	src_dst_obj:	DWORD,
+	buffer:DWORD,
+	x:		DWORD,
+	y:		DWORD,
+	hotx:		DWORD,
+	hoty:		DWORD,
+	store:		DWORD,
 
 	local	x0: 		dword
 	local	y0: 		dword
@@ -104,7 +102,7 @@ EXTERN	_ShapeBuffer		  :DWORD
 	;*===================================================================
 	;* Copy of X, Y, Width and Height into local registers
 	;*===================================================================
-	mov	esi, [this]			; get offset to mouse data
+	mov	esi, [_this]			; get offset to mouse data
 	mov	edi, [src_dst_obj]		; get offset to mouse data
 
 	mov	eax, [x]
@@ -261,7 +259,7 @@ EXTERN	_ShapeBuffer		  :DWORD
 	pop	ebp
 ??out:
 	ret
-	ENDP	Mouse_Shadow_Buffer
+Mouse_Shadow_Buffer	ENDP
 
 ;***************************************************************************
 ;* DRAW_MOUSE -- Handles drawing the mouse cursor			   *
@@ -284,14 +282,12 @@ EXTERN	_ShapeBuffer		  :DWORD
 ;* HISTORY:                                                                *
 ;*   10/27/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C Draw_Mouse:NEAR
-	PROC	Draw_Mouse C NEAR
-	USES	eax,ebx,ecx,edx,edi,esi
-
-	ARG	this:DWORD
-	ARG	dest:DWORD
-	ARG	mousex:DWORD
-	ARG	mousey:DWORD
+	PUBLIC	C Draw_Mouse
+Draw_Mouse	PROC	NEAR C USES eax ebx ecx edx edi esi,
+	_this:DWORD,
+	dest:DWORD,
+	mousex:DWORD,
+	mousey:DWORD,
 
 	local	x0:dword
 	local	y0:dword
@@ -301,7 +297,7 @@ EXTERN	_ShapeBuffer		  :DWORD
 	local	buffy0:dword
 
 
-	mov	esi, [this]    	; get 32 bit offset to mouse data
+	mov	esi, [_this]    	; get 32 bit offset to mouse data
 	mov	edi, [dest]	; get 32 bit offset to dest buffer
 
 	;*===================================================================
@@ -450,7 +446,7 @@ EXTERN	_ShapeBuffer		  :DWORD
 ??out:
 	ret
 
-	ENDP	Draw_Mouse
+Draw_Mouse	ENDP
 ;***************************************************************************
 ;* SET_MOUSE_CURSOR -- Sets the shape to be used as the mouse.             *
 ;*                                                                         *
@@ -472,14 +468,12 @@ EXTERN	_ShapeBuffer		  :DWORD
 ;* HISTORY:                                                                *
 ;*   02/13/1992 JLB : Created.                                             *
 ;*=========================================================================*
-	GLOBAL	C ASM_Set_Mouse_Cursor:NEAR
-	PROC	ASM_Set_Mouse_Cursor C NEAR
-	USES	ebx,ecx,edx,esi,edi
-
-	ARG	this:DWORD				; pointer to mouse cursor struct
-	ARG	xhotspot:DWORD				; the x hot spot of the mouse
-	ARG	yhotspot:DWORD				; the y hot spot of the mouse
-	ARG	cursor:DWORD				; ptr to the new mouse cursor
+	PUBLIC	C ASM_Set_Mouse_Cursor
+ASM_Set_Mouse_Cursor	PROC	NEAR C USES ebx ecx edx esi edi,
+	_this:DWORD,				; pointer to mouse cursor struct
+	xhotspot:DWORD,				; the x hot spot of the mouse
+	yhotspot:DWORD,				; the y hot spot of the mouse
+	cursor:DWORD,				; ptr to the new mouse cursor
 
 	LOCAL	datasize:DWORD
 	LOCAL	stype:WORD
@@ -491,7 +485,7 @@ EXTERN	_ShapeBuffer		  :DWORD
 	; Direction flag must be forward in this routine.
 	;*=========================================================================*
 	cld
-	mov	esi,[this]			; get offset of real mode data start
+	mov	esi,[_this]			; get offset of real mode data start
 
 	;-------------------------------------------------------------------
 	; Calculate the size of the buffer needed.
@@ -628,13 +622,13 @@ EXTERN	_ShapeBuffer		  :DWORD
 	pop	eax
 	pop	eax
 	pop	eax
-	mov	esi,[this]
+	mov	esi,[_this]
 	mov	edi,[(MouseType esi).MouseCursor]		; set edi to point to mouse buffer
 	mov	esi,[ShapeBuffer]
 	jmp	??copy_type
 
 ??done_copy:
-	mov	esi,[this]	; get offset of real mode data start
+	mov	esi,[_this]	; get offset of real mode data start
 
 	mov	eax,[xhotspot]		; get the mouse cursors x hotspot
 	mov	[(MouseType esi).MouseXHot],eax
@@ -656,6 +650,6 @@ EXTERN	_ShapeBuffer		  :DWORD
 	pop	[(MouseType esi).PrevCursor]
 	ret				; and return back to the world
 
-	ENDP	ASM_Set_Mouse_Cursor
+ASM_Set_Mouse_Cursor	ENDP
 
 END
