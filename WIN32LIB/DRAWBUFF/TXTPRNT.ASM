@@ -144,15 +144,13 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 ;* HISTORY:                                                                *
 ;*   01/17/1995 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Buffer_Print C near
-	USES	ebx,ecx,edx,esi,edi
-
-	ARG	this_object:DWORD
-	ARG	string:DWORD
-	ARG	x_pixel:DWORD
-	ARG	y_pixel:DWORD
-	ARG	fcolor:DWORD
-	ARG	bcolor:DWORD
+Buffer_Print	PROC	near C	USES ebx ecx edx esi edi,
+	this_object:DWORD,
+	string:DWORD,
+	x_pixel:DWORD,
+	y_pixel:DWORD,
+	fcolor:DWORD,
+	bcolor:DWORD,
 
 	LOCAL	infoblock:DWORD		; pointer to info block
 	LOCAL	offsetblock:DWORD	; pointer to offset block  (UWORD *)
@@ -474,7 +472,7 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 	mov	eax,[startdraw]			; return this so calling routine
 	ret					; can figure out where to draw next.
 
-	ENDP	Buffer_Print
+Buffer_Print	ENDP
 
 ;***************************************************************************
 ;* GET_FONT_PALETTE_PTR -- Returns a pointer to the 256 byte font palette  *
@@ -489,11 +487,11 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 ;*   08/18/1995 PWG : Created.                                             *
 ;*=========================================================================*
 
-	GLOBAL C	Get_Font_Palette_Ptr:NEAR
-	PROC	Get_Font_Palette_Ptr C near
+	PUBLIC C	Get_Font_Palette_Ptr
+Get_Font_Palette_Ptr	PROC	near C
 	mov	eax, OFFSET ColorXlat
 	ret
-	ENDP	Get_Font_Palette_Ptr
+Get_Font_Palette_Ptr	ENDP
 
 
 END
