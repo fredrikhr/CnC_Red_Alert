@@ -34,13 +34,13 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
 GLOBAL	C Calculate_CRC	:NEAR
 
-	CODESEG
+	.CODE
 
 ; LONG Calculate_CRC(VOID *buffer, LONG length);
 	PROC	Calculate_CRC C near
