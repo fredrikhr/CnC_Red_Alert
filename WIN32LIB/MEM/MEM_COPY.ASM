@@ -33,12 +33,9 @@
 ;*   Mem_Copy -- Copies from one pointer to another.                       *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
-
-
-LOCALS ??
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
 
 ;******************************************************************************
@@ -55,7 +52,7 @@ OPTIMAL_BYTE_COPY	equ	14
 GLOBAL 	C Mem_Copy	: NEAR
 GLOBAL  C Largest_Mem_Block : near
 
-CODESEG
+.CODE
 
 
 ;***************************************************************************
