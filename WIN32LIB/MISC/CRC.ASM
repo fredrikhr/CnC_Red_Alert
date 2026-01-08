@@ -43,11 +43,9 @@ PUBLIC	C Calculate_CRC
 	.CODE
 
 ; LONG Calculate_CRC(VOID *buffer, LONG length);
-	PROC	Calculate_CRC C near
-	USES 	esi
-
-	ARG	buffer:DWORD
-	ARG	length:DWORD
+Calculate_CRC	PROC	near C	USES	esi,
+	buffer:DWORD,
+	_length:DWORD,
 
 	LOCAL	crc:DWORD
 
@@ -61,7 +59,7 @@ PUBLIC	C Calculate_CRC
 	xor	ebx,ebx
 
 	; Fetch the length of the data block to CRC.
-	mov	ecx,[length]
+	mov	ecx,[_length]
 	jecxz	short ??fini
 
 	; Prepare the length counters.
@@ -109,6 +107,6 @@ PUBLIC	C Calculate_CRC
 	mov	eax,[crc]
 	ret
 
-	ENDP	Calculate_CRC
+Calculate_CRC	ENDP
 
 	END
