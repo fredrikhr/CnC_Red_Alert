@@ -52,10 +52,8 @@ PUBLIC	C Shake_Screen
 ; Bounds Checking: None
 ;
 ;*
-	PROC	Shake_Screen C near
-	USES	ecx, edx
-
-	ARG	shakes:DWORD
+Shake_Screen	PROC	near C	USES	ecx edx,
+	shakes:DWORD
  ret
 
 	mov	ecx,[shakes]
@@ -151,7 +149,7 @@ PUBLIC	C Shake_Screen
 
 	ret
 
-	ENDP	Shake_Screen
+Shake_Screen	ENDP
 
 ;***********************************************************
 
