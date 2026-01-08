@@ -217,7 +217,7 @@ Buffer_Draw_Stamp	PROC	near C,
 
 	; Determine whether simple icon draw is sufficient or whether the
 	; extra remapping icon draw is needed.
-	cmp	[BYTE PTR doremap],0
+	cmp	BYTE PTR [doremap],0
 	je	short ??istranscheck
 
 	;************************************************************
@@ -257,7 +257,7 @@ Buffer_Draw_Stamp	PROC	near C,
 ??istranscheck:
 	mov	ebx,[IsTrans]
 	add	ebx,[icon]
-	cmp	[BYTE PTR ebx],0
+	cmp	BYTE PTR [ebx],0
 	jne	short ??rowloop
 
 	;************************************************************
@@ -486,7 +486,7 @@ Buffer_Draw_Stamp_Clip	PROC	near C,
 
 	; Determine whether simple icon draw is sufficient or whether the
 	; extra remapping icon draw is needed.
-	cmp	[BYTE PTR doremap],0
+	cmp	BYTE PTR [doremap],0
 	je	short ??istranscheck2
 
 	;************************************************************
@@ -523,7 +523,7 @@ Buffer_Draw_Stamp_Clip	PROC	near C,
 ??istranscheck2:
 	mov	ebx,[IsTrans]
 	add	ebx,[icon]
-	cmp	[BYTE PTR ebx],0
+	cmp	BYTE PTR [ebx],0
 	jne	short ??rowloopc
 
 	;************************************************************
