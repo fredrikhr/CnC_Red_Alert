@@ -60,7 +60,7 @@ INCLUDE <gbuffer.inc>
 ;*   06/07/1994 PWG : Created.                                             *
 ;*=========================================================================*
 Buffer_Get_Pixel	PROC	near C	USES	ebx ecx edx edi,
-	   	this_object:DWORD,				; this is a member function
+	this_object:DWORD,			; this is a member function
 	x_pixel:DWORD,				; x position of pixel to set
 	y_pixel:DWORD,				; y position of pixel to set
 
@@ -69,9 +69,9 @@ Buffer_Get_Pixel	PROC	near C	USES	ebx ecx edx edi,
 	;*===================================================================
 	mov	ebx,[this_object]				; get a pointer to viewport
 	xor	eax,eax
-	mov	edi,[(GraphicViewPort ebx).GVPOffset]	; get the correct offset
-	mov	ecx,[(GraphicViewPort ebx).GVPHeight]	; edx = height of viewport
-	mov	edx,[(GraphicViewPort ebx).GVPWidth]	; ecx = width of viewport
+	mov	edi,(GraphicViewPort PTR [ebx]).GVPOffset	; get the correct offset
+	mov	ecx,(GraphicViewPort PTR [ebx]).GVPHeight	; edx = height of viewport
+	mov	edx,(GraphicViewPort PTR [ebx]).GVPWidth	; ecx = width of viewport
 
 	;*===================================================================
 	; Verify that the X pixel offset if legal
@@ -87,8 +87,8 @@ Buffer_Get_Pixel	PROC	near C	USES	ebx ecx edx edi,
 	mov	eax,[y_pixel]				; get the y position
 	cmp	eax,ecx					;  is it out of bounds
 	jae	??exit					; if so then get out
-	add	edx,[(GraphicViewPort ebx).GVPXAdd]	; otherwise find bytes per row
-	add	edx,[(GraphicViewPort ebx).GVPPitch]	; otherwise find bytes per row
+	add	edx,(GraphicViewPort PTR [ebx]).GVPXAdd		; otherwise find bytes per row
+	add	edx,(GraphicViewPort PTR [ebx]).GVPPitch	; otherwise find bytes per row
 	mul	edx					; offset = bytes per row * y
 	add	edi,eax					; add it into the offset
 
