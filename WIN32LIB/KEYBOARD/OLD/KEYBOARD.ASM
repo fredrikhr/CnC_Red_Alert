@@ -44,7 +44,7 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 ;*
 ;*	Keyboard driver -- 80386 Protected Mode Assembly portion	   *
-;*	updated by: Phil Gorrow for 32 bit Protected Mode		   
+;*	updated by: Phil Gorrow for 32 bit Protected Mode
 ;***************************************************************************
 ;
 ; ----------------------------------------------------------------
@@ -61,7 +61,7 @@ JUMPS				; optimize jumps if possible
 ;---------------------------------------------------------------------------
 PROT_INT_ENABLE	EQU	1		; if false protected int just calls real mode int
 
-DPMI_INTR	EQU	31h	
+DPMI_INTR	EQU	31h
 IRQ1INTNUM	EQU	09h		; IRQ1 interrupt vector number.
 BRKINTNUM	EQU	23h		; Crtl-C (Break) interrupt vector number
 DBGINTNUM	EQU	3h		; Debug interrupt vector number
@@ -114,7 +114,7 @@ LABEL 	RealBinStart	BYTE
 include "keyireal.ibn"
 LABEL	RealBinEnd	BYTE
 
-LABEL	LockedDataStart	BYTE	
+LABEL	LockedDataStart	BYTE
 RMVector	DD	0
 RealModeSel	DD	0
 RealModePtr	DD	0		; Pointer to real mode memory.
@@ -200,7 +200,7 @@ MouseQY		DD	0
 ;* HISTORY:                                                                *
 ;*   07/11/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Install_Keyboard_Interrupt C NEAR 
+	PROC	Install_Keyboard_Interrupt C NEAR
 	USES	eax,ebx,ecx,edx,esi,edi
 	ARG	rm_ptr:DWORD
 	ARG	rm_size:DWORD
@@ -248,7 +248,7 @@ MouseQY		DD	0
 	mov	eax,0100h	; set function number
 	mov	ebx,[rm_size]		; get size of RM binary.
 	mov	[RealModeSize],ebx
-	add	ebx,15			; round up 
+	add	ebx,15			; round up
 	shr	ebx,4			; convert to pages.
 	int	DPMI_INTR	 	; do call.
 	jc	??error		 	; check for error.
@@ -421,7 +421,7 @@ ENDIF
 	; output: cf error
 	; ES:EBX = address of PM int handler routine.
 	;==========================================================================
-	
+
 	mov	eax,0204h		; Get proteced mode
 	mov	bl,BRKINTNUM		; IRQ1 interrupt vector
 	int	DPMI_INTR		; do call.
@@ -484,7 +484,7 @@ IF DEBUG
 	; output: cf error
 	; ES:EBX = address of PM int handler routine.
 	;==========================================================================
-	
+
 	mov	eax,0204h		; Get proteced mode
 	mov	bl,DBGINTNUM		; IRQ1 interrupt vector
 	int	DPMI_INTR		; do call.
@@ -529,7 +529,7 @@ ENDIF
 ;* HISTORY:                                                                *
 ;*   07/13/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Remove_Keyboard_Interrupt C NEAR 
+	PROC	Remove_Keyboard_Interrupt C NEAR
 	USES	ebx,ecx,edx
 
 	; verifie that the keyboard was previosly install
@@ -655,7 +655,7 @@ ENDIF
 	jc	??error
 ??mem_not_allocated:
 
-	; Now we can unlock all stuff needed for the interrupt.  
+	; Now we can unlock all stuff needed for the interrupt.
 	; Unlock Code
 	test	[InitFlags],IF_LOCKED_PM_CODE
 	jz	??code_not_locked
@@ -705,14 +705,14 @@ ENDIF
 ;* HISTORY:                                                                *
 ;*   07/14/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Check_Key_Num C NEAR 
+	PROC	Check_Key_Num C NEAR
 	USES	ebx,esi
 	pushf					; save off the flags
 	cli					; disable interrupts
 
 	mov	esi,[RealModePtr]		; Point to start of RM data.
-	mov	eax,[(KeyboardType PTR esi).KeyBufferHead]		
-	xor	eax,[(KeyboardType PTR esi).KeyBufferTail]		
+	mov	eax,[(KeyboardType PTR esi).KeyBufferHead]
+	xor	eax,[(KeyboardType PTR esi).KeyBufferTail]
 	or	eax,eax				; check to see if head == tail
 	jz	short ??fini			; if so we are done
 
@@ -794,7 +794,7 @@ ENDIF
 ;* HISTORY:                                                                *
 ;*   07/14/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Low_Get_Key C NEAR 
+	PROC	Low_Get_Key C NEAR
 	USES	ebx,esi,edi
 
 	mov	edi,eax				; save off value in ax
@@ -807,7 +807,7 @@ ENDIF
 ; This is not a hardware interrupt and if the funtion is being called
 ; from within a hardware interrupt then DS and ES will be preset to
 ; DGROUP _DATA
-	
+
 	mov	esi,[RealModePtr]		; Point to start of RM data.
 
 	mov	ax,[(KeyboardType PTR esi+edi).KeyBuffer]		; get the head
@@ -879,7 +879,7 @@ ENDIF
 ;* HISTORY:                                                                *
 ;*   07/15/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Convert_Num_To_ASCII C NEAR 
+	PROC	Convert_Num_To_ASCII C NEAR
 	USES	ebx,ecx,esi,edi
 
 	;*===================================================================
@@ -897,13 +897,13 @@ ENDIF
 
 ??ok:
 	;*===================================================================
-	;* ES points to the DOSMEM selector, esi is the offset of the 
+	;* ES points to the DOSMEM selector, esi is the offset of the
 	;*   protected mode structure.
 	;*===================================================================
 	mov	esi,[RealModePtr]	; Point to start of RM data.
 
 	;*===================================================================
-	;* Start dealing with the keys.					  
+	;* Start dealing with the keys.
 	;*===================================================================
 	cmp	al,110			; is it esc
 	je	??esc			; if so then deal with it
@@ -955,7 +955,7 @@ ENDIF
 	mov	cl,[(KeyboardType PTR esi+edi).Bits]
 
 	shr	ebx,3			; div by 8 for byte offset
-	test	[(KeyboardType PTR esi+ebx).KeysCapsLock],cl	
+	test	[(KeyboardType PTR esi+ebx).KeysCapsLock],cl
 	je 	short ??jexit
 	and	al,01FH			; force to ctrl value
 
@@ -1015,7 +1015,7 @@ ENDIF
 
 	add	al,133			; make value between 198-207 or
 	jmp	short ??exit		; 0C6H-0CFH
-	
+
 ??extout:
 	or	al,080H
 	jmp	short ??exit
@@ -1115,7 +1115,7 @@ ENDIF
 ;* HISTORY:                                                                *
 ;*   07/15/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Get_Key C NEAR 
+	PROC	Get_Key C NEAR
 	USES 	ebx,ecx,edi
 
 	cld				; clear the direction flag for speed
@@ -1223,7 +1223,7 @@ ENDIF
 	and	[(KeyboardType PTR esi).KeyFlags],eax
 	xor	eax,eax
 	mov	eax,[(KeyboardType PTR esi).KeyFlags]
-	ret 
+	ret
 
 	ENDP	Keyboard_Attributes_Off
 ;***************************************************************************
@@ -1375,7 +1375,7 @@ ENDIF
 ;* HISTORY:                                                                *
 ;*   07/20/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Get_Key_Bits C NEAR 
+	PROC	Get_Key_Bits C NEAR
 	USES	ebx,ecx,edi
 
 	cld
@@ -1508,7 +1508,7 @@ ENDIF
 
 
 ;***************************************************************************
-;* Interrupt routines start here - Interrupts must be within the Locked 
+;* Interrupt routines start here - Interrupts must be within the Locked
 ;*   code area for DPMI compatability.
 ;***************************************************************************
 
@@ -1529,12 +1529,12 @@ LABEL 	LockedCodeStart	BYTE
 ;* HISTORY:                                                                *
 ;*   07/15/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	KeyNum_Translate C NEAR 
+	PROC	KeyNum_Translate C NEAR
 	USES 	ebx,ecx,esi,edi
 	ARG	keycode:DWORD
 
 ;*===================================================================
-;* ES points to the DOSMEM selector, esi is the offset of the 
+;* ES points to the DOSMEM selector, esi is the offset of the
 ;*   protected mode structure.
 ;*===================================================================
 
@@ -1626,7 +1626,7 @@ LABEL 	LockedCodeStart	BYTE
 
 ; We need to set the data segment because we might be being called
 ; from within an interrupt
-; Soo, if that is the case then DS & ES point to DGROUP _DATA 
+; Soo, if that is the case then DS & ES point to DGROUP _DATA
 
 	mov	esi,[RealModePtr]		; Point to start of RM data.
 
@@ -1821,7 +1821,7 @@ LABEL 	LockedCodeStart	BYTE
 	mov	[tail],edi		; Safety record.
 
 	; Record the base keycode (if there is room).
-	cwde	
+	cwde
 	push	eax
 	call	Stuff_Key_WORD
 	add	esp,4
@@ -1858,7 +1858,7 @@ LABEL 	LockedCodeStart	BYTE
 	or	eax,eax
 	jne	??jmpnoroom
 	add	[size],2
-	
+
 ??ok:
 	; If PASSBREAKS is not active and this is a keyboard
 	; break AND it is not a mouse event, then don't put
@@ -2044,7 +2044,7 @@ IF PROT_INT_ENABLE
 ;*=========================================================================*
 	PROC	Keyboard_Interrupt C NEAR
 
-	; This routine will do what it needs to, 
+	; This routine will do what it needs to,
 	; then it will decide if the old vector should be called.
 	; if so, it calls it and never returns to this function.
 	; if not, we do our own return.
@@ -2072,11 +2072,11 @@ IF PROT_INT_ENABLE
 	mov	es , ax
 	mov	ds , ax
 	mov	esi,[RealModePtr]		; Point to start of RM data.
-	
+
 	mov	edx,[(KeyboardType PTR esi).KeyFlags]
 	;*** The following fix allows proper caps and num lock tracking on Tandy
 	; 10-6-89 LJC, DRD
-					
+
 	and	[(KeyboardType PTR esi).KeyLock],NOT (NUMLOCK OR CAPSLOCK); assume caps and num inactive
 	test	[BYTE PTR 417H],040H	; test Caps lock bit in BIOS
 	je	short ??bioscapsoff	; skip activate code
@@ -2095,7 +2095,7 @@ IF PROT_INT_ENABLE
 
 ??extkeyboard:
 	xor	ah,ah			; clear ctrl flags to 0
-	mov	ebx,0101H		; set key to a make by default 
+	mov	ebx,0101H		; set key to a make by default
 
 	in	al,KEYDATA		; get a code from the keyboard
 	;
@@ -2286,7 +2286,7 @@ IF DEBUG
 ??justpass:
 	jmp	??passcode
 
-??not_currently_disabled:	
+??not_currently_disabled:
 	cmp	eax,125
 	jne	??not_toggle
 
@@ -2354,7 +2354,7 @@ ENDIF
 ;------	Check to see if the key is to be passed to the system or not.
 	mov	edi,OFFSET (KeyboardType PTR 0).PassAlways	; get offset to table
 	add	edi,esi
-	mov	ecx,(OFFSET (KeyboardType PTR 0).PassAlwaysEnd - OFFSET (KeyboardType PTR 0).PassAlways) ; get number of pass always CDY JLB MOD 7/11 was 
+	mov	ecx,(OFFSET (KeyboardType PTR 0).PassAlwaysEnd - OFFSET (KeyboardType PTR 0).PassAlways) ; get number of pass always CDY JLB MOD 7/11 was
 	repne	scasb			; look for a match
 	or	ecx,ecx			; see if there was no match
 	jne	??passcode	; CDY JLB 7/11 optimization
@@ -2416,10 +2416,10 @@ ENDIF
 	pop	fs gs es ds
 	popad
 
-	pop	ebp  
+	pop	ebp
 	add	esp,8
 	popfd
-	iret	
+	iret
 
 	ENDP	Keyboard_Interrupt
 
@@ -2437,7 +2437,7 @@ ELSE
 ;*   07/06/1994 SKB : Created.                                             *
 ;*=========================================================================*
 
- 
+
 DATASEG
 STRUC	RealModeCallStruc
 	_EDI  DD	0
@@ -2459,8 +2459,8 @@ STRUC	RealModeCallStruc
 	_SS   DW	0
 	      dd	0
 	      dd	0
-  nothing     dd	0	
-ENDS 
+  nothing     dd	0
+RealModeCallStruc	ENDS
 
 RMDS RealModeCallStruc  <>
 
@@ -2473,7 +2473,7 @@ PROC	Keyboard_Interrupt	Near
 ; Extender do not allow a DPMI real mode call which is
 ; DMPI INT 31h funtion 0301h
 
-	pushad	
+	pushad
 	push	fs gs es ds
 
 	mov	ax , _DATA
@@ -2486,7 +2486,7 @@ PROC	Keyboard_Interrupt	Near
 	xor	eax , eax
 	shr	ecx , 2
 	rep	stosd
-	
+
 	mov	eax , 0300h
 	mov	bl , [ byte ptr RMVector ]
 	xor	bh , bh
@@ -2495,7 +2495,7 @@ PROC	Keyboard_Interrupt	Near
 	int	DPMI_INTR
 
 ; this is here only for testing to make sure
-; that a real mode interrupt is bieng issued. 
+; that a real mode interrupt is bieng issued.
 mov	ax , _DATA
 mov	es , ax
 mov	ds , ax
@@ -2505,7 +2505,7 @@ mov [ byte ptr 0b0000h + 10 * 80 + 42 ] , 041h
 
 ??error:
 	pop	ds es gs fs
-	popad	
+	popad
 	iretd
 	ENDP
 
