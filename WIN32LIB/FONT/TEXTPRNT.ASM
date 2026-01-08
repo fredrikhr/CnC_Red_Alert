@@ -129,19 +129,18 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 ;* HISTORY:                                                                *
 ;*   06/28/1994 SKB : Created.                                             *
 ;*=========================================================================*
-	PROC	Text_Print C near
-	USES	ebx,ecx,edx,esi,edi
-	ARG	vpselector:WORD
-	ARG	vpoffset:DWORD
-	ARG	vpwidth:DWORD
-	ARG	vpheight:DWORD
-	ARG	vpxadd:DWORD
-	ARG	string:DWORD
-	ARG	x_pixel:DWORD
-	ARG	y_pixel:DWORD
-	ARG	fcolor:DWORD
-	ARG	bcolor:DWORD
-		
+Text_Print	PROC	near C	USES ebx ecx edx esi edi,
+	vpselector:WORD,
+	vpoffset:DWORD,
+	vpwidth:DWORD,
+	vpheight:DWORD,
+	vpxadd:DWORD,
+	string:DWORD,
+	x_pixel:DWORD,
+	y_pixel:DWORD,
+	fcolor:DWORD,
+	bcolor:DWORD,
+
 	LOCAL	infoblock:DWORD		; pointer to info block
 	LOCAL	offsetblock:DWORD	; pointer to offset block  (UWORD *)
 	LOCAL	widthblock:DWORD	; pointer to width block   (BYTE  *)
@@ -152,7 +151,7 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 	LOCAL	nextdraw:DWORD		; bufferwidth - width of cur character.
 	LOCAL	startdraw:DWORD		; where next character will start being drawn.
 
-	LOCAL	char:DWORD		; current character value.	
+	LOCAL	char:DWORD		; current character value.
 
 	LOCAL	maxheight:BYTE		; max height of characters in font.
 	LOCAL	bottomblank:BYTE	; amount of empty space below current character.
@@ -165,12 +164,12 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 	mov	es,ax			; Set up selector to write to.
 
 	mov	eax,[vpwidth]		; get the width of the viewport
-	add	eax,[vpxadd]		; add amount to add to get to left edge of next line.	
+	add	eax,[vpxadd]		; add amount to add to get to left edge of next line.
 	mov	[bufferwidth],eax     	; save it off for later use.
 
 	mul	[y_pixel]		; multiply rowsize * y_pixel start.
 	mov	edi,[vpoffset]		; get start of the viewport
-	add	edi,eax			; add x,y position to start of vp to get starting row address.	
+	add	edi,eax			; add x,y position to start of vp to get starting row address.
 	mov	[curline],edi		; save 0,y address for line feed stuff.
 	add	edi,[x_pixel]		; add to get starting column in starting row.
 	mov	[startdraw],edi		; save it off.
@@ -191,8 +190,8 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 	movzx	ecx,[WORD PTR esi+FONTWIDTHBLOCK] 	; get offset to width block
 	movzx	edx,[WORD PTR esi+FONTHEIGHTBLOCK]	; get offset to height block
 
-	add	eax,esi				; add offset of FontPtr to offset block  
-	add	ebx,esi				; add offset of FontPtr to info block 
+	add	eax,esi				; add offset of FontPtr to offset block
+	add	ebx,esi				; add offset of FontPtr to info block
 	add	ecx,esi				; add offset of FontPtr to width block
 	add	edx,esi				; add offset of FontPtr to height block
 
@@ -229,16 +228,16 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 	; something with it.
 ??next_char:
 	; while (*string++)
-	xor	eax,eax				; zero out since we will just load al.	
-	mov	esi,[string]			; get address on next character.	
+	xor	eax,eax				; zero out since we will just load al.
+	mov	esi,[string]			; get address on next character.
 	lodsb					; load the character into al.
 	test	eax,0FFH			; test to see if character is a NULL
 	jz	??done				; character is NULL, get outa here.
 
 	mov	edi,[startdraw]			; Load the starting address.
 
-	mov	[string],esi			; save index into string. (incremented by lodsb)	
-	
+	mov	[string],esi			; save index into string. (incremented by lodsb)
+
 	cmp	eax,13				; is the character a line feed?
 	je	??line_feed			; if so, go to special case.
 
@@ -301,7 +300,7 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 	mov	ecx,edx				; save width since edx will be destroyed by mul.
 	mul	[bufferwidth]			; multiply that by the width of the buffer.
 	mov	edx,ecx				; restore the width
-	add	edi,eax				; update the pointer.	
+	add	edi,eax				; update the pointer.
 	jmp	short ??draw_char		; now go draw the character.
 
 ;----------------------------------------- fill Top blank area ----------------------------------------
@@ -324,7 +323,7 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 ??draw_char:
 	movzx	ecx,[charheight]		; get the height of character to count down rows.
 	test	ecx,ecx				; is there any data? (blank would not have any)
-	jz	??next_char			; if no data, go on to next character.	
+	jz	??next_char			; if no data, go on to next character.
 
 ??while_data:
 	lodsb					; get byte value from font data
@@ -392,7 +391,7 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 
 ;----------------------------------- special case line feeds ----------------------------------------
 
-??force_line_feed:	
+??force_line_feed:
 	; decrement pointer *string so that it will be back at same character
 	; when it goes through the loop.
 	mov	eax,[string]			; get string pointer.
@@ -408,8 +407,8 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 	jg	??overflow			; if so, we are outa here.
 
 	mov	eax,[bufferwidth]      		; get bytes to next line.
-	mov	edi,[curline]			; get start of current line.	
-	mul	ecx				; mult max height * next line.	
+	mov	edi,[curline]			; get start of current line.
+	mul	ecx				; mult max height * next line.
 
 	add	edi,eax				; add adjustment to current line.
 	add	[y_pixel],ecx			; increment to our next y position.
@@ -425,8 +424,8 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 ??done:
 	mov	eax,[startdraw]			; return this so calling routine
 	ret					; can figure out where to draw next.
-		
-	ENDP	Text_Print
+
+Text_Print	ENDP
 
 
 
