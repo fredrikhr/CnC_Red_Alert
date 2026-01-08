@@ -301,7 +301,7 @@ IF NOT PROT_INT_ENABLE
        jmp	??error
  ??found:
        movzx	ebx , bl
-       mov	[ byte ptr RMVector ] , bl
+       mov	byte ptr [ RMVector ] , bl
        mov	[ 4 * ebx ] , edi
 ENDIF
 
@@ -624,7 +624,7 @@ ENDIF
 IF NOT PROT_INT_ENABLE
        ; Clean up the Users interrupt table
         mov	eax , 201h
-       mov	bl , [ byte ptr RMVector ]
+       mov	bl , byte ptr [ RMVector ]
        xor	ecx , ecx
        xor	edx , edx
        int	DPMI_INTR
@@ -1978,7 +1978,7 @@ Debug_Interrupt	PROC	NEAR C
 	mov	ax , _DATA
 	mov	ds , ax
 	mov	es , ax
-	inc	[BYTE PTR 0B0000h]
+	inc	BYTE PTR [0B0000h]
 
 	;*==================================================================
 	;* Setup the pointers to the real mode data and the protected mode
@@ -2079,18 +2079,18 @@ Keyboard_Interrupt	PROC	NEAR C
 	; 10-6-89 LJC, DRD
 
 	and	(KeyboardType PTR [esi]).KeyLock,NOT (NUMLOCK OR CAPSLOCK); assume caps and num inactive
-	test	[BYTE PTR 417H],040H	; test Caps lock bit in BIOS
+	test	BYTE PTR [417H],040H	; test Caps lock bit in BIOS
 	je	short ??bioscapsoff	; skip activate code
 	or	(KeyboardType PTR [esi]).KeyLock,CAPSLOCK	; Caps Lock active
 
 ??bioscapsoff:
-	test	[BYTE PTR 417H],020H	; test Num lock bit in BIOS
+	test	BYTE PTR [417H],020H	; test Num lock bit in BIOS
 	je	short ??biosnumoff	; skip activate code
 	or	(KeyboardType PTR [esi]).KeyLock,NUMLOCK 	; Num Lock active
 
 ??biosnumoff:
 	mov	(KeyboardType PTR [esi]).ExtKeyboard,TRUE 	; assume 101/102-key keyboard
-	test	[BYTE PTR 496H],010H	; test for 101/102-key keyboard
+	test	BYTE PTR [496H],010H	; test for 101/102-key keyboard
 	jne	short ??extkeyboard	; skip deactivate code
 	mov	(KeyboardType PTR [esi]).ExtKeyboard,FALSE 	; no 101/102-key keyboard
 
@@ -2275,7 +2275,7 @@ IF DEBUG
 	cmp	(KeyboardType PTR [esi]).KeyIntDisabled,1
 	jne	??not_currently_disabled
 
-	inc	[BYTE PTR 0B0002h]
+	inc	BYTE PTR [0B0002h]
 
 	cmp	eax,115			; is it the F4 key
 	je	??disable
@@ -2293,7 +2293,7 @@ IF DEBUG
 	cmp	eax,125
 	jne	??not_toggle
 
-	inc	[BYTE PTR 0B0000h]
+	inc	BYTE PTR [0B0000h]
 
 	mov	(KeyboardType PTR [esi]).KeyIntDisabled,1
 	jmp	??absorbcode
@@ -2502,7 +2502,7 @@ Keyboard_Interrupt	PROC	Near
 
 
 	mov	eax , 0300h
-	mov	bl , [ byte ptr RMVector ]
+	mov	bl , byte ptr [ RMVector ]
 	xor	bh , bh
 	xor	cx , cx
 	lea	edi , [RMDS]
@@ -2514,9 +2514,9 @@ Keyboard_Interrupt	PROC	Near
 mov	ax , _DATA
 mov	es , ax
 mov	ds , ax
-mov [ byte ptr 0b0000h + 10 * 80 + 40 ] , 040h
+mov byte ptr [ 0b0000h + 10 * 80 + 40 ] , 040h
 jc	??error
-mov [ byte ptr 0b0000h + 10 * 80 + 42 ] , 041h
+mov byte ptr [ 0b0000h + 10 * 80 + 42 ] , 041h
 
 ??error:
 	pop	ds es gs fs
