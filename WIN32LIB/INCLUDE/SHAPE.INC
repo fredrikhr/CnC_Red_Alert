@@ -157,57 +157,57 @@ Local_Size	EQU 00A4h		; Amt of data on stack: 4+last offset
 ;---------------------------------------------------------------------------
 ; Global variables used by the shape routines, defined in drawshp.asm
 ;---------------------------------------------------------------------------
-GLOBAL C ShapeBuffer:DWORD
-GLOBAL C ShapeBufferSize:DWORD
-GLOBAL C _MaskPage:DWORD
-GLOBAL C _BackGroundPage:DWORD
-GLOBAL C PredCount:DWORD
-GLOBAL C PredTable:BYTE
-GLOBAL C PredValue:DWORD
-GLOBAL C PartialPred:DWORD
-GLOBAL C PartialCount:DWORD
-GLOBAL C Flags:DWORD
+EXTERN C ShapeBuffer:DWORD
+EXTERN C ShapeBufferSize:DWORD
+EXTERN C _MaskPage:DWORD
+EXTERN C _BackGroundPage:DWORD
+EXTERN C PredCount:DWORD
+EXTERN C PredTable:BYTE
+EXTERN C PredValue:DWORD
+EXTERN C PartialPred:DWORD
+EXTERN C PartialCount:DWORD
+EXTERN C Flags:DWORD
 
 ;---------------------------------------------------------------------------
 ; External tables that are defined in ds_table.asm.
 ;---------------------------------------------------------------------------
-GLOBAL LSkipTable:DWORD
-GLOBAL RSkipTable:DWORD
-GLOBAL DrawTable:DWORD
+EXTERN LSkipTable:DWORD
+EXTERN RSkipTable:DWORD
+EXTERN DrawTable:DWORD
 
 ;------------------------------------------------------------------------------
 ; Public functions, declared in the order they appear in the function tables.
 ;--------------------------------------------------------------------------------
-GLOBAL	C Not_Supported:NEAR
+EXTERN	C Not_Supported:NEAR
 ;	LSkipTable:
-GLOBAL Left_Skip:NEAR						; ds_ls
-GLOBAL Left_Reverse_Skip:NEAR				; ds_lrs
-GLOBAL Left_Skip:NEAR						; ds_ls
-GLOBAL Left_Reverse_Skip:NEAR				; ds_lrs
-GLOBAL Left_Scale_Skip:NEAR				; ds_lss
-GLOBAL Left_Scale_Reverse_Skip:NEAR		; ds_lsrs
-GLOBAL Left_Scale_Skip:NEAR				; ds_lss
-GLOBAL Left_Scale_Reverse_Skip:NEAR		; ds_lsrs
+EXTERN Left_Skip:NEAR						; ds_ls
+EXTERN Left_Reverse_Skip:NEAR				; ds_lrs
+EXTERN Left_Skip:NEAR						; ds_ls
+EXTERN Left_Reverse_Skip:NEAR				; ds_lrs
+EXTERN Left_Scale_Skip:NEAR				; ds_lss
+EXTERN Left_Scale_Reverse_Skip:NEAR		; ds_lsrs
+EXTERN Left_Scale_Skip:NEAR				; ds_lss
+EXTERN Left_Scale_Reverse_Skip:NEAR		; ds_lsrs
 
 ;	RSkipTable:
-GLOBAL Right_Skip:NEAR					   ; ds_rs
-GLOBAL Right_Reverse_Skip:NEAR			; ds_rrs
-GLOBAL Right_Skip:NEAR					   ; ds_rs
-GLOBAL Right_Reverse_Skip:NEAR			; ds_rrs
-GLOBAL Right_Scale_Skip:NEAR				; ds_rss
-GLOBAL Right_Scale_Reverse_Skip:NEAR	; ds_rsrs
-GLOBAL Right_Scale_Skip:NEAR				; ds_rss
-GLOBAL Right_Scale_Reverse_Skip:NEAR	; ds_rsrs
+EXTERN Right_Skip:NEAR					   ; ds_rs
+EXTERN Right_Reverse_Skip:NEAR			; ds_rrs
+EXTERN Right_Skip:NEAR					   ; ds_rs
+EXTERN Right_Reverse_Skip:NEAR			; ds_rrs
+EXTERN Right_Scale_Skip:NEAR				; ds_rss
+EXTERN Right_Scale_Reverse_Skip:NEAR	; ds_rsrs
+EXTERN Right_Scale_Skip:NEAR				; ds_rss
+EXTERN Right_Scale_Reverse_Skip:NEAR	; ds_rsrs
 
 ;	DrawTable:
-GLOBAL Draw_Normal:NEAR					; ds_dn
-GLOBAL Draw_Reverse:NEAR				; ds_dr
-GLOBAL Draw_Normal:NEAR					; ds_dn
-GLOBAL Draw_Reverse:NEAR				; ds_dr
-GLOBAL Draw_Scale:NEAR					; ds_ds
-GLOBAL Draw_Scale_Reverse:NEAR		; ds_dsr
-GLOBAL Draw_Scale:NEAR					; ds_ds
-GLOBAL Draw_Scale_Reverse:NEAR		; ds_dsr
+EXTERN Draw_Normal:NEAR					; ds_dn
+EXTERN Draw_Reverse:NEAR				; ds_dr
+EXTERN Draw_Normal:NEAR					; ds_dn
+EXTERN Draw_Reverse:NEAR				; ds_dr
+EXTERN Draw_Scale:NEAR					; ds_ds
+EXTERN Draw_Scale_Reverse:NEAR		; ds_dsr
+EXTERN Draw_Scale:NEAR					; ds_ds
+EXTERN Draw_Scale_Reverse:NEAR		; ds_dsr
 
 
 ;************************* End of shape.inc ********************************
