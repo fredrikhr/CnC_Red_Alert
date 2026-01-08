@@ -36,13 +36,13 @@
 ;*                                                                         *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
-INCLUDE ".\keystruc.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
+INCLUDE <keystruc.inc>
 
 GLOBAL	C Shadow_Blit	: NEAR
 
@@ -50,7 +50,7 @@ GLOBAL	C RealModePtr : DWORD
 GLOBAL	C Hide_Mouse  : NEAR
 GLOBAL	C Show_Mouse  : NEAR
 
-	CODESEG
+	.CODE
 
 ; void Shadow_Blit(int xpix, int ypix, int width, int height, GVPC src, VBC dst, void *shadowbuff);
 ; Warning: Shadow_Blit appears to be relatively stupid, in that while it is
