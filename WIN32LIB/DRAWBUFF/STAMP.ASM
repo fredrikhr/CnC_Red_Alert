@@ -43,12 +43,12 @@ INCLUDE <gbuffer.inc>
 
 INCLUDE	<stamp.inc>
 
-global		C Init_Stamps:near
-global		LastIconset:dword
-global		MapPtr:dword
-global		IconCount:dword
-global		IconSize:dword
-global		StampPtr:dword
+public		C Init_Stamps
+public		LastIconset
+public		MapPtr
+public		IconCount
+public		IconSize
+public		StampPtr
 
 	.DATA
 
@@ -68,8 +68,8 @@ IconCount	DD	0	; Number of icons in the set.
 
 	.CODE
 
-GLOBAL C	Buffer_Draw_Stamp:near
-GLOBAL C	Buffer_Draw_Stamp_Clip:near
+PUBLIC C	Buffer_Draw_Stamp
+PUBLIC C	Buffer_Draw_Stamp_Clip
 
 ; 256 color icon system.
 
