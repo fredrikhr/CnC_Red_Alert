@@ -39,9 +39,9 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 
-IDEAL
-P386
-MODEL USE32 FLAT
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
 GLOBAL             C Operating_System         :NEAR
 GLOBAL             C OperatingSystem          :WORD
@@ -53,12 +53,12 @@ WIN30ENH	equ	4
 WIN30STD	equ	5
 WIN30REAL	equ	6
 
-DATASEG
+.DATA
 
 OperatingSystem	dw	0
 
 
-CODESEG
+.CODE
 
 ;***************************************************************************
 ;* Operating_System -- Determines what the operating system is.            *
