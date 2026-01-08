@@ -159,12 +159,12 @@ MouseQY		DD	0
 ;* HISTORY:                                                                *
 ;*   07/06/1994 SKB : Created.                                             *
 ;*=========================================================================*
-	PROC	Get_RM_Keyboard_Address C Near
+Get_RM_Keyboard_Address	PROC	Near C
 
 	mov	eax, OFFSET RealBinStart
 	ret
 
-	ENDP
+Get_RM_Keyboard_Address	ENDP
 
 ;***************************************************************************
 ;* GET_RM_KEYBOARD_SIZE -- return size of real mode timer code.            *
@@ -178,12 +178,12 @@ MouseQY		DD	0
 ;* HISTORY:                                                                *
 ;*   07/06/1994 SKB : Created.                                             *
 ;*=========================================================================*
-	PROC	Get_RM_Keyboard_Size C Near
+Get_RM_Keyboard_Size	PROC	Near C
 
 	mov	eax, OFFSET RealBinEnd - OFFSET RealBinStart
 	ret
 
-	ENDP
+Get_RM_Keyboard_Size	ENDP
 ;***************************************************************************
 ;* INSTALL_KEYBOARD_INTERRUPT -- Installs the keyboard interrupt           *
 ;*                                                                         *
@@ -197,10 +197,9 @@ MouseQY		DD	0
 ;* HISTORY:                                                                *
 ;*   07/11/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Install_Keyboard_Interrupt C NEAR
-	USES	eax,ebx,ecx,edx,esi,edi
-	ARG	rm_ptr:DWORD
-	ARG	rm_size:DWORD
+Install_Keyboard_Interrupt	PROC	NEAR C	USES eax ebx ecx edx esi edi,
+	rm_ptr:DWORD,
+	rm_size:DWORD,
 
 	; Are they attempting to set timer again?
 	cmp	[RealModePtr],0
@@ -245,6 +244,7 @@ MouseQY		DD	0
 	mov	eax,0100h	; set function number
 	mov	ebx,[rm_size]		; get size of RM binary.
 	mov	[RealModeSize],ebx
+	add	ebx,15			; round up
 	add	ebx,15			; round up
 	shr	ebx,4			; convert to pages.
 	int	DPMI_INTR	 	; do call.
@@ -482,6 +482,7 @@ IF DEBUG
 	; ES:EBX = address of PM int handler routine.
 	;==========================================================================
 
+
 	mov	eax,0204h		; Get proteced mode
 	mov	bl,DBGINTNUM		; IRQ1 interrupt vector
 	int	DPMI_INTR		; do call.
@@ -512,7 +513,7 @@ ENDIF
        	xor	eax,eax			; signal an error.
 ??exit:
 	ret
-	ENDP	Install_Keyboard_Interrupt
+Install_Keyboard_Interrupt	ENDP
 
 ;***************************************************************************
 ;* REMOVE_INTERRUPT -- Removes keyboard interrupt and restores chain	   *
@@ -526,8 +527,7 @@ ENDIF
 ;* HISTORY:                                                                *
 ;*   07/13/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Remove_Keyboard_Interrupt C NEAR
-	USES	ebx,ecx,edx
+Remove_Keyboard_Interrupt	PROC	NEAR C	USES ebx ecx edx
 
 	; verifie that the keyboard was previosly install
 	; this is here in case of a page fault crash
@@ -653,6 +653,7 @@ ENDIF
 ??mem_not_allocated:
 
 	; Now we can unlock all stuff needed for the interrupt.
+	; Now we can unlock all stuff needed for the interrupt.
 	; Unlock Code
 	test	[InitFlags],IF_LOCKED_PM_CODE
 	jz	??code_not_locked
@@ -687,7 +688,7 @@ ENDIF
 ??error:
        	xor	eax,eax			; signal an error.
 	ret
-	ENDP	Remove_Keyboard_Interrupt
+Remove_Keyboard_Interrupt	ENDP
 
 
 ;***************************************************************************
@@ -702,8 +703,7 @@ ENDIF
 ;* HISTORY:                                                                *
 ;*   07/14/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Check_Key_Num C NEAR
-	USES	ebx,esi
+Check_Key_Num	PROC	NEAR C	USES ebx esi
 	pushf					; save off the flags
 	cli					; disable interrupts
 
@@ -721,7 +721,7 @@ ENDIF
 	popf
 	ret
 
-	ENDP	Check_Key_Num
+Check_Key_Num	ENDP
 
 ;***************************************************************************
 ;* GET_KEY_NUM -- Returns the next key num in ax                           *
@@ -736,8 +736,7 @@ ENDIF
 ;* HISTORY:                                                                *
 ;*   07/14/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Get_Key_Num C NEAR
-	USES	esi,edi
+Get_Key_Num	PROC	NEAR C	USES	esi edi
 
 	mov	esi,[RealModePtr]		; Point to start of RM data.
 ??wait:
@@ -753,7 +752,7 @@ ENDIF
 	sti				; enable interrupts
 	ret
 
-	ENDP	Get_Key_Num
+Get_Key_Num	ENDP
 
 ;***************************************************************************
 ;* KN_TO_KA -- Translates a key num to an ASCII key                        *
@@ -768,15 +767,15 @@ ENDIF
 ;*   07/15/1994 PWG : Created.                                             *
 ;*=========================================================================*
 
-	PROC	KN_To_KA C NEAR
-	ARG	keynum:DWORD
+KN_To_KA	PROC	NEAR C,
+	keynum:DWORD
 
 	mov	eax,[keynum]
 	call	near ptr Convert_Num_To_ASCII
 
 	ret
 
-	ENDP	KN_To_KA
+KN_To_KA	ENDP
 
 
 ;***************************************************************************
@@ -791,8 +790,7 @@ ENDIF
 ;* HISTORY:                                                                *
 ;*   07/14/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Low_Get_Key C NEAR
-	USES	ebx,esi,edi
+Low_Get_Key	PROC	NEAR C	USES	ebx esi edi
 
 	mov	edi,eax				; save off value in ax
 
@@ -856,7 +854,7 @@ ENDIF
 ??out:
 	ret
 
-	ENDP	Low_Get_Key
+Low_Get_Key	ENDP
 
 ;***************************************************************************
 ;* CONVERT_NUM_TO_ASCII -- Assembly routine converts keynum to ASCII key   *
@@ -876,8 +874,7 @@ ENDIF
 ;* HISTORY:                                                                *
 ;*   07/15/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Convert_Num_To_ASCII C NEAR
-	USES	ebx,ecx,esi,edi
+Convert_Num_To_ASCII	PROC	NEAR C	USES	ebx ecx esi edi
 
 	;*===================================================================
 	;* Force all breaks to be thrown out.
@@ -895,11 +892,13 @@ ENDIF
 ??ok:
 	;*===================================================================
 	;* ES points to the DOSMEM selector, esi is the offset of the
+	;* ES points to the DOSMEM selector, esi is the offset of the
 	;*   protected mode structure.
 	;*===================================================================
 	mov	esi,[RealModePtr]	; Point to start of RM data.
 
 	;*===================================================================
+	;* Start dealing with the keys.
 	;* Start dealing with the keys.
 	;*===================================================================
 	cmp	al,110			; is it esc
@@ -1013,6 +1012,7 @@ ENDIF
 	add	al,133			; make value between 198-207 or
 	jmp	short ??exit		; 0C6H-0CFH
 
+
 ??extout:
 	or	al,080H
 	jmp	short ??exit
@@ -1022,7 +1022,7 @@ ENDIF
 
 ??exit:
 	ret
-	ENDP	Convert_Num_To_ASCII
+Convert_Num_To_ASCII	ENDP
 
 ;***************************************************************************
 ;* CHECK_KEY -- checks for ASCII keys sitting in the keybuffer             *
@@ -1036,8 +1036,7 @@ ENDIF
 ;* HISTORY:                                                                *
 ;*   07/15/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Check_Key C NEAR
-	USES	ebx,edi,esi
+Check_Key	PROC	NEAR C	USES	ebx edi esi
 
 	pushf
 	cld
@@ -1096,7 +1095,7 @@ ENDIF
 ??exit:
 	popf
 	ret
-	ENDP	Check_Key
+Check_Key	ENDP
 
 
 ;***************************************************************************
@@ -1112,8 +1111,7 @@ ENDIF
 ;* HISTORY:                                                                *
 ;*   07/15/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Get_Key C NEAR
-	USES 	ebx,ecx,edi
+Get_Key	PROC	NEAR C	USES ebx ecx edi
 
 	cld				; clear the direction flag for speed
 
@@ -1158,7 +1156,7 @@ ENDIF
 	xor	ah,ah
 	ret
 
-	ENDP	Get_Key
+Get_Key	ENDP
 
 ;***************************************************************************
 ;* KEYBOARD_ATTRIBUTES_ON -- Sets the specified keyflags on                *
@@ -1172,9 +1170,8 @@ ENDIF
 ;* HISTORY:                                                                *
 ;*   07/19/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Keyboard_Attributes_On C NEAR
-	USES	esi,edi
-	ARG	bits:DWORD
+Keyboard_Attributes_On	PROC	NEAR C USES esi edi,
+	bits:DWORD
 
 	mov	esi,[RealModePtr]		; Point to start of RM data.
 
@@ -1195,7 +1192,7 @@ ENDIF
 ??fini:
 	mov	eax,[(KeyboardType PTR esi).KeyFlags]
 	ret
-	ENDP	Keyboard_Attributes_On
+Keyboard_Attributes_On	ENDP
 
 ;***************************************************************************
 ;* KEYBOARD_ATTRIBUTES_OFF -- Sets the specified keyflags off              *
@@ -1209,9 +1206,8 @@ ENDIF
 ;* HISTORY:                                                                *
 ;*   07/19/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Keyboard_Attributes_Off C NEAR
-	USES	esi
-	ARG	bits:DWORD
+Keyboard_Attributes_Off	PROC	NEAR C	USES	esi,
+	bits:DWORD
 
 	mov	esi,[RealModePtr]		; Point to start of RM data.
 
@@ -1222,7 +1218,7 @@ ENDIF
 	mov	eax,[(KeyboardType PTR esi).KeyFlags]
 	ret
 
-	ENDP	Keyboard_Attributes_Off
+Keyboard_Attributes_Off	ENDP
 ;***************************************************************************
 ;* CLEAR_KEYBUFFER -- Clears keystrokes out of the key buffer              *
 ;*                                                                         *
@@ -1235,8 +1231,7 @@ ENDIF
 ;* HISTORY:                                                                *
 ;*   07/19/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Clear_KeyBuffer C NEAR
-	USES	eax,esi
+Clear_KeyBuffer	PROC	NEAR C	USES	eax esi
 
 	mov	esi,[RealModePtr]		; Point to start of RM data.
 	cli
@@ -1246,7 +1241,7 @@ ENDIF
 
 	ret
 
-	ENDP	Clear_KeyBuffer
+Clear_KeyBuffer	ENDP
 
 ;***************************************************************************
 ;* KEY_DOWN -- tests the status of a keyboard key                          *
@@ -1260,9 +1255,8 @@ ENDIF
 ;* HISTORY:                                                                *
 ;*   07/19/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Key_Down C NEAR
-	USES	ebx,ecx,edi,esi
-	ARG	key:DWORD
+Key_Down	PROC	NEAR C	USES	ebx ecx edi esi,
+	key:DWORD
 
 	push	[key]
 	call	KeyNum_Translate
@@ -1280,7 +1274,7 @@ ENDIF
 	and	al,[(KeyboardType PTR esi+edi).KeysUpDown]
 	ret
 
-	ENDP	Key_Down
+Key_Down	ENDP
 
 ;***************************************************************************
 ;* CHECK_KEY_BITS -- checks ascii key in key buff with shift,ctrl,alt bits *
@@ -1294,8 +1288,7 @@ ENDIF
 ;* HISTORY:                                                                *
 ;*   07/20/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Check_Key_Bits C NEAR
-	USES	ebx,ecx,edi,esi
+Check_Key_Bits	PROC	NEAR C	USES	ebx ecx edi esi
 
 	pushf					; save off the direction flag
 	cld					; we will go forward
@@ -1359,7 +1352,7 @@ ENDIF
 	popf
 	ret
 
-	ENDP	Check_Key_Bits
+Check_Key_Bits	ENDP
 ;***************************************************************************
 ;* GET_KEY_BITS -- Gets ascii key in key buff with shift,ctrl,alt bits     *
 ;*                                                                         *
@@ -1372,8 +1365,7 @@ ENDIF
 ;* HISTORY:                                                                *
 ;*   07/20/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Get_Key_Bits C NEAR
-	USES	ebx,ecx,edi
+Get_Key_Bits	PROC	NEAR C	USES	ebx ecx edi
 
 	cld
 
@@ -1421,7 +1413,7 @@ ENDIF
 	or	ah,ch			; replace KEYRELEASE bit
 	ret
 
-	ENDP	Get_Key_Bits
+Get_Key_Bits	ENDP
 
 ;***************************************************************************
 ;* KEY_SATISFIED -- checks to see if the given key is satisfied            *
@@ -1435,9 +1427,8 @@ ENDIF
 ;* HISTORY:                                                                *
 ;*   07/20/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Key_Satisfied C NEAR
-	USES	ebx,ecx,esi,edi
-	ARG	key:DWORD
+Key_Satisfied	PROC	NEAR C	USES	ebx ecx esi edi,
+	key:DWORD
 
 	mov	eax,[key]
 	mov	ebx,eax			; save key code
@@ -1501,10 +1492,11 @@ ENDIF
 	or	eax,eax
 	ret
 
-	ENDP	Key_Satisfied
+Key_Satisfied	ENDP
 
 
 ;***************************************************************************
+;* Interrupt routines start here - Interrupts must be within the Locked
 ;* Interrupt routines start here - Interrupts must be within the Locked
 ;*   code area for DPMI compatability.
 ;***************************************************************************
@@ -1526,11 +1518,11 @@ LockedCodeStart	LABEL	BYTE
 ;* HISTORY:                                                                *
 ;*   07/15/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	KeyNum_Translate C NEAR
-	USES 	ebx,ecx,esi,edi
-	ARG	keycode:DWORD
+KeyNum_Translate	PROC	NEAR C	USES	ebx ecx esi edi,
+	keycode:DWORD
 
 ;*===================================================================
+;* ES points to the DOSMEM selector, esi is the offset of the
 ;* ES points to the DOSMEM selector, esi is the offset of the
 ;*   protected mode structure.
 ;*===================================================================
@@ -1556,7 +1548,7 @@ LockedCodeStart	LABEL	BYTE
 ??fini:
 	ret
 
-	ENDP	KeyNum_Translate
+KeyNum_Translate	ENDP
 
 ;***************************************************************************
 ;* STUFF_KEY_WORD -- Stuffs a word of data into keyboard buffer            *
@@ -1570,9 +1562,8 @@ LockedCodeStart	LABEL	BYTE
 ;* HISTORY:                                                                *
 ;*   07/11/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Stuff_Key_WORD C NEAR
-	USES	ebx,esi,edi
-	ARG	code:WORD
+Stuff_Key_WORD	PROC	NEAR C	USES	ebx esi edi,
+	code:WORD
 
 	mov	esi,[RealModePtr]		; Point to start of RM data.
 
@@ -1593,7 +1584,7 @@ LockedCodeStart	LABEL	BYTE
 	mov	eax,1
 	ret
 
-	ENDP	Stuff_Key_WORD
+Stuff_Key_WORD	ENDP
 
 ;***************************************************************************
 ;* STUFF_KEY_NUM -- Stuffs a key num code into the circular buffer         *
@@ -1607,11 +1598,10 @@ LockedCodeStart	LABEL	BYTE
 ;* HISTORY:                                                                *
 ;*   07/11/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Stuff_Key_Num C NEAR
-	USES	ebx,ecx,edx,edi,esi
-	ARG	keycode:DWORD
+Stuff_Key_Num	PROC	NEAR C	USES	ebx ecx edx edi esi,
+	keycode:DWORD
 	LOCAL	tail:DWORD		; Original keybuffer tail (safety copy).
-	LOCAL	size:WORD		; Size of write.
+	LOCAL	_size:WORD		; Size of write.
 
 ; for the moment we do not check for the interrupt flag
 ;	mov	eax,2534h 		; function to get the interrupt status
@@ -1623,6 +1613,7 @@ LockedCodeStart	LABEL	BYTE
 
 ; We need to set the data segment because we might be being called
 ; from within an interrupt
+; Soo, if that is the case then DS & ES point to DGROUP _DATA
 ; Soo, if that is the case then DS & ES point to DGROUP _DATA
 
 	mov	esi,[RealModePtr]		; Point to start of RM data.
@@ -1819,6 +1810,7 @@ LockedCodeStart	LABEL	BYTE
 
 	; Record the base keycode (if there is room).
 	cwde
+	cwde
 	push	eax
 	call	Stuff_Key_WORD
 	add	esp,4
@@ -1845,7 +1837,7 @@ LockedCodeStart	LABEL	BYTE
 	add	esp,4
 	or	eax,eax
 	jne	??jmpnoroom
-	add	[size],2
+	add	[_size],2
 
 	; Record mouse coordinate Y.
 	movzx	eax,[(KeyboardType esi).LocalMouseY]
@@ -1854,7 +1846,7 @@ LockedCodeStart	LABEL	BYTE
 	add	esp,4
 	or	eax,eax
 	jne	??jmpnoroom
-	add	[size],2
+	add	[_size],2
 
 ??ok:
 	; If PASSBREAKS is not active and this is a keyboard
@@ -1926,7 +1918,7 @@ LockedCodeStart	LABEL	BYTE
 ??final_exit:
 	ret
 
-	ENDP	Stuff_Key_Num
+Stuff_Key_Num	ENDP
 
 
 ;***************************************************************************
@@ -1941,10 +1933,10 @@ LockedCodeStart	LABEL	BYTE
 ;* HISTORY:                                                                *
 ;*   07/28/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Break_Interrupt C NEAR
+Break_Interrupt	PROC	NEAR C
 
 	iret
-	ENDP	Break_Interrupt
+Break_Interrupt	ENDP
 
 IF DEBUG
 ;***************************************************************************
@@ -1959,7 +1951,7 @@ IF DEBUG
 ;* HISTORY:                                                                *
 ;*   07/28/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Debug_Interrupt C NEAR
+Debug_Interrupt	PROC	NEAR C
 
 	;*==================================================================
 	;* Setup fake Interrupt entry sequence so that we can execute our
@@ -1975,7 +1967,10 @@ IF DEBUG
 	;* Preserve all of the registers that we intend to use.
 	;*=======================================Dbg========================
 	pushad
-	push	ds es gs fs
+	push	ds
+	push	es
+	push	gs
+	push	fs
 	cld
 
 	mov	ax , _DATA
@@ -2006,7 +2001,10 @@ IF DEBUG
 	;*==================================================================
 	;* Restore the stack so it looks like we just did an IRET entry
 	;*==================================================================
-	pop	fs gs es ds
+	pop	fs
+	pop	gs
+	pop	es
+	pop	ds
 	popad
 	pop	ebp
 
@@ -2016,7 +2014,7 @@ IF DEBUG
 	;*==================================================================
 	iretd
 
-	ENDP	Debug_Interrupt
+Debug_Interrupt	ENDP
 ENDIF
 
 
@@ -2039,8 +2037,9 @@ IF PROT_INT_ENABLE
 ;* HISTORY:                                                                *
 ;*   07/13/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Keyboard_Interrupt C NEAR
+Keyboard_Interrupt	PROC	NEAR C
 
+	; This routine will do what it needs to,
 	; This routine will do what it needs to,
 	; then it will decide if the old vector should be called.
 	; if so, it calls it and never returns to this function.
@@ -2061,7 +2060,10 @@ IF PROT_INT_ENABLE
 	mov	ebp,esp		; Set up a stack frame to know where to poke address.
 
 	pushad
-	push	ds es gs fs
+	push	ds
+	push	es
+	push	gs
+	push	fs
 	cld
 
 ; this is the part of the interrupt that set the segment registers
@@ -2092,6 +2094,7 @@ IF PROT_INT_ENABLE
 
 ??extkeyboard:
 	xor	ah,ah			; clear ctrl flags to 0
+	mov	ebx,0101H		; set key to a make by default
 	mov	ebx,0101H		; set key to a make by default
 
 	in	al,KEYDATA		; get a code from the keyboard
@@ -2284,6 +2287,7 @@ IF DEBUG
 	jmp	??passcode
 
 ??not_currently_disabled:
+??not_currently_disabled:
 	cmp	eax,125
 	jne	??not_toggle
 
@@ -2388,7 +2392,10 @@ ENDIF
 	mov	[ss:ebp+8],ebx					; Poke selector.
 
 	; Step 6.
-	pop	fs gs es ds
+	pop	fs
+	pop	gs
+	pop	es
+	pop	ds
 	popad
 	pop	ebp
 
@@ -2410,15 +2417,20 @@ ENDIF
 	mov	al,CLEARISR			; value to clear In Service Register
 	out	INTCHIP0,al			; 8259 interrupt chip controller 0
 
-	pop	fs gs es ds
+	pop	fs
+	pop	gs
+	pop	es
+	pop	ds
 	popad
 
+	pop	ebp
 	pop	ebp
 	add	esp,8
 	popfd
 	iret
+	iret
 
-	ENDP	Keyboard_Interrupt
+Keyboard_Interrupt	ENDP
 
 ELSE
 ;***************************************************************************
@@ -2433,6 +2445,7 @@ ELSE
 ;* HISTORY:                                                                *
 ;*   07/06/1994 SKB : Created.                                             *
 ;*=========================================================================*
+
 
 
 .DATA
@@ -2463,13 +2476,14 @@ RMDS RealModeCallStruc  <>
 
 .CODE
 
-PROC	Keyboard_Interrupt	Near
+Keyboard_Interrupt	PROC	Near
 
 ; This option of the keyboard interrupt handle will not be
 ; available at this moment because the light version of Rational System DOS
 ; Extender do not allow a DPMI real mode call which is
 ; DMPI INT 31h funtion 0301h
 
+	pushad
 	pushad
 	push	fs gs es ds
 
@@ -2484,6 +2498,7 @@ PROC	Keyboard_Interrupt	Near
 	shr	ecx , 2
 	rep	stosd
 
+
 	mov	eax , 0300h
 	mov	bl , [ byte ptr RMVector ]
 	xor	bh , bh
@@ -2492,6 +2507,7 @@ PROC	Keyboard_Interrupt	Near
 	int	DPMI_INTR
 
 ; this is here only for testing to make sure
+; that a real mode interrupt is bieng issued.
 ; that a real mode interrupt is bieng issued.
 mov	ax , _DATA
 mov	es , ax
@@ -2502,6 +2518,7 @@ mov [ byte ptr 0b0000h + 10 * 80 + 42 ] , 041h
 
 ??error:
 	pop	ds es gs fs
+	popad
 	popad
 	iretd
 	ENDP
