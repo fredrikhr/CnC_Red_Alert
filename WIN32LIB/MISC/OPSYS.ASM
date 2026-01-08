@@ -72,8 +72,7 @@ OperatingSystem	dw	0
 ;* HISTORY:                                                                *
 ;*   01/26/1993  SB : Created.                                             *
 ;*=========================================================================*
-PROC	Operating_System C near
-	USES ebx,ecx,edx,es,edi
+Operating_System	PROC	near C	USES ebx ecx edx es edi
 
 
 	; Check for Windows 3.1
@@ -138,10 +137,10 @@ NotRunningUnderWin:
 	mov	eax,DOS
 
 Exit:
-	mov [WORD PTR OperatingSystem], ax
+	mov WORD PTR [OperatingSystem], ax
 	ret
 
-ENDP	Operating_System
+Operating_System	ENDP
 
 
 
