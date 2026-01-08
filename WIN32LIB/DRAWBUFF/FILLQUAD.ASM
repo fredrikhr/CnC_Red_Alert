@@ -204,16 +204,16 @@ Buffer_Fill_Quad	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
 	sal	ebx,2
 
 ??span_initialize_loop:
-	mov	[DWORD PTR eax + ebx],SLOT_VACANT
+	mov	DWORD PTR [eax + ebx],SLOT_VACANT
 	sub	ebx,4
 	jl	short ??exit_span_initialize
-	mov	[DWORD PTR eax + ebx],SLOT_VACANT
+	mov	DWORD PTR [eax + ebx],SLOT_VACANT
 	sub	ebx,4
      	jl	short ??exit_span_initialize
-	mov	[DWORD PTR eax + ebx],SLOT_VACANT
+	mov	DWORD PTR [eax + ebx],SLOT_VACANT
 	sub	ebx,4
      	jl	short ??exit_span_initialize
-	mov	[DWORD PTR eax + ebx],SLOT_VACANT
+	mov	DWORD PTR [eax + ebx],SLOT_VACANT
 	sub	ebx,4
 	jge	short ??span_initialize_loop
 
@@ -298,12 +298,12 @@ Buffer_Fill_Quad	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
 						;   render topmost span
 
 ??quad_fill_loop:
-	cmp	[DWORD PTR esi],SLOT_VACANT	; test for unused spans	due to clipping
+	cmp	DWORD PTR [esi],SLOT_VACANT	; test for unused spans	due to clipping
 	je	??skip_span
 	xor	ecx,ecx
 	xor	edx,edx
-	mov	cx,[WORD PTR esi]
-	mov	dx,[WORD PTR esi + 2]
+	mov	cx,WORD PTR [esi]
+	mov	dx,WORD PTR [esi + 2]
 	sub	ecx,edx
 	push	edi
 	jns	short ??not_negative_count
@@ -370,11 +370,11 @@ Buffer_Fill_Quad	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
 	test	edi,esi
 	jne	??exit				; trivial rejection?
 	shl	esi,2
-	call	[DWORD PTR cs:??clip_tbl+esi]
+	call	DWORD PTR cs:[??clip_tbl+esi]
 	xchg	eax,ecx
 	xchg	ebx,edx
 	shl	edi,2
-	call	[DWORD PTR cs:??clip_tbl+edi]
+	call	DWORD PTR cs:[??clip_tbl+edi]
 
 ??clip_up_down:
 	call	NEAR PTR ??set_up_down_bits
@@ -388,11 +388,11 @@ Buffer_Fill_Quad	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
 	test	edi,esi
 	jne	??exit				; trivial rejection?
 	shl	esi,2
-	call	[DWORD PTR cs:??clip_tbl+esi]
+	call	DWORD PTR cs:[??clip_tbl+esi]
 	xchg	eax,ecx
 	xchg	ebx,edx
 	shl	edi,2
-	call	[DWORD PTR cs:??clip_tbl+edi]
+	call	DWORD PTR cs:[??clip_tbl+edi]
 	jmp	??scan_convert
 
 
@@ -587,7 +587,7 @@ Buffer_Fill_Quad	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
 	jg	??l_scan_convert
 
 ??l_scan_convert_loop:
-	cmp	[DWORD PTR ebx],SLOT_VACANT    ; if the left slot of span is
+	cmp	DWORD PTR [ebx],SLOT_VACANT    ; if the left slot of span is
 	jne	short ??l_next_slot	       ;   vacant fill it with xpos
 	mov	[ebx],ax
 
@@ -615,7 +615,7 @@ Buffer_Fill_Quad	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
 	jg	??r_scan_convert
 
 ??r_scan_convert_loop:
-	cmp	[DWORD PTR ebx],SLOT_VACANT    ; if the left slot of span is
+	cmp	DWORD PTR [ebx],SLOT_VACANT    ; if the left slot of span is
 	jne	short ??r_next_slot	       ;   vacant fill it with xpos
 	mov	[ebx],ax
 
@@ -643,7 +643,7 @@ Buffer_Fill_Quad	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
 	jg	??v_scan_convert
 
 ??v_scan_convert_loop:
-	cmp	[DWORD PTR ebx],SLOT_VACANT   ; if the left slot of span is
+	cmp	DWORD PTR [ebx],SLOT_VACANT   ; if the left slot of span is
  	jne	short ??v_next_slot	      ;   vacant fill it with xpos
 	mov	[ebx],ax
 
