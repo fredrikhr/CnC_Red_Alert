@@ -68,13 +68,11 @@ INCLUDE <gbuffer.inc>
 ;*   12/24/1991 JLB : Adapted.                                             *
 ;*=========================================================================*/
 ; LONG cdecl Desired_Facing256(LONG srcx, LONG srcy, LONG dstx, LONG dsty)
-	PROC	Desired_Facing256 C near
-	USES	ebx, ecx, edx
-
-	ARG	srcx:DWORD
-	ARG	srcy:DWORD
-	ARG	dstx:DWORD
-	ARG	dsty:DWORD
+Desired_Facing256	PROC	near C	USES	ebx ecx edx,
+	srcx:DWORD,
+	srcy:DWORD,
+	dstx:DWORD,
+	dsty:DWORD,
 
 	xor	ebx,ebx			; Facing number.
 
@@ -158,7 +156,7 @@ INCLUDE <gbuffer.inc>
 	and	eax,0FFH
 	ret
 
-	ENDP	Desired_Facing256
+Desired_Facing256	ENDP
 
 
 
