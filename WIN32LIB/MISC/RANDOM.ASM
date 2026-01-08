@@ -39,9 +39,9 @@
 .MODEL FLAT
 OPTION SEGMENT:USE32
 
-Global C Random		:NEAR
-Global C Get_Random_Mask	:NEAR
-Global C RandNumb		:DWORD
+Public C Random
+Public C Get_Random_Mask
+Public C RandNumb
 
 	.DATA
 
