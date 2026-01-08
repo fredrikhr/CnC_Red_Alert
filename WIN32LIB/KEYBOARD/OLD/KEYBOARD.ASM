@@ -1997,8 +1997,8 @@ Debug_Interrupt	PROC	NEAR C
 	;*==================================================================
 	mov	eax,(KeyboardType PTR [esi]).DbgOldPMIOffset	; Get orig offset.
 	mov	ebx,(KeyboardType PTR [esi]).DbgOldPMISelector	; Get orig selector.
-	mov	[ss:ebp+4],eax					; Poke offset.
-	mov	[ss:ebp+8],ebx					; Poke selector.
+	mov	ss:[ebp+4],eax					; Poke offset.
+	mov	ss:[ebp+8],ebx					; Poke selector.
 
 	;*==================================================================
 	;* Restore the stack so it looks like we just did an IRET entry
@@ -2390,8 +2390,8 @@ ENDIF
 	mov	(KeyboardType PTR [esi]).PMIssuedKeyInt,1		; Make it TRUE
 	mov	eax,(KeyboardType PTR [esi]).KeyOldPMIOffset	; Get orig offset.
 	mov	ebx,(KeyboardType PTR [esi]).KeyOldPMISelector	; Get orig selector.
-	mov	[ss:ebp+4],eax					; Poke offset.
-	mov	[ss:ebp+8],ebx					; Poke selector.
+	mov	ss:[ebp+4],eax					; Poke offset.
+	mov	ss:[ebp+8],ebx					; Poke selector.
 
 	; Step 6.
 	pop	fs
