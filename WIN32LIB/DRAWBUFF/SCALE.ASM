@@ -55,6 +55,18 @@ INCLUDE <gbuffer.inc>
 ;* VVC::SCALE -- Scales a virtual viewport to another virtual viewport     *
 ;*                                                                         *
 ;* INPUT:                                                                  *
+;*   this_object:DWORD,; pointer to source view port                       *
+;*   dest:DWORD,       ; pointer to destination view port                  *
+;*   src_x:DWORD,      ; source x offset into view port                    *
+;*   src_y:DWORD,      ; source y offset into view port                    *
+;*   dst_x:DWORD,      ; dest x offset into view port                      *
+;*   dst_y:DWORD,      ; dest y offset into view port                      *
+;*   src_width:DWORD,  ; width of source rectangle                         *
+;*   src_height:DWORD, ; height of source rectangle                        *
+;*   dst_width:DWORD,  ; width of dest rectangle                           *
+;*   dst_height:DWORD, ; width of dest height                              *
+;*   trans:DWORD,      ; is this transparent?                              *
+;*   remap:DWORD,      ; pointer to table to remap source                  *
 ;*                                                                         *
 ;* OUTPUT:                                                                 *
 ;*                                                                         *
@@ -63,24 +75,19 @@ INCLUDE <gbuffer.inc>
 ;* HISTORY:                                                                *
 ;*   06/16/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Linear_Scale_To_Linear C NEAR
-	USES	eax,ebx,ecx,edx,esi,edi
-
-	;*===================================================================
-	;* Define the arguements that our function takes.
-	;*===================================================================
-	ARG	this_object:DWORD		; pointer to source view port
-	ARG	dest:DWORD		; pointer to destination view port
-	ARG	src_x:DWORD		; source x offset into view port
-	ARG	src_y:DWORD		; source y offset into view port
-	ARG	dst_x:DWORD		; dest x offset into view port
-	ARG	dst_y:DWORD		; dest y offset into view port
-	ARG	src_width:DWORD		; width of source rectangle
-	ARG	src_height:DWORD	; height of source rectangle
-	ARG	dst_width:DWORD		; width of dest rectangle
-	ARG	dst_height:DWORD	; width of dest height
-	ARG	trans:DWORD		; is this transparent?
-	ARG	remap:DWORD		; pointer to table to remap source
+Linear_Scale_To_Linear	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
+	this_object:DWORD,
+	dest:DWORD,
+	src_x:DWORD,
+	src_y:DWORD,
+	dst_x:DWORD,
+	dst_y:DWORD,
+	src_width:DWORD,
+	src_height:DWORD,
+	dst_width:DWORD,
+	dst_height:DWORD,
+	trans:DWORD,
+	remap:DWORD,
 
 	;*===================================================================
 	;* Define local variables to hold the viewport characteristics
@@ -564,7 +571,7 @@ INCLUDE <gbuffer.inc>
 
 ??all_done:
 	ret
-endp
+Linear_Scale_To_Linear	endp
 
 
 END
