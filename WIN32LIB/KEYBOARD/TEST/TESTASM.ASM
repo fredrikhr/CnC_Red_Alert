@@ -16,14 +16,12 @@
 ;	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ;
 
-IDEAL
-P386
-MODEL USE32 FLAT
-jumps
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
-	codeseg
+	.code
 
-	masm
 ;
 ; Change a DAC colour register directly
 ;
@@ -58,7 +56,6 @@ set_dac_col proc near
 		ret
 set_dac_col endp
 
-	ideal
 
 
 global	Set_Palette_Register_:near
