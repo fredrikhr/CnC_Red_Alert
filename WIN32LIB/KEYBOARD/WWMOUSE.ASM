@@ -32,15 +32,14 @@
 ;*-------------------------------------------------------------------------*
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
-IDEAL
-P386
-MODEL USE32 FLAT
-LOCALS ??
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
-INCLUDE "drawbuff.inc"
-INCLUDE "gbuffer.inc"
-INCLUDE "shape.inc"
-INCLUDE ".\mouse.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
+INCLUDE <shape.inc>
+INCLUDE <mouse.inc>
 
 GLOBAL	C LCW_Uncompress:NEAR
 GLOBAL	C Get_Shape_Uncomp_Size     :NEAR
@@ -48,7 +47,7 @@ GLOBAL	C Get_Shape_Width      	  :NEAR
 GLOBAL	C Get_Shape_Original_Height :NEAR
 GLOBAL	_ShapeBuffer		  :DWORD
 
-CODESEG
+.CODE
 
 
 ;***************************************************************************
