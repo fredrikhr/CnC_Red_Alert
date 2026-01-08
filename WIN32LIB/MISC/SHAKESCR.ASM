@@ -34,13 +34,13 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
 GLOBAL	C Shake_Screen	:NEAR
 
-	CODESEG
+	.CODE
 
 ;***********************************************************
 ; SHAKE_SCREEN
