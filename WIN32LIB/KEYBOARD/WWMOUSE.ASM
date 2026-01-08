@@ -112,8 +112,8 @@ Mouse_Shadow_Buffer	PROC	NEAR C USES eax ebx ecx edx edi esi,
 
 	mov	[x0], eax
 	mov	[y0], ebx
-	add	eax, [(MouseType esi).CursorWidth]
-	add	ebx, [(MouseType esi).CursorHeight]
+	add	eax, (MouseType PTR [esi]).CursorWidth
+	add	ebx, (MouseType PTR [esi]).CursorHeight
 	mov	[x1], eax
 	mov	[y1], ebx
 
@@ -136,8 +136,8 @@ Mouse_Shadow_Buffer	PROC	NEAR C USES eax ebx ecx edx edi esi,
 
 	mov	ecx, [x0]
 	mov	ebx, [x1]
-	sub	ecx, [(GraphicViewPort edi).GVPWidth]
-	sub	ebx, [(GraphicViewPort edi).GVPWidth]
+	sub	ecx, (GraphicViewPort PTR [edi]).GVPWidth
+	sub	ebx, (GraphicViewPort PTR [edi]).GVPWidth
 	dec	ecx
 	dec	ebx
 	shld	eax, ecx, 1
@@ -150,8 +150,8 @@ Mouse_Shadow_Buffer	PROC	NEAR C USES eax ebx ecx edx edi esi,
 
 	mov	ecx, [y0]
 	mov	ebx, [y1]
-	sub	ecx, [(GraphicViewPort edi).GVPHeight]
-	sub	ebx, [(GraphicViewPort edi).GVPHeight]
+	sub	ecx, (GraphicViewPort PTR [edi]).GVPHeight
+	sub	ebx, (GraphicViewPort PTR [edi]).GVPHeight
 	dec	ecx
 	dec	ebx
 	shld	eax, ecx, 1
@@ -177,19 +177,19 @@ Mouse_Shadow_Buffer	PROC	NEAR C USES eax ebx ecx edx edi esi,
 	jz	??scr_bottom_ok
 	mov	ebx, [y0]
 	neg	ebx
-	imul	ebx, [(MouseType esi).CursorWidth]
+	imul	ebx, (MouseType PTR [esi]).CursorWidth
 	add	[buffy0], ebx
 	mov	[y0], 0
 
 ??scr_bottom_ok:
 	test	dl, 0100b
 	jz	??scr_right_ok
-	mov	eax, [(GraphicViewPort edi).GVPWidth]  ; get width into register
+	mov	eax, (GraphicViewPort PTR [edi]).GVPWidth  ; get width into register
 	mov	[x1], eax
 ??scr_right_ok:
 	test	dl, 0001b
 	jz	??not_clip
-	mov	eax, [(GraphicViewPort edi).GVPHeight]  ; get width into register
+	mov	eax, (GraphicViewPort PTR [edi]).GVPHeight  ; get width into register
 	mov	[y1], eax
 
 ??not_clip:
@@ -197,18 +197,18 @@ Mouse_Shadow_Buffer	PROC	NEAR C USES eax ebx ecx edx edi esi,
 	;* Get the offset into the screen.
 	;*===================================================================
 	mov	eax, [y0]
-	mov	edx, [(GraphicViewPort edi).GVPWidth]
-	add	edx, [(GraphicViewPort edi).GVPXAdd]
-	add	edx, [(GraphicViewPort edi).GVPPitch]
+	mov	edx, (GraphicViewPort PTR [edi]).GVPWidth
+	add	edx, (GraphicViewPort PTR [edi]).GVPXAdd
+	add	edx, (GraphicViewPort PTR [edi]).GVPPitch
 	imul	eax, edx
 	add	eax, [x0]
-	mov	edi, [(GraphicViewPort edi).GVPOffset]
+	mov	edi, (GraphicViewPort PTR [edi]).GVPOffset
 	add	edi, eax
 
 	;*===================================================================
 	;* Adjust the source for the top clip.
 	;*===================================================================
-	mov	ebx, [(MouseType esi).CursorWidth]	; turn this into an offset
+	mov	ebx, (MouseType PTR [esi]).CursorWidth	; turn this into an offset
 	mov	esi, [buffy0]			; edx points to source
 	add	esi, [buffx0]					; plus clipped lines
 
@@ -305,18 +305,18 @@ Draw_Mouse	PROC	NEAR C USES eax ebx ecx edx edi esi,
 	;*===================================================================
 	mov	eax, [mousex]
 	mov	ebx, [mousey]
-	sub	eax, [(MouseType esi).MouseXHot]
-	sub	ebx, [(MouseType esi).MouseYHot]
+	sub	eax, (MouseType PTR [esi]).MouseXHot
+	sub	ebx, (MouseType PTR [esi]).MouseYHot
 
 	mov	[x0], eax
 	mov	[y0], ebx
-	add	eax,[(MouseType esi).CursorWidth]
-	add	ebx,[(MouseType esi).CursorHeight]
+	add	eax,(MouseType PTR [esi]).CursorWidth
+	add	ebx,(MouseType PTR [esi]).CursorHeight
 	mov	[x1], eax
 	mov	[y1], ebx
 
 	mov	[buffx0], 0
-	mov	eax, [(MouseType esi).MouseCursor]
+	mov	eax, (MouseType PTR [esi]).MouseCursor
 	mov	[buffy0], eax
 
 
@@ -333,8 +333,8 @@ Draw_Mouse	PROC	NEAR C USES eax ebx ecx edx edi esi,
 
 	mov	ecx, [x0]
 	mov	ebx, [x1]
-	sub	ecx, [(GraphicViewPort edi).GVPWidth]
-	sub	ebx, [(GraphicViewPort edi).GVPWidth]
+	sub	ecx, (GraphicViewPort PTR [edi]).GVPWidth
+	sub	ebx, (GraphicViewPort PTR [edi]).GVPWidth
 	dec	ecx
 	dec	ebx
 	shld	eax, ecx, 1
@@ -347,8 +347,8 @@ Draw_Mouse	PROC	NEAR C USES eax ebx ecx edx edi esi,
 
 	mov	ecx, [y0]
 	mov	ebx, [y1]
-	sub	ecx, [(GraphicViewPort edi).GVPHeight]
-	sub	ebx, [(GraphicViewPort edi).GVPHeight]
+	sub	ecx, (GraphicViewPort PTR [edi]).GVPHeight
+	sub	ebx, (GraphicViewPort PTR [edi]).GVPHeight
 	dec	ecx
 	dec	ebx
 	shld	eax, ecx, 1
@@ -374,19 +374,19 @@ Draw_Mouse	PROC	NEAR C USES eax ebx ecx edx edi esi,
 	jz	??scr_bottom_ok
 	mov	ebx, [y0]
 	neg	ebx
-	imul	ebx, [(MouseType esi).CursorWidth]
+	imul	ebx, (MouseType PTR [esi]).CursorWidth
 	add	[buffy0], ebx
 	mov	[y0], 0
 
 ??scr_bottom_ok:
 	test	dl, 0100b
 	jz	??scr_right_ok
-	mov	eax, [(GraphicViewPort edi).GVPWidth]  ; get width into register
+	mov	eax, (GraphicViewPort PTR [edi]).GVPWidth  ; get width into register
 	mov	[x1] , eax
 ??scr_right_ok:
 	test	dl, 0001b
 	jz	??not_clip
-	mov	eax, [(GraphicViewPort edi).GVPHeight]  ; get width into register
+	mov	eax, (GraphicViewPort PTR [edi]).GVPHeight  ; get width into register
 	mov	[y1] , eax
 
 ??not_clip:
@@ -395,18 +395,18 @@ Draw_Mouse	PROC	NEAR C USES eax ebx ecx edx edi esi,
 	;* Get the offset into the screen.
 	;*===================================================================
 	mov	eax, [y0]
-	mov	edx, [(GraphicViewPort edi).GVPWidth]
-	add	edx, [(GraphicViewPort edi).GVPXAdd]
-	add	edx, [(GraphicViewPort edi).GVPPitch]
+	mov	edx, (GraphicViewPort PTR [edi]).GVPWidth
+	add	edx, (GraphicViewPort PTR [edi]).GVPXAdd
+	add	edx, (GraphicViewPort PTR [edi]).GVPPitch
 	imul	eax, edx
 	add	eax, [x0]
-	mov	edi, [(GraphicViewPort edi).GVPOffset]
+	mov	edi, (GraphicViewPort PTR [edi]).GVPOffset
 	add	edi, eax
 
 	;*===================================================================
 	;* Adjust the source for the top clip.
 	;*===================================================================
-	mov	ebx, [(MouseType esi).CursorWidth]	; turn this into an offset
+	mov	ebx, (MouseType PTR [esi]).CursorWidth	; turn this into an offset
 	mov	esi, [buffy0]			; edx points to source
 	add	esi, [buffx0]					; plus clipped lines
 
@@ -499,14 +499,14 @@ ASM_Set_Mouse_Cursor	PROC	NEAR C USES ebx ecx edx esi edi,
 	call	Get_Shape_Width
 	pop	edx
 	mov	[swidth],eax
-	cmp	eax,[(MouseType esi).MaxWidth]
+	cmp	eax,(MouseType PTR [esi]).MaxWidth
 	jg	??end
 
 	push	[cursor]
 	call	Get_Shape_Original_Height
 	pop	edx
 	mov	[sheight],eax
-	cmp	eax,[(MouseType esi).MaxHeight]
+	cmp	eax,(MouseType PTR [esi]).MaxHeight
 	jg	??end
 
 
@@ -515,7 +515,7 @@ ASM_Set_Mouse_Cursor	PROC	NEAR C USES ebx ecx edx esi edi,
 	imul	ebx,eax
 
 ??copy_mouse:
-	mov	edi,[(MouseType esi).MouseCursor]		; set edi to point to mouse buffer
+	mov	edi,(MouseType PTR [esi]).MouseCursor		; set edi to point to mouse buffer
 	mov	esi,[cursor]			; set esi to point to mouse shape
 	mov	ax,[esi]			; get the shape type byte
 	mov	[stype],ax			; save off the shape type
@@ -623,7 +623,7 @@ ASM_Set_Mouse_Cursor	PROC	NEAR C USES ebx ecx edx esi edi,
 	pop	eax
 	pop	eax
 	mov	esi,[_this]
-	mov	edi,[(MouseType esi).MouseCursor]		; set edi to point to mouse buffer
+	mov	edi,(MouseType PTR [esi]).MouseCursor		; set edi to point to mouse buffer
 	mov	esi,[ShapeBuffer]
 	jmp	??copy_type
 
@@ -631,23 +631,23 @@ ASM_Set_Mouse_Cursor	PROC	NEAR C USES ebx ecx edx esi edi,
 	mov	esi,[_this]	; get offset of real mode data start
 
 	mov	eax,[xhotspot]		; get the mouse cursors x hotspot
-	mov	[(MouseType esi).MouseXHot],eax
+	mov	(MouseType PTR [esi]).MouseXHot,eax
 	mov	eax,[yhotspot]		; get the mouse cursors y hotspot
-	mov	[(MouseType esi).MouseYHot],eax
+	mov	(MouseType PTR [esi]).MouseYHot,eax
 
 	mov	ebx,[sheight]		; get shape height
-	mov	[(MouseType esi).CursorHeight],ebx
+	mov	(MouseType PTR [esi]).CursorHeight,ebx
 	mov	ebx,[swidth]
-	mov	[(MouseType esi).CursorWidth],ebx
+	mov	(MouseType PTR [esi]).CursorWidth,ebx
 
 	;-------------------------------------------------------------------
 	; Final cleanup and exit.
 	;-------------------------------------------------------------------
 ??end:
 	push	[cursor]
-	push	[(MouseType esi).PrevCursor]
+	push	(MouseType PTR [esi]).PrevCursor
 	pop	eax
-	pop	[(MouseType esi).PrevCursor]
+	pop	(MouseType PTR [esi]).PrevCursor
 	ret				; and return back to the world
 
 ASM_Set_Mouse_Cursor	ENDP
