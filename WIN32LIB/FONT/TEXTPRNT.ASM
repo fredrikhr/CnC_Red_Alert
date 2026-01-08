@@ -35,9 +35,9 @@
 ;*   Text_Print -- Assembly text print routine.                            *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
 
 
@@ -63,9 +63,8 @@ FONTHEIGHTBLOCK		EQU	12
 FONTINFOMAXHEIGHT	EQU	4
 FONTINFOMAXWIDTH	EQU	5
 
-LOCALS ??
 
-	DATASEG
+	.DATA
 
 ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 		DB	008H,009H,00AH,00BH,00CH,00DH,00EH,00FH
@@ -114,7 +113,7 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 
 		DB	00FH
 
-	CODESEG
+	.CODE
 
 
 ;***************************************************************************
@@ -351,7 +350,7 @@ ColorXlat	DB	000H,001H,002H,003H,004H,005H,006H,007H
 	jz	short ??skiphi			; skip over write
 	mov	[es:edi],al			; write it out
 ??skiphi:
-	
+
 	inc	edi
 	dec	dh				; decrement our width.
 	jnz	short ??while_data		; check if done with width of char
