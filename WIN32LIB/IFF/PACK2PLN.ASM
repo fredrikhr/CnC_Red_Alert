@@ -66,7 +66,7 @@ PUBLIC		Pack_2_Plane
 ;*=========================================================================*
 ;									   *
 ;	This is the original function that is converted to asm
-;  
+;
 ;PRIVATE VOID Pack_2_Plane(UBYTE * buffer, BYTE * pageptr, BYTE planebit)
 ;{
 ;  WORD currbit=0x80;		// current bit to be written to
@@ -86,26 +86,25 @@ PUBLIC		Pack_2_Plane
 ;  }
 ;}
 
-PROC	Pack_2_Plane C NEAR 
-	USES	ebx,ecx,esi,edi
- 	ARG	buffer:DWORD
-	ARG	page:DWORD
-	ARG	planebit:WORD
+Pack_2_Plane	PROC	NEAR C USES ebx ecx esi edi,
+	buffer:DWORD,
+	_page:DWORD,
+	planebit:WORD,
 
 
 	mov	edi,[buffer]
-	mov	esi,[page]
+	mov	esi,[_page]
 
 	mov	ax,[planebit]		; move bit set for current plane (planebit) to ax
 					; the low byte will only be used
-	      
+
 	mov	ecx,320d	      	; set counter to 320 columns (320x200 picture)
-	mov	ah,80h			; set bit 7 of current_bit 
+	mov	ah,80h			; set bit 7 of current_bit
 	dec	edi			; this will get incremented at the start
 
 ??top_loop:				; while (columns left)
 	cmp	ah,80h			;   if current_bit is bit 7
-	jnz	short ??same_dest			
+	jnz	short ??same_dest
 					;   Then
 	inc	edi			;     buffer++  increment pointer
 	mov	[BYTE PTR edi],0	;     *buffer = 0 
@@ -120,12 +119,12 @@ PROC	Pack_2_Plane C NEAR
 ??no_set_bit:
 	inc	esi			;   pageptr++	goto next in source byte
 	ror	ah,1			;   rotate current_bit right one
-	dec	ecx			; 
+	dec	ecx			;
 	jnz	??top_loop
 
 	ret
 
-	ENDP	Pack_2_Plane
+Pack_2_Plane	ENDP
 
 	END
 
