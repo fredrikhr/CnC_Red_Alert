@@ -59,12 +59,10 @@ INCLUDE <gbuffer.inc>
 ;* HISTORY:                                                                *
 ;*   06/07/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Buffer_Get_Pixel C near
-	USES	ebx,ecx,edx,edi
-
-	ARG    	this_object:DWORD				; this is a member function
-	ARG	x_pixel:DWORD				; x position of pixel to set
-	ARG	y_pixel:DWORD				; y position of pixel to set
+Buffer_Get_Pixel	PROC	near C	USES	ebx ecx edx edi,
+	this_object:DWORD,			; this is a member function
+	x_pixel:DWORD,				; x position of pixel to set
+	y_pixel:DWORD,				; y position of pixel to set
 
 	;*===================================================================
 	; Get the viewport information and put bytes per row in ecx
@@ -101,6 +99,6 @@ INCLUDE <gbuffer.inc>
 	mov	al,[edi]				; read in the pixel
 ??exit:
 	ret
-	ENDP	Buffer_Get_Pixel
+Buffer_Get_Pixel	ENDP
 
 END
