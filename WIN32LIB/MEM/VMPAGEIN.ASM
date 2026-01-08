@@ -32,17 +32,14 @@
 ;*  Force_VM_Page_In -- forces a buffer to be paged in under win95         *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-		IDEAL
-		P386
-		MODEL USE32 FLAT
-
-
-		LOCALS ??
+		.386
+		.MODEL FLAT
+		OPTION SEGMENT:USE32
 
 
 GLOBAL		C Force_VM_Page_In:near
 
-CODESEG
+.CODE
 
 
 ;***************************************************************************
