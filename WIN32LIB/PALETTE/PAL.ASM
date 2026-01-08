@@ -86,8 +86,8 @@ IF 1
 ;*   03/07/1995 PWG : Created.                                             *
 ;*=========================================================================*
 
-	PROC	Set_Palette_Range C NEAR
-	ARG	palette:DWORD
+Set_Palette_Range	PROC	NEAR C,
+	palette:DWORD
 
 	EXTERN	Set_DD_Palette_:NEAR
 	EXTERN	Wait_Vert_Blank_:NEAR
@@ -211,7 +211,7 @@ ifdef NOT_FOR_WIN95
 	ret
 endif	;NOT_FOR_WIN95
 
-	ENDP	Set_Palette_Range
+Set_Palette_Range	ENDP
 ELSE
 ;***************************************************************************
 ;* Set_Palette_Range -- Sets changed values in the palette.                *
@@ -229,9 +229,8 @@ ELSE
 ;*   04/27/1994 BR : Converted to 32-bit                                   *
 ;*=========================================================================*
 ; VOID cdecl Set_Palette_Range(VOID *palette);
-	PROC Set_Palette_Range	C NEAR
-	USES eax,ebx,ecx,edx,edi,esi
-	ARG	palette:DWORD
+Set_Palette_Range	PROC NEAR C USES eax ebx ecx edx edi esi,
+	palette:DWORD
 	LOCAL	remain:DWORD	; 32-bit: converted to LONG
 
 	cld
@@ -342,7 +341,7 @@ ELSE
 ??exit:
 	ret
 
-	ENDP	Set_Palette_Range
+Set_Palette_Range	ENDP
 ENDIF
 
 
@@ -363,9 +362,8 @@ ENDIF
 ;*   04/27/1994 BR : Converted to 32-bit.                                  *
 ;*=========================================================================*
 ; BOOL cdecl Bump_Color(VOID *palette, WORD changable, WORD target);
-PROC Bump_Color C NEAR
-	USES ebx,ecx,edi,esi
-	ARG	pal:DWORD, color:WORD, desired:WORD
+Bump_Color PROC NEAR C USES ebx ecx edi esi,
+	pal:DWORD, color:WORD, desired:WORD
 	LOCAL	changed:WORD		; Has palette changed?
 
 	mov	edi,[pal]		; Original palette pointer.
@@ -401,7 +399,7 @@ PROC Bump_Color C NEAR
 	mov	ax,[changed]
 	ret
 
-	ENDP	Bump_Color
+Bump_Color	ENDP
 
 	END
 
