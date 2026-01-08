@@ -45,10 +45,10 @@ INCLUDE <gbuffer.inc>
 ;*=========================================================================*
 ;* Extern the font pointer which is defined by the font class		   *
 ;*=========================================================================*
-GLOBAL	C FontPtr:DWORD
-GLOBAL	C FontXSpacing:DWORD
-GLOBAL	C FontYSpacing:DWORD
-GLOBAL	C ColorXlat:BYTE
+EXTERN	C FontPtr:DWORD
+EXTERN	C FontXSpacing:DWORD
+EXTERN	C FontYSpacing:DWORD
+PUBLIC	C ColorXlat
 
 ;*=========================================================================*
 ;* Define the necessary equates for structures and bounds checking	   *
