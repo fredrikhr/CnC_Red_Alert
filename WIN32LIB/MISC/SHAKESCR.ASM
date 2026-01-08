@@ -38,7 +38,7 @@
 .MODEL FLAT
 OPTION SEGMENT:USE32
 
-GLOBAL	C Shake_Screen	:NEAR
+PUBLIC	C Shake_Screen
 
 	.CODE
 
