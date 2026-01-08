@@ -107,14 +107,14 @@ Pack_2_Plane	PROC	NEAR C USES ebx ecx esi edi,
 	jnz	short ??same_dest
 					;   Then
 	inc	edi			;     buffer++  increment pointer
-	mov	[BYTE PTR edi],0	;     *buffer = 0 
+	mov	BYTE PTR [edi],0	;     *buffer = 0
 
 ??same_dest:				;   EndIf
 	mov	bl,al
 	and	bl,[esi]		;   if (planebit & *pageptr)
 	jz	short ??no_set_bit
 
-	or	[BYTE PTR edi],ah     	;     Then *buffer |= current_bit
+	or	BYTE PTR [edi],ah     	;     Then *buffer |= current_bit
 
 ??no_set_bit:
 	inc	esi			;   pageptr++	goto next in source byte
