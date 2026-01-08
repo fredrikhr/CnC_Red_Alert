@@ -42,7 +42,7 @@ OPTION SEGMENT:USE32
 INCLUDE <drawbuff.inc>
 INCLUDE <gbuffer.inc>
 
-GLOBAL	Buffer_Size_Of_Region	: NEAR
+PUBLIC	Buffer_Size_Of_Region
 
 .CODE
 
