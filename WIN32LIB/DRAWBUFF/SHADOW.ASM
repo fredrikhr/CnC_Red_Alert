@@ -77,7 +77,7 @@ Shadow_Blit	PROC	near C	PUBLIC	USES eax ebx ecx edx esi edi,
 
 ; Fetch the segment of the seenpage.
 	mov	ebx,[dstpage]
-	mov	ebx,[(GraphicViewPort ebx).GVPOffset]
+	mov	ebx,(GraphicViewPort PTR [ebx]).GVPOffset
 
 	; Determine if the mouse needs to be hidden at all.  If this happens to be
 	; a shadow blit to non visible page (who knows why!?) then don't bother to
@@ -86,17 +86,17 @@ Shadow_Blit	PROC	near C	PUBLIC	USES eax ebx ecx edx esi edi,
 ;	setne	[BYTE PTR hidemouse]	; Flag that mouse need not be hidden.
 ;	jne	short ??itsok
 	mov	esi,[RealModePtr]
-	cmp	[(KeyboardType esi).MState],0
+	cmp	(KeyboardType PTR [esi]).MState,0
 	je	short ??itsok
 	mov	[hidemouse],1
 	call	Hide_Mouse C		; Hides mouse again (just to be sure).
 ??itsok:
 	mov	edi,[srcpage]
-	mov	esi,[(GraphicViewPort edi).GVPOffset]
+	mov	esi,(GraphicViewPort PTR [edi]).GVPOffset
 
-	mov	eax,[(GraphicViewPort edi).GVPWidth]
-	add	eax,[(GraphicViewPort edi).GVPXAdd]
-	add	eax,[(GraphicViewPort edi).GVPPitch]
+	mov	eax,(GraphicViewPort PTR [edi]).GVPWidth
+	add	eax,(GraphicViewPort PTR [edi]).GVPXAdd
+	add	eax,(GraphicViewPort PTR [edi]).GVPPitch
 	push	eax			; save width+xadd for later calc
 	mov	edx,[y]
 	mul	edx
@@ -137,11 +137,11 @@ Shadow_Blit	PROC	near C	PUBLIC	USES eax ebx ecx edx esi edi,
 	; If this row would interfere with the mouse image, then hide it.
 	cmp	[hidemouse],0
 	jnz	short ??dok
-	mov	eax,[(KeyboardType edx).MouseY]
-	sub	eax,[(KeyboardType edx).MouseYHot]
+	mov	eax,(KeyboardType PTR [edx]).MouseY
+	sub	eax,(KeyboardType PTR [edx]).MouseYHot
 	cmp	eax,[y]
 	jg	short ??dok
-	add	eax,[(KeyboardType edx).MouseHeight]
+	add	eax,(KeyboardType PTR [edx]).MouseHeight
 	cmp	eax,[y]
 	jb	short ??dok
 	mov	[hidemouse],1		; Manual hide of the mouse.
@@ -168,11 +168,11 @@ Shadow_Blit	PROC	near C	PUBLIC	USES eax ebx ecx edx esi edi,
 	; If this row would interfere with the mouse image, then hide it.
 	cmp	[hidemouse],0
 	jnz	short ??bok
-	mov	eax,[(KeyboardType edx).MouseY]
-	sub	eax,[(KeyboardType edx).MouseYHot]
+	mov	eax,(KeyboardType PTR [edx]).MouseY
+	sub	eax,(KeyboardType PTR [edx]).MouseYHot
 	cmp	eax,[y]
 	jg	short ??bok
-	add	eax,[(KeyboardType edx).MouseHeight]
+	add	eax,(KeyboardType PTR [edx]).MouseHeight
 	cmp	eax,[y]
 	jl	short ??bok
 	mov	[hidemouse],1		; Manual hide of the mouse.
