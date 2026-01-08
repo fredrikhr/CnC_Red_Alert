@@ -1,6 +1,6 @@
 file_glob_enabled_language_files()
 
-add_executable(WIN32LIB_DRAWBUFF_TEST EXCLUDE_FROM_ALL)
+add_executable(WIN32LIB_DRAWBUFF_TEST WIN32 EXCLUDE_FROM_ALL)
 target_link_libraries(WIN32LIB_DRAWBUFF_TEST
   PRIVATE
     WIN32LIB_INCLUDE

@@ -4,6 +4,12 @@ file_glob_enabled_language_files_in_directory(
 )
 
 add_library(WIN32LIB_INCLUDE INTERFACE)
+target_compile_definitions(
+  WIN32LIB_INCLUDE
+  INTERFACE
+    TRUE_FALSE_DEFINED
+    _export=
+)
 target_include_directories(WIN32LIB_INCLUDE INTERFACE "INCLUDE")
 target_sources(
   WIN32LIB_INCLUDE

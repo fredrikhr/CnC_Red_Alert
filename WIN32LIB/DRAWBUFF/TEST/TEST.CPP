@@ -57,7 +57,7 @@
 #define WIN32
 #include <windows.h>
 #include <windowsx.h>
-#include "..\gbuffer.h"
+#include "gbuffer.h"
 #include <ddraw.h>
 #include <font.h>
 #include <tile.h>
