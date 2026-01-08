@@ -168,7 +168,7 @@ Buffer_Draw_Stamp	PROC	near C,
 	mov	eax,[icondata]
 	cmp	[LastIconset],eax
 	je	short ??noreset
-	call	Init_Stamps C,eax
+	invoke	Init_Stamps,eax
 ??noreset:
 
 	; Determine if the icon number requested is actually in the set.
@@ -360,7 +360,7 @@ Buffer_Draw_Stamp_Clip	PROC	near C,
 	mov	eax,[icondata]
 	cmp	[LastIconset],eax
 	je	short ??noreset2
-	call	Init_Stamps C,eax
+	invoke	Init_Stamps,eax
 ??noreset2:
 
 	; Determine if the icon number requested is actually in the set.
