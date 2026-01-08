@@ -84,10 +84,10 @@ Buffer_Fill_Rect	PROC	near C	USES	eax ebx ecx edx esi edi ebp,
 	;* save off the viewport characteristics on the stack
 	;*===================================================================
 	mov	ebx,[this_object]				; get a pointer to viewport
-	mov	eax,[(GraphicViewPort ebx).GVPWidth]	; get width from viewport
-	mov	ecx,[(GraphicViewPort ebx).GVPHeight]	; get height from viewport
-	mov	edx,[(GraphicViewPort ebx).GVPXAdd]	; get xadd from viewport
-	add	edx,[(GraphicViewPort ebx).GVPPitch]	; extra pitch of direct draw surface
+	mov	eax,(GraphicViewPort PTR [ebx]).GVPWidth	; get width from viewport
+	mov	ecx,(GraphicViewPort PTR [ebx]).GVPHeight	; get height from viewport
+	mov	edx,(GraphicViewPort PTR [ebx]).GVPXAdd		; get xadd from viewport
+	add	edx,(GraphicViewPort PTR [ebx]).GVPPitch	; extra pitch of direct draw surface
 	mov	[VPwidth],eax				; store the width of locally
 	mov	[VPheight],ecx
 	mov	[VPxadd],edx
@@ -191,7 +191,7 @@ Buffer_Fill_Rect	PROC	near C	USES	eax ebx ecx edx esi edi ebp,
 	mul	[VPbpr]			; multiply by bytes per row
 	add	edi,eax			; add the result into the x position
 	mov	ebx,[this_object]
-	add	edi,[(GraphicViewPort ebx).GVPOffset]
+	add	edi,(GraphicViewPort PTR [ebx]).GVPOffset
 
 	mov	edx,esi			; restore edx back to real value
 	mov	eax,ecx			; store total width in ecx
