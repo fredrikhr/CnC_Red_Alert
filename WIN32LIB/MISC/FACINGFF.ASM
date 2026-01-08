@@ -36,15 +36,15 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 
-IDEAL
-P386
-MODEL USE32 FLAT
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
 GLOBAL	C Desired_Facing256	:NEAR
 ;	INCLUDE	"wwlib.i"
-INCLUDE "..\include\gbuffer.inc"
+INCLUDE <gbuffer.inc>
 
-	CODESEG
+	.CODE
 
 ;***************************************************************************
 ;* Desired_Facing256 -- Desired facing algorithm 0..255 resolution.        *
