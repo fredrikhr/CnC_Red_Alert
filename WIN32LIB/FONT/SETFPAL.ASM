@@ -40,8 +40,8 @@
 OPTION SEGMENT:USE32
 
 
-GLOBAL  C ColorXlat:BYTE
-GLOBAL	C Set_Font_Palette_Range:NEAR
+EXTERN  C ColorXlat:BYTE
+PUBLIC	C Set_Font_Palette_Range
 
 	.CODE
 
