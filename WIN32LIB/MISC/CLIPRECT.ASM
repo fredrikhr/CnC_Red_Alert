@@ -39,14 +39,14 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 
-IDEAL
-P386
-MODEL USE32 FLAT
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
 GLOBAL	 C Clip_Rect	:NEAR
 GLOBAL	 C Confine_Rect	:NEAR
 
-CODESEG
+.CODE
 
 ;***************************************************************************
 ;* Clip_Rect -- clip a given rectangle against a given window		   *
