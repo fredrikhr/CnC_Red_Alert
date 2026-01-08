@@ -34,13 +34,13 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
 GLOBAL	C Build_Fading_Table	:NEAR
 
-	CODESEG
+	.CODE
 
 ;***********************************************************
 ; BUILD_FADING_TABLE
