@@ -150,7 +150,7 @@ Clip_Rect	PROC	near C	uses	ebx ecx edx esi edi,
 	mov	edi,[x]		; edi = a pointer to x0
 	mov	ebx,[w]		; ebx = a pointer to dw
 	mov	esi,[edi]	; esi = x0
-	mov	[dword ptr edi],0 ; set x0 to 0 "this the left edge value"
+	mov	dword ptr [edi],0 ; set x0 to 0 "this the left edge value"
 	add	[ebx],esi	; adjust dw by x0, since x0 must be negative
 
 ??left_ok:
@@ -159,7 +159,7 @@ Clip_Rect	PROC	near C	uses	ebx ecx edx esi edi,
 	mov	edi,[y]		; edi = a pointer to y0
 	mov	ebx,[h]		; ebx = a pointer to dh
 	mov	esi,[edi]	; esi = y0
-	mov	[dword ptr edi],0 ; set y0 to 0 "this the bottom edge value"
+	mov	dword ptr [edi],0 ; set y0 to 0 "this the bottom edge value"
 	add	[ebx],esi	; adjust dh by y0, since y0 must be negative
 
 ??bottom_ok:
@@ -232,7 +232,7 @@ Confine_Rect	PROC	near C	uses	ebx esi edi,
 
 	test	esi,esi
 	jl	??shift_right
-	mov	[dword ptr ebx],0
+	mov	dword ptr [ebx],0
 	jmp	??x_axix_ok
 ??shift_right:
 	inc	edi
@@ -254,7 +254,7 @@ Confine_Rect	PROC	near C	uses	ebx esi edi,
 
 	test	esi,esi
 	jl	??shift_top
-	mov	[dword ptr ebx],0
+	mov	dword ptr [ebx],0
 	ret
 ??shift_top:
 	inc	edi
