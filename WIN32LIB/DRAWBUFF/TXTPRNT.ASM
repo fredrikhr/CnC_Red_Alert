@@ -179,16 +179,16 @@ Buffer_Print	PROC	near C	USES ebx ecx edx esi edi,
 ;-------------------------------- Where to draw -----------------------------------------------
 	; Set up memory location to start drawing.
 	mov  	ebx,[this_object]				; get a pointer to dest
-	mov	eax,[(GraphicViewPort ebx).GVPHeight]	; get height of viewport
+	mov	eax,(GraphicViewPort PTR [ebx]).GVPHeight	; get height of viewport
 	mov	[vpheight],eax				; save off height of viewport
-	mov	eax,[(GraphicViewPort ebx).GVPWidth]	; get width of viewport
+	mov	eax,(GraphicViewPort PTR [ebx]).GVPWidth	; get width of viewport
 	mov	[vpwidth],eax				; save it off for later
-	add	eax,[(GraphicViewPort ebx).GVPXAdd]	; add in xadd for bytes_per_line
-	add	eax,[(GraphicViewPort ebx).GVPPitch]	; add in pitch of direct draw surface
+	add	eax,(GraphicViewPort PTR [ebx]).GVPXAdd	; add in xadd for bytes_per_line
+	add	eax,(GraphicViewPort PTR [ebx]).GVPPitch	; add in pitch of direct draw surface
 	mov	[bufferwidth],eax     			; save it off for later use.
 
 	mul	[y_pixel]				; multiply rowsize * y_pixel start.
-	mov	edi,[(GraphicViewPort ebx).GVPOffset]	; get start of the viewport
+	mov	edi,(GraphicViewPort PTR [ebx]).GVPOffset	; get start of the viewport
 	add	edi,eax					; add y position to start of vp
 	mov	[curline],edi				; save 0,y address for line feed stuff.
 	add	edi,[x_pixel]				; add to get starting column in starting row.
