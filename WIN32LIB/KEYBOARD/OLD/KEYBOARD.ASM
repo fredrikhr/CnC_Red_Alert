@@ -49,12 +49,9 @@
 ;
 ; ----------------------------------------------------------------
 
-IDEAL				; the product runs in ideal mode
-P386				; use 386 real mode instructions
-MODEL USE32 FLAT
-LOCALS ??			; ?? is the symbol for a local
-;WARN				; generate all warnings we can
-JUMPS				; optimize jumps if possible
+.386				; use 386 real mode instructions
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
 ;---------------------------------------------------------------------------
 ; Make some general equates for easy compatability
@@ -73,9 +70,9 @@ INTCHIP0	EQU	020H	; 8259 interrupt chip controller 0
 ;---------------------------------------------------------------------------
 ; Include all of the keyboard specific defines
 ;---------------------------------------------------------------------------
-	INCLUDE "keyboard.inc"
-	INCLUDE "keystruc.inc"
-	INCLUDE "mcgaprim.inc"
+	INCLUDE <keyboard.inc>
+	INCLUDE <keystruc.inc>
+	INCLUDE <mcgaprim.inc>
 
 	GLOBAL	 RealModePtr:DWORD
 
@@ -104,14 +101,14 @@ INTCHIP0	EQU	020H	; 8259 interrupt chip controller 0
 	GLOBAL   Keyboard_Interrupt:NEAR
 
 
-	DATASEG
+	.DATA
 ; For the current time we will just include the real mode stuff
 ; into the protected mode code and then copy it down.  The C side of
 ; this will handle this method or reading it off of disk in the real
 ; method.
 
 LABEL 	RealBinStart	BYTE
-include "keyireal.ibn"
+include <keyireal.ibn>
 LABEL	RealBinEnd	BYTE
 
 LABEL	LockedDataStart	BYTE
@@ -149,7 +146,7 @@ InitFlags	DW	0
 MouseQX		DD	0
 MouseQY		DD	0
 
-	CODESEG
+	.CODE
 ;***************************************************************************
 ;* GET_RM_TIMER_ADDRESS -- Return address of real mode code for copy.      *
 ;*                                                                         *
@@ -2438,7 +2435,7 @@ ELSE
 ;*=========================================================================*
 
 
-DATASEG
+.DATA
 STRUC	RealModeCallStruc
 	_EDI  DD	0
 	_ESI  DD	0
@@ -2464,7 +2461,7 @@ RealModeCallStruc	ENDS
 
 RMDS RealModeCallStruc  <>
 
-CODESEG
+.CODE
 
 PROC	Keyboard_Interrupt	Near
 
