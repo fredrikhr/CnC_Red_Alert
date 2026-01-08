@@ -41,7 +41,7 @@
 OPTION SEGMENT:USE32
 
 
-GLOBAL	 C Desired_Facing8	:NEAR
+PUBLIC	 C Desired_Facing8
 ;	INCLUDE	"wwlib.i"
 
 	.DATA
