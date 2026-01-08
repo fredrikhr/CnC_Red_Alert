@@ -59,7 +59,7 @@ Processor	PROC	near C	USES ebx
 	pushfd
 
 ; At least a 386 -- check for 486.
-	mov	[WORD PTR ptype],PROC_80386	; 80386
+	mov	WORD PTR [ptype],PROC_80386	; 80386
 	pushfd
 	pop	eax
 	mov	ebx,eax
@@ -72,7 +72,7 @@ Processor	PROC	near C	USES ebx
 	je	short ??fini
 
 ; At least a 486 -- check for 586(Pentium)
-	mov	[ptype],PROC_80486	; 80486
+	mov	WORD PTR [ptype],PROC_80486	; 80486
 
 	; Some machines have a problem with this fLAG
 	; and thus make us think they are a 586 but they are
@@ -93,7 +93,7 @@ Processor	PROC	near C	USES ebx
 	je	short ??fini
 
 ; At least a 586(Pentium) -- check for higher.
-	mov	[ptype],PROC_80586	; 80486
+	mov	WORD PTR [ptype],PROC_80586	; 80486
 ;	mov	eax,1
 ;	DW	0fA2h		; CPUID opcode.
 ;	shr	ax,8
