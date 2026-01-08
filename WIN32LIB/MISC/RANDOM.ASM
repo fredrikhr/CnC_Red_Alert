@@ -72,12 +72,12 @@ Random	PROC	near C	USES	esi
 	mov	al,[esi]
 	shr	al,1			; shift right 1 bit (bit0 in carry)
 	shr	al,1
-	rcl	[BYTE PTR esi+2],1	; rcl byte 3 of RandNumb
-	rcl	[BYTE PTR esi+1],1 	; rcl byte 2 of RandNumb
+	rcl	BYTE PTR [esi+2],1	; rcl byte 3 of RandNumb
+	rcl	BYTE PTR [esi+1],1 	; rcl byte 2 of RandNumb
 	cmc				; complement carry
 	sbb	al,[esi]		; sbb byte 1 of RandNumb
 	shr	al,1			; sets carry
-	rcr	[BYTE PTR esi],1 	; rcr byte 1 of RandNumb
+	rcr	BYTE PTR [esi],1 	; rcr byte 1 of RandNumb
 	mov	al,[esi]		; reload byte 1 of RandNumb
 	xor	al,[esi+1]		; xor with byte 2 of RandNumb
 
