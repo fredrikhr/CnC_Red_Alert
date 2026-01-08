@@ -69,8 +69,8 @@ Buffer_Size_Of_Region	PROC	near C	USES ebx ecx edx,
 	;*===================================================================
 	mov	ebx,[this_object]				; get a pointer to viewport
 	xor	eax,eax
-	mov	ecx,[(GraphicViewPort ebx).GVPHeight]	; ecx = height of viewport
-	mov	edx,[(GraphicViewPort ebx).GVPWidth]	; edx = width of viewport
+	mov	ecx,(GraphicViewPort PTR [ebx]).GVPHeight	; ecx = height of viewport
+	mov	edx,(GraphicViewPort PTR [ebx]).GVPWidth	; edx = width of viewport
 
 	;*===================================================================
 	; Verify that the width is legal
