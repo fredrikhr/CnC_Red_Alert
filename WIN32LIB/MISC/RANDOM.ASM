@@ -35,19 +35,19 @@
 ;*                                                                         *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
 Global C Random		:NEAR
 Global C Get_Random_Mask	:NEAR
 Global C RandNumb		:DWORD
 
-	DATASEG
+	.DATA
 
 RandNumb	DD	12349876H
 
-	CODESEG
+	.CODE
 
 ; ----------------------------------------------------------------
 ;
