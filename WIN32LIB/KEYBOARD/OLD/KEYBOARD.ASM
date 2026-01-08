@@ -74,31 +74,31 @@ INTCHIP0	EQU	020H	; 8259 interrupt chip controller 0
 	INCLUDE <keystruc.inc>
 	INCLUDE <mcgaprim.inc>
 
-	GLOBAL	 RealModePtr:DWORD
+	PUBLIC	 RealModePtr
 
-	GLOBAL	 Install_Keyboard_Interrupt:NEAR
-	GLOBAL	 Get_RM_Keyboard_Address:Near
-	GLOBAL	 Get_RM_Keyboard_Size:Near
-	GLOBAL	 Remove_Keyboard_Interrupt:NEAR
-	GLOBAL	 Check_Key_Num:NEAR
-	GLOBAL	 Get_Key_Num:NEAR
-	GLOBAL	 KN_To_KA:NEAR
-	GLOBAL	 KeyNum_Translate:NEAR
-	GLOBAL	 Check_Key:NEAR
-	GLOBAL	 Get_Key:NEAR
-	GLOBAL	 Keyboard_Attributes_On:NEAR
-	GLOBAL	 Clear_KeyBuffer:NEAR
-	GLOBAL	 Key_Down:NEAR
-	GLOBAL	 Keyboard_Attributes_Off:NEAR
-	GLOBAL	 Check_Key_Bits:NEAR
-	GLOBAL	 Get_Key_Bits:NEAR
-	GLOBAL	 Key_Satisfied:NEAR
-	GLOBAL	 Stuff_Key_WORD:NEAR
-	GLOBAL	 Stuff_Key_Num:NEAR
-	GLOBAL	 MouseQX:DWORD
-	GLOBAL	 MouseQY:DWORD
+	PUBLIC	 Install_Keyboard_Interrupt
+	PUBLIC	 Get_RM_Keyboard_Address
+	PUBLIC	 Get_RM_Keyboard_Size
+	PUBLIC	 Remove_Keyboard_Interrupt
+	PUBLIC	 Check_Key_Num
+	PUBLIC	 Get_Key_Num
+	PUBLIC	 KN_To_KA
+	PUBLIC	 KeyNum_Translate
+	PUBLIC	 Check_Key
+	PUBLIC	 Get_Key
+	PUBLIC	 Keyboard_Attributes_On
+	PUBLIC	 Clear_KeyBuffer
+	PUBLIC	 Key_Down
+	PUBLIC	 Keyboard_Attributes_Off
+	PUBLIC	 Check_Key_Bits
+	PUBLIC	 Get_Key_Bits
+	PUBLIC	 Key_Satisfied
+	PUBLIC	 Stuff_Key_WORD
+	PUBLIC	 Stuff_Key_Num
+	PUBLIC	 MouseQX
+	PUBLIC	 MouseQY
 ;DBG
-	GLOBAL   Keyboard_Interrupt:NEAR
+	PUBLIC   Keyboard_Interrupt
 
 
 	.DATA
