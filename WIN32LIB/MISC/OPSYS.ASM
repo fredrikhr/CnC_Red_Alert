@@ -43,8 +43,8 @@
 .MODEL FLAT
 OPTION SEGMENT:USE32
 
-GLOBAL             C Operating_System         :NEAR
-GLOBAL             C OperatingSystem          :WORD
+PUBLIC             C Operating_System
+PUBLIC             C OperatingSystem
 
 DOS		equ	1
 WIN31STD	equ	2
