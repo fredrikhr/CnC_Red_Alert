@@ -53,8 +53,7 @@ cpu_id_586	dw	0
 
 .CODE
 
-PROC	Processor C near
-	USES ebx
+Processor	PROC	near C	USES ebx
 	LOCAL	ptype:WORD
 
 	pushfd
@@ -110,6 +109,6 @@ PROC	Processor C near
 	mov	ax,[ptype]
 	ret
 
-ENDP	Processor
+Processor	ENDP
 
 END
