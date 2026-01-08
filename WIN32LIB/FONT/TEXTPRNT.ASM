@@ -185,10 +185,10 @@ Text_Print	PROC	near C	USES ebx ecx edx esi edi,
 	; esi (FontPtr) is added to each to get the true address of each block.
 	; Many registers are used for P5 optimizations.
 	; ebx is used for InfoBlock which is then used in the next section.
-	movzx	eax,[WORD PTR esi+FONTOFFSETBLOCK]	; get offset to offset block
-	movzx	ebx,[WORD PTR esi+FONTINFOBLOCK]      	; get offset to info block (must be ebx for height test)
-	movzx	ecx,[WORD PTR esi+FONTWIDTHBLOCK] 	; get offset to width block
-	movzx	edx,[WORD PTR esi+FONTHEIGHTBLOCK]	; get offset to height block
+	movzx	eax,WORD PTR [esi+FONTOFFSETBLOCK]	; get offset to offset block
+	movzx	ebx,WORD PTR [esi+FONTINFOBLOCK]      	; get offset to info block (must be ebx for height test)
+	movzx	ecx,WORD PTR [esi+FONTWIDTHBLOCK] 	; get offset to width block
+	movzx	edx,WORD PTR [esi+FONTHEIGHTBLOCK]	; get offset to height block
 
 	add	eax,esi				; add offset of FontPtr to offset block
 	add	ebx,esi				; add offset of FontPtr to info block
@@ -204,7 +204,7 @@ Text_Print	PROC	near C	USES ebx ecx edx esi edi,
 	; Test to make sure the height of the max character will fit on this line
 	; and and not fall out of the viewport.
 	; remember we set ebx to FONTINFOBLOCK above.
-	movzx	eax,[BYTE PTR ebx + FONTINFOMAXHEIGHT]; get the max height in font.
+	movzx	eax,BYTE PTR [ebx + FONTINFOMAXHEIGHT]; get the max height in font.
 	mov	[maxheight],al			; save it for later use.
 	add	eax,[y_pixel]			; add current y_value.
 	cmp	eax,[vpheight]			; are we over the edge?
@@ -246,7 +246,7 @@ Text_Print	PROC	near C	USES ebx ecx edx esi edi,
 
 	add	eax,[widthblock]		; figure address of width of character.
 	mov	ecx,[x_pixel]			; get current x_pixel.
-	movzx	edx,[BYTE PTR eax]	 	; get the width of the character in dl.
+	movzx	edx,BYTE PTR [eax]	 	; get the width of the character in dl.
 	add	ecx,edx				; add width of char to current x_pixel.
 	add	[startdraw],edx			; save start draw for next character.
 
@@ -266,8 +266,8 @@ Text_Print	PROC	near C	USES ebx ecx edx esi edi,
 	; get offset of data for character into esi.
 	shl	ebx,1				; mult by 2 to later use as a WORD index.
 	mov	esi,[offsetblock]		; get pointer to begining of offset block.
-	add	esi,ebx				; index into offset block.	
-	movzx	esi,[WORD PTR esi]		; get true offset into data block from FontPtr.
+	add	esi,ebx				; index into offset block.
+	movzx	esi,WORD PTR [esi]		; get true offset into data block from FontPtr.
 	add	esi,[FontPtr]			; Now add FontPtr address to get true address.
 
 	; Get top and bottom blank sizes and the true height of the character.
@@ -290,7 +290,7 @@ Text_Print	PROC	near C	USES ebx ecx edx esi edi,
 	jz	??draw_char			; if not go and draw the real character.
 
 	xor	eax,eax				; get color 0 for background.
-	xlat	[ebx]				; get translated color into al
+	xlat	BYTE PTR [ebx]		; get translated color into al
 	test	al,al				; is it transparent black
 	jnz	??loop_top			; if not go and write the color
 
@@ -329,7 +329,7 @@ Text_Print	PROC	near C	USES ebx ecx edx esi edi,
 	lodsb					; get byte value from font data
 	mov	ah,al				; save hinibble
 	and	eax,0F00FH	       		; mask of low nibble in al hi nibble in ah.
-	xlat	[ebx]				; get new color
+	xlat	BYTE PTR [ebx]		; get new color
 
 	test	al,al				; is it a transparent?
 	jz	short ??skiplo			; skip over write
@@ -343,7 +343,7 @@ Text_Print	PROC	near C	USES ebx ecx edx esi edi,
 	; test the time difference between looking up in a large table when shr al,4 is not done as
 	; compared to using only a 16 byte table when using the shr al,4
 	;shr	al,4				; shift the hi nibble down to low nibble
-	xlat	[ebx]				; get new color
+	xlat	BYTE PTR [ebx]		; get new color
 
 	test	al,al				; is it a transparent?
 	jz	short ??skiphi			; skip over write
@@ -366,7 +366,7 @@ Text_Print	PROC	near C	USES ebx ecx edx esi edi,
 	jz	??next_char			; then skip to go to next character
 
 	xor	eax,eax				; get color 0 for background.
-	xlat	[ebx]				; get translated color into al
+	xlat	BYTE PTR [ebx]		; get translated color into al
 	test	al,al				; is it transparent black
 	jz	??next_char			; skip the top black section to let the background through
 
