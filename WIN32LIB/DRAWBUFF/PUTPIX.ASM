@@ -73,9 +73,9 @@ Buffer_Put_Pixel	PROC	near C	USES	eax ebx ecx edx edi,
 	;*===================================================================
 	mov	ebx,[this_object]				; get a pointer to viewport
 	xor	eax,eax
-	mov	edi,[(GraphicViewPort ebx).GVPOffset]	; get the correct offset
-	mov	ecx,[(GraphicViewPort ebx).GVPHeight]	; edx = height of viewport
-	mov	edx,[(GraphicViewPort ebx).GVPWidth]	; ecx = width of viewport
+	mov	edi,(GraphicViewPort PTR [ebx]).GVPOffset	; get the correct offset
+	mov	ecx,(GraphicViewPort PTR [ebx]).GVPHeight	; edx = height of viewport
+	mov	edx,(GraphicViewPort PTR [ebx]).GVPWidth	; ecx = width of viewport
 
 	;*===================================================================
 	; Verify that the X pixel offset if legal
@@ -91,8 +91,8 @@ Buffer_Put_Pixel	PROC	near C	USES	eax ebx ecx edx edi,
 	mov	eax,[y_pixel]				; get the y position
 	cmp	eax,ecx					;  is it out of bounds
 	jae	??exit					; if so then get out
-	add	edx,[(GraphicViewPort ebx).GVPXAdd]	; otherwise find bytes per row
-	add	edx,[(GraphicViewPort ebx).GVPPitch]	; add in direct draw pitch
+	add	edx,(GraphicViewPort PTR [ebx]).GVPXAdd		; otherwise find bytes per row
+	add	edx,(GraphicViewPort PTR [ebx]).GVPPitch	; add in direct draw pitch
 	mul	edx					; offset = bytes per row * y
 	add	edi,eax					; add it into the offset
 
