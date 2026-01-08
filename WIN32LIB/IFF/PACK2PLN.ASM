@@ -45,7 +45,7 @@ OPTION SEGMENT:USE32
 ;******************************************************************************
 ; External declares so these functions can be called
 ;
-GLOBAL  		Pack_2_Plane:NEAR
+PUBLIC		Pack_2_Plane
 
 	.CODE
 
