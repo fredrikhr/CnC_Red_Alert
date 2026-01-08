@@ -36,9 +36,9 @@
 ;*   Bump_Color -- adjusts specified color in specified palette            *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 ;********************** Model & Processor Directives ************************
-IDEAL
-P386
-MODEL USE32 FLAT
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
 
 ;include "keyboard.inc"
@@ -53,9 +53,8 @@ GLOBAL		C PaletteTable:byte:1024
 
 
 ;********************************** Data ************************************
-LOCALS ??
 
-	DATASEG
+	.DATA
 
 CurrentPalette	DB	768 DUP(255)	; copy of current values of DAC regs
 PaletteTable	DB	1024 DUP(0)
@@ -66,7 +65,7 @@ ENDIF
 
 
 ;********************************** Code ************************************
-	CODESEG
+	.CODE
 
 
 
