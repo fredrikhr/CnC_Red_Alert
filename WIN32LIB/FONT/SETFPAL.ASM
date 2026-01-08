@@ -35,15 +35,15 @@
 ;*   Text_Print -- Assembly text print routine.                            *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
 
 GLOBAL  C ColorXlat:BYTE
 GLOBAL	C Set_Font_Palette_Range:NEAR
 
-	CODESEG
+	.CODE
 
 ;***********************************************************
 ; SET_FONT_PALETTE_RANGE
