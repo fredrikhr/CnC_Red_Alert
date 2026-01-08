@@ -35,15 +35,15 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 
-IDEAL
-P386
-MODEL USE32 FLAT
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
 
 
-CODESEG
+.CODE
 
 	PROC	Buffer_Remap C NEAR
 	USES	eax,ebx,ecx,edx,esi,edi
