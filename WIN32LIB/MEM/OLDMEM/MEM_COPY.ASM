@@ -49,8 +49,8 @@ OPTIMAL_BYTE_COPY	equ	14
 ;******************************************************************************
 ; External declares so these functions can be called
 ;
-GLOBAL 	Mem_Copy	: NEAR
-GLOBAL  Largest_Mem_Block : near
+PUBLIC 	C Mem_Copy
+PUBLIC  C Largest_Mem_Block
 
 .CODE
 
