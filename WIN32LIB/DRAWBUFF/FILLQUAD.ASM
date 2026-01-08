@@ -111,16 +111,16 @@ Buffer_Fill_Quad	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
 	;* Extract essential GraphicViewPort info.
 	;*==================================================================
 	mov	ebx,[this_object]
-	mov	eax,[(GraphicViewPort ebx).GVPXPos]
+	mov	eax,(GraphicViewPort PTR [ebx]).GVPXPos
 	mov	[clip_min_x],eax
-	mov	eax,[(GraphicViewPort ebx).GVPYPos]
+	mov	eax,(GraphicViewPort PTR [ebx]).GVPYPos
 	mov	[clip_min_y],eax
-	mov	eax,[(GraphicViewPort ebx).GVPWidth]
+	mov	eax,(GraphicViewPort PTR [ebx]).GVPWidth
 	mov	[clip_max_x],eax
-	add	eax,[(GraphicViewPort ebx).GVPXAdd]
-	add	eax,[(GraphicViewPort ebx).GVPPitch]
+	add	eax,(GraphicViewPort PTR [ebx]).GVPXAdd
+	add	eax,(GraphicViewPort PTR [ebx]).GVPPitch
 	mov	[bpr],eax
-	mov	eax,[(GraphicViewPort ebx).GVPHeight]
+	mov	eax,(GraphicViewPort PTR [ebx]).GVPHeight
 	mov	[clip_max_y],eax
 
 
@@ -275,7 +275,7 @@ Buffer_Fill_Quad	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
 	;*==================================================================
 ??no_right_edge:
 	mov	eax,[this_object]
-	mov	edi,[(GraphicViewPort eax).GVPOffset]
+	mov	edi,(GraphicViewPort PTR [eax]).GVPOffset
 	mov	eax,[scanline_min]		; eax = scanline_min
 
 	mov	ebx,[scanline_max]
