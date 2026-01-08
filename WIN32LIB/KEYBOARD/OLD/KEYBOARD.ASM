@@ -107,16 +107,16 @@ INTCHIP0	EQU	020H	; 8259 interrupt chip controller 0
 ; this will handle this method or reading it off of disk in the real
 ; method.
 
-LABEL 	RealBinStart	BYTE
+RealBinStart	LABEL	BYTE
 include <keyireal.ibn>
-LABEL	RealBinEnd	BYTE
+RealBinEnd		LABEL	BYTE
 
-LABEL	LockedDataStart	BYTE
+LockedDataStart	LABEL	BYTE
 RMVector	DD	0
 RealModeSel	DD	0
 RealModePtr	DD	0		; Pointer to real mode memory.
 RealModeSize	DD	0		; Pointer to real mode memory.
-LABEL	LockedDataEnd	BYTE
+LockedDataEnd	LABEL	BYTE
 
 
 
@@ -1512,7 +1512,7 @@ ENDIF
 
 
 
-LABEL 	LockedCodeStart	BYTE
+LockedCodeStart	LABEL	BYTE
 
 ;***************************************************************************
 ;* KEYNUM_TRANSLATE -- Performs a lowlevel xlate to a keycode              *
@@ -2508,7 +2508,7 @@ mov [ byte ptr 0b0000h + 10 * 80 + 42 ] , 041h
 
 ENDIF
 
-LABEL 	LockedCodeEnd		BYTE
+LockedCodeEnd	LABEL	BYTE
 
 ;***************************************************************************
 ;* End of File.								   *
