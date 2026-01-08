@@ -35,15 +35,15 @@
 ;*   VVPC::Put_Pixel -- Puts a pixel on a virtual viewport                 *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
 
 
-CODESEG
+.CODE
 
 ;***************************************************************************
 ;* VVPC::PUT_PIXEL -- Puts a pixel on a virtual viewport                   *
