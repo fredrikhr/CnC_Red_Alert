@@ -96,15 +96,15 @@ Init_Stamps	PROC	near C USES eax ebx edx edi,
 	mov	[LastIconset],edi
 
 	; Record number of icons in set.
-	movzx	eax,[(IControl_Type edi).Count]
+	movzx	eax,(IControl_Type PTR [edi]).Count
 	mov	[IconCount],eax
 
 	; Record width of icon.
-	movzx	eax,[(IControl_Type edi).Width]
+	movzx	eax,(IControl_Type PTR [edi])._Width
 	mov	[IconWidth],eax
 
 	; Record height of icon.
-	movzx	ebx,[(IControl_Type edi).Height]
+	movzx	ebx,(IControl_Type PTR [edi]).Height
 	mov	[IconHeight],ebx
 
 	; Record size of icon (in bytes).
@@ -112,19 +112,19 @@ Init_Stamps	PROC	near C USES eax ebx edx edi,
 	mov	[IconSize],eax
 
 	; Record hard pointer to icon map data.
-	mov	eax,[(IControl_Type edi).Map]
+	mov	eax,(IControl_Type PTR [edi]).Map
 	add	eax,edi
 	mov	[MapPtr],eax
 
 ??nomap:
 	; Record hard pointer to icon data.
 	mov	eax,edi
-	add	eax,[(IControl_Type edi).Icons]
+	add	eax,(IControl_Type PTR [edi]).Icons
 	mov	[StampPtr],eax
 
 	; Record the transparent table.
 	mov	eax,edi
-	add	eax,[(IControl_Type edi).TransFlag]
+	add	eax,(IControl_Type PTR [edi]).TransFlag
 	mov	[IsTrans],eax
 
 ??fini:
@@ -190,10 +190,10 @@ Buffer_Draw_Stamp	PROC	near C,
 
 	; Get pointer to position to render icon. EDI = ptr to destination page.
 	mov	ebx,[this_object]
-	mov	edi,[(GraphicViewPort ebx).GVPOffset]
-	mov	eax,[(GraphicViewPort ebx).GVPWidth]
-	add	eax,[(GraphicViewPort ebx).GVPXAdd]
-	add	eax,[(GraphicViewPort ebx).GVPPitch]
+	mov	edi,(GraphicViewPort PTR [ebx]).GVPOffset
+	mov	eax,(GraphicViewPort PTR [ebx]).GVPWidth
+	add	eax,(GraphicViewPort PTR [ebx]).GVPXAdd
+	add	eax,(GraphicViewPort PTR [ebx]).GVPPitch
 	push	eax			; save viewport full width for lower
 	mul	[y_pixel]
 	add	edi,eax
@@ -470,10 +470,10 @@ Buffer_Draw_Stamp_Clip	PROC	near C,
 
 	; Get pointer to position to render icon. EDI = ptr to destination page.
 	mov	ebx,[this_object]
-	mov	edi,[(GraphicViewPort ebx).GVPOffset]
-	mov	eax,[(GraphicViewPort ebx).GVPWidth]
-	add	eax,[(GraphicViewPort ebx).GVPXAdd]
-	add	eax,[(GraphicViewPort ebx).GVPPitch]
+	mov	edi,(GraphicViewPort PTR [ebx]).GVPOffset
+	mov	eax,(GraphicViewPort PTR [ebx]).GVPWidth
+	add	eax,(GraphicViewPort PTR [ebx]).GVPXAdd
+	add	eax,(GraphicViewPort PTR [ebx]).GVPPitch
 	push	eax			; save viewport full width for lower
 	mul	[y_pixel]
 	add	edi,eax
