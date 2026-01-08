@@ -50,14 +50,12 @@ INCLUDE <gbuffer.inc>
 
 .CODE
 
-	PROC	get_clip C near
-	USES	eax , ebx
-
 	;*===================================================================
 	;* define the arguements that our function takes.
 	;*===================================================================
-	ARG	win	    : dword
-	ARG     rect	    : dword
+get_clip	PROC	near C	USES	eax ebx,
+	win		: dword,
+	rect	: dword,
 
 
 	mov	edi , [ rect ]
@@ -107,7 +105,7 @@ INCLUDE <gbuffer.inc>
 	xor	dl , 5
 	mov	ah , dl
 	ret
-       ENDP	get_clip
+get_clip	ENDP
 
 
 
