@@ -66,14 +66,13 @@ PUBLIC	 C Confine_Rect
 ;*=========================================================================*
 ; int Clip_Rect (int* x, int* y, int* dw, int* dh, int width, int height);          			   *
 
-	PROC	Clip_Rect C near
-	uses	ebx,ecx,edx,esi,edi
-	arg	x:dword
-	arg	y:dword
-	arg	w:dword
-	arg	h:dword
-	arg	width:dword
-	arg	height:dword
+Clip_Rect	PROC	near C	uses	ebx ecx edx esi edi,
+	x:dword,
+	y:dword,
+	w:dword,
+	h:dword,
+	_width:dword,
+	height:dword,
 
 ;This Clipping algorithm is a derivation of the very well known
 ;Cohen-Sutherland Line-Clipping test. Due to its simplicity and efficiency
@@ -112,8 +111,8 @@ PUBLIC	 C Confine_Rect
 	; now we start computing the to suthenland boolean code for x0 , x1
 	shld	ecx,esi,1	; bit3 of code0 = sign bit of (x0 - 0)
 	shld	edx,eax,1 	; bit3 of code1 = sign bit of (x1 - 0)
-	sub	esi,[width]	; get the difference (x0 - (width + 1))
-	sub	eax,[width]	; get the difference (x1 - (width + 1))
+	sub	esi,[_width]	; get the difference (x0 - (width + 1))
+	sub	eax,[_width]	; get the difference (x1 - (width + 1))
 	dec	esi
 	dec	eax
 	shld	ecx,esi,1	; bit2 of code0 = sign bit of (x0 - (width + 1))
@@ -168,7 +167,7 @@ PUBLIC	 C Confine_Rect
 	jz	??right_ok	; spill out the right edge of the window
 	mov	edi,[w] 	; edi = a pointer to dw
 	mov	esi,[x]		; esi = a pointer to x
-	mov	ebx,[width]	; ebx = the width of the window
+	mov	ebx,[_width]	; ebx = the width of the window
 	sub	ebx,[esi] 	; the new dw is the difference (width-x0)
 	mov	[edi],ebx	; adjust dw to (width - x0)
 	jle	??clip_out	; if (width-x0) = 0 then the clipped retangle
@@ -187,7 +186,7 @@ PUBLIC	 C Confine_Rect
 	mov	eax,1  	; signal the calling program that the rectangle was modify
 ??clip_out:
 	ret
-	ENDP	Clip_Rect
+Clip_Rect	ENDP
 
 
 ;***************************************************************************
@@ -208,14 +207,13 @@ PUBLIC	 C Confine_Rect
 ;*=========================================================================*
 ; int Confine_Rect (int* x, int* y, int dw, int dh, int width, int height);          			   *
 
-	PROC	Confine_Rect C near
-	uses	ebx, esi,edi
-	arg	x:dword
-	arg	y:dword
-	arg	w:dword
-	arg	h:dword
-	arg	width :dword
-	arg	height:dword
+Confine_Rect	PROC	near C	uses	ebx esi edi,
+	x:dword,
+	y:dword,
+	w:dword,
+	h:dword,
+	_width :dword,
+	height:dword,
 
 	xor	eax,eax
 	mov	ebx,[x]
@@ -224,7 +222,7 @@ PUBLIC	 C Confine_Rect
 	mov	esi,[ebx]
 	add	edi,[ebx]
 
-	sub	edi,[width]
+	sub	edi,[_width]
 	neg	esi
 	dec	edi
 
@@ -264,6 +262,6 @@ PUBLIC	 C Confine_Rect
 ??confi_out:
 	ret
 
-	ENDP	Confine_Rect
+Confine_Rect	ENDP
 
  	END
