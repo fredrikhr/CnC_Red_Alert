@@ -46,7 +46,7 @@ INCLUDE <keystruc.inc>
 
 GLOBAL	C Shadow_Blit	: NEAR
 
-GLOBAL	C RealModePtr : DWORD
+EXTERN	C RealModePtr : DWORD
 GLOBAL	C Hide_Mouse  : NEAR
 GLOBAL	C Show_Mouse  : NEAR
 
