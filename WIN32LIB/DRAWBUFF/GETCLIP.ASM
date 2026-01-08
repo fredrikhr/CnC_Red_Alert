@@ -33,13 +33,12 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
-LOCALS ??
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE "gbuffer.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
 
 
 ; typedef struct {
@@ -49,7 +48,7 @@ INCLUDE "gbuffer.inc"
 ; Note for efficiency reasons x1 must be >= x0 and y1 >= y0
 ; int get_clip ( CLIP_WIN * window , CLIP_WIN * sorce_rect ) ;
 
-CODESEG
+.CODE
 
 	PROC	get_clip C near
 	USES	eax , ebx
