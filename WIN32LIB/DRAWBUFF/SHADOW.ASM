@@ -44,8 +44,6 @@ INCLUDE <drawbuff.inc>
 INCLUDE <gbuffer.inc>
 INCLUDE <keystruc.inc>
 
-GLOBAL	C Shadow_Blit	: NEAR
-
 EXTERN	C RealModePtr : DWORD
 Hide_Mouse	PROTO	NEAR C
 Show_Mouse	PROTO	NEAR C
@@ -60,16 +58,14 @@ Show_Mouse	PROTO	NEAR C
 ;	   will use the dword loop.  However, if you blit a region that is
 ;	   201 pixels wide, the dumb thing will use the byte loop for the
 ;	   entire blit.
-	PROC    Shadow_Blit C near
-	USES	eax,ebx,ecx,edx,esi,edi
-
-	ARG	x:DWORD
-	ARG	y:DWORD
-	ARG	region_width:DWORD
-	ARG	region_height:DWORD
-	ARG     srcpage:DWORD
-	ARG     dstpage:DWORD
-	ARG     shadow:DWORD
+Shadow_Blit	PROC	near C	PUBLIC	USES eax ebx ecx edx esi edi,
+	x:DWORD,
+	y:DWORD,
+	region_width:DWORD,
+	region_height:DWORD,
+	srcpage:DWORD,
+	dstpage:DWORD,
+	shadow:DWORD,
 
 	LOCAL	modulo:DWORD		; Row modulo
 	LOCAL	hidemouse:DWORD		; Was the mouse hidden?
@@ -205,6 +201,6 @@ Show_Mouse	PROTO	NEAR C
 ??reallyfini:
 	ret
 
-	ENDP    Shadow_Blit
+Shadow_Blit	ENDP
 
 	END
