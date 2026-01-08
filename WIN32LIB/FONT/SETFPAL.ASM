@@ -55,11 +55,10 @@ PUBLIC	C Set_Font_Palette_Range
 ;
 ; Bounds Checking: forces start and end to a range of 0-15
 ;*
-	PROC	Set_Font_Palette_Range C near
-	USES	eax, ebx, ecx,edi,esi
-	ARG	palette:DWORD
-	ARG	start:DWORD
-	ARG	endval:DWORD
+Set_Font_Palette_Range	PROC	near C	USES eax  ebx  ecx edi esi,
+	palette:DWORD,
+	start:DWORD,
+	endval:DWORD,
 
 	cld
 
@@ -96,7 +95,7 @@ PUBLIC	C Set_Font_Palette_Range
 ??exit:
 	ret
 
-	ENDP	Set_Font_Palette_Range
+Set_Font_Palette_Range	ENDP
 
 ;***********************************************************
 
