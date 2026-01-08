@@ -35,16 +35,16 @@
 ;*   VVPC::Size_Of_Region - calculate graphic buffer region size           *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
 
 GLOBAL	Buffer_Size_Of_Region	: NEAR
 
-CODESEG
+.CODE
 
 ;***************************************************************************
 ;* VVPC::Size_Of_Region - calculate buffer region size			   *
