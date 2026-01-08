@@ -35,18 +35,18 @@
 ;*	Fill_Quad -- Flood fills an arbitrary convex quadrilateral	   *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
 
 SLOT_VACANT	EQU	80008000h
 NULL		EQU	0h
 
 
-CODESEG
+.CODE
 
 ;***************************************************************************
 ;* VVC::FILL_QUAD -- Flood fills an arbitrary convex quadrilateral	   *
