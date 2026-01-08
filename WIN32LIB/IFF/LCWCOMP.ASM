@@ -128,8 +128,8 @@ LCW_Compress	PROC	near C	USES ebx ecx edx edi esi,
 	sub	ecx,esi
 	cmp	ecx,65
 	jb	short ??notlongenough
-	
-	mov	[DWORD PTR inlen],0	; clear the in-length flag
+
+	mov	DWORD PTR [inlen],0	; clear the in-length flag
 	mov	esi,edi
 	mov	edi,[ndest]	; get the offset of our compressed data
 
@@ -225,7 +225,7 @@ LCW_Compress	PROC	near C	USES ebx ecx edx edi esi,
 	jmp	short ??medrunnxt ; do the run fixup code
 
 ??lenin:
-	cmp	[DWORD PTR inlen],0	; is it doing a length?
+	cmp	DWORD PTR [inlen],0	; is it doing a length?
 	jnz	short ??len	; if so, skip code
 
 ??lenin1:
@@ -235,14 +235,14 @@ LCW_Compress	PROC	near C	USES ebx ecx edx edi esi,
 
 ??len:
 	mov	ebx,[lenoff]	; get the offset of the length code
-	cmp	[BYTE PTR ebx],0BFh	; see if its maxed out
+	cmp	BYTE PTR [ebx],0BFh	; see if its maxed out
 	je	??lenin1	; if so put out a new len code
 
 ??stolen:
-	inc	[BYTE PTR ebx] ; inc the count code
+	inc	BYTE PTR [ebx] ; inc the count code
 	lodsb			; get the byte
 	stosb			; store it
-	mov	[DWORD PTR inlen],1	; we are now in a length so save it
+	mov	DWORD PTR [inlen],1	; we are now in a length so save it
 	jmp	short ??nxt	; do the next code
 
 ??longrun:
@@ -258,9 +258,9 @@ LCW_Compress	PROC	near C	USES ebx ecx edx edi esi,
 	stosw			; store it
 ; this code common to all runs
 	add	esi,[count]	; add in the length of the run to the source
-	mov	[DWORD PTR inlen],0	; set the in leght flag to false
-	
-;=======================================================================	
+	mov	DWORD PTR [inlen],0	; set the in leght flag to false
+
+;=======================================================================
 
 ??nxt:
 	cmp	esi,[end_of_data]		; see if we did the whole pic
