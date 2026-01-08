@@ -45,18 +45,16 @@ INCLUDE <gbuffer.inc>
 
 .CODE
 
-	PROC	Buffer_Remap C NEAR
-	USES	eax,ebx,ecx,edx,esi,edi
-
 	;*===================================================================
 	;* Define the arguements that our function takes.
 	;*===================================================================
-	ARG	this_object:DWORD
-	ARG	x0_pixel:DWORD
-	ARG	y0_pixel:DWORD
-	ARG	region_width:DWORD
-	ARG	region_height:DWORD
-	ARG	remap	:DWORD
+Buffer_Remap	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
+	this_object:DWORD,
+	x0_pixel:DWORD,
+	y0_pixel:DWORD,
+	region_width:DWORD,
+	region_height:DWORD,
+	remap	:DWORD,
 
 	;*===================================================================
 	; Define some locals so that we can handle things quickly
@@ -170,6 +168,6 @@ INCLUDE <gbuffer.inc>
 ??real_out:
 	ret
 
-	ENDP	Buffer_Remap
+Buffer_Remap	ENDP
 
 	END
