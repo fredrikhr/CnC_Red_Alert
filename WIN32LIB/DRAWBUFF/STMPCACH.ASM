@@ -44,25 +44,25 @@ ICON_HEIGHT	=24
 MAX_ICON_SETS	=100
 
 
-global		C IconPointers:dword
-global		C Init_Stamps:near
-global		C IconCacheLookup:word
-global		LastIconset:dword
-global		MapPtr:dword
-global		IconCount:dword
-global		IconSize:dword
-global		StampPtr:dword
-global		IconEntry:dword
-global		IconData:dword
+extern		C IconPointers:dword
+Init_Stamps	PROTO	NEAR C, icondata:DWORD
+extern		C IconCacheLookup:word
+extern		LastIconset:dword
+extern		MapPtr:dword
+extern		IconCount:dword
+extern		IconSize:dword
+extern		StampPtr:dword
+public		IconEntry
+public		IconData
 
-global		Clear_Icon_Pointers_:near
-global		Cache_Copy_Icon_:near
-global		Is_Icon_Cached_:near
-global		Get_Icon_Index_:near
-global		Get_Free_Index_:near
-global		Cache_New_Icon_:near
-global		Is_Stamp_Registered_:near
-global		Get_Free_Cache_Slot_:near
+extern		Clear_Icon_Pointers_:near
+public		Cache_Copy_Icon_
+public		Is_Icon_Cached_
+extern		Get_Icon_Index_:near
+extern		Get_Free_Index_:near
+extern		Cache_New_Icon_:near
+public		Is_Stamp_Registered_
+extern		Get_Free_Cache_Slot_:near
 
 
 	IconSetType	struc
@@ -72,7 +72,7 @@ global		Get_Free_Cache_Slot_:near
 
 	IconSetType	ends
 
-global		C IconSetList:IconSetType
+extern		C IconSetList:IconSetType
 
 		.code
 
