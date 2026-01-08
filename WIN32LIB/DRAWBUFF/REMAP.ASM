@@ -72,7 +72,7 @@ Buffer_Remap	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
 	mov  	esi , [ this_object ]	    ; get ptr to src
 	xor 	ecx , ecx
 	xor 	edx , edx
-	mov	edi , [ (GraphicViewPort esi) . GVPWidth ]  ; get width into register
+	mov	edi , (GraphicViewPort PTR [esi]) . GVPWidth  ; get width into register
 	mov	ebx , [ x0_pixel ]
 	mov	eax , [ x0_pixel ]
 	add	ebx , [ region_width ]
@@ -85,7 +85,7 @@ Buffer_Remap	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
 	shld	ecx , eax , 1
 	shld	edx , ebx , 1
 
-	mov	edi,[ ( GraphicViewPort esi) . GVPHeight ] ; get height into register
+	mov	edi,(GraphicViewPort PTR [esi]) . GVPHeight ; get height into register
 	mov	ebx , [ y0_pixel ]
 	mov	eax , [ y0_pixel ]
 	add	ebx , [ region_height ]
@@ -118,22 +118,22 @@ Buffer_Remap	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
 ??scr_bottom_ok:
 	test	dl , 0100b
 	jz	??scr_right_ok
-	mov	eax , [ (GraphicViewPort esi) . GVPWidth ]  ; get width into register
+	mov	eax , (GraphicViewPort PTR [esi]) . GVPWidth  ; get width into register
 	mov	[ x1_pixel ] , eax
 ??scr_right_ok:
 	test	dl , 0001b
 	jz	??do_remap
-	mov	eax , [ (GraphicViewPort esi) . GVPHeight ]  ; get width into register
+	mov	eax , (GraphicViewPort PTR [esi]) . GVPHeight  ; get width into register
 	mov	[ y1_pixel ] , eax
 
 
 ??do_remap:
        cld
-       mov	edi , [ (GraphicViewPort esi) . GVPOffset ]
-       mov	eax , [ (GraphicViewPort esi) . GVPXAdd ]
+       mov	edi , (GraphicViewPort PTR [esi]) . GVPOffset
+       mov	eax , (GraphicViewPort PTR [esi]) . GVPXAdd
        mov	ebx , [ x1_pixel ]
-       add	eax , [ (GraphicViewPort esi) . GVPWidth ]
-       add	eax , [ (GraphicViewPort esi) . GVPPitch ]
+       add	eax , (GraphicViewPort PTR [esi]) . GVPWidth
+       add	eax , (GraphicViewPort PTR [esi]) . GVPPitch
        mov	esi , eax
        mul	[ y0_pixel ]
        add	edi , [ x0_pixel ]
