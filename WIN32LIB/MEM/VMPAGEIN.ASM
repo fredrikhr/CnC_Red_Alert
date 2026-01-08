@@ -37,7 +37,7 @@
 		OPTION SEGMENT:USE32
 
 
-GLOBAL		C Force_VM_Page_In:near
+PUBLIC		C Force_VM_Page_In
 
 .CODE
 
