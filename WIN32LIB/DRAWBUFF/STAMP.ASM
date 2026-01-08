@@ -82,8 +82,8 @@ PUBLIC C	Buffer_Draw_Stamp_Clip
 ; Bounds Checking: NONE
 ;
 ;*
-	PROC	Init_Stamps C near USES eax ebx edx edi
-	ARG	icondata:DWORD
+Init_Stamps	PROC	near C USES eax ebx edx edi,
+	icondata:DWORD
 
 	; Verify legality of parameter.
 	cmp	[icondata],0
@@ -130,7 +130,7 @@ PUBLIC C	Buffer_Draw_Stamp_Clip
 ??fini:
 	ret
 
-	ENDP	Init_Stamps
+Init_Stamps	ENDP
 
 
 ;***********************************************************
@@ -148,14 +148,13 @@ PUBLIC C	Buffer_Draw_Stamp_Clip
 ; remap valid colors to be invisible (for special effect reasons).
 ; This routine is fastest when no remap table is passed in.
 ;*
-	PROC	Buffer_Draw_Stamp C near
-
-	ARG	this_object:DWORD		; this is a member function
-	ARG	icondata:DWORD		; Pointer to icondata.
-	ARG	icon:DWORD		; Icon number to draw.
-	ARG	x_pixel:DWORD		; X coordinate of icon.
-	ARG	y_pixel:DWORD		; Y coordinate of icon.
-	ARG	remap:DWORD 		; Remap table.
+Buffer_Draw_Stamp	PROC	near C,
+	this_object:DWORD,	; this is a member function
+	icondata:DWORD,		; Pointer to icondata.
+	icon:DWORD,			; Icon number to draw.
+	x_pixel:DWORD,		; X coordinate of icon.
+	y_pixel:DWORD,		; Y coordinate of icon.
+	remap:DWORD, 		; Remap table.
 
 	LOCAL	modulo:DWORD		; Modulo to get to next row.
 	LOCAL	iwidth:DWORD		; Icon width (here for speedy access).
@@ -319,7 +318,7 @@ PUBLIC C	Buffer_Draw_Stamp_Clip
 	popad
 	ret
 
-	ENDP	Buffer_Draw_Stamp
+Buffer_Draw_Stamp	ENDP
 
 
 
@@ -336,18 +335,17 @@ PUBLIC C	Buffer_Draw_Stamp_Clip
 ; remap valid colors to be invisible (for special effect reasons).
 ; This routine is fastest when no remap table is passed in.
 ;*
-	PROC	Buffer_Draw_Stamp_Clip C near
-
-	ARG	this_object:DWORD	; this is a member function
-	ARG	icondata:DWORD		; Pointer to icondata.
-	ARG	icon:DWORD		; Icon number to draw.
-	ARG	x_pixel:DWORD		; X coordinate of icon.
-	ARG	y_pixel:DWORD		; Y coordinate of icon.
-	ARG	remap:DWORD 		; Remap table.
-	ARG	min_x:DWORD		; Clipping rectangle boundary
-	ARG	min_y:DWORD		; Clipping rectangle boundary
-	ARG	max_x:DWORD		; Clipping rectangle boundary
-	ARG	max_y:DWORD		; Clipping rectangle boundary
+Buffer_Draw_Stamp_Clip	PROC	near C,
+	this_object:DWORD,	; this is a member function
+	icondata:DWORD,		; Pointer to icondata.
+	icon:DWORD,			; Icon number to draw.
+	x_pixel:DWORD,		; X coordinate of icon.
+	y_pixel:DWORD,		; Y coordinate of icon.
+	remap:DWORD, 		; Remap table.
+	min_x:DWORD,		; Clipping rectangle boundary
+	min_y:DWORD,		; Clipping rectangle boundary
+	max_x:DWORD,		; Clipping rectangle boundary
+	max_y:DWORD,		; Clipping rectangle boundary
 
 	LOCAL	modulo:DWORD		; Modulo to get to next row.
 	LOCAL	iwidth:DWORD		; Icon width (here for speedy access).
@@ -594,6 +592,6 @@ PUBLIC C	Buffer_Draw_Stamp_Clip
 	popad
 	ret
 
-	ENDP	Buffer_Draw_Stamp_Clip
+Buffer_Draw_Stamp_Clip	ENDP
 
 	END
