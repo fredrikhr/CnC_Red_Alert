@@ -58,11 +58,9 @@ INCLUDE <gbuffer.inc>
 ;*   06/07/1994 PWG : Created.                                             *
 ;*   08/23/1994 SKB : Clear the direction flag to always go forward.       *
 ;*=========================================================================*
-	PROC	Buffer_Clear C near
-	USES	eax,ebx,ecx,edx,esi,edi
-
-	ARG    	this_object:DWORD			; this is a member function
-	ARG    	color:BYTE				; what color should we clear to
+Buffer_Clear	PROC	near C	USES	eax ebx ecx edx esi edi,
+	this_object:DWORD,			; this is a member function
+	color:BYTE,				; what color should we clear to
 
 	cld 		 				; always go forward
 
@@ -126,5 +124,5 @@ INCLUDE <gbuffer.inc>
 	jnz	??byte_by_byte				; if any left then next line
 ??exit:
 	ret
-	ENDP	Buffer_Clear
+Buffer_Clear	ENDP
 END
