@@ -35,15 +35,15 @@
 ;*   VVPC::Buffer_Get_Pixel -- get the colour of a pixel at given coords   *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
 
 
-CODESEG
+.CODE
 
 ;***************************************************************************
 ;* VVPC::GET_PIXEL -- Gets a pixel from the current view port		   *
