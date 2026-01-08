@@ -145,7 +145,7 @@ Is_Icon_Cached_	proc	near
 ; Initialize the stamp data if necessary.
 		cmp	[LastIconset],eax
 		je	short ??noreset
-		call	Init_Stamps C,eax
+		invoke	Init_Stamps,eax
 
 ; Determine if the icon number requested is actually in the set.
 ; Perform the logical icon to actual icon number remap if necessary.
