@@ -96,7 +96,7 @@ extern		C IconSetList:IconSetType
 ;*   11/8/95 3:16PM ST: Created                                                                 *
 ;*==============================================================================================*
 
-proc		Cache_Copy_Icon_ near
+Cache_Copy_Icon_	proc	near
 		pushad
 
 		mov	esi,eax
@@ -114,7 +114,7 @@ proc		Cache_Copy_Icon_ near
 		popad
 		ret
 
-endp		Cache_Copy_Icon_
+Cache_Copy_Icon_	endp
 
 
 
@@ -135,7 +135,7 @@ endp		Cache_Copy_Icon_
 ;*   11/8/95 2:16PM ST: Created                                                                 *
 ;*==============================================================================================*
 
-proc		Is_Icon_Cached_ near
+Is_Icon_Cached_	proc	near
 
 		mov	[IconData],eax		;save the icon data ptr for later
 		push	edx
@@ -220,7 +220,7 @@ proc		Is_Icon_Cached_ near
 		ret
 
 
-endp		Is_Icon_Cached_
+Is_Icon_Cached_	endp
 
 
 
@@ -242,7 +242,7 @@ endp		Is_Icon_Cached_
 ;*   11/10/95 10:00AM ST: Created                                                               *
 ;*==============================================================================================*
 
-proc		Is_Stamp_Registered_
+Is_Stamp_Registered_	proc
 
 		push	edi
 		push	ecx
@@ -264,7 +264,7 @@ proc		Is_Stamp_Registered_
 		pop	edi
 		ret
 
-endp		Is_Stamp_Registered_
+Is_Stamp_Registered_	endp
 
 
 
