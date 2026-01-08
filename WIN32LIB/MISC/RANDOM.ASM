@@ -65,8 +65,7 @@ RandNumb	DD	12349876H
 ;
 ;*
 
-	PROC	Random C near
-	USES	esi
+Random	PROC	near C	USES	esi
 
 	lea	esi, [RandNumb]		; get offset in segment of RandNumb
 	xor	eax,eax
@@ -84,7 +83,7 @@ RandNumb	DD	12349876H
 
 	ret
 
-	ENDP	Random
+Random	ENDP
 
 
 ;-----------------------------------------------------------------
@@ -95,9 +94,8 @@ RandNumb	DD	12349876H
 ;
 ;*
 
-	PROC	Get_Random_Mask C near
-	USES	ecx
-	ARG	maxval:DWORD
+Get_Random_Mask	PROC	near C	USES	ecx,
+	maxval:DWORD
 
 ; This function takes as a parameter a maximum value, for example, 61.  It
 ; then tries to create an AND mask that is big enough to enclose that number.
@@ -112,7 +110,7 @@ RandNumb	DD	12349876H
 	dec	eax			; dec it to create the mask.
 ??invalid:
 	ret
-	ENDP	Get_Random_Mask
+Get_Random_Mask	ENDP
 ;----------------------------------------------------------------------------
 
 	END
