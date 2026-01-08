@@ -364,7 +364,7 @@ Buffer_Print	PROC	near C	USES ebx ecx edx esi edi,
 
 	test	al,al				; is it a transparent?
 	jz	short ??skiplo			; skip over write
-	mov	[es:edi],al			; write it out
+	mov	es:[edi],al			; write it out
 ??skiplo:
 	inc	edi
 	dec	dh				; decrement our width.
@@ -378,7 +378,7 @@ Buffer_Print	PROC	near C	USES ebx ecx edx esi edi,
 
 	test	al,al				; is it a transparent?
 	jz	short ??skiphi			; skip over write
-	mov	[es:edi],al			; write it out
+	mov	es:[edi],al			; write it out
 ??skiphi:
 
 	inc	edi
