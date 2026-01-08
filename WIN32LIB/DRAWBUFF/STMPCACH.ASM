@@ -34,10 +34,9 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
-JUMPS
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
 MAX_CACHED_ICONS=300
 ICON_WIDTH	=24
@@ -75,7 +74,7 @@ global		Get_Free_Cache_Slot_:near
 
 global		C IconSetList:IconSetType
 
-		codeseg
+		.code
 
 
 
@@ -273,7 +272,7 @@ endp		Is_Stamp_Registered_
 
 
 
-		dataseg
+		.data
 
 
 IconEntry	dd	0	;Temporary pointer to icon index entry in table
