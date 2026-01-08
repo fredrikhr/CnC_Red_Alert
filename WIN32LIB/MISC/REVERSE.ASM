@@ -42,9 +42,9 @@
 .MODEL FLAT
 OPTION SEGMENT:USE32
 
-GLOBAL	 C Reverse_Short	:NEAR
-GLOBAL	 C Swap_Long	:NEAR
-GLOBAL	 C Reverse_Long	:NEAR
+PUBLIC	 C Reverse_Short
+PUBLIC	 C Swap_Long
+PUBLIC	 C Reverse_Long
 
 .CODE
 
