@@ -70,19 +70,17 @@ INCLUDE <gbuffer.inc>
 ;* HISTORY:                                                                *
 ;*   06/15/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Buffer_To_Buffer C near
-	USES	ebx,ecx,edx,esi,edi
-
 	;*===================================================================
 	;* define the arguements that our function takes.
 	;*===================================================================
-	ARG	this_object:DWORD		; this is a class member function
-	ARG	x_pixel:DWORD		; Page X pixel coordinate.
-	ARG	y_pixel:DWORD		; Page Y pixel coordinate.
-	ARG	pixel_width:DWORD	; Width of region in pixels.
-	ARG	pixel_height:DWORD	; Height of region in pixels.
-	ARG	dest:DWORD		; the buffer to copy to
-	ARG	buffer_size:DWORD	; the size of the buffer
+Buffer_To_Buffer	PROC	near C	USES ebx ecx edx esi edi,
+	this_object:DWORD,	; this is a class member function
+	x_pixel:DWORD,		; Page X pixel coordinate.
+	y_pixel:DWORD,		; Page Y pixel coordinate.
+	pixel_width:DWORD,	; Width of region in pixels.
+	pixel_height:DWORD,	; Height of region in pixels.
+	dest:DWORD,			; the buffer to copy to
+	buffer_size:DWORD,	; the size of the buffer
 
 	;*===================================================================
 	; Define some locals so that we can handle things quickly
@@ -286,6 +284,6 @@ ENDIF
 ??real_out:
        ret
 
-ENDP	Buffer_To_Buffer
+Buffer_To_Buffer	ENDP
 
 END
