@@ -148,7 +148,7 @@ Linear_Scale_To_Linear	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
 	mov  	esi , [ this_object ]	    ; get ptr to src
 	xor 	ecx , ecx
 	xor 	edx , edx
-	mov	edi , [ (GraphicViewPort esi) . GVPWidth ]  ; get width into register
+	mov	edi , (GraphicViewPort PTR [esi]) . GVPWidth  ; get width into register
 	mov	eax , [ src_x0 ]
 	mov	ebx , [ src_x1 ]
 	shld	ecx , eax , 1
@@ -159,7 +159,7 @@ Linear_Scale_To_Linear	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
 	shld	ecx , eax , 1
 	shld	edx , ebx , 1
 
-	mov	edi,[ ( GraphicViewPort esi) . GVPHeight ] ; get height into register
+	mov	edi,( GraphicViewPort PTR [esi] ) . GVPHeight ; get height into register
 	mov	eax , [ src_y0 ]
 	mov	ebx , [ src_y1 ]
 	shld	ecx , eax , 1
@@ -202,7 +202,7 @@ Linear_Scale_To_Linear	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
 ??src_bottom_ok:
 	test	bl , 0100b
 	jz	??src_right_ok
-	mov	eax , [ (GraphicViewPort esi) . GVPWidth ]  ; get width into register
+	mov	eax , (GraphicViewPort PTR [esi]) . GVPWidth  ; get width into register
 	mov	[ src_x1 ] , eax
 	sub	eax , [ src_x ]
 	imul	[ dst_width ]
@@ -213,7 +213,7 @@ Linear_Scale_To_Linear	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
 ??src_right_ok:
 	test	bl , 0001b
 	jz	??clip_against_dest
-	mov	eax , [ (GraphicViewPort esi) . GVPHeight ]  ; get width into register
+	mov	eax , (GraphicViewPort PTR [esi]) . GVPHeight  ; get width into register
 	mov	[ src_y1 ] , eax
 	sub	eax , [ src_y ]
 	imul	[ dst_height ]
@@ -226,7 +226,7 @@ Linear_Scale_To_Linear	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
 	mov  	esi , [ dest ]	    ; get ptr to src
 	xor 	ecx , ecx
 	xor 	edx , edx
-	mov	edi , [ (GraphicViewPort esi) . GVPWidth ]  ; get width into register
+	mov	edi , (GraphicViewPort PTR [esi]) . GVPWidth  ; get width into register
 	mov	eax , [ dst_x0 ]
 	mov	ebx , [ dst_x1 ]
 	shld	ecx , eax , 1
@@ -237,7 +237,7 @@ Linear_Scale_To_Linear	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
 	shld	ecx , eax , 1
 	shld	edx , ebx , 1
 
-	mov	edi,[ ( GraphicViewPort esi) . GVPHeight ] ; get height into register
+	mov	edi,( GraphicViewPort PTR [esi] ) . GVPHeight ; get height into register
 	mov	eax , [ dst_y0 ]
 	mov	ebx , [ dst_y1 ]
 	shld	ecx , eax , 1
@@ -280,7 +280,7 @@ Linear_Scale_To_Linear	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
 ??dst_bottom_ok:
 	test	bl , 0100b
 	jz	??dst_right_ok
-	mov	eax , [ (GraphicViewPort esi) . GVPWidth ]  ; get width into register
+	mov	eax , (GraphicViewPort PTR [esi]) . GVPWidth  ; get width into register
 	mov	[ dst_x1 ] , eax
 	sub	eax , [ dst_x ]
 	imul	[ src_width ]
@@ -292,7 +292,7 @@ Linear_Scale_To_Linear	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
 	test	bl , 0001b
 	jz	??do_scaling
 
-	mov	eax , [ (GraphicViewPort esi) . GVPHeight ]  ; get width into register
+	mov	eax , (GraphicViewPort PTR [esi]) . GVPHeight  ; get width into register
 	mov	[ dst_y1 ] , eax
 	sub	eax , [ dst_y ]
 	imul	[ src_height ]
@@ -304,20 +304,20 @@ Linear_Scale_To_Linear	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
 
        cld
        mov	ebx , [ this_object ]
-       mov	esi , [ (GraphicViewPort ebx) . GVPOffset ]
-       mov	eax , [ (GraphicViewPort ebx) . GVPXAdd ]
-       add	eax , [ (GraphicViewPort ebx) . GVPWidth ]
-       add	eax , [ (GraphicViewPort ebx) . GVPPitch ]
+       mov	esi , (GraphicViewPort PTR [ebx]) . GVPOffset
+       mov	eax , (GraphicViewPort PTR [ebx]) . GVPXAdd
+       add	eax , (GraphicViewPort PTR [ebx]) . GVPWidth
+       add	eax , (GraphicViewPort PTR [ebx]) . GVPPitch
        mov	[ src_win_width ] , eax
        mul	[ src_y0 ]
        add	esi , [ src_x0 ]
        add	esi , eax
 
        mov	ebx , [ dest ]
-       mov	edi , [ (GraphicViewPort ebx) . GVPOffset ]
-       mov	eax , [ (GraphicViewPort ebx) . GVPXAdd ]
-       add	eax , [ (GraphicViewPort ebx) . GVPWidth ]
-       add	eax , [ (GraphicViewPort ebx) . GVPPitch ]
+       mov	edi , (GraphicViewPort PTR [ebx]) . GVPOffset
+       mov	eax , (GraphicViewPort PTR [ebx]) . GVPXAdd
+       add	eax , (GraphicViewPort PTR [ebx]) . GVPWidth
+       add	eax , (GraphicViewPort PTR [ebx]) . GVPPitch
        mov	[ dst_win_width ] , eax
        mul	[ dst_y0 ]
        add	edi , [ dst_x0 ]
