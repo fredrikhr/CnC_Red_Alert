@@ -40,7 +40,7 @@
 .MODEL FLAT
 OPTION SEGMENT:USE32
 
-GLOBAL    LCW_Compress          :NEAR
+PUBLIC    LCW_Compress
 
 .CODE
 
