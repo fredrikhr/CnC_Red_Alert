@@ -41,7 +41,7 @@
 .MODEL FLAT
 OPTION SEGMENT:USE32
 
-GLOBAL 	      	C Processor          :NEAR
+PUBLIC 	      	C Processor
 
 
 PROC_80386	equ	0
