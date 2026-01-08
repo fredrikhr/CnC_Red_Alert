@@ -37,14 +37,14 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 
-IDEAL
-P386
-MODEL USE32 FLAT
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
 GLOBAL	 C Desired_Facing16	:NEAR
 ;	INCLUDE	"wwlib.i"
 
-	DATASEG
+	.DATA
 
 ; 16 direction desired facing lookup table.  Build the index according
 ; to the following bits:
@@ -59,7 +59,7 @@ NewFacing16	DB	 3, 2, 4,-1, 1, 2,0,-1
 		DB	 5, 6, 4,-1, 7, 6,8,-1
 		DB	11,10,12,-1, 9,10,8,-1
 
-	CODESEG
+	.CODE
 
 ;***************************************************************************
 ;* DESIRED_FACING16 -- Converts coordinates into a facing number.          *
