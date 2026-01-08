@@ -171,7 +171,7 @@ Is_Icon_Cached_	proc	near
 		ret
 
 ; Stamp is registered - if its cached already then just return the index
-??got_entry:	mov	eax,[(IconSetType eax).IconListOffset]
+??got_entry:	mov	eax,(IconSetType PTR [eax]).IconListOffset
 		cmp	word ptr [eax+edx*2+IconCacheLookup],-1
 		jz	??not_cached
 
