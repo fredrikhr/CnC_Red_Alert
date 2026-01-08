@@ -89,7 +89,7 @@ Shadow_Blit	PROC	near C	PUBLIC	USES eax ebx ecx edx esi edi,
 	cmp	(KeyboardType PTR [esi]).MState,0
 	je	short ??itsok
 	mov	[hidemouse],1
-	call	Hide_Mouse C		; Hides mouse again (just to be sure).
+	invoke	Hide_Mouse		; Hides mouse again (just to be sure).
 ??itsok:
 	mov	edi,[srcpage]
 	mov	esi,(GraphicViewPort PTR [edi]).GVPOffset
@@ -145,7 +145,7 @@ Shadow_Blit	PROC	near C	PUBLIC	USES eax ebx ecx edx esi edi,
 	cmp	eax,[y]
 	jb	short ??dok
 	mov	[hidemouse],1		; Manual hide of the mouse.
-	call	Hide_Mouse C
+	invoke	Hide_Mouse
 ??dok:
 
 	mov     eax,[esi-4]
@@ -176,7 +176,7 @@ Shadow_Blit	PROC	near C	PUBLIC	USES eax ebx ecx edx esi edi,
 	cmp	eax,[y]
 	jl	short ??bok
 	mov	[hidemouse],1		; Manual hide of the mouse.
-	call	Hide_Mouse C
+	invoke	Hide_Mouse
 ??bok:
 
 	mov     al,[esi-1]
@@ -197,7 +197,7 @@ Shadow_Blit	PROC	near C	PUBLIC	USES eax ebx ecx edx esi edi,
 	; Re show the mouse if it was hidden by this routine.
 	cmp	[hidemouse],0
 	je	short ??reallyfini
-	call	Show_Mouse C
+	invoke	Show_Mouse
 ??reallyfini:
 	ret
 
