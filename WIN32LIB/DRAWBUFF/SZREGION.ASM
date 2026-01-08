@@ -59,12 +59,10 @@ PUBLIC	Buffer_Size_Of_Region
 ;* HISTORY:                                                                *
 ;*   03/01/1995 BWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Buffer_Size_Of_Region C near
-	USES	ebx,ecx,edx
-
-	ARG    	this_object:DWORD			; this is a member function
-	ARG	region_width:DWORD			; width of region
-	ARG	region_height:DWORD			; height of region
+Buffer_Size_Of_Region	PROC	near C	USES ebx ecx edx,
+	this_object:DWORD,			; this is a member function
+	region_width:DWORD,			; width of region
+	region_height:DWORD,		; height of region
 
 	;*===================================================================
 	; Get the viewport information
@@ -96,6 +94,6 @@ PUBLIC	Buffer_Size_Of_Region
 ??hok:	mul	ebx					; size = w * h
 
 	ret
-	ENDP	Buffer_Size_Of_Region
+Buffer_Size_Of_Region	ENDP
 
 	END
