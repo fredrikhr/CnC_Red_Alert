@@ -65,11 +65,11 @@ Buffer_Clear	PROC	near C	USES	eax ebx ecx edx esi edi,
 	cld 		 				; always go forward
 
 	mov	ebx,[this_object]			; get a pointer to viewport
-	mov	edi,[(GraphicViewPort ebx).GVPOffset]	; get the correct offset
-	mov	edx,[(GraphicViewPort ebx).GVPHeight]	; ecx = height of viewport
-	mov	esi,[(GraphicViewPort ebx).GVPWidth]	; edx = width of viewport
-	push	[dword (GraphicViewPort ebx).GVPPitch]	; extra pitch of direct draw surface
-	mov	ebx,[(GraphicViewPort ebx).GVPXAdd]	; esi = add for each line
+	mov	edi,(GraphicViewPort PTR [ebx]).GVPOffset	; get the correct offset
+	mov	edx,(GraphicViewPort PTR [ebx]).GVPHeight	; ecx = height of viewport
+	mov	esi,(GraphicViewPort PTR [ebx]).GVPWidth	; edx = width of viewport
+	push	dword ptr (GraphicViewPort PTR [ebx]).GVPPitch	; extra pitch of direct draw surface
+	mov	ebx,(GraphicViewPort PTR [ebx]).GVPXAdd	; esi = add for each line
 	add	ebx,[esp]				; Yes, I know its nasty but
 	add	esp,4					;      it works!
 
