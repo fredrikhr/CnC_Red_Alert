@@ -75,21 +75,20 @@ PUBLIC  C Largest_Mem_Block
 ; void Mem_Copy(void *source, void *dest, unsigned long bytes_to_copy);
 
 
-PROC Mem_Copy 	C near 
-	USES	ecx , esi , edi , ebx
-	ARG	source:DWORD
-	ARG	dest:DWORD
-	ARG	bytes:DWORD
-		
+Mem_Copy PROC	near C	USES	ecx esi edi ebx,
+	source:DWORD,
+	dest:DWORD,
+	bytes:DWORD,
+
 ;********************************* Setup ******************************************
 	cld
 	mov	esi,[source]
 	mov	edi,[dest]
-	mov	ecx,[bytes]	; get number of bytes to copy.	
+	mov	ecx,[bytes]	; get number of bytes to copy.
 
      ; check pointers for singularities
 	cmp	esi,edi		; Compare source with dest.
-	je	??done		; No sence in copying the same pointer.	
+	je	??done		; No sence in copying the same pointer.
 	or	esi,0
 	jz	??done
 	or	edi,0
@@ -148,7 +147,7 @@ PROC Mem_Copy 	C near
 ;********************************* Forward ***************************************
 ??forward:
 	cld
-	mov	ecx,edi		; get destination pointer.	
+	mov	ecx,edi		; get destination pointer.
 	neg	ecx
 	and	ecx,3		; Get non aligned bytes.
 	sub	ebx,ecx		; remove that from the total size to be copied later.
@@ -161,11 +160,10 @@ PROC Mem_Copy 	C near
 	rep	movsb		; finnish the remaining bytes.
 	ret
 
-ENDP	Mem_Copy
+Mem_Copy	ENDP
 
-PROC Largest_Mem_Block 	C near 
-	uses	esi , edi , ebx , ecx , edx
-	local	mem_struct : dword : 16
+Largest_Mem_Block PROC	near C	uses	esi edi ebx ecx edx
+	local	mem_struct [16] : dword
 
 	mov	eax , 0500h
 	lea	edi , [ mem_struct ]
@@ -173,7 +171,7 @@ PROC Largest_Mem_Block 	C near
 	mov	eax , [ mem_struct ]
 
 	ret
-ENDP Largest_Mem_Block
+Largest_Mem_Block ENDP
 
 END
 
