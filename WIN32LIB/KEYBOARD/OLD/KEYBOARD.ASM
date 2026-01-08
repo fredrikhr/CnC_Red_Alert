@@ -2436,7 +2436,7 @@ ELSE
 
 
 .DATA
-STRUC	RealModeCallStruc
+RealModeCallStruc	STRUC
 	_EDI  DD	0
 	_ESI  DD	0
 	_EBP  DD	0
