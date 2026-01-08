@@ -40,7 +40,7 @@
 .MODEL FLAT
 OPTION SEGMENT:USE32
 
-GLOBAL	C Desired_Facing256	:NEAR
+PUBLIC	C Desired_Facing256
 ;	INCLUDE	"wwlib.i"
 INCLUDE <gbuffer.inc>
 
