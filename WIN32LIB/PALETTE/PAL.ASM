@@ -383,14 +383,14 @@ Bump_Color PROC NEAR C USES ebx ecx edi esi,
 
 	; Check the color gun.
 ??colorloop:
-	mov	al,[BYTE PTR esi]
-	sub	al,[BYTE PTR edi]	; Carry flag is set if subtraction needed.
+	mov	al,BYTE PTR [esi]
+	sub	al,BYTE PTR [edi]	; Carry flag is set if subtraction needed.
 	jz	short ??gotit
 	mov	[changed],TRUE
-	inc	[BYTE PTR edi]		; Presume addition.
+	inc	BYTE PTR [edi]		; Presume addition.
 	jnc	short ??gotit		; oops, subtraction needed so dec twice.
-	dec	[BYTE PTR edi]
-	dec	[BYTE PTR edi]
+	dec	BYTE PTR [edi]
+	dec	BYTE PTR [edi]
 ??gotit:
 	inc	edi
 	inc	esi
