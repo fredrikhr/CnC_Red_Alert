@@ -37,9 +37,9 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
 GLOBAL 	      	C Processor          :NEAR
 
@@ -48,10 +48,10 @@ PROC_80386	equ	0
 PROC_80486	equ	1
 PROC_80586	equ	2
 
-DATASEG
+.DATA
 cpu_id_586	dw	0
 
-CODESEG
+.CODE
 
 PROC	Processor C near
 	USES ebx
