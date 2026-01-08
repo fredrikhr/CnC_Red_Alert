@@ -34,14 +34,14 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
 
-INCLUDE	"stamp.inc"
+INCLUDE	<stamp.inc>
 
 global		C Init_Stamps:near
 global		LastIconset:dword
@@ -50,7 +50,7 @@ global		IconCount:dword
 global		IconSize:dword
 global		StampPtr:dword
 
-	DATASEG
+	.DATA
 
 
 LastIconset	DD	0	; Pointer to last iconset initialized.
@@ -66,8 +66,7 @@ IconCount	DD	0	; Number of icons in the set.
 
 	EVEN
 
-	CODESEG
-
+	.CODE
 
 GLOBAL C	Buffer_Draw_Stamp:near
 GLOBAL C	Buffer_Draw_Stamp_Clip:near
