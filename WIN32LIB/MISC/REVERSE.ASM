@@ -70,15 +70,15 @@ Reverse_Long	PROC	near C,
 	number:DWORD
 
 IF 1
-	mov	eax,[DWORD PTR number]
+	mov	eax,DWORD PTR [number]
 	xchg	al,ah
 	ror	eax,16
 	xchg	al,ah
 ELSE
 
 	; This is old 16 bit code.
-	mov	ax,[WORD PTR number]
-	mov	dx,[WORD PTR number+2]
+	mov	ax,WORD PTR [number]
+	mov	dx,WORD PTR [number+2]
 	xchg	ah,dl
 	xchg	al,dh
 ENDIF
@@ -120,12 +120,12 @@ Swap_Long	PROC	near C,
 
 IF 1
 	; 32 bit code.
-    	mov	eax,[DWORD PTR number]
+    	mov	eax,DWORD PTR [number]
 	ror	eax,16
 ELSE
 	; 16 bit code.
-	mov	ax,[WORD PTR number+2]
-	mov	dx,[WORD PTR number]
+	mov	ax,WORD PTR [number+2]
+	mov	dx,WORD PTR [number]
 ENDIF
 
 	ret
