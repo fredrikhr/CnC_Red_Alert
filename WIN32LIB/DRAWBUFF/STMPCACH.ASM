@@ -65,12 +65,12 @@ global		Is_Stamp_Registered_:near
 global		Get_Free_Cache_Slot_:near
 
 
-		struc	IconSetType
+	IconSetType	struc
 
 		IconSetPtr	dd	?
 		IconListOffset	dd	?
 
-		ends
+	IconSetType	ends
 
 global		C IconSetList:IconSetType
 
