@@ -40,7 +40,7 @@
 .MODEL FLAT
 OPTION SEGMENT:USE32
 
-GLOBAL            C LCW_Uncompress          :NEAR
+PUBLIC            C LCW_Uncompress
 
 .CODE
 
