@@ -63,39 +63,39 @@ get_clip	PROC	near C	USES	eax ebx,
 	xor 	eax , eax
 	xor 	edx , edx
 
-	mov	ecx , [ (RECTANGLE edi) . x0 ]
-	mov	ebx , [ (RECTANGLE edi) . x1 ]
-	sub	ecx , [ (RECTANGLE esi) . x0 ]
-	sub	ebx , [ (RECTANGLE esi) . x0 ]
+	mov	ecx , (RECTANGLE PTR [edi]) . x0
+	mov	ebx , (RECTANGLE PTR [edi]) . x1
+	sub	ecx , (RECTANGLE PTR [esi]) . x0
+	sub	ebx , (RECTANGLE PTR [esi]) . x0
 	shld	eax , ecx , 1
 	shld	edx , ebx , 1
 
-;	mov	ebx , [ (RECTANGLE esi) . x1 ]
+;	mov	ebx , (RECTANGLE PTR [esi]) . x1
 ;	inc	ebx
 ;	mov	[ rect ] , ebx
-	mov	ecx , [ (RECTANGLE edi) . x0 ]
-	mov	ebx , [ (RECTANGLE edi) . x1 ]
-	sub	ecx , [ (RECTANGLE esi) . x1 ]
-	sub	ebx , [ (RECTANGLE esi) . x1 ]
+	mov	ecx , (RECTANGLE PTR [edi]) . x0
+	mov	ebx , (RECTANGLE PTR [edi]) . x1
+	sub	ecx , (RECTANGLE PTR [esi]) . x1
+	sub	ebx , (RECTANGLE PTR [esi]) . x1
 	dec	ecx
 	dec	ebx
 	shld	eax , ecx , 1
 	shld	edx , ebx , 1
 
-	mov	ecx , [ (RECTANGLE edi) . y0 ]
-	mov	ebx , [ (RECTANGLE edi) . y1 ]
-	sub	ecx , [ (RECTANGLE esi) . y0 ]
-	sub	ebx , [ (RECTANGLE esi) . y0 ]
+	mov	ecx , (RECTANGLE PTR [edi]) . y0
+	mov	ebx , (RECTANGLE PTR [edi]) . y1
+	sub	ecx , (RECTANGLE PTR [esi]) . y0
+	sub	ebx , (RECTANGLE PTR [esi]) . y0
 	shld	eax , ecx , 1
 	shld	edx , ebx , 1
 
-;	mov	ebx , [ (RECTANGLE esi) . y1 ]
+;	mov	ebx , (RECTANGLE PTR [esi]) . y1
 ;	inc	ebx
 ;	mov	[ rect ] , ebx
-	mov	ecx , [ (RECTANGLE edi) . y0 ]
-	mov	ebx , [ (RECTANGLE edi) . y1 ]
-	sub	ecx , [ (RECTANGLE esi) . y1 ]
-	sub	ebx , [ (RECTANGLE esi) . y1 ]
+	mov	ecx , (RECTANGLE PTR [edi]) . y0
+	mov	ebx , (RECTANGLE PTR [edi]) . y1
+	sub	ecx , (RECTANGLE PTR [esi]) . y1
+	sub	ebx , (RECTANGLE PTR [esi]) . y1
 	dec	ecx
 	dec	ebx
 	shld	eax , ecx , 1
