@@ -41,11 +41,11 @@ INCLUDE <gbuffer.inc>
 INCLUDE <shape.inc>
 INCLUDE <mouse.inc>
 
-GLOBAL	C LCW_Uncompress:NEAR
-GLOBAL	C Get_Shape_Uncomp_Size     :NEAR
-GLOBAL	C Get_Shape_Width      	  :NEAR
-GLOBAL	C Get_Shape_Original_Height :NEAR
-GLOBAL	_ShapeBuffer		  :DWORD
+EXTERN	C LCW_Uncompress:NEAR
+EXTERN	C Get_Shape_Uncomp_Size     :NEAR
+EXTERN	C Get_Shape_Width      	  :NEAR
+EXTERN	C Get_Shape_Original_Height :NEAR
+EXTERN	_ShapeBuffer		  :DWORD
 
 .CODE
 
