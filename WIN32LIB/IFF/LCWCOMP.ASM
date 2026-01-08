@@ -36,13 +36,13 @@
 ;*                                                                         *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
 GLOBAL    LCW_Compress          :NEAR
 
-CODESEG
+.CODE
 
 ; ----------------------------------------------------------------
 ;
