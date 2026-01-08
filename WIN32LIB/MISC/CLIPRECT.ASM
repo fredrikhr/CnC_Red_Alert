@@ -43,8 +43,8 @@
 .MODEL FLAT
 OPTION SEGMENT:USE32
 
-GLOBAL	 C Clip_Rect	:NEAR
-GLOBAL	 C Confine_Rect	:NEAR
+PUBLIC	 C Clip_Rect
+PUBLIC	 C Confine_Rect
 
 .CODE
 
