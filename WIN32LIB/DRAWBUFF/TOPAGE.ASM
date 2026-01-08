@@ -68,20 +68,29 @@ INCLUDE <gbuffer.inc>
 ;* HISTORY:                                                                *
 ;*   06/15/1994 PWG : Created.                                             *
 ;*=========================================================================*
-	PROC	Buffer_To_Page C near
-	USES	eax,ebx,ecx,edx,esi,edi
-
 	;*===================================================================
 	;* define the arguements that our function takes.
 	;*===================================================================
-	ARG	x_pixel     :DWORD		; x pixel position in source
-	ARG	y_pixel     :DWORD		; y pixel position in source
-	ARG	pixel_width :DWORD		; width of rectangle to blit
-	ARG	pixel_height:DWORD		; height of rectangle to blit
-	ARG    	src         :DWORD		; this is a member function
-	ARG	dest        :DWORD		; what are we blitting to
+IF	TRANSP
+Buffer_To_Page	PROC	near C	USES eax ebx ecx edx esi edi,
+	x_pixel     :DWORD,		; x pixel position in source
+	y_pixel     :DWORD,		; y pixel position in source
+	pixel_width :DWORD,		; width of rectangle to blit
+	pixel_height:DWORD,		; height of rectangle to blit
+	src         :DWORD,		; this is a member function
+	dest        :DWORD,		; what are we blitting to
+	trans       :DWORD,		; do we deal with transparents?
 
-;	ARG	trans       :DWORD			; do we deal with transparents?
+ELSE
+Buffer_To_Page	PROC	near C	USES eax ebx ecx edx esi edi,
+	x_pixel     :DWORD,		; x pixel position in source
+	y_pixel     :DWORD,		; y pixel position in source
+	pixel_width :DWORD,		; width of rectangle to blit
+	pixel_height:DWORD,		; height of rectangle to blit
+	src         :DWORD,		; this is a member function
+	dest        :DWORD,		; what are we blitting to
+
+ENDIF
 
 	;*===================================================================
 	; Define some locals so that we can handle things quickly
@@ -290,5 +299,5 @@ ENDIF
        ret
 
 
-	ENDP	Buffer_To_Page
+Buffer_To_Page	ENDP
 END
