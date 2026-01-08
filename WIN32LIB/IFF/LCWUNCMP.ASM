@@ -54,13 +54,10 @@ PUBLIC            C LCW_Uncompress
 
 
 
-PROC	LCW_Uncompress C near
-
-	USES ebx,ecx,edx,edi,esi
-
-	ARG	source:DWORD
-	ARG	dest:DWORD
-	ARG	length:DWORD
+LCW_Uncompress	PROC	near C	USES ebx ecx edx edi esi,
+	source:DWORD,
+	dest:DWORD,
+	_length:DWORD
 ;LOCALS
 	LOCAL a1stdest:DWORD
 	LOCAL maxlen:DWORD
@@ -71,7 +68,7 @@ PROC	LCW_Uncompress C near
 
 	mov	edi,[dest]
 	mov	esi,[source]
-	mov	edx,[length]
+	mov	edx,[_length]
 
 ;
 ;
@@ -283,7 +280,7 @@ PROC	LCW_Uncompress C near
 
 	ret
 
-ENDP	LCW_Uncompress
+LCW_Uncompress	ENDP
 
 ;***********************************************************
 
