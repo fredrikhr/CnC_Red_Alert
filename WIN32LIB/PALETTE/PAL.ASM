@@ -46,10 +46,10 @@ FALSE = 0
 TRUE  = 1
 
 ;****************************** Declarations ********************************
-GLOBAL 		C Set_Palette_Range:NEAR
-GLOBAL 		C Bump_Color:NEAR
-GLOBAL  	C CurrentPalette:BYTE:768
-GLOBAL		C PaletteTable:byte:1024
+PUBLIC 		C Set_Palette_Range
+PUBLIC 		C Bump_Color
+PUBLIC  	C CurrentPalette
+PUBLIC		C PaletteTable
 
 
 ;********************************** Data ************************************
@@ -89,8 +89,8 @@ IF 1
 	PROC	Set_Palette_Range C NEAR
 	ARG	palette:DWORD
 
-	GLOBAL	Set_DD_Palette_:near
-	GLOBAL	Wait_Vert_Blank_:near
+	EXTERN	Set_DD_Palette_:NEAR
+	EXTERN	Wait_Vert_Blank_:NEAR
 
 	pushad
 	mov	esi,[palette]
