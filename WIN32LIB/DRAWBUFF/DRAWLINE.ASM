@@ -65,18 +65,16 @@ INCLUDE <gbuffer.inc>
 ;*   06/16/1994 PWG : Created.                                             *
 ;*   08/30/1994 IML : Fixed clipping bug.				   *
 ;*=========================================================================*
-	PROC	Buffer_Draw_Line C NEAR
-	USES	eax,ebx,ecx,edx,esi,edi
-
 	;*==================================================================
 	;* Define the arguements that the function takes.
 	;*==================================================================
-	ARG	this_object:DWORD	; associated graphic view port
-	ARG	x1_pixel:DWORD		; the start x pixel position
-	ARG	y1_pixel:DWORD		; the start y pixel position
-	ARG	x2_pixel:DWORD		; the dest x pixel position
-	ARG	y2_pixel:DWORD		; the dest y pixel position
-	ARG	color:DWORD		; the color we are drawing
+Buffer_Draw_Line	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
+	this_object:DWORD,	; associated graphic view port
+	x1_pixel:DWORD,		; the start x pixel position
+	y1_pixel:DWORD,		; the start y pixel position
+	x2_pixel:DWORD,		; the dest x pixel position
+	y2_pixel:DWORD,		; the dest y pixel position
+	color:DWORD,		; the color we are drawing
 
 	;*==================================================================
 	;* Define the local variables that we will use on the stack
@@ -458,7 +456,7 @@ INCLUDE <gbuffer.inc>
 
 ??out:
 	ret
-	ENDP	Buffer_Draw_Line
+Buffer_Draw_Line	ENDP
 
 
 END
