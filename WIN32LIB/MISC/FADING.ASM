@@ -38,7 +38,7 @@
 .MODEL FLAT
 OPTION SEGMENT:USE32
 
-GLOBAL	C Build_Fading_Table	:NEAR
+PUBLIC	C Build_Fading_Table
 
 	.CODE
 
