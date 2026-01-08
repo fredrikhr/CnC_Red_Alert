@@ -114,7 +114,7 @@ ENDIF
 	mov  	esi , [ dest ]	    ; get ptr to dest
 	xor 	ecx , ecx
 	xor 	edx , edx
-	mov	edi , [ (GraphicViewPort esi) . GVPWidth ]  ; get width into register
+	mov	edi , (GraphicViewPort PTR [ esi ]) . GVPWidth   ; get width into register
 	mov	ebx , [ x_pixel ]
 	mov	eax , [ x_pixel ]
 	add	ebx , [ pixel_width ]
@@ -127,7 +127,7 @@ ENDIF
 	shld	ecx , eax , 1
 	shld	edx , ebx , 1
 
-	mov	edi,[ ( GraphicViewPort esi) . GVPHeight ] ; get height into register
+	mov	edi,( GraphicViewPort PTR [ esi ]) . GVPHeight  ; get height into register
 	mov	ebx , [ y_pixel ]
 	mov	eax , [ y_pixel ]
 	add	ebx , [ pixel_height ]
@@ -166,22 +166,22 @@ ENDIF
 ??dest_bottom_ok:
 	test	dl , 0100b
 	jz	??dest_right_ok
-	mov	eax , [ (GraphicViewPort esi) . GVPWidth ]  ; get width into register
+	mov	eax , (GraphicViewPort PTR [ esi ]) . GVPWidth   ; get width into register
 	mov	[ x1_pixel ] , eax
 ??dest_right_ok:
 	test	dl , 0001b
 	jz	??do_blit
-	mov	eax , [ (GraphicViewPort esi) . GVPHeight ]  ; get width into register
+	mov	eax , (GraphicViewPort PTR [ esi ]) . GVPHeight   ; get width into register
 	mov	[ y1_pixel ] , eax
 
 ??do_blit:
 
        cld
 
-       mov	eax , [ (GraphicViewPort esi) . GVPXAdd ]
-       add	eax , [ (GraphicViewPort esi) . GVPWidth ]
-       add	eax , [ (GraphicViewPort esi) . GVPPitch ]
-       mov	edi , [ (GraphicViewPort esi) . GVPOffset ]
+       mov	eax , (GraphicViewPort PTR [ esi ]) . GVPXAdd
+       add	eax , (GraphicViewPort PTR [ esi ]) . GVPWidth
+       add	eax , (GraphicViewPort PTR [ esi ]) . GVPPitch
+       mov	edi , (GraphicViewPort PTR [ esi ]) . GVPOffset
 
        mov	ecx , eax
        mul	[ y_pixel ]
