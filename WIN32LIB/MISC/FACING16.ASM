@@ -41,7 +41,7 @@
 .MODEL FLAT
 OPTION SEGMENT:USE32
 
-GLOBAL	 C Desired_Facing16	:NEAR
+PUBLIC	 C Desired_Facing16
 ;	INCLUDE	"wwlib.i"
 
 	.DATA
