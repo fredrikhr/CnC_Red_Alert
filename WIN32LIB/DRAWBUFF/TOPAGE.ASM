@@ -35,17 +35,17 @@
 ;*   Buffer_To_Page -- Copies a linear buffer to a virtual viewport	   *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
 TRANSP	equ  0
 
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
 
-CODESEG
+.CODE
 
 ;***************************************************************************
 ;* VVC::TOPAGE -- Copies a linear buffer to a virtual viewport		   *
