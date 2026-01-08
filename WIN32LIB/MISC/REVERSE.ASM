@@ -38,15 +38,15 @@
 ;*                                                                         *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
 GLOBAL	 C Reverse_Short	:NEAR
 GLOBAL	 C Swap_Long	:NEAR
 GLOBAL	 C Reverse_Long	:NEAR
 
-CODESEG
+.CODE
 
 
 ; ----------------------------------------------------------------
