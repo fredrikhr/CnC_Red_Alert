@@ -35,15 +35,15 @@
 ;*   GVPC::Fill_Rect -- draws a filled rectangle to a graphics buffer      *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
-INCLUDE ".\drawbuff.inc"
-INCLUDE ".\gbuffer.inc"
+INCLUDE <drawbuff.inc>
+INCLUDE <gbuffer.inc>
 
 
-CODESEG
+.CODE
 
 ;***************************************************************************
 ;* GVPC::FILL_RECT -- Fills a rectangular region of a graphic view port	   *
