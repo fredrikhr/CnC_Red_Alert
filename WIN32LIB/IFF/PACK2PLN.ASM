@@ -35,12 +35,11 @@
 ;* Functions:                                                              *
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
-IDEAL
-P386
-MODEL USE32 FLAT
+.386
+.MODEL FLAT
+OPTION SEGMENT:USE32
 
 
-LOCALS ??
 
 
 ;******************************************************************************
@@ -48,7 +47,7 @@ LOCALS ??
 ;
 GLOBAL  		Pack_2_Plane:NEAR
 
-	CODESEG
+	.CODE
 
 ;***************************************************************************
 ;* PACK_2_PLANE -- packed to planar scanline conversion                    *
