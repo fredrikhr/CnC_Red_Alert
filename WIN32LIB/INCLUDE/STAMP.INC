@@ -21,38 +21,38 @@
 
 ifdef NO_WAY_THIS_WILL_BE_DEFINED_HAHAHAHA
 
-	STRUC	IControl_Type
-Width		DW	?	; Width in pixels (per icon).
+IControl_Type	STRUC
+_Width		DW	?	; Width in pixels (per icon).
 Height		DW	?	; Height in pixels (per icon).
 Count		DW	?	; Number of icons in this set.
 Allocated	DW	?	; Was this iconset allocated?
-Size		DD	?	; Size of entire iconset memory block.
+_Size		DD	?	; Size of entire iconset memory block.
 Icons		DD	?	; Offset from buffer start to icon data.
 Palettes	DD	?	; Offset from buffer start to palette data.
 Remaps		DD	?	; Offset from buffer start to remap index data.
 TransFlag	DD	?	; Offset for transparency flag data.
 Map		DD	?	; Icon map offset.
-	ENDS
+IControl_Type	ENDS
 
 else
 
 
-	STRUC	IControl_Type
+IControl_Type	STRUC
 
-Width		DW	?	; Width in pixels (per icon).
+_Width		DW	?	; Width in pixels (per icon).
 Height		DW	?	; Height in pixels (per icon).
 Count		DW	?	; Number of icons in this set.
 Allocated	DW	?	; Was this iconset allocated?
 MapWidth	DW	?
 MapHeight	DW	?
-Size		DD	?	; Size of entire iconset memory block.
+_Size		DD	?	; Size of entire iconset memory block.
 Icons		DD	?	; Offset from buffer start to icon data.
 Palettes	DD	?	; Offset from buffer start to palette data.
 Remaps		DD	?	; Offset from buffer start to remap index data.
 TransFlag	DD	?	; Offset for transparency flag data.
 ColorMap	DD	?
 Map		DD	?	; Icon map offset.
-	ENDS
+IControl_Type	ENDS
 
 endif
 
