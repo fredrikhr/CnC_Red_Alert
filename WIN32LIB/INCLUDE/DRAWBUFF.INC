@@ -36,53 +36,141 @@
 ;* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
 
 ; Externs from REGIONSZ.ASM module of the DRAWBUFF library
-GLOBAL C Buffer_Size_Of_Region	:NEAR
+Buffer_Size_Of_Region	PROTO	NEAR C,
+	this_object:DWORD,
+	region_width:DWORD,
+	region_height:DWORD,
 
 ; Externs from GETPIX.ASM module of the DRAWBUFF library
-GLOBAL C Buffer_Get_Pixel          	:NEAR
+Buffer_Get_Pixel		PROTO	NEAR C,
+	this_object:DWORD,
+	x_pixel:DWORD,
+	y_pixel:DWORD,
 
 ; Externs from PUTPIX.ASM module of the DRAWBUFF library
-GLOBAL C Buffer_Put_Pixel 		:NEAR
+Buffer_Put_Pixel		PROTO	NEAR C,
+	this_object:DWORD,
+	x_pixel:DWORD,
+	y_pixel:DWORD,
+	color:BYTE,
 
 ; Externs from CLEAR.ASM module of the DRAWBUFF library
-GLOBAL C Buffer_Clear	          	:NEAR
+Buffer_Clear			PROTO	NEAR C,
+	this_object:DWORD,
+	color:BYTE,
 
 ; Externs from BITBLIT.ASM module of the DRAWBUFF library
-GLOBAL C Linear_Blit_To_Linear		:NEAR
+Linear_Blit_To_Linear	PROTO	NEAR C,
+	this_object :DWORD,
+	dest        :DWORD,
+	x_pixel     :DWORD,
+	y_pixel     :DWORD,
+	dest_x0     :dword,
+	dest_y0     :dword,
+	pixel_width :DWORD,
+	pixel_height:DWORD,
+	trans       :DWORD,
 
 ; Externs from TOBUFF.ASM module of the DRAWBUFF library
-GLOBAL C Buffer_To_Buffer		:NEAR
+Buffer_To_Buffer		PROTO	NEAR C,
+	this_object:DWORD,
+	x_pixel:DWORD,
+	y_pixel:DWORD,
+	pixel_width:DWORD,
+	pixel_height:DWORD,
+	dest:DWORD,
+	buffer_size:DWORD,
 
 ; Externs from TOPAGE.ASM module of the DRAWBUFF library
-GLOBAL C Buffer_To_Page		:NEAR
+Buffer_To_Page			PROTO	NEAR C,
+	x_pixel     :DWORD,
+	y_pixel     :DWORD,
+	pixel_width :DWORD,
+	pixel_height:DWORD,
+	src         :DWORD,
+	dest        :DWORD,
 
 ; Externs from SCALE.ASM module of the DRAWBUFF library
-GLOBAL C Linear_Scale_To_Linear 	:NEAR
+Linear_Scale_To_Linear	PROTO	NEAR C,
+	this_object:DWORD,
+	dest:DWORD,
+	src_x:DWORD,
+	src_y:DWORD,
+	dst_x:DWORD,
+	dst_y:DWORD,
+	src_width:DWORD,
+	src_height:DWORD,
+	dst_width:DWORD,
+	dst_height:DWORD,
+	trans:DWORD,
+	remap:DWORD,
 
 ; Externs from TXTPRNT.ASM module of the DRAWBUFF library
-GLOBAL C Buffer_Print			:NEAR
-
+Buffer_Print			PROTO	NEAR C,
+	this_object:DWORD,
+	string:DWORD,
+	x_pixel:DWORD,
+	y_pixel:DWORD,
+	fcolor:DWORD,
+	bcolor:DWORD,
 
 ;*-------------------------------------------------------------------------*
 ;* Define Buffer only assembly GLOBALS					   *
 ;*-------------------------------------------------------------------------*
 
 ; Externs from DRAWLINE.ASM module of the DRAWBUFF library
-GLOBAL C Buffer_Draw_Line:NEAR
+Buffer_Draw_Line		PROTO	NEAR C,
+	this_object:DWORD,
+	x1_pixel:DWORD,
+	y1_pixel:DWORD,
+	x2_pixel:DWORD,
+	y2_pixel:DWORD,
+	color:DWORD,
 
 ; Externs from FILLQUAD.ASM module of the DRAWBUFF library
-GLOBAL C Buffer_Fill_Quad 		:NEAR
+Buffer_Fill_Quad		PROTO	NEAR C,
+	this_object:DWORD,
+	span_buff:DWORD,
+	x0_pixel:DWORD,
+	y0_pixel:DWORD,
+	x1_pixel:DWORD,
+	y1_pixel:DWORD,
+	x2_pixel:DWORD,
+	y2_pixel:DWORD,
+	x3_pixel:DWORD,
+	y3_pixel:DWORD,
+	color:DWORD,
 
 ; Externs from FILLRECT.ASM module of the DRAWBUFF library
-GLOBAL C Buffer_Fill_Rect 		:NEAR
+Buffer_Fill_Rect		PROTO	NEAR C,
+	this_object:DWORD,
+	x1_pixel:WORD,
+	y1_pixel:WORD,
+	x2_pixel:WORD,
+	y2_pixel:WORD,
+	color:BYTE,
 
 ; Externs from REMAP.ASM module of the DRAWBUFF library
-GLOBAL C Buffer_Remap      		:NEAR
+Buffer_Remap			PROTO	NEAR C,
+	this_object:DWORD,
+	x0_pixel:DWORD,
+	y0_pixel:DWORD,
+	region_width:DWORD,
+	region_height:DWORD,
+	remap	:DWORD,
 
 ; Externs from STAMP.ASM module of the DRAWBUFF library
-GLOBAL C Buffer_Draw_Stamp 		:NEAR
+Buffer_Draw_Stamp		PROTO	NEAR C,
+	this_object:DWORD,
+	icondata:DWORD,
+	icon:DWORD,
+	x_pixel:DWORD,
+	y_pixel:DWORD,
+	remap:DWORD,
 
-GLOBAL C get_clip	 	   : NEAR
+get_clip				PROTO	NEAR C,
+	win	    : dword,
+     rect	    : dword,
 
 RECTANGLE	struc
 		  x0	dd	?
