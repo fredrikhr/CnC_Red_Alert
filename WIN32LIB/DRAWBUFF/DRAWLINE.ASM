@@ -94,12 +94,12 @@ Buffer_Draw_Line	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
 	xor	eax,eax
 	mov	[clip_min_x],eax
 	mov	[clip_min_y],eax
-	mov	eax,[(GraphicViewPort ebx).GVPWidth]
+	mov	eax,(GraphicViewPort PTR [ebx]).GVPWidth
 	mov	[clip_max_x],eax
-	add	eax,[(GraphicViewPort ebx).GVPXAdd]
-	add	eax,[(GraphicViewPort ebx).GVPPitch]
+	add	eax,(GraphicViewPort PTR [ebx]).GVPXAdd
+	add	eax,(GraphicViewPort PTR [ebx]).GVPPitch
 	mov	[bpr],eax
-	mov	eax,[(GraphicViewPort ebx).GVPHeight]
+	mov	eax,(GraphicViewPort PTR [ebx]).GVPHeight
 	mov	[clip_max_y],eax
 
 	;*==================================================================
@@ -304,7 +304,7 @@ Buffer_Draw_Line	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
 	mul	ebx
 	mov	ebx,eax
 	mov	eax,[this_object]
-	add	ebx,[(GraphicViewPort eax).GVPOffset]
+	add	ebx,(GraphicViewPort PTR [eax]).GVPOffset
 	pop	eax
 	pop	edx
 
@@ -395,20 +395,20 @@ Buffer_Draw_Line	PROC	NEAR C	USES	eax ebx ecx edx esi edi,
 	mul	ebx
 	mov	ebx,eax
 	mov	eax,[this_object]
-	add	ebx,[(GraphicViewPort eax).GVPOffset]
+	add	ebx,(GraphicViewPort PTR [eax]).GVPOffset
 	pop	eax
 	pop	edx
 	add	ebx,eax
 	mov	edi,ebx
 	cmp	ecx,15
 	jg	??big_line
-	mov	al,[byte color]
+	mov	al,byte ptr [color]
 	rep	stosb			; write as many words as possible
 	jmp	short ??out		; get outt
 
 
 ??big_line:
-	mov	al,[byte color]
+	mov	al,byte ptr [color]
 	mov	ah,al
 	mov     ebx,eax
 	shl	eax,16
