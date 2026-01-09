@@ -10,21 +10,21 @@ list(REMOVE_ITEM PROJECT_CURRENT_SOURCE_DIR_ANY_LANG_SOURCE_FILES
   "${CMAKE_CURRENT_SOURCE_DIR}/DEBUG.RC"
 )
 
-add_executable(WINVQAVIEW)
-target_sources(WINVQAVIEW
+add_executable(VQAVIEW)
+target_sources(VQAVIEW
   PRIVATE
     ${PROJECT_CURRENT_SOURCE_DIR_ANY_LANG_SOURCE_FILES}
     $<$<CONFIG:Debug>:DEBUG.CPP>
     $<$<CONFIG:Debug>:DEBUG.RC>
 )
-target_sources(WINVQAVIEW
+target_sources(VQAVIEW
   PRIVATE
     FILE_SET private_headers
     TYPE HEADERS
     FILES
       ${PROJECT_CURRENT_SOURCE_DIR_ANY_LANG_IGNORES}
 )
-target_sources(WINVQAVIEW
+target_sources(VQAVIEW
   PRIVATE
     FILE_SET HEADERS
     BASE_DIRS
@@ -34,13 +34,10 @@ target_sources(WINVQAVIEW
       ${PROJECT_WINVQM32_INCLUDE_ANY_LANG_IGNORES}
       ${PROJECT_WINVQA32_INCLUDE_ANY_LANG_IGNORES}
 )
-target_link_libraries(WINVQAVIEW
+target_link_libraries(VQAVIEW
   PRIVATE
     WINVQA32
 )
-install(TARGETS WINVQAVIEW)
-if(USE_WINVQ_AS_VQ)
-add_library(VQAVIEW ALIAS WINVQA32)
-endif(USE_WINVQ_AS_VQ)
+install(TARGETS VQAVIEW)
 
 set_asm_masm_source_files_language_property()
