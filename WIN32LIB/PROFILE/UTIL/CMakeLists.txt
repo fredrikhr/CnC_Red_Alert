@@ -1,8 +1,9 @@
 file_glob_enabled_language_files()
 
 add_executable(PROFILE)
-target_include_directories(PROFILE
-  PRIVATE ../../INCLUDE
+target_link_libraries(PROFILE
+  PUBLIC
+    WIN32LIB_INCLUDE
 )
 target_sources(PROFILE
   PRIVATE

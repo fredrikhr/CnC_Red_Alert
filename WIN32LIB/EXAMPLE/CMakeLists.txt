@@ -1,6 +1,6 @@
 file_glob_enabled_language_files()
 
-add_executable(WIN32LIB_EXAMPLE)
+add_executable(WIN32LIB_EXAMPLE EXCLUDE_FROM_ALL)
 target_sources(WIN32LIB_EXAMPLE
   PRIVATE
     ${PROJECT_CURRENT_SOURCE_DIR_ANY_LANG_SOURCE_FILES}

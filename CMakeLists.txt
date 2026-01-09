@@ -29,6 +29,7 @@ target_compile_definitions(PROJECT_DEFAULT INTERFACE
 target_compile_options(PROJECT_DEFAULT INTERFACE
   $<$<COMPILE_LANG_AND_ID:C,MSVC>:/W3>
   $<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/W3>
+  $<$<COMPILE_LANG_AND_ID:ASM_MASM,MSVC>:/Gd> # Use OPTION LANGUAGE:C by default
   $<$<COMPILE_LANG_AND_ID:ASM_MASM,MSVC>:/W3>
 )
 
@@ -39,15 +40,10 @@ add_subdirectory(LAUNCHER)
 add_subdirectory(TOOLS/AUDIOMAK)
 add_subdirectory(TOOLS/MIX)
 if(NOT USE_WINVQ_AS_VQ)
-add_subdirectory(VQ/VQA32)
-add_subdirectory(VQ/VQM32)
+add_subdirectory(VQ)
 endif(NOT USE_WINVQ_AS_VQ)
 add_subdirectory(WIN32LIB)
-add_subdirectory(WINVQ/LIB)
-add_subdirectory(WINVQ/VPLAY32)
-add_subdirectory(WINVQ/VQAVIEW)
-add_subdirectory(WINVQ/VQA32)
-add_subdirectory(WINVQ/VQM32)
+add_subdirectory(WINVQ)
 add_subdirectory(WWFLAT32)
 
 function(get_project_buildsystem_targets_recursive PROJECT_DIRECTORY)

@@ -43,7 +43,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <wwlib32.h>
 #include	<direct.h>
-#include "..\mouse.h"
+#include "mouse.h"
 #define NAME "KEYBOARD/MOUSE test"
 #define TITLE "KEYBOARD/MOUSE library test"
 
@@ -290,7 +290,7 @@ long FAR PASCAL _export WndProc (HWND hwnd, UINT message, UINT wParam,
 				Mouse->Set_Cursor(0,0,Extract_Shape(ShapeFile,++CurrentShape));
 				if (CurrentShape>160) CurrentShape = 0;
 			}
-				
+
 			break;
 
 		case WM_RBUTTONDOWN:

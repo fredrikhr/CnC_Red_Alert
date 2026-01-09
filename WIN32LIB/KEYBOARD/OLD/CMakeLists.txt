@@ -1,8 +1,9 @@
 file_glob_enabled_language_files()
 
-add_library(WIN32LIB_KEYBOARD_OLD OBJECT)
-target_include_directories(WIN32LIB_KEYBOARD_OLD
-  PRIVATE ../../INCLUDE
+add_library(WIN32LIB_KEYBOARD_OLD STATIC EXCLUDE_FROM_ALL)
+target_link_libraries(WIN32LIB_KEYBOARD_OLD
+  PUBLIC
+    WIN32LIB_INCLUDE
 )
 target_sources(WIN32LIB_KEYBOARD_OLD
   PRIVATE

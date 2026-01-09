@@ -7,7 +7,6 @@ target_compile_definitions(WINVQA32
 )
 target_include_directories(WINVQA32
   PUBLIC
-    ../INCLUDE
     ../INCLUDE/VQA32
 )
 target_sources(WINVQA32
@@ -19,14 +18,6 @@ target_sources(WINVQA32
     TYPE HEADERS
     FILES ${PROJECT_CURRENT_SOURCE_DIR_ANY_LANG_IGNORES}
 )
-file_glob_enabled_language_files_in_directory(WINVQ_INCLUDE ../INCLUDE)
-file_glob_enabled_language_files_in_directory(WINVQA32_INCLUDE ../INCLUDE/VQA32)
-list(TRANSFORM PROJECT_WINVQ_INCLUDE_ANY_LANG_IGNORES
-  PREPEND ../INCLUDE/
-)
-list(TRANSFORM PROJECT_WINVQA32_INCLUDE_ANY_LANG_IGNORES
-  PREPEND ../INCLUDE/VQA32/
-)
 target_sources(WINVQA32
   PUBLIC
     FILE_SET HEADERS
@@ -35,9 +26,11 @@ target_sources(WINVQA32
       ${PROJECT_WINVQ_INCLUDE_ANY_LANG_IGNORES}
       ${PROJECT_WINVQA32_INCLUDE_ANY_LANG_IGNORES}
 )
-target_link_libraries(WINVQA32 PRIVATE WINVQM32)
+target_link_libraries(WINVQA32 PUBLIC WINVQM32)
 if(USE_WINVQ_AS_VQ)
 add_library(VQA32 ALIAS WINVQA32)
 endif(USE_WINVQ_AS_VQ)
+
+set_asm_masm_source_files_language_property()
 
 add_subdirectory(OLD)

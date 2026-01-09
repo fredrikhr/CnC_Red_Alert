@@ -2,11 +2,11 @@ file_glob_enabled_language_files()
 
 add_library(VQA32 STATIC)
 target_compile_definitions(VQA32
-  PUBLIC PHARLAP_TNT=0
+  PUBLIC
+    PHARLAP_TNT=0
 )
 target_include_directories(VQA32
   PUBLIC
-    "../INCLUDE"
     "../INCLUDE/VQA32"
 )
 target_sources(VQA32
@@ -18,19 +18,14 @@ target_sources(VQA32
     TYPE HEADERS
     FILES ${PROJECT_CURRENT_SOURCE_DIR_ANY_LANG_IGNORES}
 )
-file_glob_enabled_language_files_in_directory(VQ_INCLUDE ../INCLUDE)
-file_glob_enabled_language_files_in_directory(VQA32_INCLUDE ../INCLUDE/VQA32)
-list(TRANSFORM PROJECT_VQ_INCLUDE_ANY_LANG_IGNORES PREPEND ../INCLUDE/)
-list(TRANSFORM PROJECT_VQA32_INCLUDE_ANY_LANG_IGNORES PREPEND ../INCLUDE/VQA32/)
 target_sources(VQA32
   PUBLIC
     FILE_SET HEADERS
-    BASE_DIRS
-      ../INCLUDE
+    BASE_DIRS ../INCLUDE
     FILES
       ${PROJECT_VQ_INCLUDE_ANY_LANG_IGNORES}
       ${PROJECT_VQA32_INCLUDE_ANY_LANG_IGNORES}
 )
-target_link_libraries(VQA32 PRIVATE VQM32)
+target_link_libraries(VQA32 PUBLIC VQM32)
 
 set_asm_masm_source_files_language_property()

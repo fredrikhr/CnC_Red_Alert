@@ -2,7 +2,7 @@ file_glob_enabled_language_files()
 
 add_executable(THUNK FIXTHUNK.CPP)
 
-add_executable(IPXTEST WIN32 IPXTEST.CPP)
+add_executable(IPXTEST WIN32 EXCLUDE_FROM_ALL IPXTEST.CPP)
 target_link_libraries(IPXTEST PRIVATE THIPX32)
 
 if(WITH_16BIT_TARGETS)
