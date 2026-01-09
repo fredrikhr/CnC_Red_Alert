@@ -1,7 +1,7 @@
 file_glob_enabled_language_files()
 
-add_executable(WINVPLAY32)
-target_compile_definitions(WINVPLAY32
+add_executable(VPLAY32)
+target_compile_definitions(VPLAY32
   PRIVATE
     VQAMONO_ON=1
     VQAAUDIO_ON=1
@@ -10,16 +10,16 @@ target_compile_definitions(WINVPLAY32
     VQAXMODE_ON=1
     VQAVESA_ON=1
 )
-target_sources(WINVPLAY32
+target_sources(VPLAY32
   PRIVATE ${PROJECT_CURRENT_SOURCE_DIR_ANY_LANG_SOURCE_FILES}
 )
-target_sources(WINVPLAY32
+target_sources(VPLAY32
   PRIVATE
     FILE_SET private_headers
     TYPE HEADERS
     FILES ${PROJECT_CURRENT_SOURCE_DIR_ANY_LANG_IGNORES}
 )
-target_sources(WINVPLAY32
+target_sources(VPLAY32
   PRIVATE
     FILE_SET HEADERS
     BASE_DIRS ../INCLUDE
@@ -28,13 +28,10 @@ target_sources(WINVPLAY32
       ${PROJECT_WINVQM32_INCLUDE_ANY_LANG_IGNORES}
       ${PROJECT_WINVQA32_INCLUDE_ANY_LANG_IGNORES}
 )
-target_link_libraries(WINVPLAY32
+target_link_libraries(VPLAY32
   PRIVATE
     WINVQA32
 )
-install(TARGETS WINVPLAY32)
-if(USE_WINVQ_AS_VQ)
-add_library(VPLAY32 ALIAS WINVPLAY32)
-endif(USE_WINVQ_AS_VQ)
+install(TARGETS VPLAY32)
 
 set_asm_masm_source_files_language_property()
